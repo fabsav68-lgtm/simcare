@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimGluco · Outil pédagogique IFSI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #06100a;
+  --bg2:   #0c1a10;
+  --card:  rgba(255,255,255,.032);
+  --bdr:   rgba(255,255,255,.08);
+  --txt:   #e8f0e9;
+  --txt2:  #8aaa8e;
+  --txt3:  #3d5c42;
+  --em:    #5ecb7a;
+  --em2:   #3dab5a;
+  --red:   #e05555;
+  --amber: #e8a53a;
+  --blue:  #5aabe0;
+  --rose:  #e07095;
+  --hypo:  #e05555;
+  --norm:  #5ecb7a;
+  --hyper: #e8a53a;
+  --critic:#e05555;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  font-family:'IBM Plex Sans',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 40% at 15% 5%,  rgba(94,203,122,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% 95%, rgba(224,85,85,.04)  0%,transparent 50%);
+  color:var(--txt);
+  min-height:100vh;
+  padding-bottom:80px;
+}
+
+.wrap{max-width:700px;margin:0 auto;padding:0 20px}
+
+/* ── HEADER ── */
+.site-header{text-align:center;padding:42px 24px 24px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(94,203,122,.08);border:1px solid rgba(94,203,122,.22);
+  color:var(--em);padding:5px 16px;border-radius:20px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+}
+.site-header h1{
+  font-family:'Fraunces',serif;
+  font-size:clamp(26px,6vw,44px);font-weight:700;letter-spacing:-.5px;line-height:1.1;
+  color:var(--txt);
+}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt3);font-size:14px;margin-top:8px;font-style:italic}
+
+/* ── STEPS ── */
+.steps-bar{display:flex;justify-content:center;align-items:center;gap:4px;padding:0 16px 28px;flex-wrap:wrap}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;transition:all .28s;
+  border:2px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt3);
+  font-family:'IBM Plex Mono',monospace;
+}
+.step-dot.active{background:rgba(94,203,122,.12);border-color:var(--em);color:var(--em)}
+.step-dot.done  {background:var(--em2);border-color:var(--em2);color:#06100a}
+.step-lbl{font-size:12px;color:var(--txt3);transition:color .28s}
+.step-lbl.active{color:var(--txt2)}
+.step-line{width:16px;height:1px;background:var(--bdr)}
+
+/* ── CARD ── */
+.card{
+  background:var(--card);border:1.5px solid var(--bdr);
+  border-radius:20px;padding:28px;margin-bottom:16px;
+}
+.card-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:5px}
+.card-sub{color:var(--txt3);font-size:13px;margin-bottom:22px;line-height:1.65}
+
+/* ── FORM ── */
+.lbl{
+  display:block;font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--txt3);margin-bottom:8px;
+}
+.lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.lbl-val{font-family:'IBM Plex Mono',monospace;color:var(--em);font-size:15px;font-weight:500}
+
+input[type=text]{
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
+  border-radius:10px;color:var(--txt);padding:11px 14px;
+  font-size:15px;font-family:'IBM Plex Mono',monospace;
+  outline:none;width:100%;transition:border-color .2s;
+}
+input[type=text]:focus{border-color:rgba(94,203,122,.4)}
+
+
+
+.range-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-top:5px;font-family:'IBM Plex Mono',monospace}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.col  {display:flex;flex-direction:column;gap:18px}
+.col8 {display:flex;flex-direction:column;gap:8px}
+
+/* ── SEL ── */
+.sel{
+  cursor:pointer;border:1.5px solid var(--bdr);border-radius:12px;
+  padding:13px 16px;background:rgba(255,255,255,.02);
+  color:var(--txt2);font-family:'IBM Plex Sans',sans-serif;font-size:14px;
+  transition:all .18s;display:flex;align-items:center;gap:12px;user-select:none;
+}
+.sel:hover{background:rgba(255,255,255,.05);color:var(--txt);border-color:rgba(255,255,255,.14)}
+.sel.on   {background:rgba(94,203,122,.08);color:var(--txt);border-color:rgba(94,203,122,.4)}
+.sel.center{justify-content:center;flex-direction:column;text-align:center;padding:16px 8px}
+.sel .si  {font-size:22px;flex-shrink:0}
+.sel .sd  {font-size:11px;color:var(--txt3);margin-top:2px}
+.sel .stag{
+  margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;
+  padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.04);color:var(--txt3);
+}
+.sel.on .stag{background:rgba(94,203,122,.1);color:var(--em)}
+
+/* ── BUTTONS ── */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  border:none;border-radius:12px;color:#06100a;
+  font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:600;
+  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-p:active{transform:translateY(0)}
+.btn-g{
+  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
+  border-radius:12px;color:var(--txt2);
+  font-family:'IBM Plex Sans',sans-serif;font-size:14px;
+  padding:11px 20px;cursor:pointer;transition:all .18s;
+}
+.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+.nav-col{display:flex;flex-direction:column;gap:10px}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.055);border-radius:13px;padding:15px;text-align:center}
+.stat-v{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;color:var(--em);display:block}
+.stat-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace;display:block;margin-top:5px}
+.stat-s{font-size:11px;color:#2d4030;font-style:italic;display:block;margin-top:6px;line-height:1.4}
+
+/* ── GLYCÉMIE GAUGE ── */
+.gauge-wrap{margin:0 auto 28px;max-width:360px}
+.gauge-bar{
+  position:relative;height:36px;border-radius:18px;overflow:hidden;
+  background:linear-gradient(90deg,
+    #7a1a1a 0%,#e05555 10%,
+    #e05555 18%,#5ecb7a 25%,
+    #5ecb7a 55%,#e8a53a 68%,
+    #e8a53a 80%,#e05555 92%,
+    #e05555 100%);
+  margin-bottom:8px;
+}
+.gauge-needle{
+  position:absolute;top:0;bottom:0;width:3px;border-radius:2px;
+  background:#fff;box-shadow:0 0 8px rgba(255,255,255,.6);
+  transition:left .6s cubic-bezier(.34,1.56,.64,1);
+  transform:translateX(-50%);
+}
+.gauge-zones{display:flex;justify-content:space-between;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--txt3)}
+.gauge-current{
+  text-align:center;margin-bottom:14px;
+}
+.gauge-val{font-family:'Fraunces',serif;font-size:42px;font-weight:700;line-height:1}
+.gauge-unit{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--txt3);margin-left:4px}
+.gauge-zone-lbl{font-size:13px;font-weight:600;margin-top:4px}
+
+/* ── INSULINE TIMELINE ── */
+.insulin-timeline{
+  position:relative;height:60px;margin:8px 0;
+}
+.ins-bg{
+  position:absolute;bottom:0;left:0;right:0;height:4px;
+  background:rgba(255,255,255,.06);border-radius:2px;
+}
+.ins-curve{
+  position:absolute;bottom:4px;left:0;
+  transition:all .5s ease;
+}
+.ins-peak-dot{
+  position:absolute;width:8px;height:8px;border-radius:50%;
+  background:var(--em);transform:translate(-50%,-50%);
+  box-shadow:0 0 10px rgba(94,203,122,.6);
+  transition:all .5s ease;
+}
+.ins-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace;margin-top:4px}
+
+/* ── GLYCO ZONES ── */
+.zone-box{border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px}
+.zone-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.zone-t{font-size:14px;font-weight:600;margin-bottom:3px}
+.zone-d{font-size:13px;line-height:1.6;opacity:.85}
+
+/* ── INFO BOXES ── */
+.info{border-radius:11px;padding:13px 15px;font-size:13px;line-height:1.7}
+.info-em  {background:rgba(94,203,122,.07); border:1px solid rgba(94,203,122,.2); color:var(--em)}
+.info-red {background:rgba(224,85,85,.07);  border:1px solid rgba(224,85,85,.2);  color:var(--red)}
+.info-amb {background:rgba(232,165,58,.07); border:1px solid rgba(232,165,58,.2); color:var(--amber)}
+.info-blu {background:rgba(90,171,224,.07); border:1px solid rgba(90,171,224,.2); color:var(--blue)}
+.info-ros {background:rgba(224,112,149,.07);border:1px solid rgba(224,112,149,.2);color:var(--rose)}
+
+/* ── RECAP ── */
+.recap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.rc{background:rgba(0,0,0,.22);border-radius:10px;padding:10px 13px}
+.rc-k{font-size:10px;color:#2d4030;text-transform:uppercase;letter-spacing:1px;font-family:'IBM Plex Mono',monospace}
+.rc-v{font-size:13px;color:var(--txt);margin-top:4px;line-height:1.4}
+
+/* ── ANALYSIS ── */
+.analysis p{margin-bottom:16px;color:#a8c4aa;font-size:15px;line-height:1.85}
+.analysis strong{color:var(--txt);font-size:16px}
+
+/* ── API KEY ── */
+.apikey-box{
+  background:rgba(94,203,122,.04);border:1px solid rgba(94,203,122,.15);
+  border-radius:12px;padding:14px 16px;margin-bottom:14px;
+}
+.apikey-box p{font-size:13px;color:var(--txt3);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:13px}
+.apikey-row button{
+  padding:9px 16px;border:none;border-radius:9px;
+  background:var(--em2);color:#06100a;font-weight:700;
+  cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:13px;
+}
+.apikey-saved{color:var(--em);font-size:11px;margin-top:6px;font-family:'IBM Plex Mono',monospace}
+
+/* ── WELCOME ── */
+.welcome{text-align:center;padding:4px 0 28px}
+.welcome-icon{font-size:64px;display:block;margin-bottom:18px}
+.welcome p{color:var(--txt2);font-size:15px;line-height:1.8;max-width:480px;margin:0 auto}
+.pts{display:flex;flex-direction:column;gap:14px;margin:24px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:20px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:28px 0}
+.dots span{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--em);margin:0 3px;
+  animation:dotB 1.4s ease-in-out infinite both;
+}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt3);font-size:13px;margin-top:10px;font-style:italic}
+
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:20px 0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB  {0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+@keyframes pulse {0%,100%{opacity:.6}50%{opacity:1}}
+
+.fadeup{animation:fadeUp .35s ease forwards}
+.pulse {animation:pulse 2s ease-in-out infinite}
+
+@media(max-width:480px){
+  .grid2,.recap{grid-template-columns:1fr}
+  .nav-row{flex-direction:column}
+}
+
+    /* ── SLIDERS AMÉLIORÉS ── */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%; height: 10px;
+      border-radius: 5px;
+      background: rgba(255,255,255,.10);
+      outline: none; cursor: pointer;
+      margin-top: 4px;
+      touch-action: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid rgba(255,255,255,.18);
+      box-shadow: 0 2px 12px rgba(0,0,0,.5);
+      transition: transform .15s;
+    }
+    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.18); }
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 10px; border-radius: 5px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      background: #5ecb7a;
+    }
+
+    /* ── STEPPER WRAPPER ── */
+    .sl-wrap {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+    }
+    .sl-wrap input[type=range] { flex: 1; }
+    .sl-btn {
+      flex-shrink: 0;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      border: 1.5px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.55);
+      font-size: 20px; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s, transform .1s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .sl-btn:hover  { background: rgba(255,255,255,.12); color: #fff; }
+    .sl-btn:active { transform: scale(.9); }
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+const DIABETE_TYPES = [
+  { id:'dt1',      label:'Diabète de type 1',              icon:'🩸', short:'DT1',   desc:'Insulinodépendant, déficit absolu' },
+  { id:'dt2',      label:'Diabète de type 2',              icon:'💊', short:'DT2',   desc:'Résistance à l\'insuline' },
+  { id:'cortico',  label:'Diabète cortico-induit',          icon:'💉', short:'Cortico',desc:'Sous corticoïdes' },
+  { id:'gestatio', label:'Diabète gestationnel',            icon:'🤰', short:'DG',    desc:'Grossesse' },
+  { id:'nutri',    label:'Nutrition artificielle',          icon:'🍼', short:'Nutrition',desc:'Entérale ou parentérale' },
+  { id:'postop',   label:'Hyperglycémie post-opératoire',  icon:'🏥', short:'Post-op',desc:'Stress chirurgical' },
+  { id:'sain',     label:'Patient sans diabète connu',     icon:'💚', short:'Standard',desc:'Contrôle ponctuel' },
+];
+
+const INSULINES = [
+  { id:'rapide', label:'Insuline rapide (Actrapid®)',       icon:'⚡', onset:30, peak:120,  dur:480,  couleur:'#5aabe0', risque:'hypoglycémie 2h après injection' },
+  { id:'analog',  label:'Analogue rapide (NovoRapid®)',     icon:'💨', onset:15, peak:60,   dur:240,  couleur:'#5ecb7a', risque:'action très rapide — manger immédiatement' },
+  { id:'lente',   label:'Insuline lente (Lantus®)',         icon:'🌙', onset:120,peak:600,  dur:1440, couleur:'#e8a53a', risque:'hypoglycémie nocturne' },
+  { id:'nph',     label:'Insuline NPH (Insulatard®)',       icon:'🕐', onset:90, peak:360,  dur:720,  couleur:'#e07095', risque:'pic à surveiller 4-6h après injection' },
+  { id:'mix',     label:'Insuline mixte (Novomix 30®)',     icon:'🔀', onset:15, peak:90,   dur:600,  couleur:'#9b7fc4', risque:'double pic — risque biphasique' },
+];
+
+const FACTEURS_RISQUE = [
+  { id:'insuffrenal', label:'Insuffisance rénale',          icon:'🫘' },
+  { id:'betablock',   label:'Bêtabloquants (masquent l\'hypoglycémie)', icon:'❤️‍🩹' },
+  { id:'jeune',       label:'À jeun / NPO',                  icon:'🚫' },
+  { id:'alcool',      label:'Consommation d\'alcool',        icon:'🍷' },
+  { id:'infection',   label:'Infection / Fièvre en cours',   icon:'🦠' },
+  { id:'vomiss',      label:'Nausées / Vomissements',        icon:'🤢' },
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let S = {
+  view:'welcome',
+  patient:{
+    prenom:'Suzanne', sexe:'F', age:68, poids:72, taille:162,
+    diabete:'dt2', glycemie:2.8, facteurs:['insuffrenal','betablock']
+  },
+  rx:{ insuline:'rapide', dose:8, moment:'avant_repas' },
+  analyse:'', loading:false,
+  apiKey:localStorage.getItem('simgluco_key')||'',
+  apiKeySaved:!!localStorage.getItem('simgluco_key'),
+};
+
+// ═══════════════════════════════════════
+//  PHYSIOLOGIE GLYCÉMIQUE
+// ═══════════════════════════════════════
+function glycoPhysio(){
+  const { age, poids, diabete, glycemie, facteurs } = S.patient;
+
+  // Insulino-sensibilité
+  let sensi = 1.0;
+  if (diabete==='dt2')     sensi=0.65;
+  if (diabete==='cortico') sensi=0.50;
+  if (diabete==='gestatio')sensi=0.75;
+  if (facteurs.includes('infection')) sensi*=0.80;
+  if (age>70) sensi*=0.90;
+
+  // Risque hypoglycémie
+  let risqueHypo = 'faible';
+  let scoreHypo = 0;
+  if (glycemie<1.5) scoreHypo+=3;
+  else if (glycemie<2.0) scoreHypo+=2;
+  if (facteurs.includes('jeune'))       scoreHypo+=2;
+  if (facteurs.includes('insuffrenal')) scoreHypo+=2;
+  if (facteurs.includes('betablock'))   scoreHypo+=1;
+  if (facteurs.includes('alcool'))      scoreHypo+=2;
+  if (diabete==='dt1')                  scoreHypo+=1;
+  if (age>70)                           scoreHypo+=1;
+  if (scoreHypo>=4) risqueHypo='élevé';
+  else if (scoreHypo>=2) risqueHypo='modéré';
+
+  // Zone glycémique
+  let zone, zoneCol, zoneLabel;
+  if (glycemie<0.7)       { zone='hypo_sévère';  zoneCol='#e05555'; zoneLabel='Hypoglycémie sévère — urgence'; }
+  else if (glycemie<1.1)  { zone='hypo';         zoneCol='#e07070'; zoneLabel='Hypoglycémie'; }
+  else if (glycemie<=1.8) { zone='normale';      zoneCol='#5ecb7a'; zoneLabel='Glycémie normale (à jeun)'; }
+  else if (glycemie<=2.5) { zone='normale_pp';   zoneCol='#7ed494'; zoneLabel='Normale post-prandiale'; }
+  else if (glycemie<=3.0) { zone='hypermod';     zoneCol='#e8a53a'; zoneLabel='Hyperglycémie modérée'; }
+  else if (glycemie<=5.0) { zone='hyper';        zoneCol='#e07a20'; zoneLabel='Hyperglycémie'; }
+  else                     { zone='hyper_severe'; zoneCol='#e05555'; zoneLabel='Hyperglycémie sévère'; }
+
+  // Position jauge (0-100%)
+  const gaugePos = Math.min(98, Math.max(2,
+    glycemie<1.1  ? (glycemie/1.1)*22 :
+    glycemie<2.6  ? 22+(glycemie-1.1)/1.5*35 :
+    glycemie<5.0  ? 57+(glycemie-2.6)/2.4*28 :
+                    85+(glycemie-5.0)/5.0*13
+  ));
+
+  // Besoins insuline estimés
+  const besoinBase = Math.round(poids * (diabete==='dt1'?0.55:diabete==='dt2'?0.4:0.35) * sensi);
+  
+  // Analogue glycémie en sucre concret
+  const sucreAnalog = glycemie<1.0 ? 'le cerveau manque de carburant — perte de conscience possible'
+    : glycemie<1.8 ? `comme après un effort physique intense sans manger`
+    : glycemie<2.6 ? `glycémie d'équilibre — le corps fonctionne normalement`
+    : glycemie<4.0 ? `comme 2h après un repas riche en sucres rapides`
+    : `comme si quelqu'un avait bu plusieurs verres de sirop pur — les vaisseaux s'endommagent`;
+
+  return { sensi, risqueHypo, scoreHypo, zone, zoneCol, zoneLabel, gaugePos, besoinBase, sucreAnalog };
+}
+
+function insulineInfo(){ return INSULINES.find(i=>i.id===S.rx.insuline)||INSULINES[0]; }
+function diabeteInfo(){ return DIABETE_TYPES.find(d=>d.id===S.patient.diabete)||DIABETE_TYPES[0]; }
+
+function ageLabel(a){
+  if(a<3) return 'Nourrisson';if(a<12) return 'Enfant';if(a<18) return 'Adolescent';
+  if(a<65) return 'Adulte';return 'Personne âgée';
+}
+
+function momentLabel(m){
+  const map={avant_repas:'Avant repas',apres_repas:'Après repas',coucher:'Au coucher',matin:'Le matin à jeun',urgence:'Correction urgente'};
+  return map[m]||m;
+}
+
+// ═══════════════════════════════════════
+//  UTILITAIRES
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  const ph  = glycoPhysio();
+  const ins = insulineInfo();
+  const di  = diabeteInfo();
+  const pr  = S.patient.prenom;
+  const stepNum = {step1:1,step2:2,step3:3,step4:4}[S.view]||0;
+  const rl  = ph.risqueHypo==='élevé'
+    ? {col:'#e05555',bg:'rgba(224,85,85,.08)',bdr:'rgba(224,85,85,.25)'}
+    : ph.risqueHypo==='modéré'
+    ? {col:'#e8a53a',bg:'rgba(232,165,58,.08)',bdr:'rgba(232,165,58,.25)'}
+    : {col:'#5ecb7a',bg:'rgba(94,203,122,.08)',bdr:'rgba(94,203,122,.25)'};
+
+  let h='';
+
+  // ─── EN-TÊTE ────────────────────────────────────────────────────
+  if(S.view!=='welcome'){
+    const steps=['Patient','Glycémie','Prescription','Analyse'];
+    h+=`
+    <div class="site-header">
+      <div class="badge">🩸 Module 3 · SimCare IFSI</div>
+      <h1>Sim<span>Gluco</span></h1>
+      <p>Comprendre la glycémie et l'insuline à travers la physiologie du patient</p>
+    </div>
+    <div class="steps-bar">
+      ${steps.map((s,i)=>`
+        <div class="step-dot ${stepNum>i+1?'done':stepNum===i+1?'active':''}">${stepNum>i+1?'✓':i+1}</div>
+        <span class="step-lbl ${stepNum===i+1?'active':''}">${s}</span>
+        ${i<3?'<div class="step-line"></div>':''}
+      `).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+          <div class="badge">🩸 Module 3 · SimCare IFSI</div>
+          <h1>Sim<span>Gluco</span></h1>
+        </div>`;
+  }
+
+  h+='<div class="wrap">';
+
+  // ─── WELCOME ─────────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(94,203,122,.16)">
+      <div class="welcome">
+        <span class="welcome-icon">🩸</span>
+        <p>Administrer de l'insuline sans comprendre ce qu'une glycémie à <strong>2,8 g/L</strong> représente dans le corps d'une femme de 68 ans sous bêtabloquants, c'est agir dans l'obscurité. SimGluco allume la lumière.</p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez votre patient</strong> — type de diabète, facteurs de risque, contexte : chaque élément modifie le danger d'une injection</span></div>
+          <div class="pt"><span class="pt-i">🩸</span><span class="pt-t"><strong>Visualisez sa glycémie</strong> — pas un chiffre abstrait : ce que cette valeur représente dans ses cellules, son cerveau, ses vaisseaux</span></div>
+          <div class="pt"><span class="pt-i">💉</span><span class="pt-t"><strong>Simulez la prescription</strong> — type d'insuline, dose, moment d'injection, et la courbe d'action dans le temps</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analysez la cohérence</strong> — cette injection est-elle adaptée ? Quels signes surveiller et pourquoi pour CE patient ?</span></div>
+        </div>
+        <button class="btn-p" onclick="go('step1')">Construire un patient →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 1 — PATIENT ───────────────────────────────────────────
+  else if(S.view==='step1'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(94,203,122,.16)">
+      <div class="card-title" style="color:var(--em)">👤 Votre patient</div>
+      <div class="card-sub">Le profil définit tout : un même chiffre de glycémie n'a pas la même signification ni le même danger selon le patient.</div>
+      <div class="col">
+
+        <div>
+          <label class="lbl">Prénom</label>
+          <input type="text" value="${esc(S.patient.prenom)}" placeholder="Ex : Suzanne, Pierre, Amina, Lucas…" oninput="up('prenom',this.value)">
+        </div>
+
+        <div>
+          <label class="lbl">Sexe biologique</label>
+          <div class="grid2">
+            ${[{v:'F',l:'Femme',i:'👩'},{v:'H',l:'Homme',i:'👨'}].map(s=>`
+              <div class="sel center ${S.patient.sexe===s.v?'on':''}" onclick="up('sexe','${s.v}')">
+                <span style="font-size:28px">${s.i}</span>
+                <span style="font-size:13px;margin-top:5px">${s.l}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="lbl-row">
+            <label class="lbl" style="margin:0">Âge</label>
+            <span><span class="lbl-val">${S.patient.age} ans</span><span style="font-size:11px;color:var(--txt3);margin-left:6px">${ageLabel(S.patient.age)}</span></span>
+          </div>
+          <input type="range" min="1" max="95" value="${S.patient.age}" oninput="up('age',+this.value)">
+          <div class="range-lbl"><span>1</span><span>Enfant</span><span>Adulte</span><span>75+</span></div>
+        </div>
+
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Poids</label><span class="lbl-val">${S.patient.poids} kg</span></div>
+          <input type="range" min="5" max="180" value="${S.patient.poids}" oninput="up('poids',+this.value)">
+        </div>
+
+        <div>
+          <label class="lbl">Type de diabète / situation</label>
+          <div class="col8">
+            ${DIABETE_TYPES.map(d=>`
+              <div class="sel ${S.patient.diabete===d.id?'on':''}" onclick="up('diabete','${d.id}')">
+                <span class="si">${d.icon}</span>
+                <div><div style="font-weight:500">${d.label}</div><div class="sd">${d.desc}</div></div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <label class="lbl">Facteurs de risque associés <span style="color:var(--txt3);font-size:10px;letter-spacing:0;text-transform:none">(sélection multiple)</span></label>
+          <div class="col8">
+            ${FACTEURS_RISQUE.map(f=>`
+              <div class="sel ${S.patient.facteurs.includes(f.id)?'on':''}" onclick="toggleFacteur('${f.id}')">
+                <span class="si">${f.icon}</span>
+                <span>${f.label}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-p" onclick="go('step2')">Voir sa glycémie →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 2 — GLYCÉMIE ──────────────────────────────────────────
+  else if(S.view==='step2'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(${ph.zone==='normale'||ph.zone==='normale_pp'?'94,203,122':'224,85,85'||ph.zone.startsWith('hyper')?'232,165,58':'224,85,85'},.18)">
+      <div class="card-title" style="color:var(--em)">🩸 Glycémie de ${esc(pr)||'ce patient'}</div>
+      <div class="card-sub">Ajustez la glycémie capillaire mesurée. Visualisez ce qu'elle signifie physiologiquement — pas juste si c'est "dans les normes".</div>
+
+      <!-- Glycémie slider -->
+      <div style="margin-bottom:24px">
+        <div class="lbl-row" style="margin-bottom:12px">
+          <label class="lbl" style="margin:0">Glycémie capillaire mesurée</label>
+          <span class="lbl-val" style="font-size:20px;color:${ph.zoneCol}">${S.patient.glycemie.toFixed(1)} g/L</span>
+        </div>
+        <input type="range" min="0.3" max="6.0" step="0.1" value="${S.patient.glycemie}"
+          oninput="up('glycemie',+this.value)"
+          style="background:linear-gradient(90deg,#e05555 0%,#e05555 18%,#5ecb7a 25%,#5ecb7a 55%,#e8a53a 68%,#e8a53a 80%,#e05555 100%)">
+        <div class="range-lbl"><span>0,3 g/L</span><span style="color:#5ecb7a">Normal 0,7–1,8</span><span>6 g/L</span></div>
+      </div>
+
+      <!-- Gauge visuelle -->
+      <div class="gauge-wrap">
+        <div class="gauge-current">
+          <span class="gauge-val" style="color:${ph.zoneCol}">${S.patient.glycemie.toFixed(1)}</span>
+          <span class="gauge-unit">g/L</span>
+          <div class="gauge-zone-lbl" style="color:${ph.zoneCol}">${ph.zoneLabel}</div>
+        </div>
+        <div class="gauge-bar">
+          <div class="gauge-needle" style="left:${ph.gaugePos}%"></div>
+        </div>
+        <div class="gauge-zones">
+          <span style="color:#e05555">Hypo&lt;0,7</span>
+          <span style="color:#5ecb7a">Normal 0,7–1,8</span>
+          <span style="color:#e8a53a">Hyper&gt;2,5</span>
+          <span style="color:#e05555">&gt;5,0</span>
+        </div>
+      </div>
+
+      <!-- Analogie concrète -->
+      <div class="info info-em" style="margin-bottom:14px">
+        💡 <strong>Ce que ${S.patient.glycemie.toFixed(1)} g/L représente :</strong> ${ph.sucreAnalog}.
+      </div>
+
+      <!-- Stats -->
+      <div class="grid2" style="margin-bottom:14px">
+        <div class="stat">
+          <span class="stat-v" style="color:${ph.risqueHypo==='élevé'?'var(--red)':ph.risqueHypo==='modéré'?'var(--amber)':'var(--em)'}">${ph.risqueHypo.toUpperCase()}</span>
+          <span class="stat-l">Risque hypoglycémie</span>
+          <span class="stat-s">Score : ${ph.scoreHypo} facteurs cumulés</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v">${Math.round(ph.sensi*100)}%</span>
+          <span class="stat-l">Insulino-sensibilité</span>
+          <span class="stat-s">Efficacité estimée de l'insuline</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v">${ph.besoinBase} UI/j</span>
+          <span class="stat-l">Besoins basaux estimés</span>
+          <span class="stat-s">≈ ${S.patient.poids} kg × facteur ${di.short}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v">${Math.round(S.patient.glycemie*18)} mg/dL</span>
+          <span class="stat-l">En mg/dL</span>
+          <span class="stat-s">Unité anglo-saxonne (÷18 = g/L)</span>
+        </div>
+      </div>
+
+      <!-- Facteurs risque actifs -->
+      ${S.patient.facteurs.length>0?`
+      <div style="background:${rl.bg};border:1px solid ${rl.bdr};border-radius:12px;padding:14px">
+        <div style="color:${rl.col};font-size:13px;font-weight:600;margin-bottom:8px">
+          ${ph.risqueHypo==='élevé'?'⚠️ Risque hypoglycémique ÉLEVÉ pour ce patient':ph.risqueHypo==='modéré'?'📊 Risque modéré — surveillance accrue':'✅ Profil à risque standard'}
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${S.patient.facteurs.map(f=>{
+            const fr=FACTEURS_RISQUE.find(x=>x.id===f);
+            return `<span style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:3px 10px;font-size:12px;color:var(--txt2)">${fr?fr.icon+' '+fr.label:f}</span>`;
+          }).join('')}
+        </div>
+      </div>`:''}
+
+      ${S.patient.facteurs.includes('betablock')?`
+      <div class="info info-red" style="margin-top:12px">
+        ❤️‍🩹 <strong>Bêtabloquants :</strong> Ils masquent la tachycardie, principal signe d'alerte d'une hypoglycémie. Seule la sudation reste visible. La vigilance doit être maximale.
+      </div>`:''}
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step1')">← Modifier le patient</button>
+      <button class="btn-p" onclick="go('step3')">Entrer la prescription →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 3 — PRESCRIPTION ──────────────────────────────────────
+  else if(S.view==='step3'){
+    const peakH  = Math.round(ins.peak/60*10)/10;
+    const durH   = Math.round(ins.dur/60*10)/10;
+    const onsetM = ins.onset;
+    const pctPeak= Math.round(ins.peak/(ins.dur)*100);
+
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(90,171,224,.16)">
+      <div class="card-title" style="color:var(--blue)">💉 Prescription médicale</div>
+      <div class="card-sub">Telle qu'elle figure dans le dossier de ${esc(pr)||'ce patient'}. L'IDE doit maintenant comprendre ce qu'elle va déclencher.</div>
+
+      <!-- Type d'insuline -->
+      <div style="margin-bottom:22px">
+        <label class="lbl">Type d'insuline prescrit</label>
+        <div class="col8">
+          ${INSULINES.map(i=>`
+            <div class="sel ${S.rx.insuline===i.id?'on':''}" onclick="upRx('insuline','${i.id}')">
+              <span class="si">${i.icon}</span>
+              <div style="flex:1">
+                <div style="font-weight:500">${i.label}</div>
+                <div class="sd">Début : ${i.onset}min · Pic : ${Math.round(i.peak/60)}h · Durée : ${Math.round(i.dur/60)}h</div>
+              </div>
+              <span class="stag" style="color:${i.couleur};border-color:${i.couleur}30;background:${i.couleur}0f">${Math.round(i.dur/60)}h</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Dose -->
+      <div style="margin-bottom:20px">
+        <div class="lbl-row">
+          <label class="lbl" style="margin:0">Dose prescrite</label>
+          <span class="lbl-val" style="font-size:22px">${S.rx.dose} UI</span>
+        </div>
+        <input type="range" min="1" max="50" value="${S.rx.dose}" oninput="upRx('dose',+this.value)">
+        <div class="range-lbl"><span>1 UI</span><span style="color:var(--txt2)">Dose habituelle 4–20 UI</span><span>50 UI</span></div>
+      </div>
+
+      <!-- Moment -->
+      <div style="margin-bottom:24px">
+        <label class="lbl">Moment d'administration</label>
+        <div class="grid2">
+          ${['avant_repas','apres_repas','coucher','matin','urgence'].map(m=>`
+            <div class="sel ${S.rx.moment===m?'on':''}" onclick="upRx('moment','${m}')">
+              ${m==='avant_repas'?'🍽️':m==='apres_repas'?'✅':m==='coucher'?'🌙':m==='matin'?'🌅':'🚨'}
+              <span style="margin-left:8px;font-size:13px">${momentLabel(m)}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Courbe d'action -->
+      <div style="background:rgba(0,0,0,.22);border-radius:14px;padding:18px">
+        <label class="lbl" style="margin-bottom:14px">Profil d'action dans le temps</label>
+
+        <div style="position:relative;padding:10px 0 30px">
+          <!-- Grille horizontale -->
+          <svg width="100%" height="80" viewBox="0 0 400 80" preserveAspectRatio="none" style="display:block;overflow:visible">
+            <defs>
+              <linearGradient id="insGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="${ins.couleur}" stop-opacity=".8"/>
+                <stop offset="100%" stop-color="${ins.couleur}" stop-opacity=".05"/>
+              </linearGradient>
+            </defs>
+            <!-- Zone normale -->
+            <rect x="0" y="30" width="400" height="30" fill="rgba(94,203,122,.05)" rx="2"/>
+            <!-- Courbe d'action insuline -->
+            <path d="
+              M 0,75
+              C ${Math.round(ins.onset/ins.dur*400*0.5)},75 ${Math.round(ins.onset/ins.dur*400)},75 ${Math.round(ins.onset/ins.dur*400)},70
+              C ${Math.round(ins.onset/ins.dur*400*1.5)},65 ${Math.round(ins.peak/ins.dur*400*0.8)},10 ${Math.round(ins.peak/ins.dur*400)},8
+              C ${Math.round(ins.peak/ins.dur*400*1.2)},6 ${Math.round(ins.peak/ins.dur*400*1.4)},20 ${Math.round(ins.peak/ins.dur*400*1.6)},35
+              C ${Math.round(ins.peak/ins.dur*400*1.8)},50 380,70 400,75
+            " fill="url(#insGrad)" stroke="${ins.couleur}" stroke-width="2" fill-opacity=".4"/>
+            <!-- Marqueur pic -->
+            <circle cx="${Math.round(ins.peak/ins.dur*400)}" cy="8" r="5" fill="${ins.couleur}"/>
+            <!-- Ligne début action -->
+            <line x1="${Math.round(ins.onset/ins.dur*400)}" y1="0" x2="${Math.round(ins.onset/ins.dur*400)}" y2="75" stroke="rgba(255,255,255,.12)" stroke-dasharray="4,3" stroke-width="1"/>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);font-family:'IBM Plex Mono',monospace;margin-top:-2px">
+            <span>Injection</span>
+            <span style="color:${ins.couleur}">▲ Pic à ${peakH}h</span>
+            <span>Fin à ${durH}h</span>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:8px">
+          <div class="stat">
+            <span class="stat-v" style="color:${ins.couleur}">${onsetM} min</span>
+            <span class="stat-l">Début d'action</span>
+            <span class="stat-s">Délai avant effet</span>
+          </div>
+          <div class="stat">
+            <span class="stat-v" style="color:${ins.couleur}">${peakH}h</span>
+            <span class="stat-l">Pic d'action</span>
+            <span class="stat-s">Risque max · ${ins.risque}</span>
+          </div>
+        </div>
+
+        <!-- Avertissement risque spécifique -->
+        <div class="info info-amb" style="margin-top:12px">
+          ⏰ <strong>Vigilance :</strong> ${ins.risque}
+          ${S.rx.moment==='coucher' && ins.id==='lente' ? ' · Injection au coucher : surveiller hypoglycémie nocturne.' : ''}
+          ${S.patient.facteurs.includes('jeune') && ins.id!=='lente' ? ' · Patient à jeun — risque hypoglycémique majoré avec cette insuline.' : ''}
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step2')">← Glycémie</button>
+      <button class="btn-p" onclick="goAnalyse()">Analyser la cohérence →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 4 — ANALYSE ────────────────────────────────────────────
+  else if(S.view==='step4'){
+    const ins2 = insulineInfo();
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(224,112,149,.18)">
+      <div class="card-title" style="color:var(--rose)">🔬 Analyse clinique — ${esc(pr)||'ce patient'}</div>
+
+      <div class="recap">
+        ${[
+          ['Patient',          `${esc(pr)||'—'}, ${S.patient.sexe==='H'?'♂':'♀'} ${S.patient.age} ans · ${S.patient.poids} kg`],
+          ['Diabète',          di.label],
+          ['Glycémie mesurée', `${S.patient.glycemie.toFixed(1)} g/L (${ph.zoneLabel})`],
+          ['Risque hypo',      ph.risqueHypo.toUpperCase()],
+          ['Insuline prescrite',`${ins2.label}`],
+          ['Dose · Moment',    `${S.rx.dose} UI · ${momentLabel(S.rx.moment)}`],
+          ['Insulino-sensi.',  `${Math.round(ph.sensi*100)}% (normal = 100%)`],
+          ['Facteurs risque',  S.patient.facteurs.length>0 ? S.patient.facteurs.map(f=>FACTEURS_RISQUE.find(x=>x.id===f)?.icon||'').join(' ') : 'Aucun'],
+        ].map(([k,v])=>`<div class="rc"><div class="rc-k">${k}</div><div class="rc-v">${v}</div></div>`).join('')}
+      </div>
+
+      <hr class="div">
+      <label class="lbl" style="margin-bottom:14px">Ce que dit la physiologie</label>
+
+      ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse glycémique et insulinique en cours…</div></div>`:''}
+
+      ${!S.loading && !S.analyse?`
+        <div>
+          <div class="apikey-box">
+            <p>Pour l'analyse clinique IA, entrez votre clé API Anthropic (stockée localement). <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
+            <div class="apikey-row">
+              <input type="text" id="inp-key" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div>':''}
+          </div>
+          <div style="text-align:center">
+            <button class="btn-p" onclick="runAnalyse()">🔍 Lancer l'analyse clinique</button>
+          </div>
+        </div>`:''}
+
+      ${!S.loading && S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
+    </div>
+
+    <div class="nav-col">
+      <div class="nav-row">
+        <button class="btn-g" onclick="go('step3')">← Modifier la prescription</button>
+        <button class="btn-g" onclick="runAnalyse()" style="color:var(--rose);border-color:rgba(224,112,149,.22)">↺ Relancer</button>
+      </div>
+      <button class="btn-g btn-full" onclick="reset()" style="color:var(--em);border-color:rgba(94,203,122,.2)">✦ Nouveau patient</button>
+    </div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(enhanceSliders,0);
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){S.view=v;render()}
+function up(k,v){S.patient={...S.patient,[k]:v};render()}
+function upRx(k,v){S.rx={...S.rx,[k]:v};render()}
+function goAnalyse(){S.view='step4';S.analyse='';render();runAnalyse()}
+function saveKey(){localStorage.setItem('simgluco_key',S.apiKey);S.apiKeySaved=true;render()}
+function toggleFacteur(id){
+  const f=S.patient.facteurs;
+  S.patient.facteurs=f.includes(id)?f.filter(x=>x!==id):[...f,id];
+  render();
+}
+function reset(){
+  S={...S,view:'step1',
+    patient:{prenom:'',sexe:'F',age:45,poids:70,taille:165,diabete:'sain',glycemie:1.2,facteurs:[]},
+    rx:{insuline:'rapide',dose:6,moment:'avant_repas'},analyse:''};
+  render();
+}
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const ph  = glycoPhysio();
+  const ins = insulineInfo();
+  const di  = diabeteInfo();
+  const pr  = S.patient.prenom||'le patient';
+  const facteursLabels = S.patient.facteurs.map(f=>FACTEURS_RISQUE.find(x=>x.id===f)?.label||f).join(', ')||'aucun';
+
+  S.loading=true;S.analyse='';render();
+
+  const prompt=`Tu es un formateur infirmier expert en diabétologie et thérapeutique. Un étudiant IFSI en formation initiale vient de simuler une prise en charge glycémique. Aide-le à développer son intuition clinique — pas à réciter des protocoles.
+
+PATIENT : ${pr}, ${S.patient.sexe==='H'?'homme':'femme'} de ${S.patient.age} ans, ${S.patient.poids} kg.
+Diabète / situation : ${di.label}.
+Facteurs de risque associés : ${facteursLabels}.
+
+GLYCÉMIE MESURÉE : ${S.patient.glycemie.toFixed(1)} g/L → ${ph.zoneLabel}
+Risque hypoglycémique global : ${ph.risqueHypo} (score ${ph.scoreHypo})
+Insulino-sensibilité estimée : ${Math.round(ph.sensi*100)}%
+
+PRESCRIPTION SIMULÉE :
+- ${ins.label}
+- Dose : ${S.rx.dose} UI
+- Moment : ${momentLabel(S.rx.moment)}
+- Profil : début à ${ins.onset}min, pic à ${Math.round(ins.peak/60)}h, durée ${Math.round(ins.dur/60)}h
+
+Réponds avec EXACTEMENT ces 4 blocs (titres en gras obligatoires) :
+
+**🩸 Ce que ${S.patient.glycemie.toFixed(1)} g/L représente dans le corps de ${pr}**
+[2-3 phrases. Traduis ce chiffre en réalité physiologique pour CE profil précis. Pas "c'est élevé/normal" — mais ce qui se passe dans ses cellules, son cerveau, ses vaisseaux. Utilise une image concrète.]
+
+**✅ Cohérence de la prescription**
+[2-3 phrases. Ce type d'insuline, cette dose, ce moment sont-ils adaptés à CE patient avec CETTE glycémie et CES facteurs de risque ? Dis-le clairement, sans détour.]
+
+**⚠️ Le risque principal pour CE patient**
+[2-3 phrases. UN risque principal, précisément lié à sa combinaison de facteurs. Mécanisme expliqué simplement. Insiste sur ce qui est spécifique à LUI — pas une liste générique.]
+
+**👁️ 3 signes à surveiller — pourquoi pour CE patient précisément**
+[3 signes numérotés. Pour chacun : le signe + pourquoi il est critique pour CE profil (1 phrase). Par exemple si bêtabloquants : expliquer que la tachycardie est masquée.]
+
+Tutoie l'étudiant. Direct, chaleureux, cliniquement précis.`;
+
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1100,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){
+    S.analyse=`**⚠️ Erreur**\n\n${e.message||'Vérifiez votre clé API et votre connexion.'}`;
+  }
+  S.loading=false;render();
+}
+
+render();
+
+// ── ENHANCEMENT SLIDERS : boutons −/+ ──────────────────────
+function enhanceSliders() {
+  document.querySelectorAll('input[type=range]').forEach(input => {
+    if (input.closest('.sl-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'sl-wrap';
+    input.parentNode.insertBefore(wrap, input);
+
+    const btnM = document.createElement('button');
+    btnM.className = 'sl-btn'; btnM.textContent = '−'; btnM.type = 'button';
+    btnM.addEventListener('click', e => {
+      e.preventDefault();
+      const step = parseFloat(input.step) || 1;
+      const nv   = Math.max(parseFloat(input.min), parseFloat(input.value) - step);
+      input.value = nv;
+      input.dispatchEvent(new Event('input', { bubbles:true }));
+    });
+
+    const btnP = document.createElement('button');
+    btnP.className = 'sl-btn'; btnP.textContent = '+'; btnP.type = 'button';
+    btnP.addEventListener('click', e => {
+      e.preventDefault();
+      const step = parseFloat(input.step) || 1;
+      const nv   = Math.min(parseFloat(input.max), parseFloat(input.value) + step);
+      input.value = nv;
+      input.dispatchEvent(new Event('input', { bubbles:true }));
+    });
+
+    wrap.appendChild(btnM);
+    wrap.appendChild(input);
+    wrap.appendChild(btnP);
+  });
+}
+
+</script>
+</body>
+</html>
