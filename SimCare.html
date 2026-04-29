@@ -4,7 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SimCare · Suite pédagogique IFSI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- Icône application -->
+  <link rel="icon" type="image/svg+xml" href="SimCare-icon.svg">
+  <link rel="apple-touch-icon" href="SimCare-icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SimCare">
+  <meta name="theme-color" content="#04090f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,600;0,700;1,300;1,600&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -214,7 +221,7 @@ hr.section-line{border:none;border-top:1px solid var(--bdr);margin:80px 0}
 .philo-txt strong{color:var(--txt);font-weight:500}
 
 /* ── MODULES GRID ── */
-.modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
+.modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:52px}
 .module-card{
   border-radius:22px;padding:36px 30px;position:relative;overflow:hidden;
   border:1.5px solid var(--bdr);background:rgba(255,255,255,.025);
@@ -355,7 +362,7 @@ footer{
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+.reveal{opacity:1;transform:translateY(0);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
 /* ── RESPONSIVE ── */
@@ -480,7 +487,7 @@ footer{
           <span class="m-tag" style="background:rgba(56,189,248,.08);color:var(--o2);border:1px solid rgba(56,189,248,.2)">SpO₂</span>
           <span class="m-tag" style="background:rgba(56,189,248,.08);color:var(--o2);border:1px solid rgba(56,189,248,.2)">BPCO · OAP</span>
         </div>
-        <a href="SimO2-IFSI.html" class="module-btn o2">Ouvrir SimO₂ →</a>
+        <a href="./SimO2-IFSI.html" class="module-btn o2" onclick="window.location.href='./SimO2-IFSI.html';return false;">Ouvrir SimO₂ →</a>
       </div>
 
       <!-- SimPerf -->
@@ -498,7 +505,7 @@ footer{
           <span class="m-tag" style="background:rgba(212,168,83,.08);color:var(--perf);border:1px solid rgba(212,168,83,.2)">Bilan E/S</span>
           <span class="m-tag" style="background:rgba(212,168,83,.08);color:var(--perf);border:1px solid rgba(212,168,83,.2)">Osmolarité</span>
         </div>
-        <a href="SimPerf-IFSI.html" class="module-btn perf">Ouvrir SimPerf →</a>
+        <a href="./SimPerf-IFSI.html" class="module-btn perf" onclick="window.location.href='./SimPerf-IFSI.html';return false;">Ouvrir SimPerf →</a>
       </div>
 
       <!-- SimGluco -->
@@ -516,8 +523,27 @@ footer{
           <span class="m-tag" style="background:rgba(94,203,122,.08);color:var(--gluco);border:1px solid rgba(94,203,122,.2)">Risque hypo</span>
           <span class="m-tag" style="background:rgba(94,203,122,.08);color:var(--gluco);border:1px solid rgba(94,203,122,.2)">DT1 · DT2</span>
         </div>
-        <a href="SimGluco-IFSI.html" class="module-btn gluco">Ouvrir SimGluco →</a>
+        <a href="./SimGluco-IFSI.html" class="module-btn gluco" onclick="window.location.href='./SimGluco-IFSI.html';return false;">Ouvrir SimGluco →</a>
       </div>
+
+      <!-- SimContention -->
+      <div class="module-card reveal" style="border-color:rgba(184,160,232,.18);animation-delay:.3s">
+        <div class="module-num" style="color:rgba(184,160,232,.4)">MODULE 04</div>
+        <div class="module-icon">🩹</div>
+        <div class="module-name" style="color:#b8a0e8">SimContention</div>
+        <div class="module-sub">Contention veineuse</div>
+        <div class="module-desc">
+          Poser un bas de contention sans comprendre pourquoi, pour qui, et à quelle pression, c'est agir à l'aveugle. SimContention lie chaque décision à la physiologie veineuse du patient — mesures, classe, dispositif.
+        </div>
+        <div class="module-tags">
+          <span class="m-tag" style="background:rgba(184,160,232,.08);color:#b8a0e8;border:1px solid rgba(184,160,232,.2)">Mesures</span>
+          <span class="m-tag" style="background:rgba(184,160,232,.08);color:#b8a0e8;border:1px solid rgba(184,160,232,.2)">Classes I–IV</span>
+          <span class="m-tag" style="background:rgba(184,160,232,.08);color:#b8a0e8;border:1px solid rgba(184,160,232,.2)">Retour veineux</span>
+          <span class="m-tag" style="background:rgba(184,160,232,.08);color:#b8a0e8;border:1px solid rgba(184,160,232,.2)">TVP · Varices</span>
+        </div>
+        <a href="./SimContention-IFSI.html" class="module-btn" style="background:rgba(184,160,232,.1);color:#b8a0e8;border:1.5px solid rgba(184,160,232,.25)" onclick="window.location.href='./SimContention-IFSI.html';return false;">Ouvrir SimContention →</a>
+      </div>
+
     </div>
   </div>
 </section>
@@ -651,6 +677,7 @@ footer{
     <a href="SimO2-IFSI.html">SimO₂</a>
     <a href="SimPerf-IFSI.html">SimPerf</a>
     <a href="SimGluco-IFSI.html">SimGluco</a>
+    <a href="SimContention-IFSI.html">SimContention</a>
   </div>
   <div style="margin-top:24px;font-size:11px;color:var(--txt3);font-family:'JetBrains Mono',monospace;letter-spacing:1px">
     UE 4.4 · UE 4.2 · UE 4.7 — Formation initiale IFSI
