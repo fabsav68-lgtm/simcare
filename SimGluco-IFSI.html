@@ -368,6 +368,7 @@ let S = {
   analyse:'', loading:false,
   apiKey:localStorage.getItem('simgluco_key')||'',
   apiKeySaved:!!localStorage.getItem('simgluco_key'),
+  showKey:false,
 };
 
 // ═══════════════════════════════════════
@@ -812,19 +813,63 @@ function render(scrollTop=false){
       ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse glycémique et insulinique en cours…</div></div>`:''}
 
       ${!S.loading && !S.analyse?`
-        <div>
-          <div class="apikey-box">
-            <p>Pour l'analyse clinique IA, entrez votre clé API Anthropic (stockée localement). <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
-            <div class="apikey-row">
-              <input type="text" id="inp-key" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
-              <button onclick="saveKey()">Sauver</button>
+        <div style="background:rgba(0,0,0,.32);border:1.5px solid rgba(224,112,149,.18);border-radius:18px;padding:28px;margin-bottom:16px">
+          <div style="text-align:center;margin-bottom:22px">
+            <div style="font-size:38px;margin-bottom:10px">🔒</div>
+            <div style="font-family:'IBM Plex Sans',sans-serif;font-size:18px;font-weight:700;color:var(--txt);margin-bottom:5px">Analyse clinique — Accès Premium</div>
+            <div style="font-size:13px;color:var(--txt3)">Les étapes 1 à 3 sont gratuites et fonctionnent sans connexion</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+            <div style="border:1px solid rgba(114,201,138,.2);background:rgba(114,201,138,.05);border-radius:12px;padding:14px">
+              <div style="color:var(--norm);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✓ GRATUIT</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Étape 1 — Patient<br>Étape 2 — Glycémie<br>Étape 3 — Prescription</div>
             </div>
-            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div>':''}
+            <div style="border:1px solid rgba(224,112,149,.25);background:rgba(224,112,149,.06);border-radius:12px;padding:14px">
+              <div style="color:var(--rose);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✦ PREMIUM</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Étape 4 — Analyse IA<br>Cohérence clinique<br>Signes de surveillance</div>
+            </div>
           </div>
-          <div style="text-align:center">
-            <button class="btn-p" onclick="runAnalyse()">🔍 Lancer l'analyse clinique</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+            <div style="border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center;background:rgba(255,255,255,.02)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Module seul</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">4,99€</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">Accès à vie<br>1 module</div>
+            </div>
+            <div style="border:1px solid rgba(224,112,149,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(224,112,149,.05)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:8px">Suite complète</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">12,99€</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">4 modules<br>à vie</div>
+            </div>
+            <div style="border:1px solid rgba(167,139,250,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(167,139,250,.05)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#a78bfa;margin-bottom:8px">Institution</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">Sur devis</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">IFSI · Syndicat<br>Promotion entière</div>
+            </div>
           </div>
+          <div style="text-align:center;margin-bottom:12px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:13px 32px;border-radius:12px;background:linear-gradient(135deg,#c4609a,#e07095);color:#fff;font-weight:700;font-size:15px;text-decoration:none">
+              Obtenir l'accès →
+            </a>
+            <div style="margin-top:8px;font-size:12px;color:var(--txt3)">
+              IFSI & établissements : <a href="mailto:contact@simcare.fr" style="color:var(--rose);text-decoration:none">tarif institution sur devis</a>
+            </div>
+          </div>
+          <div style="text-align:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px">
+              🔑 Espace formateur / développeur
+            </button>
+          </div>
+        </div>
+        ${S.showKey?`<div class="apikey-box">
+          <p>Clé API Anthropic — réservé au formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
+          <div class="apikey-row">
+            <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+            <button onclick="saveKey()">Sauver</button>
+          </div>
+          ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:12px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
         </div>`:''}
+      `:''}
+
 
       ${!S.loading && S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
     </div>
