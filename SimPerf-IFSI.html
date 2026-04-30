@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimPerf · Outil pédagogique IFSI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #0a0d0f;
+  --bg2:    #111518;
+  --card:   rgba(255,255,255,.034);
+  --bdr:    rgba(255,255,255,.08);
+  --txt:    #f0ece4;
+  --txt2:   #9ea8a0;
+  --txt3:   #4a5250;
+  --gold:   #d4a853;
+  --gold2:  #f0c96a;
+  --amber:  #e8883a;
+  --green:  #4caf82;
+  --red:    #e05a5a;
+  --blue:   #6ab4d4;
+  --violet: #9b7fc4;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(212,168,83,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(76,175,130,.05) 0%, transparent 50%);
+  color: var(--txt);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.wrap { max-width: 700px; margin: 0 auto; padding: 0 20px; }
+
+/* ── HEADER ── */
+.site-header { text-align: center; padding: 44px 24px 26px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(212,168,83,.1); border: 1px solid rgba(212,168,83,.25);
+  color: var(--gold); padding: 5px 16px; border-radius: 20px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px;
+}
+.site-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px,6vw,44px); font-weight: 700;
+  letter-spacing: -.5px; line-height: 1.1;
+  background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 50%, var(--amber) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.site-header p { color: var(--txt3); font-size: 14px; margin-top: 8px; font-style: italic; }
+
+/* ── STEPS ── */
+.steps-bar {
+  display: flex; justify-content: center; align-items: center;
+  gap: 4px; padding: 0 16px 28px; flex-wrap: wrap;
+}
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; transition: all .28s;
+  border: 2px solid var(--bdr); background: rgba(255,255,255,.02); color: var(--txt3);
+  font-family: 'DM Mono', monospace;
+}
+.step-dot.active { background: rgba(212,168,83,.15); border-color: var(--gold); color: var(--gold); }
+.step-dot.done   { background: var(--gold); border-color: var(--gold); color: #0a0d0f; }
+.step-lbl { font-size: 12px; color: var(--txt3); transition: color .28s; }
+.step-lbl.active { color: var(--txt2); }
+.step-line { width: 16px; height: 1px; background: var(--bdr); }
+
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border: 1.5px solid var(--bdr);
+  border-radius: 20px; padding: 28px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 600; margin-bottom: 5px;
+}
+.card-sub { color: var(--txt3); font-size: 13px; margin-bottom: 24px; line-height: 1.6; }
+
+/* ── FORM ── */
+.lbl {
+  display: block; font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--txt3); margin-bottom: 8px;
+}
+.lbl-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.lbl-val { font-family: 'DM Mono', monospace; color: var(--gold); font-size: 15px; font-weight: 500; }
+.lbl-sub { font-size: 11px; color: var(--txt3); margin-left: 6px; }
+
+input[type=text] {
+  background: rgba(255,255,255,.04); border: 1.5px solid rgba(255,255,255,.09);
+  border-radius: 10px; color: var(--txt); padding: 11px 14px;
+  font-size: 15px; font-family: 'DM Mono', monospace;
+  outline: none; width: 100%; transition: border-color .2s;
+}
+input[type=text]:focus { border-color: rgba(212,168,83,.4); }
+
+
+
+.range-lbl {
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--txt3); margin-top: 5px;
+  font-family: 'DM Mono', monospace;
+}
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.col   { display: flex; flex-direction: column; gap: 18px; }
+.col8  { display: flex; flex-direction: column; gap: 8px; }
+
+/* ── SELECT CARDS ── */
+.sel {
+  cursor: pointer; border: 1.5px solid var(--bdr); border-radius: 12px;
+  padding: 13px 16px; background: rgba(255,255,255,.02);
+  color: var(--txt2); font-family: 'DM Sans', sans-serif; font-size: 14px;
+  transition: all .18s; display: flex; align-items: center; gap: 12px;
+  user-select: none;
+}
+.sel:hover { background: rgba(255,255,255,.055); color: var(--txt); border-color: rgba(255,255,255,.14); }
+.sel.on    { background: rgba(212,168,83,.09); color: var(--txt); border-color: rgba(212,168,83,.42); }
+.sel.center { justify-content: center; flex-direction: column; text-align: center; padding: 16px 8px; }
+.sel .si   { font-size: 22px; flex-shrink: 0; }
+.sel .sd   { font-size: 11px; color: var(--txt3); margin-top: 2px; }
+.sel .stag {
+  margin-left: auto; font-family: 'DM Mono', monospace; font-size: 10px;
+  padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,.05); color: var(--txt3);
+}
+.sel.on .stag { background: rgba(212,168,83,.12); color: var(--gold); }
+
+/* ── BUTTONS ── */
+.btn-p {
+  background: linear-gradient(135deg, #c49030, var(--gold2));
+  border: none; border-radius: 12px; color: #0a0d0f;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700;
+  padding: 13px 28px; cursor: pointer; transition: opacity .2s, transform .1s;
+}
+.btn-p:hover { opacity: .9; transform: translateY(-1px); }
+.btn-p:active { transform: translateY(0); }
+.btn-g {
+  background: rgba(255,255,255,.03); border: 1.5px solid var(--bdr);
+  border-radius: 12px; color: var(--txt2);
+  font-family: 'DM Sans', sans-serif; font-size: 14px;
+  padding: 11px 20px; cursor: pointer; transition: all .18s;
+}
+.btn-g:hover { background: rgba(255,255,255,.07); color: var(--txt); }
+.btn-full { width: 100%; }
+.nav-row  { display: flex; gap: 10px; }
+.nav-row > * { flex: 1; }
+.nav-col { display: flex; flex-direction: column; gap: 10px; }
+
+/* ── STAT BOXES ── */
+.stat {
+  background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.055);
+  border-radius: 13px; padding: 15px; text-align: center;
+}
+.stat-v { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: var(--gold); display: block; }
+.stat-l { font-size: 10px; color: var(--txt3); text-transform: uppercase; letter-spacing: 1.5px; font-family: 'DM Mono', monospace; display: block; margin-top: 5px; }
+.stat-s { font-size: 11px; color: #3a4040; font-style: italic; display: block; margin-top: 6px; line-height: 1.4; }
+
+/* ── DRIP ANIMATION ── */
+.drip-scene {
+  display: flex; flex-direction: column; align-items: center; margin-bottom: 28px;
+}
+.drip-container { position: relative; width: 200px; }
+.drip-bag {
+  width: 100px; height: 60px; background: rgba(106,180,212,.12);
+  border: 1.5px solid rgba(106,180,212,.3); border-radius: 10px 10px 50% 50%;
+  margin: 0 auto 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.drip-tube {
+  width: 3px; height: 30px; background: rgba(106,180,212,.3);
+  margin: 0 auto;
+}
+.drip-chamber {
+  width: 60px; height: 50px; margin: 0 auto;
+  background: rgba(0,0,0,.3); border: 1.5px solid rgba(106,180,212,.25);
+  border-radius: 4px; position: relative; overflow: hidden;
+}
+.drip-liquid {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(180deg, rgba(106,180,212,.3), rgba(106,180,212,.5));
+  transition: height .5s;
+}
+.drop {
+  position: absolute; width: 5px; height: 7px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: rgba(106,180,212,.8); left: 50%; transform: translateX(-50%);
+}
+.drip-tube2 { width: 3px; height: 24px; background: rgba(106,180,212,.3); margin: 0 auto; }
+.drip-needle {
+  width: 30px; height: 8px; margin: 0 auto;
+  border-left: 2px solid rgba(212,168,83,.6);
+  border-bottom: 2px solid rgba(212,168,83,.6);
+  border-radius: 0 0 0 4px;
+}
+.drip-info { text-align: center; margin-top: 16px; }
+.drip-rate { font-family: 'DM Mono', monospace; color: var(--gold); font-size: 20px; font-weight: 500; }
+.drip-sub  { color: var(--txt3); font-size: 12px; margin-top: 3px; }
+
+/* ── VASCULAR BARS ── */
+.vasc-box { background: rgba(0,0,0,.22); border-radius: 13px; padding: 16px; margin-bottom: 12px; }
+.vasc-lbl { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--txt3); margin-bottom: 10px; }
+.vasc-bar-wrap { background: rgba(255,255,255,.06); border-radius: 100px; height: 12px; overflow: hidden; position: relative; }
+.vasc-bar { height: 100%; border-radius: 100px; transition: width .6s ease; }
+.vasc-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--txt3); margin-top: 5px; font-family: 'DM Mono', monospace; }
+
+/* ── INFO BOXES ── */
+.info { border-radius: 11px; padding: 13px 15px; font-size: 13px; line-height: 1.7; }
+.info-gold   { background: rgba(212,168,83,.07); border: 1px solid rgba(212,168,83,.2); color: var(--gold); }
+.info-green  { background: rgba(76,175,130,.07); border: 1px solid rgba(76,175,130,.2); color: var(--green); }
+.info-red    { background: rgba(224,90,90,.07);  border: 1px solid rgba(224,90,90,.2);  color: var(--red); }
+.info-blue   { background: rgba(106,180,212,.07);border: 1px solid rgba(106,180,212,.2);color: var(--blue); }
+
+/* ── SOLUTION BADGE ── */
+.sol-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+}
+
+/* ── RECAP ── */
+.recap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.rc { background: rgba(0,0,0,.22); border-radius: 10px; padding: 10px 13px; }
+.rc-k { font-size: 10px; color: #374151; text-transform: uppercase; letter-spacing: 1px; font-family: 'DM Mono', monospace; }
+.rc-v { font-size: 13px; color: var(--txt); margin-top: 4px; line-height: 1.4; }
+
+/* ── ANALYSIS ── */
+.analysis p { margin-bottom: 16px; color: #b8c4bc; font-size: 15px; line-height: 1.85; }
+.analysis strong { color: var(--txt); font-size: 16px; }
+
+/* ── API KEY ── */
+.apikey-box {
+  background: rgba(212,168,83,.05); border: 1px solid rgba(212,168,83,.18);
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+}
+.apikey-box p { font-size: 13px; color: var(--txt3); margin-bottom: 10px; line-height: 1.6; }
+.apikey-box a { color: var(--gold); }
+.apikey-row { display: flex; gap: 8px; }
+.apikey-row input { flex: 1; padding: 9px 12px; font-size: 13px; }
+.apikey-row button {
+  padding: 9px 16px; border: none; border-radius: 9px;
+  background: var(--gold); color: #0a0d0f; font-weight: 700;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px;
+}
+.apikey-saved { color: var(--green); font-size: 11px; margin-top: 6px; font-family: 'DM Mono', monospace; }
+
+/* ── WELCOME ── */
+.welcome { text-align: center; padding: 4px 0 28px; }
+.welcome-icon { font-size: 64px; display: block; margin-bottom: 20px; }
+.welcome p { color: var(--txt2); font-size: 15px; line-height: 1.8; max-width: 480px; margin: 0 auto; }
+.pts { display: flex; flex-direction: column; gap: 14px; margin: 24px 0; text-align: left; }
+.pt  { display: flex; gap: 12px; align-items: flex-start; }
+.pt-i { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.pt-t { font-size: 14px; color: var(--txt2); line-height: 1.65; }
+.pt-t strong { color: var(--txt); }
+
+/* ── LOADING ── */
+.dots { text-align: center; padding: 28px 0; }
+.dots span {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); margin: 0 3px;
+  animation: dotB 1.4s ease-in-out infinite both;
+}
+.dots span:nth-child(2) { animation-delay: .16s; }
+.dots span:nth-child(3) { animation-delay: .32s; }
+.dots-msg { color: var(--txt3); font-size: 13px; margin-top: 10px; font-style: italic; }
+
+hr.div { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 20px 0; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes dotB   { 0%,80%,100% { transform:scale(0); } 40% { transform:scale(1); } }
+@keyframes dropFall { 0% { top: 2px; opacity:1; } 100% { top: 42px; opacity:.2; } }
+
+.fadeup { animation: fadeUp .35s ease forwards; }
+
+@media(max-width:480px) {
+  .grid2,.recap { grid-template-columns:1fr; }
+  .nav-row { flex-direction:column; }
+}
+
+    /* ── SLIDERS AMÉLIORÉS ── */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%; height: 10px;
+      border-radius: 5px;
+      background: rgba(255,255,255,.10);
+      outline: none; cursor: pointer;
+      margin-top: 4px;
+      touch-action: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid rgba(255,255,255,.18);
+      box-shadow: 0 2px 12px rgba(0,0,0,.5);
+      transition: transform .15s;
+    }
+    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.18); }
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 10px; border-radius: 5px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      background: #d4a853;
+    }
+
+    /* ── STEPPER WRAPPER ── */
+    .sl-wrap {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+    }
+    .sl-wrap input[type=range] { flex: 1; }
+    .sl-btn {
+      flex-shrink: 0;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      border: 1.5px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.55);
+      font-size: 20px; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s, transform .1s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .sl-btn:hover  { background: rgba(255,255,255,.12); color: #fff; }
+    .sl-btn:active { transform: scale(.9); }
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+const PATHOLOGIES = [
+  { id:'sain',       label:'Aucune pathologie',              icon:'💚', short:'Bonne santé' },
+  { id:'card',       label:'Insuffisance cardiaque',         icon:'❤️', short:'IC' },
+  { id:'renal',      label:'Insuffisance rénale',            icon:'🫘', short:'IR' },
+  { id:'deshyd',     label:'Déshydratation / Hypovolémie',   icon:'💧', short:'Déshydraté' },
+  { id:'postop',     label:'Post-opératoire',                icon:'🏥', short:'Post-op' },
+  { id:'hta',        label:'HTA / Rétention hydrosodée',     icon:'🩺', short:'HTA' },
+  { id:'diab',       label:'Diabète sous insuline',          icon:'🩸', short:'Diabète' },
+  { id:'fragile',    label:'Personne âgée fragile (>75 ans)',icon:'👴', short:'Âgé fragile' },
+];
+
+const SOLUTIONS = [
+  { id:'nacl09',   label:'NaCl 0,9%',        sub:'Sérum physiologique · isotonique', icon:'🧪', color:'#6ab4d4', osmol:308, glucose:false },
+  { id:'g5',       label:'Glucose 5%',        sub:'Soluté glucosé · isotonique',      icon:'🍬', color:'#d4a853', osmol:278, glucose:true  },
+  { id:'rl',       label:'Ringer Lactate',    sub:'Cristalloïde équilibré',           icon:'⚗️', color:'#4caf82', osmol:273, glucose:false },
+  { id:'g10',      label:'Glucose 10%',       sub:'Soluté glucosé hypertonique',      icon:'🔶', color:'#e8883a', osmol:556, glucose:true  },
+  { id:'nacl045',  label:'NaCl 0,45%',        sub:'Sérum hemi-isotonique',            icon:'💧', color:'#9b7fc4', osmol:154, glucose:false },
+  { id:'mannitol', label:'Mannitol 20%',      sub:'Hyperosmolaire · usage spécifique',icon:'⚡', color:'#e05a5a', osmol:1100,glucose:false },
+];
+
+const VOIES = [
+  { id:'periph', label:'Voie veineuse périphérique (VVP)', icon:'💉', dMax:500  },
+  { id:'central',label:'Voie veineuse centrale (VVC)',     icon:'🔌', dMax:1000 },
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let S = {
+  view:'welcome',
+  patient: { prenom:'Jean', sexe:'H', age:78, taille:172, poids:74, pathologie:'card' },
+  rx:      { solution:'nacl09', volume:500, dureeH:4, dureeMin:0, voie:'periph' },
+  analyse:'', loading:false,
+  apiKey: localStorage.getItem('simperf_key')||'',
+  apiKeySaved: !!localStorage.getItem('simperf_key'),
+  showKey: false,
+};
+
+// ═══════════════════════════════════════
+//  PHYSIOLOGIE VASCULAIRE
+// ═══════════════════════════════════════
+function vasculaire() {
+  const { age, sexe, poids, pathologie } = S.patient;
+
+  // Volémie estimée
+  let vole = sexe==='H' ? poids*70 : poids*65;
+  if (age>65) vole *= 0.92;
+  if (age<12) vole = poids*80;
+  if (pathologie==='deshyd') vole *= 0.88;
+  if (pathologie==='card')   vole *= 1.08; // hypervolémie
+  vole = Math.round(vole);
+
+  // Débit cardiaque
+  let dc = sexe==='H' ? 5.5 : 4.8;
+  if (age>70) dc *= 0.85;
+  if (pathologie==='card') dc *= 0.68;
+  if (pathologie==='deshyd') dc *= 0.80;
+  dc = Math.round(dc*10)/10;
+
+  // Débit urinaire (élimination)
+  let du = 1.0; // mL/min normal
+  if (pathologie==='renal') du = 0.3;
+  if (pathologie==='card')  du = 0.5;
+  if (pathologie==='hta')   du = 0.7;
+  if (pathologie==='deshyd') du = 0.2;
+  du = Math.round(du*10)/10;
+
+  // Risque surcharge
+  let risque = 'faible';
+  if (pathologie==='card' || pathologie==='renal') risque='élevé';
+  else if (pathologie==='hta' || pathologie==='fragile') risque='modéré';
+
+  // Pression artérielle de base
+  const pasSys = pathologie==='hta' ? 155 : pathologie==='deshyd' ? 90 : pathologie==='card' ? 100 : 120;
+  const pasDia = pathologie==='hta' ? 95  : pathologie==='deshyd' ? 60  : pathologie==='card' ? 70  : 75;
+
+  // Analogie volémie
+  const analog = vole<3000 ? 'environ 3 grandes bouteilles d\'eau'
+    : vole<4000 ? 'environ 4 grandes bouteilles d\'eau'
+    : vole<5000 ? 'environ 5 grandes bouteilles d\'eau'
+    : 'l\'équivalent de 5 à 6 grandes bouteilles d\'eau';
+
+  return { vole, dc, du, risque, pasSys, pasDia, analog };
+}
+
+function perfusion() {
+  const { volume, dureeH, dureeMin } = S.rx;
+  const dureeMinTotal = dureeH*60 + dureeMin;
+  const debitHeure = Math.round(volume / (dureeMinTotal/60) * 10) / 10;
+  const debitMin   = Math.round(volume / dureeMinTotal * 10) / 10;
+  const goutteMin  = Math.round(debitHeure / 3); // macrogouttes : 1 mL = 20 gouttes, /60*20 = /3
+  const goutteS    = Math.round(goutteMin / 60 * 10) / 10;
+  const dureeAffH  = Math.floor(dureeMinTotal/60);
+  const dureeAffM  = dureeMinTotal % 60;
+  return { debitHeure, debitMin, goutteMin, goutteS, dureeMinTotal, dureeAffH, dureeAffM };
+}
+
+function risqueNiveau(r) {
+  if (r==='faible')  return { col:'#4caf82', bg:'rgba(76,175,130,.08)',  bdr:'rgba(76,175,130,.25)'  };
+  if (r==='modéré')  return { col:'#d4a853', bg:'rgba(212,168,83,.08)',  bdr:'rgba(212,168,83,.25)'  };
+  return                    { col:'#e05a5a', bg:'rgba(224,90,90,.08)',   bdr:'rgba(224,90,90,.25)'   };
+}
+
+function ageLabel(a) {
+  if (a<3) return 'Nourrisson';
+  if (a<12) return 'Enfant';
+  if (a<18) return 'Adolescent';
+  if (a<65) return 'Adulte';
+  return 'Personne âgée';
+}
+
+// ═══════════════════════════════════════
+//  ANIMATION PERFUSION
+// ═══════════════════════════════════════
+let dropInterval = null;
+
+function startDrip(goutteMin) {
+  clearInterval(dropInterval);
+  const chambre = document.getElementById('drip-chamber');
+  if (!chambre) return;
+  const ms = Math.round(60000 / Math.max(1, goutteMin));
+  dropInterval = setInterval(() => {
+    const drop = document.createElement('div');
+    drop.className = 'drop';
+    drop.style.cssText = 'top:2px;animation:dropFall '+Math.max(400,Math.min(1200, ms*0.6))+'ms ease-in forwards';
+    chambre.appendChild(drop);
+    setTimeout(()=>drop.remove(), Math.max(400,Math.min(1200, ms*0.6)));
+  }, ms);
+}
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+function sol()  { return SOLUTIONS.find(s=>s.id===S.rx.solution)||SOLUTIONS[0]; }
+function patho(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0]; }
+function voie() { return VOIES.find(v=>v.id===S.rx.voie)||VOIES[0]; }
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render() {
+  const ph  = vasculaire();
+  const pf  = perfusion();
+  const sl  = sol();
+  const pa  = patho();
+  const vo  = voie();
+  const rl  = risqueNiveau(ph.risque);
+  const pr  = S.patient.prenom;
+  const stepNum = {step1:1,step2:2,step3:3,step4:4}[S.view]||0;
+
+  let h = '';
+
+  // HEADER
+  if (S.view !== 'welcome') {
+    const steps = ['Patient','Hémodynamique','Prescription','Analyse'];
+    h += `
+      <div class="site-header">
+        <div class="badge">💉 Module 2 · SimCare IFSI</div>
+        <h1>SimPerf</h1>
+        <p>Comprendre la perfusion à travers la physiologie vasculaire du patient</p>
+      </div>
+      <div class="steps-bar">
+        ${steps.map((s,i)=>`
+          <div class="step-dot ${stepNum>i+1?'done':stepNum===i+1?'active':''}">${stepNum>i+1?'✓':i+1}</div>
+          <span class="step-lbl ${stepNum===i+1?'active':''}">${s}</span>
+          ${i<3?'<div class="step-line"></div>':''}
+        `).join('')}
+      </div>`;
+  } else {
+    h += `<div class="site-header" style="padding-top:44px">
+            <div class="badge">💉 Module 2 · SimCare IFSI</div>
+            <h1>SimPerf</h1>
+          </div>`;
+  }
+
+  h += '<div class="wrap">';
+
+  // ─── WELCOME ───────────────────────────────────────────────────
+  if (S.view==='welcome') {
+    h += `
+    <div class="card fadeup" style="border-color:rgba(212,168,83,.18)">
+      <div class="welcome">
+        <span class="welcome-icon">💉</span>
+        <p>Perfuser ne s'apprend pas en calculant des gouttes par minute. Ça s'apprend en comprenant ce que <strong>${pf.debitHeure} mL/h</strong> représente dans le système vasculaire d'un patient précis, avec son cœur, ses reins, son histoire.</p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez votre patient</strong> — âge, morphologie, pathologie : tout change la tolérance vasculaire à la perfusion</span></div>
+          <div class="pt"><span class="pt-i">🫀</span><span class="pt-t"><strong>Visualisez son hémodynamique</strong> — sa volémie, son débit cardiaque, sa capacité d'élimination rénale, son risque de surcharge</span></div>
+          <div class="pt"><span class="pt-i">📋</span><span class="pt-t"><strong>Entrez la prescription</strong> — solution, volume, durée, voie d'abord — et voyez l'impact en temps réel</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analysez la cohérence</strong> — ce débit est-il raisonnable pour ce patient précis ? Quels signes surveiller ?</span></div>
+        </div>
+        <button class="btn-p" onclick="go('step1')">Construire un patient →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 1 — PATIENT ─────────────────────────────────────────
+  else if (S.view==='step1') {
+    h += `
+    <div class="card fadeup" style="border-color:rgba(212,168,83,.18)">
+      <div class="card-title" style="color:var(--gold)">👤 Votre patient</div>
+      <div class="card-sub">Chaque paramètre modifiera sa physiologie vasculaire — et donc ce que la perfusion représente pour lui.</div>
+      <div class="col">
+
+        <div>
+          <label class="lbl">Prénom</label>
+          <input type="text" value="${esc(S.patient.prenom)}" placeholder="Ex : Jean, Fatima, Pierre, Lucie…" oninput="up('prenom',this.value)">
+        </div>
+
+        <div>
+          <label class="lbl">Sexe biologique</label>
+          <div class="grid2">
+            ${[{v:'F',l:'Femme',i:'👩'},{v:'H',l:'Homme',i:'👨'}].map(s=>`
+              <div class="sel center ${S.patient.sexe===s.v?'on':''}" onclick="up('sexe','${s.v}')">
+                <span style="font-size:28px">${s.i}</span>
+                <span style="font-size:13px;margin-top:5px">${s.l}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="lbl-row">
+            <label class="lbl" style="margin:0">Âge</label>
+            <span><span class="lbl-val">${S.patient.age} ans</span><span class="lbl-sub">${ageLabel(S.patient.age)}</span></span>
+          </div>
+          <input type="range" min="0" max="95" value="${S.patient.age}" oninput="up('age',+this.value)">
+          <div class="range-lbl"><span>0</span><span>Enfant</span><span>Adulte</span><span>75+</span></div>
+        </div>
+
+        <div class="grid2">
+          <div>
+            <div class="lbl-row"><label class="lbl" style="margin:0">Taille</label><span class="lbl-val">${S.patient.taille} cm</span></div>
+            <input type="range" min="45" max="205" value="${S.patient.taille}" oninput="up('taille',+this.value)">
+          </div>
+          <div>
+            <div class="lbl-row"><label class="lbl" style="margin:0">Poids</label><span class="lbl-val">${S.patient.poids} kg</span></div>
+            <input type="range" min="3" max="180" value="${S.patient.poids}" oninput="up('poids',+this.value)">
+          </div>
+        </div>
+
+        <div>
+          <label class="lbl">Situation clinique</label>
+          <div class="col8">
+            ${PATHOLOGIES.map(p=>`
+              <div class="sel ${S.patient.pathologie===p.id?'on':''}" onclick="up('pathologie','${p.id}')">
+                <span class="si">${p.icon}</span>
+                <div><div>${p.label}</div></div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-p" onclick="go('step2')">Voir son hémodynamique →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 2 — HÉMODYNAMIQUE ────────────────────────────────────
+  else if (S.view==='step2') {
+    const pct = Math.min(98, Math.round((ph.vole / 6000)*100));
+    const duCol = ph.du<0.4?'#e05a5a':ph.du<0.8?'#d4a853':'#4caf82';
+    h += `
+    <div class="card fadeup" style="border-color:rgba(76,175,130,.18)">
+      <div class="card-title" style="color:var(--green)">🫀 Système vasculaire de ${esc(pr)||'ce patient'}</div>
+      <div class="card-sub">Voici l'état hémodynamique au repos, <em>avant</em> toute perfusion. C'est le contexte dans lequel votre prescription va agir.</div>
+
+      <!-- Volémie -->
+      <div class="vasc-box" style="margin-bottom:14px">
+        <div class="vasc-lbl">Volémie estimée — volume sanguin total</div>
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
+          <span style="font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--gold)">${ph.vole.toLocaleString('fr')} mL</span>
+          <span style="font-size:12px;color:var(--txt3);font-style:italic">≈ ${ph.analog}</span>
+        </div>
+        <div class="vasc-bar-wrap">
+          <div class="vasc-bar" style="width:${pct}%;background:linear-gradient(90deg,rgba(212,168,83,.4),var(--gold))"></div>
+        </div>
+        <div class="vasc-labels"><span>3 L</span><span>Normale</span><span>6 L</span></div>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="grid2" style="margin-bottom:14px">
+        <div class="stat">
+          <span class="stat-v">${ph.dc} L/min</span>
+          <span class="stat-l">Débit cardiaque</span>
+          <span class="stat-s">Volume éjecté par le cœur chaque minute</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v" style="color:${duCol}">${ph.du} mL/min</span>
+          <span class="stat-l">Débit urinaire</span>
+          <span class="stat-s">Capacité d'élimination rénale</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v">${ph.pasSys}/${ph.pasDia}</span>
+          <span class="stat-l">Pression artérielle</span>
+          <span class="stat-s">mmHg de base estimée</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v" style="color:${rl.col}">${ph.risque.toUpperCase()}</span>
+          <span class="stat-l">Risque surcharge</span>
+          <span class="stat-s">Tolérance à un apport hydrique</span>
+        </div>
+      </div>
+
+      <!-- Risque surcharge detail -->
+      <div style="background:${rl.bg};border:1px solid ${rl.bdr};border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="color:${rl.col};font-size:14px;font-weight:600;margin-bottom:5px">
+          ${ph.risque==='élevé'?'⚠️ Risque de surcharge volémique élevé':ph.risque==='modéré'?'📊 Risque modéré à surveiller':'✅ Bonne tolérance vasculaire attendue'}
+        </div>
+        <div style="font-size:13px;color:var(--txt3);line-height:1.6">
+          ${ph.risque==='élevé'
+            ? `Le cœur et/ou les reins de ${esc(pr)||'ce patient'} ne pourront pas facilement compenser un apport liquidien rapide ou excessif. Chaque mL compte.`
+            : ph.risque==='modéré'
+            ? `Une surveillance accrue du bilan entrées/sorties est recommandée. La tolérance peut varier.`
+            : `Le système cardiovasculaire de ${esc(pr)||'ce patient'} devrait bien tolérer une perfusion adaptée.`}
+        </div>
+      </div>
+
+      <!-- Débit urinaire vs apport -->
+      <div class="info info-blue">
+        💡 <strong>À retenir :</strong> Le rein élimine <strong>${ph.du} mL/min</strong> soit <strong>${Math.round(ph.du*60)} mL/h</strong>. Tout débit de perfusion supérieur à cette valeur s'accumulera dans l'organisme s'il n'est pas compensé.
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step1')">← Modifier le patient</button>
+      <button class="btn-p" onclick="go('step3')">Entrer la prescription →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 3 — PRESCRIPTION ─────────────────────────────────────
+  else if (S.view==='step3') {
+    const elim = Math.round(ph.du*60);
+    const solde = Math.round(pf.debitHeure - elim);
+    const accum = Math.max(0, solde * (pf.dureeMinTotal/60));
+    const accumPct = Math.min(100, Math.round((accum/ph.vole)*100));
+
+    h += `
+    <div class="card fadeup" style="border-color:rgba(106,180,212,.18)">
+      <div class="card-title" style="color:var(--blue)">📋 Prescription médicale</div>
+      <div class="card-sub">Telle qu'elle apparaîtrait dans le dossier de ${esc(pr)||'ce patient'}. Chaque paramètre modifie l'impact sur son système vasculaire.</div>
+
+      <!-- Solution -->
+      <div style="margin-bottom:22px">
+        <label class="lbl">Solution à perfuser</label>
+        <div class="col8">
+          ${SOLUTIONS.map(s=>`
+            <div class="sel ${S.rx.solution===s.id?'on':''}" onclick="upRx('solution','${s.id}')">
+              <span class="si">${s.icon}</span>
+              <div style="flex:1">
+                <div style="font-weight:500">${s.label}</div>
+                <div class="sd">${s.sub}</div>
+              </div>
+              <span class="stag">${s.osmol} mOsm/L</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Voie -->
+      <div style="margin-bottom:22px">
+        <label class="lbl">Voie d'abord</label>
+        <div class="grid2">
+          ${VOIES.map(v=>`
+            <div class="sel ${S.rx.voie===v.id?'on':''}" onclick="upRx('voie','${v.id}')">
+              <span class="si">${v.icon}</span><span>${v.label}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Volume -->
+      <div style="margin-bottom:20px">
+        <div class="lbl-row">
+          <label class="lbl" style="margin:0">Volume prescrit</label>
+          <span class="lbl-val" style="font-size:20px">${S.rx.volume} mL</span>
+        </div>
+        <input type="range" min="50" max="1000" step="50" value="${S.rx.volume}" oninput="upRx('volume',+this.value)">
+        <div class="range-lbl"><span>50 mL</span><span>250</span><span>500</span><span>1000 mL</span></div>
+      </div>
+
+      <!-- Durée -->
+      <div style="margin-bottom:24px">
+        <label class="lbl">Durée de passage</label>
+        <div class="grid2">
+          <div>
+            <div class="lbl-row"><label class="lbl" style="margin:0">Heures</label><span class="lbl-val">${S.rx.dureeH}h</span></div>
+            <input type="range" min="0" max="24" value="${S.rx.dureeH}" oninput="upRx('dureeH',+this.value)">
+          </div>
+          <div>
+            <div class="lbl-row"><label class="lbl" style="margin:0">Minutes</label><span class="lbl-val">${S.rx.dureeMin}min</span></div>
+            <input type="range" min="0" max="55" step="5" value="${S.rx.dureeMin}" oninput="upRx('dureeMin',+this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div style="background:rgba(0,0,0,.22);border-radius:14px;padding:18px">
+        <label class="lbl" style="margin-bottom:14px">Impact en temps réel</label>
+
+        <!-- Drip animation -->
+        <div class="drip-scene">
+          <div class="drip-container">
+            <div class="drip-bag">
+              <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--blue)">${S.rx.volume}mL</span>
+            </div>
+            <div class="drip-tube"></div>
+            <div class="drip-chamber" id="drip-chamber">
+              <div class="drip-liquid" style="height:40%"></div>
+            </div>
+            <div class="drip-tube2"></div>
+            <div class="drip-needle"></div>
+          </div>
+          <div class="drip-info">
+            <div class="drip-rate">${pf.debitHeure} mL/h</div>
+            <div class="drip-sub">${pf.goutteMin} gouttes/min · ${pf.goutteS} gouttes/s</div>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-bottom:14px">
+          <div class="stat">
+            <span class="stat-v" style="color:var(--blue)">${pf.debitHeure} mL/h</span>
+            <span class="stat-l">Débit de perfusion</span>
+            <span class="stat-s">${pf.goutteMin} gouttes/min</span>
+          </div>
+          <div class="stat">
+            <span class="stat-v" style="color:${solde>0?'#e05a5a':solde===0?'#4caf82':'#4caf82'}">${solde>0?'+':''}${solde} mL/h</span>
+            <span class="stat-l">Solde entrées/sorties</span>
+            <span class="stat-s">Apport − élimination rénale (${elim} mL/h)</span>
+          </div>
+        </div>
+
+        ${accum>0?`
+        <div style="margin-bottom:12px">
+          <div class="lbl" style="margin-bottom:6px">Accumulation estimée sur ${pf.dureeAffH}h${pf.dureeAffM>0?pf.dureeAffM+'min':''}</div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">
+            <span style="font-family:'DM Mono',monospace;font-size:22px;color:${accumPct>8?'#e05a5a':accumPct>4?'#d4a853':'#4caf82'}">${accum.toFixed(0)} mL</span>
+            <span style="font-size:12px;color:var(--txt3)">non éliminés · soit ${accumPct}% de sa volémie</span>
+          </div>
+          <div class="vasc-bar-wrap">
+            <div class="vasc-bar" style="width:${accumPct}%;background:linear-gradient(90deg,rgba(224,90,90,.4),${accumPct>8?'#e05a5a':accumPct>4?'#d4a853':'#4caf82'})"></div>
+          </div>
+        </div>`:''}
+
+        <div class="info info-gold" style="font-size:12px">
+          💧 Solution : <strong>${sl.label}</strong> (${sl.osmol} mOsm/L · ${sl.osmol<280?'hypotonique':sl.osmol>320?'hypertonique':'isotonique'})
+          ${sl.glucose?' · Apport glucosé':''}
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step2')">← Hémodynamique</button>
+      <button class="btn-p" onclick="goAnalyse()">Analyser la cohérence →</button>
+    </div>`;
+
+    // Lancer animation après render
+    setTimeout(()=>startDrip(pf.goutteMin), 100);
+  }
+
+  // ─── ÉTAPE 4 — ANALYSE ─────────────────────────────────────────
+  else if (S.view==='step4') {
+    const ph  = vasculaire();
+    const pf  = perfusion();
+    const elim = Math.round(ph.du*60);
+    const solde = Math.round(pf.debitHeure - elim);
+    h += `
+    <div class="card fadeup" style="border-color:rgba(155,127,196,.2)">
+      <div class="card-title" style="color:var(--violet)">🔬 Analyse clinique — ${esc(pr)||'ce patient'}</div>
+
+      <div class="recap">
+        ${[
+          ['Patient',        `${esc(pr)||'—'}, ${S.patient.sexe==='H'?'♂':'♀'} ${S.patient.age} ans · ${S.patient.poids} kg`],
+          ['Pathologie',     pa.label],
+          ['Volémie estimée',`${ph.vole.toLocaleString('fr')} mL`],
+          ['Risque surcharge',ph.risque.toUpperCase()],
+          ['Solution',       `${sol().label} (${sol().osmol} mOsm/L)`],
+          ['Prescription',   `${S.rx.volume} mL en ${pf.dureeAffH}h${pf.dureeAffM>0?pf.dureeAffM+'min':''} → ${pf.debitHeure} mL/h`],
+          ['Débit urinaire', `${ph.du} mL/min · ${elim} mL/h éliminés`],
+          ['Solde hydrique', `${solde>0?'+':''}${solde} mL/h`],
+        ].map(([k,v])=>`<div class="rc"><div class="rc-k">${k}</div><div class="rc-v">${v}</div></div>`).join('')}
+      </div>
+
+      <hr class="div">
+      <label class="lbl" style="margin-bottom:14px">Ce que dit la physiologie vasculaire</label>
+
+      ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse de la cohérence clinique en cours…</div></div>`:''}
+
+      ${!S.loading && !S.analyse?`
+        <div style="background:rgba(0,0,0,.32);border:1.5px solid rgba(212,168,83,.18);border-radius:18px;padding:28px;margin-bottom:16px">
+          <div style="text-align:center;margin-bottom:24px">
+            <div style="font-size:40px;margin-bottom:10px">🔒</div>
+            <div style="font-family:'DM Sans',sans-serif;font-size:18px;font-weight:700;color:#f0ece4;margin-bottom:5px">Analyse clinique — Accès Premium</div>
+            <div style="font-size:13px;color:#4a5250">Les étapes 1 à 3 sont entièrement gratuites et fonctionnent sans connexion internet</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+            <div style="border:1px solid rgba(76,175,130,.2);background:rgba(76,175,130,.05);border-radius:12px;padding:14px">
+              <div style="color:#4caf82;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✓ GRATUIT</div>
+              <div style="font-size:12px;color:#4a5250;line-height:1.8">Étape 1 — Patient<br>Étape 2 — Hémodynamique<br>Étape 3 — Prescription</div>
+            </div>
+            <div style="border:1px solid rgba(212,168,83,.25);background:rgba(212,168,83,.06);border-radius:12px;padding:14px">
+              <div style="color:#d4a853;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✦ PREMIUM</div>
+              <div style="font-size:12px;color:#4a5250;line-height:1.8">Étape 4 — Analyse IA<br>Cohérence clinique<br>Signes de surveillance</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px">
+            <div style="border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;text-align:center;background:rgba(255,255,255,.02)">
+              <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#4a5250;margin-bottom:8px">Abonnement</div>
+              <div style="font-size:26px;font-weight:700;color:#f0ece4">9,90€<span style="font-size:12px;font-weight:400;color:#4a5250">/mois</span></div>
+              <div style="font-size:11px;color:#4a5250;margin-top:8px;line-height:1.5">Tous les modules SimCare · Mises à jour incluses</div>
+            </div>
+            <div style="border:1px solid rgba(212,168,83,.28);border-radius:12px;padding:16px;text-align:center;background:rgba(212,168,83,.05)">
+              <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#d4a853;margin-bottom:8px">Achat unique</div>
+              <div style="font-size:26px;font-weight:700;color:#f0ece4">24,90€<span style="font-size:12px;font-weight:400;color:#4a5250">/module</span></div>
+              <div style="font-size:11px;color:#4a5250;margin-top:8px;line-height:1.5">SimPerf à vie · Accès illimité</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:12px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:13px 32px;border-radius:12px;background:linear-gradient(135deg,#c49030,#f0c96a);color:#0a0d0f;font-weight:700;font-size:15px;text-decoration:none">
+              Obtenir l'accès →
+            </a>
+            <div style="margin-top:10px;font-size:12px;color:#4a5250">
+              IFSI & établissements : <a href="mailto:contact@simcare.fr" style="color:#d4a853;text-decoration:none">tarif institution sur devis</a>
+            </div>
+          </div>
+          <div style="text-align:center;padding-top:14px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:#2a3a45;font-size:11px;cursor:pointer;font-family:'DM Mono',monospace;letter-spacing:.5px">
+              🔑 Espace formateur / développeur
+            </button>
+          </div>
+        </div>
+        ${S.showKey?`<div class="apikey-box">
+          <p>Clé API Anthropic — réservé au formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
+          <div class="apikey-row">
+            <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+            <button onclick="saveKey()">Sauver</button>
+          </div>
+          ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:12px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
+        </div>`:''}
+      `:''}
+
+      ${!S.loading && S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
+    </div>
+
+    <div class="nav-col">
+      <div class="nav-row">
+        <button class="btn-g" onclick="go('step3')">← Modifier la prescription</button>
+        <button class="btn-g" onclick="runAnalyse()" style="color:var(--violet);border-color:rgba(155,127,196,.22)">↺ Relancer</button>
+      </div>
+      <button class="btn-g btn-full" onclick="reset()" style="color:var(--gold);border-color:rgba(212,168,83,.22)">✦ Nouveau patient</button>
+    </div>`;
+  }
+
+  h += '</div>';
+  document.getElementById('app').innerHTML = h;
+  if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(enhanceSliders, 0);
+
+  if (S.view==='step3') setTimeout(()=>startDrip(pf.goutteMin), 120);
+  else clearInterval(dropInterval);
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){ S.view=v; render(); }
+function up(k,v){ S.patient={...S.patient,[k]:v}; render(); }
+function upRx(k,v){ S.rx={...S.rx,[k]:v}; render(); }
+function goAnalyse(){ S.view='step4'; S.analyse=''; render(); runAnalyse(); }
+function saveKey(){ localStorage.setItem('simperf_key',S.apiKey); S.apiKeySaved=true; render(); }
+function reset(){ clearInterval(dropInterval); S={...S,view:'step1',patient:{prenom:'',sexe:'F',age:45,taille:165,poids:65,pathologie:'sain'},rx:{solution:'nacl09',volume:500,dureeH:4,dureeMin:0,voie:'periph'},analyse:''}; render(); }
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const ph  = vasculaire();
+  const pf  = perfusion();
+  const pa  = patho();
+  const sl  = sol();
+  const vo  = voie();
+  const pr  = S.patient.prenom||'le patient';
+  const elim = Math.round(ph.du*60);
+  const solde = Math.round(pf.debitHeure - elim);
+  const accum = Math.max(0, solde * (pf.dureeMinTotal/60));
+
+  S.loading=true; S.analyse=''; render();
+
+  const prompt=`Tu es un formateur infirmier expert en soins vasculaires et hémodynamique. Un étudiant IFSI en formation initiale vient de construire un profil patient et simuler une prescription de perfusion IV. Aide-le à développer son intuition clinique, pas à mémoriser des formules.
+
+PATIENT : ${pr}, ${S.patient.sexe==='H'?'homme':'femme'} de ${S.patient.age} ans, ${S.patient.poids} kg, ${S.patient.taille} cm.
+Pathologie principale : ${pa.label}.
+
+PHYSIOLOGIE VASCULAIRE AU REPOS :
+- Volémie estimée : ${ph.vole} mL (≈ ${ph.analog})
+- Débit cardiaque : ${ph.dc} L/min
+- Débit urinaire : ${ph.du} mL/min soit ${elim} mL/h éliminés
+- Pression artérielle de base : ${ph.pasSys}/${ph.pasDia} mmHg
+- Risque de surcharge volémique : ${ph.risque}
+
+PRESCRIPTION SIMULÉE :
+- Solution : ${sl.label} (${sl.osmol} mOsm/L · ${sl.osmol<280?'hypotonique':sl.osmol>320?'hypertonique':'isotonique'}${sl.glucose?' · glucosée':''})
+- Volume : ${S.rx.volume} mL en ${pf.dureeAffH}h${pf.dureeAffM>0?pf.dureeAffM+'min':''}
+- Débit : ${pf.debitHeure} mL/h (${pf.goutteMin} gouttes/min)
+- Voie : ${vo.label}
+- Solde hydrique estimé : ${solde>0?'+':''}${solde} mL/h (${accum.toFixed(0)} mL non éliminés sur la durée totale)
+
+Réponds avec EXACTEMENT ces 4 blocs (titres en gras obligatoires) :
+
+**✅ Cohérence pour ce patient**
+[2-3 phrases. Est-ce approprié pour CE profil précis ? Lien direct avec sa volémie, son débit cardiaque, son risque de surcharge. Jamais de généralités.]
+
+**💉 Ce que ${pf.debitHeure} mL/h représente dans son système vasculaire**
+[2-3 phrases. Traduis ce débit concrètement. Compare à quelque chose de concret ("c'est comme si…", "imagine que chaque heure…"). Lien avec sa volémie de ${ph.vole} mL.]
+
+**🔬 La solution ${sl.label} pour ce patient**
+[2 phrases. Pourquoi cette solution est adaptée ou pas à CE profil ? Impact de l'osmolarité, de l'apport glucosé, sur son état spécifique.]
+
+**⚠️ Signes de surveillance prioritaires**
+[3 signes cliniques précis à surveiller, liés à SA pathologie, pas génériques. Chaque signe expliqué en une phrase : pourquoi ce signe pour ce patient.]
+
+Tutoie l'étudiant. Sois direct, chaleureux, précis. Aucune formulation vague.`;
+
+  try {
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){ headers['x-api-key']=S.apiKey; headers['anthropic-version']='2023-06-01'; }
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  } catch(e){
+    S.analyse=`**⚠️ Erreur**\n\n${e.message||'Vérifiez votre clé API et votre connexion.'}`;
+  }
+  S.loading=false; render(true);
+}
+
+render();
+
+// ── ENHANCEMENT SLIDERS : boutons −/+ ──────────────────────
+function enhanceSliders() {
+  document.querySelectorAll('input[type=range]').forEach(input => {
+    if (input.closest('.sl-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'sl-wrap';
+    input.parentNode.insertBefore(wrap, input);
+
+    const btnM = document.createElement('button');
+    btnM.className = 'sl-btn'; btnM.textContent = '−'; btnM.type = 'button';
+    btnM.addEventListener('click', e => {
+      e.preventDefault();
+      const step = parseFloat(input.step) || 1;
+      const nv   = Math.max(parseFloat(input.min), parseFloat(input.value) - step);
+      input.value = nv;
+      input.dispatchEvent(new Event('input', { bubbles:true }));
+    });
+
+    const btnP = document.createElement('button');
+    btnP.className = 'sl-btn'; btnP.textContent = '+'; btnP.type = 'button';
+    btnP.addEventListener('click', e => {
+      e.preventDefault();
+      const step = parseFloat(input.step) || 1;
+      const nv   = Math.min(parseFloat(input.max), parseFloat(input.value) + step);
+      input.value = nv;
+      input.dispatchEvent(new Event('input', { bubbles:true }));
+    });
+
+    wrap.appendChild(btnM);
+    wrap.appendChild(input);
+    wrap.appendChild(btnP);
+  });
+}
+
+</script>
+</body>
+</html>
