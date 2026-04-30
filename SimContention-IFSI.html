@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimContention · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Epilogue:wght@300;400;500;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #0d0a14;
+  --bg2:   #130f1e;
+  --card:  rgba(255,255,255,.032);
+  --bdr:   rgba(255,255,255,.08);
+  --txt:   #ede8f5;
+  --txt2:  #8a7fa0;
+  --txt3:  #3d3550;
+  --em:    #b8a0e8;
+  --em2:   #9b7fc4;
+  --rose:  #e88aaa;
+  --teal:  #5ecfbe;
+  --amber: #e8c46a;
+  --red:   #e06060;
+  --green: #72c98a;
+  /* Classes de compression */
+  --c1:    #72c98a;
+  --c2:    #5ecfbe;
+  --c3:    #e8c46a;
+  --c4:    #e06060;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Epilogue',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% 0%,  rgba(184,160,232,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(94,207,190,.04) 0%,transparent 50%);
+  color:var(--txt); min-height:100vh; padding-bottom:80px;
+}
+.wrap{max-width:700px;margin:0 auto;padding:0 20px}
+
+/* ── HEADER ── */
+.site-header{text-align:center;padding:42px 24px 22px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(184,160,232,.08);border:1px solid rgba(184,160,232,.22);
+  color:var(--em);padding:5px 16px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+}
+.site-header h1{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(26px,6vw,42px);font-weight:700;
+  letter-spacing:-.5px;line-height:1.1;
+}
+.site-header h1 em{font-style:italic;color:var(--em)}
+.site-header p{color:var(--txt3);font-size:14px;margin-top:8px;font-style:italic}
+
+/* ── STEPS ── */
+.steps-bar{display:flex;justify-content:center;align-items:center;gap:4px;padding:0 16px 28px;flex-wrap:wrap}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;transition:all .28s;
+  border:2px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt3);
+  font-family:'Fira Mono',monospace;
+}
+.step-dot.active{background:rgba(184,160,232,.12);border-color:var(--em);color:var(--em)}
+.step-dot.done  {background:var(--em2);border-color:var(--em2);color:#0d0a14}
+.step-lbl{font-size:12px;color:var(--txt3);transition:color .28s}
+.step-lbl.active{color:var(--txt2)}
+.step-line{width:14px;height:1px;background:var(--bdr)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:20px;padding:28px;margin-bottom:16px}
+.card-title{font-family:'Libre Baskerville',serif;font-size:21px;font-weight:700;margin-bottom:5px}
+.card-sub{color:var(--txt3);font-size:13px;margin-bottom:22px;line-height:1.65}
+
+/* ── FORM ── */
+.lbl{display:block;font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px}
+.lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.lbl-val{font-family:'Fira Mono',monospace;color:var(--em);font-size:14px;font-weight:500}
+
+input[type=text]{
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
+  border-radius:10px;color:var(--txt);padding:11px 14px;
+  font-size:15px;font-family:'Fira Mono',monospace;
+  outline:none;width:100%;transition:border-color .2s;
+}
+input[type=text]:focus{border-color:rgba(184,160,232,.4)}
+
+
+
+.range-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-top:5px;font-family:'Fira Mono',monospace}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.col  {display:flex;flex-direction:column;gap:18px}
+.col8 {display:flex;flex-direction:column;gap:8px}
+
+/* ── SEL ── */
+.sel{
+  cursor:pointer;border:1.5px solid var(--bdr);border-radius:12px;
+  padding:12px 16px;background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:14px;transition:all .18s;
+  display:flex;align-items:center;gap:12px;user-select:none;
+}
+.sel:hover{background:rgba(255,255,255,.05);color:var(--txt);border-color:rgba(255,255,255,.14)}
+.sel.on   {background:rgba(184,160,232,.08);color:var(--txt);border-color:rgba(184,160,232,.4)}
+.sel .si  {font-size:20px;flex-shrink:0}
+.sel .sd  {font-size:11px;color:var(--txt3);margin-top:2px}
+
+/* ── BOUTONS ── */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  border:none;border-radius:12px;color:#0d0a14;
+  font-family:'Epilogue',sans-serif;font-size:15px;font-weight:700;
+  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
+  border-radius:12px;color:var(--txt2);
+  font-family:'Epilogue',sans-serif;font-size:14px;
+  padding:11px 20px;cursor:pointer;transition:all .18s;
+}
+.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+.nav-col{display:flex;flex-direction:column;gap:10px}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.055);border-radius:13px;padding:14px;text-align:center}
+.stat-v{font-family:'Fira Mono',monospace;font-size:20px;font-weight:500;color:var(--em);display:block}
+.stat-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1.5px;font-family:'Fira Mono',monospace;display:block;margin-top:4px}
+.stat-s{font-size:11px;color:#2d2540;font-style:italic;display:block;margin-top:5px;line-height:1.4}
+
+/* ── JAMBE SCHÉMA ── */
+.leg-schema{
+  display:flex;flex-direction:column;align-items:center;
+  gap:0;margin:0 auto 20px;max-width:200px;position:relative;
+}
+.leg-part{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(184,160,232,.2);transition:all .4s;
+  cursor:default;
+}
+.leg-label{
+  position:absolute;right:-90px;font-family:'Fira Mono',monospace;
+  font-size:11px;color:var(--txt2);white-space:nowrap;
+  display:flex;align-items:center;gap:6px;
+}
+.leg-label::before{content:'';width:20px;height:1px;background:rgba(184,160,232,.3)}
+.leg-meas{
+  position:absolute;left:-90px;font-family:'Fira Mono',monospace;
+  font-size:12px;font-weight:500;color:var(--em);white-space:nowrap;text-align:right;
+  display:flex;align-items:center;gap:6px;flex-direction:row-reverse;
+}
+.leg-meas::before{content:'';width:20px;height:1px;background:rgba(184,160,232,.3)}
+.leg-measure-line{
+  position:absolute;width:calc(100% + 16px);height:2px;
+  background:rgba(184,160,232,.25);left:-8px;
+  pointer-events:none;
+}
+
+/* ── CLASSES COMPRESSION ── */
+.class-card{
+  border-radius:14px;padding:16px;border:2px solid transparent;
+  cursor:pointer;transition:all .2s;
+}
+.class-card:hover{transform:translateY(-2px)}
+.class-card.on{transform:translateY(-2px)}
+.class-num{font-family:'Libre Baskerville',serif;font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
+.class-label{font-size:12px;font-weight:600;margin-bottom:3px}
+.class-pression{font-family:'Fira Mono',monospace;font-size:11px;opacity:.7;margin-bottom:6px}
+.class-pathos{font-size:11px;line-height:1.5;opacity:.75}
+
+/* ── INDICATIONS ── */
+.indication-tag{
+  display:inline-block;padding:3px 10px;border-radius:10px;
+  font-size:11px;margin:2px;cursor:pointer;
+  border:1px solid transparent;transition:all .18s;
+  font-family:'Fira Mono',monospace;
+}
+
+/* ── BARRE PRESSION ── */
+.pression-bar{
+  height:24px;border-radius:12px;overflow:hidden;
+  background:linear-gradient(90deg,var(--c1) 0%,var(--c2) 33%,var(--c3) 66%,var(--c4) 100%);
+  position:relative;margin:8px 0;
+}
+.pression-cursor{
+  position:absolute;top:-3px;bottom:-3px;width:4px;
+  border-radius:2px;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.6);
+  transition:left .5s cubic-bezier(.34,1.56,.64,1);transform:translateX(-50%);
+}
+.pression-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);font-family:'Fira Mono',monospace}
+
+/* ── INFO BOXES ── */
+.info{border-radius:11px;padding:12px 15px;font-size:13px;line-height:1.7}
+.info-em  {background:rgba(184,160,232,.06);border:1px solid rgba(184,160,232,.18);color:var(--em)}
+.info-red {background:rgba(224,96,96,.07);  border:1px solid rgba(224,96,96,.2);  color:var(--red)}
+.info-teal{background:rgba(94,207,190,.06); border:1px solid rgba(94,207,190,.18);color:var(--teal)}
+.info-amb {background:rgba(232,196,106,.06);border:1px solid rgba(232,196,106,.18);color:var(--amber)}
+.info-grn {background:rgba(114,201,138,.06);border:1px solid rgba(114,201,138,.18);color:var(--green)}
+
+/* ── MESURES INPUT BOX ── */
+.mesure-box{
+  background:rgba(0,0,0,.22);border:1px solid rgba(184,160,232,.12);
+  border-radius:14px;padding:18px;margin-bottom:12px;
+}
+.mesure-title{
+  font-family:'Libre Baskerville',serif;font-size:14px;font-weight:700;
+  margin-bottom:14px;color:var(--em);display:flex;align-items:center;gap:8px;
+}
+.mesure-field{
+  display:flex;align-items:center;gap:12px;margin-bottom:10px;
+}
+.mesure-field label{font-size:13px;color:var(--txt2);min-width:140px}
+.mesure-field input{
+  background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:8px;color:var(--txt);padding:8px 12px;
+  font-size:15px;font-family:'Fira Mono',monospace;outline:none;
+  width:80px;text-align:center;transition:border-color .2s;
+}
+.mesure-field input:focus{border-color:rgba(184,160,232,.4)}
+.mesure-field .unit{font-size:12px;color:var(--txt3);font-family:'Fira Mono',monospace}
+.mesure-field .taille-ref{font-size:11px;color:var(--em);font-family:'Fira Mono',monospace;margin-left:4px}
+
+/* ── TAILLE RECOMMANDÉE ── */
+.taille-badge{
+  display:inline-block;padding:4px 12px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:12px;font-weight:500;
+  background:rgba(184,160,232,.12);border:1px solid rgba(184,160,232,.3);color:var(--em);
+}
+
+/* ── RECAP ── */
+.recap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.rc{background:rgba(0,0,0,.22);border-radius:10px;padding:10px 13px}
+.rc-k{font-size:10px;color:#2d2540;text-transform:uppercase;letter-spacing:1px;font-family:'Fira Mono',monospace}
+.rc-v{font-size:13px;color:var(--txt);margin-top:4px;line-height:1.4}
+
+/* ── ANALYSIS ── */
+.analysis p{margin-bottom:16px;color:#b0a8c4;font-size:15px;line-height:1.85}
+.analysis strong{color:var(--txt);font-size:16px}
+
+/* ── API KEY / PREMIUM ── */
+.premium-box{
+  background:rgba(0,0,0,.32);border:1.5px solid rgba(184,160,232,.18);
+  border-radius:18px;padding:28px;margin-bottom:16px;
+}
+.apikey-box{
+  background:rgba(184,160,232,.04);border:1px solid rgba(184,160,232,.15);
+  border-radius:12px;padding:14px 16px;
+}
+.apikey-box p{font-size:13px;color:var(--txt3);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:13px}
+.apikey-row button{
+  padding:9px 16px;border:none;border-radius:9px;
+  background:var(--em2);color:#0d0a14;font-weight:700;
+  cursor:pointer;font-family:'Epilogue',sans-serif;font-size:13px;
+}
+.apikey-saved{color:var(--green);font-size:11px;margin-top:6px;font-family:'Fira Mono',monospace}
+
+/* ── WELCOME ── */
+.welcome{text-align:center;padding:4px 0 28px}
+.welcome-icon{font-size:60px;display:block;margin-bottom:18px}
+.welcome p{color:var(--txt2);font-size:15px;line-height:1.8;max-width:480px;margin:0 auto}
+.pts{display:flex;flex-direction:column;gap:14px;margin:24px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:20px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:28px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt3);font-size:13px;margin-top:10px;font-style:italic}
+
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:20px 0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB  {0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+@keyframes pulse {0%,100%{opacity:.5}50%{opacity:1}}
+
+.fadeup{animation:fadeUp .35s ease forwards}
+
+@media(max-width:480px){
+  .grid2,.grid3,.recap{grid-template-columns:1fr}
+  .nav-row{flex-direction:column}
+  .leg-label,.leg-meas{display:none}
+}
+
+    /* ── SLIDERS AMÉLIORÉS ── */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%; height: 10px;
+      border-radius: 5px;
+      background: rgba(255,255,255,.10);
+      outline: none; cursor: pointer;
+      margin-top: 4px;
+      touch-action: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid rgba(255,255,255,.18);
+      box-shadow: 0 2px 12px rgba(0,0,0,.5);
+      transition: transform .15s;
+    }
+    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.18); }
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 10px; border-radius: 5px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      background: #b8a0e8;
+    }
+
+    /* ── STEPPER WRAPPER ── */
+    .sl-wrap {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+    }
+    .sl-wrap input[type=range] { flex: 1; }
+    .sl-btn {
+      flex-shrink: 0;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      border: 1.5px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.55);
+      font-size: 20px; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s, transform .1s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .sl-btn:hover  { background: rgba(255,255,255,.12); color: #fff; }
+    .sl-btn:active { transform: scale(.9); }
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+const PATHOLOGIES = [
+  { id:'varices',    label:'Varices / Insuffisance veineuse chronique', icon:'🩸', short:'IVC',     classe:2 },
+  { id:'tved',       label:'Prévention TVP / Embolie pulmonaire',       icon:'⚠️', short:'Prév.TVP', classe:3 },
+  { id:'tvp_traitee',label:'TVP ou EP traitée',                         icon:'🩹', short:'TVP traitée',classe:3 },
+  { id:'lymphoedeme',label:'Lymphœdème',                                icon:'💧', short:'Lymphœdème',classe:3 },
+  { id:'postop',     label:'Post-opératoire / Alitement prolongé',      icon:'🏥', short:'Post-op',  classe:2 },
+  { id:'grossesse',  label:'Grossesse / Post-partum',                   icon:'🤰', short:'Grossesse', classe:2 },
+  { id:'voyage',     label:'Voyage longue durée / Prévention légère',   icon:'✈️', short:'Voyage',   classe:1 },
+  { id:'ulcere',     label:'Ulcère veineux de jambe',                   icon:'🩺', short:'Ulcère',   classe:4 },
+];
+
+const CLASSES = [
+  { id:1, label:'Légère',     pression:'10–15 mmHg', col:'#72c98a', bg:'rgba(114,201,138,.08)', bdr:'rgba(114,201,138,.3)', pathos:'Jambes lourdes, varices débutantes, prévention voyage', contre:'Aucune spécifique' },
+  { id:2, label:'Modérée',    pression:'15–20 mmHg', col:'#5ecfbe', bg:'rgba(94,207,190,.08)',  bdr:'rgba(94,207,190,.3)',  pathos:'Varices symptomatiques, œdème, post-op, grossesse',    contre:'Vérifier IOTD avant' },
+  { id:3, label:'Forte',      pression:'20–36 mmHg', col:'#e8c46a', bg:'rgba(232,196,106,.08)', bdr:'rgba(232,196,106,.3)', pathos:'TVP, récidive variqueuse, lymphœdème modéré',           contre:'IOTD, artériopathie' },
+  { id:4, label:'Très forte', pression:'> 36 mmHg',  col:'#e06060', bg:'rgba(224,96,96,.08)',   bdr:'rgba(224,96,96,.3)',   pathos:'Ulcère veineux, lymphœdème sévère',                    contre:'Prescription médicale obligatoire' },
+];
+
+const DISPOSITIFS = [
+  { id:'bas_cuisse',   label:'Bas de contention cuisse', icon:'🦵', mesures:['cheville','mollet','cuisse','hauteur_jambe'] },
+  { id:'bas_genou',    label:'Bas de contention genou',  icon:'🦿', mesures:['cheville','mollet','hauteur_mollet'] },
+  { id:'collant',      label:'Collant de contention',    icon:'👖', mesures:['cheville','mollet','cuisse','hauteur_jambe','taille_hanches'] },
+  { id:'bande',        label:'Bande de contention',      icon:'🩹', mesures:['cheville','mollet'] },
+];
+
+// Grilles de tailles (simplifiées, indicatives)
+const TAILLE_GRILLES = {
+  bas_genou: [
+    { taille:'S',  cheville:[17,20], mollet:[27,31] },
+    { taille:'M',  cheville:[20,23], mollet:[31,36] },
+    { taille:'L',  cheville:[23,26], mollet:[36,42] },
+    { taille:'XL', cheville:[26,30], mollet:[42,49] },
+  ],
+  bas_cuisse: [
+    { taille:'S',  cheville:[17,20], mollet:[27,31], cuisse:[40,50] },
+    { taille:'M',  cheville:[20,23], mollet:[31,36], cuisse:[50,60] },
+    { taille:'L',  cheville:[23,26], mollet:[36,42], cuisse:[60,70] },
+    { taille:'XL', cheville:[26,30], mollet:[42,49], cuisse:[70,82] },
+  ],
+  collant: [
+    { taille:'S',  cheville:[17,20], mollet:[27,32] },
+    { taille:'M',  cheville:[20,23], mollet:[32,37] },
+    { taille:'L',  cheville:[23,26], mollet:[37,43] },
+    { taille:'XL', cheville:[26,30], mollet:[43,50] },
+  ],
+  bande: [
+    { taille:'Standard', cheville:[0,50], mollet:[0,50] },
+  ],
+};
+
+const CONTRE_INDICATIONS = [
+  { id:'arterite',  label:'Artériopathie oblitérante (IOTD < 0,6)', icon:'🚫', bloquant:true },
+  { id:'dermo',     label:'Dermatose ou plaie infectée cutanée',      icon:'🩹', bloquant:true },
+  { id:'phlegmon',  label:'Phlébite septique / phlegmon',             icon:'⚠️', bloquant:true },
+  { id:'ic',        label:'Insuffisance cardiaque décompensée',        icon:'❤️', bloquant:false },
+  { id:'neuropathie',label:'Neuropathie diabétique sévère',           icon:'🩺', bloquant:false },
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let S = {
+  view:'welcome',
+  patient:{
+    prenom:'Éliane', sexe:'F', age:62, poids:72, taille:164,
+    pathologie:'varices', contreIndications:[]
+  },
+  mesures:{
+    cheville:22, mollet:34, cuisse:52, hauteur_jambe:38,
+    hauteur_mollet:38, taille_hanches:92
+  },
+  rx:{ dispositif:'bas_genou', classe:2, cote:'bilateral' },
+  analyse:'', loading:false, showKey:false,
+  apiKey:localStorage.getItem('simcont_key')||'',
+  apiKeySaved:!!localStorage.getItem('simcont_key'),
+};
+
+// ═══════════════════════════════════════
+//  LOGIQUE
+// ═══════════════════════════════════════
+function recommandeClasse(){
+  const pa = PATHOLOGIES.find(p=>p.id===S.patient.pathologie);
+  return pa ? pa.classe : 2;
+}
+
+function recommandeTaille(){
+  const grille = TAILLE_GRILLES[S.rx.dispositif] || TAILLE_GRILLES.bas_genou;
+  const m = S.mesures;
+  for(const t of grille){
+    const ok_ch = !t.cheville || (m.cheville >= t.cheville[0] && m.cheville <= t.cheville[1]);
+    const ok_mo = !t.mollet   || (m.mollet   >= t.mollet[0]   && m.mollet   <= t.mollet[1]);
+    const ok_cu = !t.cuisse   || (m.cuisse   >= t.cuisse[0]   && m.cuisse   <= t.cuisse[1]);
+    if(ok_ch && ok_mo && ok_cu) return t.taille;
+  }
+  return 'Mesures hors grille standard';
+}
+
+function hasContreIndic(){
+  return S.patient.contreIndications.some(id => {
+    const ci = CONTRE_INDICATIONS.find(c=>c.id===id);
+    return ci && ci.bloquant;
+  });
+}
+
+function ageLabel(a){
+  if(a<18)return 'Adolescent';if(a<65)return 'Adulte';return 'Personne âgée';
+}
+function dispObj(){ return DISPOSITIFS.find(d=>d.id===S.rx.dispositif)||DISPOSITIFS[0] }
+function pathoObj(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0] }
+function classeObj(){ return CLASSES.find(c=>c.id===S.rx.classe)||CLASSES[1] }
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(scrollTop=false){
+  const pr    = S.patient.prenom;
+  const pa    = pathoObj();
+  const di    = dispObj();
+  const cl    = classeObj();
+  const taille= recommandeTaille();
+  const clRec = recommandeClasse();
+  const ci    = hasContreIndic();
+  const stepNum = {step1:1,step2:2,step3:3,step4:4}[S.view]||0;
+
+  let h='';
+
+  if(S.view!=='welcome'){
+    const steps=['Patient','Physiologie','Mesures & Dispositif','Analyse'];
+    h+=`
+    <div class="site-header">
+      <div class="badge"><svg width="14" height="18" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;vertical-align:middle;margin-right:6px"><path d="M28 8 C26 8 22 10 21 18 L18 85 C17 92 20 100 26 104 C30 107 36 108 42 107 C52 106 60 101 62 95 C64 89 62 82 58 78 L54 72 L54 18 C54 10 50 8 48 8 Z" fill="rgba(184,160,232,0.8)"/><rect x="21" y="6" width="33" height="5" rx="2.5" fill="#b8a0e8"/><line x1="22" y1="22" x2="53" y2="22" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="21" y1="32" x2="53" y2="32" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="20" y1="44" x2="53" y2="44" stroke="rgba(255,255,255,0.25)" stroke-width="1"/><line x1="20" y1="58" x2="53" y2="58" stroke="rgba(255,255,255,0.2)" stroke-width="1"/></svg>Module 4 · SimCare IFSI</div>
+      <h1>Sim<em>Contention</em></h1>
+      <p>Comprendre la contention veineuse à travers la physiologie du patient</p>
+    </div>
+    <div class="steps-bar">
+      ${steps.map((s,i)=>`
+        <div class="step-dot ${stepNum>i+1?'done':stepNum===i+1?'active':''}">${stepNum>i+1?'✓':i+1}</div>
+        <span class="step-lbl ${stepNum===i+1?'active':''}">${s}</span>
+        ${i<3?'<div class="step-line"></div>':''}
+      `).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+          <div class="badge"><svg width="14" height="18" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;vertical-align:middle;margin-right:6px"><path d="M28 8 C26 8 22 10 21 18 L18 85 C17 92 20 100 26 104 C30 107 36 108 42 107 C52 106 60 101 62 95 C64 89 62 82 58 78 L54 72 L54 18 C54 10 50 8 48 8 Z" fill="rgba(184,160,232,0.8)"/><rect x="21" y="6" width="33" height="5" rx="2.5" fill="#b8a0e8"/><line x1="22" y1="22" x2="53" y2="22" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="21" y1="32" x2="53" y2="32" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="20" y1="44" x2="53" y2="44" stroke="rgba(255,255,255,0.25)" stroke-width="1"/><line x1="20" y1="58" x2="53" y2="58" stroke="rgba(255,255,255,0.2)" stroke-width="1"/></svg>Module 4 · SimCare IFSI</div>
+          <h1>Sim<em>Contention</em></h1>
+        </div>`;
+  }
+
+  h+='<div class="wrap">';
+
+  // ─── WELCOME ──────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(184,160,232,.16)">
+      <div class="welcome">
+        <span class="welcome-icon" style="font-size:unset;display:flex;justify-content:center;margin-bottom:18px">
+          <svg width="90" height="110" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Tige du bas (jambe) -->
+            <path d="M28 8 C26 8 22 10 21 18 L18 85 C17 92 20 100 26 104 C30 107 36 108 42 107 C52 106 60 101 62 95 C64 89 62 82 58 78 L54 72 L54 18 C54 10 50 8 48 8 Z" fill="url(#grad_leg)" stroke="rgba(184,160,232,0.5)" stroke-width="1.2"/>
+            <!-- Pied -->
+            <path d="M18 85 C17 92 20 100 26 104 C30 107 36 108 42 107 C48 106 55 103 59 98 L65 90 C67 87 66 83 63 81 L58 78 L54 72 L50 85 C48 90 43 93 37 93 C31 93 26 89 25 85 Z" fill="url(#grad_foot)" stroke="rgba(184,160,232,0.5)" stroke-width="1.2"/>
+            <!-- Pointe du pied (orteil ouvert) -->
+            <path d="M59 98 C61 95 63 92 64 88 L65 90 C64 93 62 96 59 98 Z" fill="rgba(184,160,232,0.15)"/>
+            <!-- Lignes de compression (gradient serré en bas, espacé en haut) -->
+            <line x1="22" y1="22" x2="53" y2="22" stroke="rgba(184,160,232,0.22)" stroke-width="0.8"/>
+            <line x1="21" y1="28" x2="53" y2="28" stroke="rgba(184,160,232,0.22)" stroke-width="0.8"/>
+            <line x1="21" y1="34" x2="53" y2="34" stroke="rgba(184,160,232,0.22)" stroke-width="0.8"/>
+            <line x1="21" y1="40" x2="53" y2="40" stroke="rgba(184,160,232,0.22)" stroke-width="0.8"/>
+            <line x1="21" y1="47" x2="53" y2="47" stroke="rgba(184,160,232,0.20)" stroke-width="0.8"/>
+            <line x1="20" y1="54" x2="53" y2="54" stroke="rgba(184,160,232,0.18)" stroke-width="0.8"/>
+            <line x1="20" y1="62" x2="53" y2="62" stroke="rgba(184,160,232,0.16)" stroke-width="0.8"/>
+            <line x1="19" y1="70" x2="53" y2="70" stroke="rgba(184,160,232,0.14)" stroke-width="0.8"/>
+            <!-- Bord supérieur (élastique) -->
+            <rect x="21" y="6" width="33" height="6" rx="3" fill="url(#grad_top)" opacity="0.9"/>
+            <!-- Flèche pression dégradée sur le côté -->
+            <g opacity="0.6">
+              <line x1="14" y1="20" x2="14" y2="80" stroke="url(#grad_arrow)" stroke-width="1.5"/>
+              <polygon points="14,14 11,22 17,22" fill="#b8a0e8" opacity="0.7"/>
+              <text x="6" y="52" font-size="6" fill="#8a7fa0" font-family="monospace" transform="rotate(-90,6,52)" text-anchor="middle">mmHg</text>
+            </g>
+            <!-- Reflet brillant -->
+            <path d="M32 10 C30 12 29 18 30 30 C31 40 33 45 35 44 C33 35 32 22 34 11 Z" fill="white" opacity="0.08"/>
+            <defs>
+              <linearGradient id="grad_leg" x1="21" y1="8" x2="54" y2="90" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#c4a8f0" stop-opacity="0.25"/>
+                <stop offset="60%" stop-color="#9b7fc4" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#7a5fa8" stop-opacity="0.45"/>
+              </linearGradient>
+              <linearGradient id="grad_foot" x1="18" y1="85" x2="65" y2="108" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7a5fa8" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#5a3f88" stop-opacity="0.55"/>
+              </linearGradient>
+              <linearGradient id="grad_top" x1="21" y1="6" x2="54" y2="6" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#b8a0e8"/>
+                <stop offset="100%" stop-color="#9b7fc4"/>
+              </linearGradient>
+              <linearGradient id="grad_arrow" x1="14" y1="14" x2="14" y2="80" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#b8a0e8"/>
+                <stop offset="100%" stop-color="#3d3550"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <p>Poser un bas de contention sans comprendre pourquoi, pour qui, et à quelle pression, c'est agir à l'aveugle. <strong>SimContention</strong> lie chaque décision à la physiologie veineuse du patient.</p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez le patient</strong> — pathologie veineuse, facteurs de risque, contre-indications : tout change la prescription</span></div>
+          <div class="pt"><span class="pt-i">🫀</span><span class="pt-t"><strong>Visualisez le retour veineux</strong> — comprenez ce que la pression de compression représente dans ses veines, pour ce profil précis</span></div>
+          <div class="pt"><span class="pt-i">📏</span><span class="pt-t"><strong>Prenez les mesures</strong> — cheville, mollet, cuisse : chaque centimètre compte pour une contention efficace et non dangereuse</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analysez la cohérence</strong> — classe, dispositif, taille recommandée, signes de surveillance spécifiques</span></div>
+        </div>
+        <button class="btn-p" onclick="go('step1')">Construire un patient →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 1 — PATIENT ───────────────────────────────────────
+  else if(S.view==='step1'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(184,160,232,.16)">
+      <div class="card-title" style="color:var(--em)">👤 Votre patient</div>
+      <div class="card-sub">La pathologie veineuse et les contre-indications déterminent si la contention est indiquée, et à quelle classe.</div>
+      <div class="col">
+
+        <div>
+          <label class="lbl">Prénom</label>
+          <input type="text" value="${esc(S.patient.prenom)}" placeholder="Ex : Éliane, Marc, Fatima…" oninput="up('prenom',this.value)">
+        </div>
+
+        <div>
+          <label class="lbl">Sexe biologique</label>
+          <div class="grid2">
+            ${[{v:'F',l:'Femme',i:'👩'},{v:'H',l:'Homme',i:'👨'}].map(s=>`
+              <div class="sel ${S.patient.sexe===s.v?'on':''}" style="${S.patient.sexe===s.v?'justify-content:center;flex-direction:column;text-align:center;padding:16px 8px;':'justify-content:center;flex-direction:column;text-align:center;padding:16px 8px;'}" onclick="up('sexe','${s.v}')">
+                <span style="font-size:28px">${s.i}</span>
+                <span style="font-size:13px;margin-top:5px">${s.l}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="lbl-row">
+            <label class="lbl" style="margin:0">Âge</label>
+            <span><span class="lbl-val">${S.patient.age} ans</span><span style="font-size:11px;color:var(--txt3);margin-left:6px">${ageLabel(S.patient.age)}</span></span>
+          </div>
+          <input type="range" min="15" max="95" value="${S.patient.age}" oninput="up('age',+this.value)">
+          <div class="range-lbl"><span>15</span><span>Adulte</span><span>65+</span></div>
+        </div>
+
+        <div class="grid2">
+          <div>
+            <div class="lbl-row"><label class="lbl" style="margin:0">Poids</label><span class="lbl-val">${S.patient.poids} kg</span></div>
+            <input type="range" min="40" max="200" value="${S.patient.poids}" oninput="up('poids',+this.value)">
+          </div>
+          <div>
+            <div class="lbl-row"><label class="lbl" style="margin:0">Taille</label><span class="lbl-val">${S.patient.taille} cm</span></div>
+            <input type="range" min="140" max="210" value="${S.patient.taille}" oninput="up('taille',+this.value)">
+          </div>
+        </div>
+
+        <div>
+          <label class="lbl">Pathologie / indication clinique</label>
+          <div class="col8">
+            ${PATHOLOGIES.map(p=>`
+              <div class="sel ${S.patient.pathologie===p.id?'on':''}" onclick="up('pathologie','${p.id}')">
+                <span class="si">${p.icon}</span>
+                <div>
+                  <div style="font-weight:500">${p.label}</div>
+                  <div class="sd">Classe recommandée : ${p.classe}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <label class="lbl">Contre-indications à vérifier <span style="color:var(--txt3);font-size:10px;letter-spacing:0;text-transform:none">(sélection multiple)</span></label>
+          <div class="col8">
+            ${CONTRE_INDICATIONS.map(ci=>`
+              <div class="sel ${S.patient.contreIndications.includes(ci.id)?'on':''}" onclick="toggleCI('${ci.id}')" style="${ci.bloquant?'border-color:rgba(224,96,96,.2)':''}">
+                <span class="si">${ci.icon}</span>
+                <div>
+                  <div>${ci.label}</div>
+                  ${ci.bloquant?'<div class="sd" style="color:#e06060">Contre-indication formelle</div>':'<div class="sd">Prudence renforcée</div>'}
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    ${ci?`<div class="info info-red" style="margin-bottom:14px">
+      🚫 <strong>Contre-indication formelle détectée.</strong> La contention est contre-indiquée. Alertez le médecin avant tout acte.
+    </div>`:''}
+
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-p" onclick="go('step2')">Voir sa physiologie veineuse →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 2 — PHYSIOLOGIE VEINEUSE ─────────────────────────
+  else if(S.view==='step2'){
+    const imc = Math.round(S.patient.poids / ((S.patient.taille/100)**2));
+    const corpulence = imc<18.5?'Insuffisance pondérale':imc<25?'Poids normal':imc<30?'Surpoids':'Obésité';
+    const risqueOedeme = S.patient.age>65||imc>30||S.patient.pathologie==='lymphoedeme'||S.patient.pathologie==='ulcere'?'élevé':S.patient.pathologie==='tvp_traitee'||S.patient.pathologie==='tved'?'modéré':'faible';
+    const rl = risqueOedeme==='élevé'?{col:'#e06060',bg:'rgba(224,96,96,.08)',bdr:'rgba(224,96,96,.25)'}
+             : risqueOedeme==='modéré'?{col:'#e8c46a',bg:'rgba(232,196,106,.08)',bdr:'rgba(232,196,106,.25)'}
+             : {col:'#72c98a',bg:'rgba(114,201,138,.08)',bdr:'rgba(114,201,138,.25)'};
+    const pressionHydro = Math.round(80 + (S.patient.poids * 0.5));
+    const retourVeineux = risqueOedeme==='élevé'?'Significativement réduit':risqueOedeme==='modéré'?'Modérément réduit':'Normal ou légèrement altéré';
+
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(94,207,190,.16)">
+      <div class="card-title" style="color:var(--teal)">🫀 Physiologie veineuse de ${esc(pr)||'ce patient'}</div>
+      <div class="card-sub">Avant de choisir une contention — comprendre l'état du retour veineux de cette personne précise, dans ce corps précis.</div>
+
+      <!-- Schéma jambe simplifié -->
+      <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap">
+        <div style="flex-shrink:0;width:130px">
+          <div style="text-align:center;font-size:11px;color:var(--txt3);margin-bottom:10px;font-family:'Fira Mono',monospace;letter-spacing:1px;text-transform:uppercase">Vue latérale</div>
+          <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:2px">
+            <!-- Cuisse -->
+            <div style="width:80px;height:70px;background:rgba(184,160,232,.08);border:1.5px solid rgba(184,160,232,.2);border-radius:40px 40px 20px 20px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--txt3)">Cuisse</div>
+            <!-- Genou -->
+            <div style="width:68px;height:30px;background:rgba(184,160,232,.04);border:1px solid rgba(184,160,232,.12);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--txt3)">Genou</div>
+            <!-- Mollet -->
+            <div style="width:72px;height:80px;background:rgba(184,160,232,.08);border:1.5px solid rgba(184,160,232,.2);border-radius:8px 8px 20px 20px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--txt3)">Mollet</div>
+            <!-- Cheville -->
+            <div style="width:58px;height:28px;background:rgba(184,160,232,.06);border:1px solid rgba(184,160,232,.15);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--txt3)">Cheville</div>
+            <!-- Pied -->
+            <div style="width:80px;height:24px;background:rgba(184,160,232,.04);border:1px solid rgba(184,160,232,.1);border-radius:0 0 10px 10px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--txt3)">Pied</div>
+            <!-- Flèche retour veineux -->
+            <div style="position:absolute;right:-16px;top:10%;height:80%;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
+              <span style="font-size:10px;color:var(--teal)">↑</span>
+              <div style="width:2px;flex:1;background:linear-gradient(to top,rgba(94,207,190,.5),rgba(94,207,190,.1));margin:2px 0"></div>
+              <span style="font-size:9px;color:var(--teal);writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:1px">retour veineux</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1;min-width:200px">
+          <div style="background:${rl.bg};border:1px solid ${rl.bdr};border-radius:12px;padding:14px;margin-bottom:12px">
+            <div style="color:${rl.col};font-size:13px;font-weight:600;margin-bottom:5px">Retour veineux : ${retourVeineux}</div>
+            <div style="font-size:12px;color:var(--txt3);line-height:1.6">
+              ${S.patient.pathologie==='varices'?`Les valvules des veines superficielles de ${esc(pr)||'ce patient'} sont défaillantes — le sang stagne au lieu de remonter.`
+              :S.patient.pathologie==='tved'||S.patient.pathologie==='tvp_traitee'?`Risque de thrombus. La pression de compression aide à maintenir le flux veineux et prévenir la stase.`
+              :S.patient.pathologie==='lymphoedeme'?`Le système lymphatique ne draine plus correctement — l'œdème s'accumule par gravité.`
+              :`Le retour veineux est compromis par ${pa.label.toLowerCase()} — la contention soutient mécaniquement les parois veineuses.`}
+            </div>
+          </div>
+          <div class="stat" style="margin-bottom:10px">
+            <span class="stat-v" style="color:var(--teal)">${pressionHydro} mmHg</span>
+            <span class="stat-l">Pression hydrostatique estimée</span>
+            <span class="stat-s">Pression que le sang exerce sur les parois en position debout</span>
+          </div>
+          <div class="stat">
+            <span class="stat-v">${imc}</span>
+            <span class="stat-l">IMC · ${corpulence}</span>
+            <span class="stat-s">${imc>30?'Obésité : mesures du membre plus complexes à prendre':'Impact sur la morphologie du membre'}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Classe recommandée -->
+      <div style="background:rgba(0,0,0,.2);border-radius:13px;padding:16px;margin-bottom:14px">
+        <div class="lbl" style="margin-bottom:10px">Classe de compression recommandée pour ${esc(pr)||'ce patient'}</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="font-family:'Libre Baskerville',serif;font-size:48px;font-weight:700;color:${CLASSES[clRec-1].col};line-height:1">
+            ${clRec}
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:${CLASSES[clRec-1].col}">${CLASSES[clRec-1].label} — ${CLASSES[clRec-1].pression}</div>
+            <div style="font-size:12px;color:var(--txt3);margin-top:4px;line-height:1.5">${CLASSES[clRec-1].pathos}</div>
+          </div>
+        </div>
+      </div>
+
+      ${ci?`<div class="info info-red">🚫 <strong>Contre-indication détectée.</strong> Aucune contention ne doit être posée sans avis médical. Retournez à l'étape 1 pour revoir le profil.</div>`
+         :`<div class="info info-teal">💡 La contention veineuse agit comme une <strong>pompe mécanique externe</strong> — elle comprime les veines superficielles pour augmenter la vitesse du flux veineux de retour. La pression au niveau de la cheville doit toujours être supérieure à celle du mollet.</div>`}
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step1')">← Modifier le patient</button>
+      <button class="btn-p" onclick="go('step3')">Prendre les mesures →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 3 — MESURES & DISPOSITIF ─────────────────────────
+  else if(S.view==='step3'){
+    const taille  = recommandeTaille();
+    const clRec   = recommandeClasse();
+    const cl      = classeObj();
+    const pressPct= Math.min(96, Math.round((cl.id / 4) * 100));
+    const disp    = dispObj();
+
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(184,160,232,.16)">
+      <div class="card-title" style="color:var(--em)">📏 Mesures & Prescription</div>
+      <div class="card-sub">
+        Les mesures se prennent <strong>le matin, avant tout lever</strong>, en position allongée ou assise — jamais debout, jamais en fin de journée. L'œdème fausse tout.
+      </div>
+
+      <!-- Dispositif -->
+      <div style="margin-bottom:22px">
+        <label class="lbl">Dispositif prescrit</label>
+        <div class="col8">
+          ${DISPOSITIFS.map(d=>`
+            <div class="sel ${S.rx.dispositif===d.id?'on':''}" onclick="upRx('dispositif','${d.id}')">
+              <span class="si">${d.icon}</span>
+              <div><div style="font-weight:500">${d.label}</div><div class="sd">${d.mesures.map(m=>m.replace('_',' ')).join(', ')}</div></div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Classe -->
+      <div style="margin-bottom:22px">
+        <label class="lbl">Classe de compression</label>
+        <div class="pression-bar"><div class="pression-cursor" style="left:${pressPct}%"></div></div>
+        <div class="pression-labels"><span>Classe 1 · 10–15 mmHg</span><span>Classe 4 · &gt;36 mmHg</span></div>
+        <div class="grid2" style="margin-top:12px">
+          ${CLASSES.map(c=>`
+            <div class="class-card ${S.rx.classe===c.id?'on':''}" onclick="upRx('classe',${c.id})"
+              style="background:${S.rx.classe===c.id?c.bg:'rgba(255,255,255,.02)'};border-color:${S.rx.classe===c.id?c.col:'rgba(255,255,255,.07)'}">
+              <div class="class-num" style="color:${c.col}">${c.id}</div>
+              <div class="class-label" style="color:${c.col}">${c.label}</div>
+              <div class="class-pression">${c.pression}</div>
+              <div class="class-pathos" style="color:var(--txt3)">${c.pathos}</div>
+            </div>`).join('')}
+        </div>
+        ${S.rx.classe!==clRec?`<div class="info info-amb" style="margin-top:10px">⚠️ Vous avez sélectionné la classe ${S.rx.classe} — la classe recommandée pour <strong>${pa.label}</strong> est la <strong>classe ${clRec}</strong>. Vérifiez la prescription médicale.</div>`:''}
+      </div>
+
+      <!-- Côté -->
+      <div style="margin-bottom:22px">
+        <label class="lbl">Côté à appareiller</label>
+        <div class="grid3">
+          ${['bilateral','gauche','droit'].map(c=>`
+            <div class="sel ${S.rx.cote===c?'on':''}" style="justify-content:center;padding:12px 8px" onclick="upRx('cote','${c}')">
+              <span>${c==='bilateral'?'🦵🦵':c==='gauche'?'◀ Gauche':'Droit ▶'}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Mesures -->
+      <div class="mesure-box">
+        <div class="mesure-title">📐 Mensurations du membre <span style="font-size:11px;font-weight:400;color:var(--txt3);font-family:'Epilogue',sans-serif">— en cm, patient allongé, le matin</span></div>
+
+        ${[
+          { key:'cheville',       label:'Tour de cheville',      pos:'Point le plus fin au-dessus de la malléole',           show:true },
+          { key:'mollet',         label:'Tour de mollet',         pos:'Circonférence maximale du mollet',                     show:true },
+          { key:'cuisse',         label:'Tour de cuisse',         pos:'À 5 cm sous le pli fessier',                          show:['bas_cuisse','collant'].includes(S.rx.dispositif) },
+          { key:'hauteur_mollet', label:'Hauteur cheville→genou', pos:'Du sol à la face postérieure du genou',               show:['bas_genou'].includes(S.rx.dispositif) },
+          { key:'hauteur_jambe',  label:'Hauteur cheville→cuisse',pos:'Du sol au pli fessier',                               show:['bas_cuisse','collant'].includes(S.rx.dispositif) },
+          { key:'taille_hanches', label:'Tour de taille/hanches', pos:'Pour le collant uniquement',                          show:S.rx.dispositif==='collant' },
+        ].filter(m=>m.show).map(m=>`
+          <div class="mesure-field">
+            <label>${m.label}</label>
+            <input type="text" inputmode="decimal" value="${S.mesures[m.key]}"
+              oninput="upMes('${m.key}',this.value)"
+              style="border-color:rgba(184,160,232,.3)">
+            <span class="unit">cm</span>
+          </div>
+          <div style="font-size:11px;color:var(--txt3);margin:-4px 0 10px 154px;font-style:italic">${m.pos}</div>
+        `).join('')}
+      </div>
+
+      <!-- Taille recommandée -->
+      <div style="background:rgba(184,160,232,.07);border:1.5px solid rgba(184,160,232,.25);border-radius:14px;padding:20px;text-align:center">
+        <div class="lbl" style="margin-bottom:8px">Taille recommandée selon les mesures</div>
+        <div style="font-family:'Libre Baskerville',serif;font-size:52px;font-weight:700;color:var(--em);line-height:1">${taille}</div>
+        <div style="font-size:13px;color:var(--txt3);margin-top:6px">${dispObj().label} · Classe ${S.rx.classe} · ${classeObj().pression}</div>
+        ${taille==='Mesures hors grille standard'?'<div class="info info-amb" style="margin-top:10px;text-align:left">⚠️ Les mesures ne correspondent à aucune taille standard. Une contention sur mesure est nécessaire.</div>':''}
+      </div>
+
+      <div class="info info-em" style="margin-top:14px">
+        ⏰ <strong>Règle d'or :</strong> toujours poser le bas ou la bande <strong>avant le lever</strong>, jamais après avoir marché ou rester debout. L'œdème formé en journée empêche une mise en place correcte et réduit l'efficacité.
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step2')">← Physiologie</button>
+      <button class="btn-p" onclick="goAnalyse()">Analyser la cohérence →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 4 — ANALYSE ──────────────────────────────────────
+  else if(S.view==='step4'){
+    const taille = recommandeTaille();
+    const clRec  = recommandeClasse();
+    const cl     = classeObj();
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(184,160,232,.2)">
+      <div class="card-title" style="color:var(--em)">🔬 Analyse clinique — ${esc(pr)||'ce patient'}</div>
+
+      <div class="recap">
+        ${[
+          ['Patient',      `${esc(pr)||'—'}, ${S.patient.sexe==='H'?'♂':'♀'} ${S.patient.age} ans · ${S.patient.poids} kg`],
+          ['Pathologie',   pa.label],
+          ['Dispositif',   dispObj().label],
+          ['Classe prescrite', `Classe ${S.rx.classe} · ${cl.pression}`],
+          ['Classe recommandée', `Classe ${clRec} ${S.rx.classe===clRec?'✓':'⚠️'}`],
+          ['Taille',       taille],
+          ['Cheville / Mollet', `${S.mesures.cheville} cm / ${S.mesures.mollet} cm`],
+          ['Côté',         S.rx.cote==='bilateral'?'Bilatéral':S.rx.cote],
+        ].map(([k,v])=>`<div class="rc"><div class="rc-k">${k}</div><div class="rc-v">${v}</div></div>`).join('')}
+      </div>
+
+      ${ci?`<div class="info info-red" style="margin-bottom:16px">🚫 <strong>Contre-indication présente.</strong> L'analyse est bloquée — aucune contention ne doit être posée.</div>`:''}
+
+      <hr class="div">
+      <label class="lbl" style="margin-bottom:14px">Ce que dit la physiologie veineuse</label>
+
+      ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse clinique en cours…</div></div>`:''}
+
+      ${!S.loading && !S.analyse?`
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:22px">
+            <div style="font-size:38px;margin-bottom:10px">🔒</div>
+            <div style="font-family:'Libre Baskerville',serif;font-size:18px;font-weight:700;color:var(--txt);margin-bottom:5px">Analyse clinique — Accès Premium</div>
+            <div style="font-size:13px;color:var(--txt3)">Les étapes 1 à 3 sont gratuites et fonctionnent sans connexion</div>
+          </div>
+          <div class="grid2" style="margin-bottom:18px">
+            <div style="border:1px solid rgba(114,201,138,.2);background:rgba(114,201,138,.05);border-radius:12px;padding:14px">
+              <div style="color:var(--green);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✓ GRATUIT</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Étape 1 — Patient<br>Étape 2 — Physiologie<br>Étape 3 — Mesures</div>
+            </div>
+            <div style="border:1px solid rgba(184,160,232,.25);background:rgba(184,160,232,.06);border-radius:12px;padding:14px">
+              <div style="color:var(--em);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✦ PREMIUM</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Étape 4 — Analyse IA<br>Cohérence clinique<br>Signes de surveillance</div>
+            </div>
+          </div>
+          <div class="grid2" style="margin-bottom:20px">
+            <div style="border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center;background:rgba(255,255,255,.02)">
+              <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Abonnement</div>
+              <div style="font-size:24px;font-weight:700;color:var(--txt)">9,90€<span style="font-size:12px;font-weight:400;color:var(--txt3)">/mois</span></div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">Tous les modules SimCare</div>
+            </div>
+            <div style="border:1px solid rgba(184,160,232,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(184,160,232,.05)">
+              <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--em);margin-bottom:8px">Achat unique</div>
+              <div style="font-size:24px;font-weight:700;color:var(--txt)">24,90€<span style="font-size:12px;font-weight:400;color:var(--txt3)">/module</span></div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">SimContention à vie</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:12px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:13px 32px;border-radius:12px;background:linear-gradient(135deg,var(--em2),var(--em));color:#0d0a14;font-weight:700;font-size:15px;text-decoration:none">
+              Obtenir l'accès →
+            </a>
+            <div style="margin-top:8px;font-size:12px;color:var(--txt3)">
+              IFSI & établissements : <a href="mailto:contact@simcare.fr" style="color:var(--em);text-decoration:none">tarif institution sur devis</a>
+            </div>
+          </div>
+          <div style="text-align:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace;letter-spacing:.5px">
+              🔑 Espace formateur / développeur
+            </button>
+          </div>
+        </div>
+        ${S.showKey?`<div class="apikey-box">
+          <p>Clé API Anthropic — réservé au formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
+          <div class="apikey-row">
+            <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+            <button onclick="saveKey()">Sauver</button>
+          </div>
+          ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:12px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
+        </div>`:''}
+      `:''}
+
+      ${!S.loading && S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
+    </div>
+
+    <div class="nav-col">
+      <div class="nav-row">
+        <button class="btn-g" onclick="go('step3')">← Modifier les mesures</button>
+        <button class="btn-g" onclick="runAnalyse()" style="color:var(--em);border-color:rgba(184,160,232,.22)">↺ Relancer</button>
+      </div>
+      <button class="btn-g btn-full" onclick="reset()" style="color:var(--teal);border-color:rgba(94,207,190,.2)">✦ Nouveau patient</button>
+    </div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+  if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
+  if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(enhanceSliders,0);
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){S.view=v;render(true);}
+function up(k,v){S.patient={...S.patient,[k]:v};render()}
+function upRx(k,v){S.rx={...S.rx,[k]:v};render()}
+function upMes(k,v){S.mesures={...S.mesures,[k]:parseFloat(v)||0};render()}
+function goAnalyse(){S.view='step4';S.analyse='';render(true);runAnalyse();}
+function saveKey(){localStorage.setItem('simcont_key',S.apiKey);S.apiKeySaved=true;render()}
+function toggleCI(id){
+  const f=S.patient.contreIndications;
+  S.patient.contreIndications=f.includes(id)?f.filter(x=>x!==id):[...f,id];
+  render(true);
+}
+function reset(){
+  S={...S,view:'step1',
+    patient:{prenom:'',sexe:'F',age:55,poids:68,taille:165,pathologie:'varices',contreIndications:[]},
+    mesures:{cheville:22,mollet:34,cuisse:52,hauteur_jambe:38,hauteur_mollet:38,taille_hanches:90},
+    rx:{dispositif:'bas_genou',classe:2,cote:'bilateral'},analyse:''};
+  render();
+}
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  if(hasContreIndic()){S.analyse='**🚫 Analyse bloquée — contre-indication formelle présente.**\n\nAucune contention ne doit être posée pour ce patient sans avis médical explicite.';S.loading=false;render();return}
+  const pr   = S.patient.prenom||'le patient';
+  const pa   = pathoObj();
+  const di   = dispObj();
+  const cl   = classeObj();
+  const clRec= recommandeClasse();
+  const taille=recommandeTaille();
+  const ciLabels=S.patient.contreIndications.map(id=>CONTRE_INDICATIONS.find(c=>c.id===id)?.label||id).join(', ')||'aucune';
+
+  S.loading=true;S.analyse='';render();
+
+  const prompt=`Tu es un formateur infirmier expert en phlébologie et contention veineuse. Un étudiant IFSI vient de simuler une prise en charge pour contention veineuse. Aide-le à développer son intuition clinique — pas à mémoriser des tableaux de tailles.
+
+PATIENT : ${pr}, ${S.patient.sexe==='H'?'homme':'femme'} de ${S.patient.age} ans, ${S.patient.poids} kg, ${S.patient.taille} cm.
+Pathologie / indication : ${pa.label}.
+Contre-indications signalées : ${ciLabels}.
+
+MESURES PRISES :
+- Tour de cheville : ${S.mesures.cheville} cm
+- Tour de mollet : ${S.mesures.mollet} cm
+- Tour de cuisse : ${S.mesures.cuisse} cm
+
+PRESCRIPTION SIMULÉE :
+- Dispositif : ${di.label}
+- Classe : ${cl.id} (${cl.label} · ${cl.pression})
+- Classe recommandée pour cette pathologie : ${clRec}
+- Taille calculée : ${taille}
+- Côté : ${S.rx.cote}
+
+Réponds avec EXACTEMENT ces 4 blocs (titres en gras obligatoires) :
+
+**🩹 Cohérence de la prescription pour ${pr}**
+[2-3 phrases. La classe choisie est-elle adaptée à CETTE pathologie et CE profil ? Lien physiologique direct. Si écart avec la classe recommandée, explique pourquoi c'est problématique ou acceptable.]
+
+**📏 Ce que ces mesures signifient pour CE patient**
+[2-3 phrases. Interpréter les mesures dans le contexte du profil — morphologie, pathologie, IMC. La taille ${taille} est-elle cohérente ? Y a-t-il un risque de mesure inadaptée ?]
+
+**⏰ La règle des règles pour CE patient**
+[2 phrases. Le moment de pose pour CE dispositif avec CETTE pathologie. Pourquoi c'est particulièrement important pour lui/elle.]
+
+**👁️ 3 signes de surveillance spécifiques**
+[3 signes numérotés, chacun expliqué en 1 phrase. Liés à SA pathologie, SA morphologie, SA classe de compression. Par exemple : signes d'ischémie si artériopathie non détectée, compression trop forte, etc.]
+
+Tutoie l'étudiant. Direct, chaleureux, cliniquement précis.`;
+
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1100,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){
+    S.analyse=`**⚠️ Erreur**\n\n${e.message||'Vérifiez votre clé API et votre connexion.'}`;
+  }
+  S.loading=false;render();
+}
+
+render();
+
+// ── ENHANCEMENT SLIDERS : boutons −/+ ──────────────────────
+function enhanceSliders() {
+  document.querySelectorAll('input[type=range]').forEach(input => {
+    if (input.closest('.sl-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'sl-wrap';
+    input.parentNode.insertBefore(wrap, input);
+
+    const btnM = document.createElement('button');
+    btnM.className = 'sl-btn'; btnM.textContent = '−'; btnM.type = 'button';
+    btnM.addEventListener('click', e => {
+      e.preventDefault();
+      const step = parseFloat(input.step) || 1;
+      const nv   = Math.max(parseFloat(input.min), parseFloat(input.value) - step);
+      input.value = nv;
+      input.dispatchEvent(new Event('input', { bubbles:true }));
+    });
+
+    const btnP = document.createElement('button');
+    btnP.className = 'sl-btn'; btnP.textContent = '+'; btnP.type = 'button';
+    btnP.addEventListener('click', e => {
+      e.preventDefault();
+      const step = parseFloat(input.step) || 1;
+      const nv   = Math.min(parseFloat(input.max), parseFloat(input.value) + step);
+      input.value = nv;
+      input.dispatchEvent(new Event('input', { bubbles:true }));
+    });
+
+    wrap.appendChild(btnM);
+    wrap.appendChild(input);
+    wrap.appendChild(btnP);
+  });
+}
+
+</script>
+</body>
+</html>
