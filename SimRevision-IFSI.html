@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimRévision · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #0e0e14;
+  --bg2:   #14141e;
+  --card:  rgba(255,255,255,.032);
+  --bdr:   rgba(255,255,255,.08);
+  --txt:   #f0eeff;
+  --txt2:  #7870a0;
+  --txt3:  #322840;
+  --em:    #a060ff;
+  --em2:   #8040e0;
+  --lime:  #b0f060;
+  --teal:  #40e0d0;
+  --rose:  #ff6090;
+  --amber: #ffb040;
+  --blue:  #40a0ff;
+  /* Années */
+  --a1:    #40e0d0;
+  --a2:    #a060ff;
+  --a3:    #ff6090;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 10% 5%,  rgba(160,96,255,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 95%, rgba(176,240,96,.04) 0%,transparent 50%);
+  color:var(--txt); min-height:100vh; padding-bottom:80px;
+}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+
+/* ── HEADER ── */
+.site-header{text-align:center;padding:40px 24px 20px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(160,96,255,.08);border:1px solid rgba(160,96,255,.22);
+  color:var(--em);padding:5px 16px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+}
+.site-header h1{
+  font-family:'Unbounded',sans-serif;
+  font-size:clamp(22px,5vw,38px);font-weight:700;letter-spacing:-1px;line-height:1.1;
+}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt3);font-size:13px;margin-top:8px;font-style:italic}
+
+/* ── ONGLETS ANNÉE ── */
+.annee-tabs{display:flex;gap:8px;padding:0 0 18px;flex-wrap:wrap}
+.annee-tab{
+  padding:8px 20px;border-radius:30px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .18s;-webkit-tap-highlight-color:transparent;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.annee-tab.a1.active{background:rgba(64,224,208,.1);border-color:rgba(64,224,208,.4);color:var(--a1)}
+.annee-tab.a2.active{background:rgba(160,96,255,.1);border-color:rgba(160,96,255,.4);color:var(--a2)}
+.annee-tab.a3.active{background:rgba(255,96,144,.1);border-color:rgba(255,96,144,.4);color:var(--a3)}
+.annee-tab:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+
+/* ── MODES ── */
+.mode-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.mode-tab{
+  flex:1;padding:10px 12px;border-radius:12px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:13px;font-weight:600;cursor:pointer;
+  text-align:center;transition:all .18s;min-width:100px;
+  -webkit-tap-highlight-color:transparent;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.mode-tab.active{background:rgba(160,96,255,.1);border-color:rgba(160,96,255,.4);color:var(--em)}
+.mode-tab:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:18px;padding:24px;margin-bottom:14px}
+
+/* ── QCM ── */
+.qcm-progress{
+  background:rgba(255,255,255,.06);border-radius:100px;height:6px;margin-bottom:18px;overflow:hidden;
+}
+.qcm-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--em2),var(--em));transition:width .5s ease}
+.qcm-meta{display:flex;justify-content:space-between;font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:16px}
+.qcm-ue{display:inline-block;padding:3px 10px;border-radius:20px;font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:1px;background:rgba(160,96,255,.1);border:1px solid rgba(160,96,255,.25);color:var(--em);margin-bottom:12px}
+.qcm-question{
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(15px,2.5vw,18px);
+  font-weight:600;line-height:1.5;margin-bottom:20px;color:var(--txt);
+}
+.qcm-opts{display:flex;flex-direction:column;gap:8px}
+.qcm-opt{
+  padding:14px 18px;border-radius:12px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.025);color:var(--txt2);
+  cursor:pointer;font-size:14px;line-height:1.5;
+  transition:all .18s;display:flex;align-items:flex-start;gap:12px;
+  -webkit-tap-highlight-color:transparent;
+}
+.qcm-opt:hover{background:rgba(255,255,255,.06);color:var(--txt);border-color:rgba(255,255,255,.15)}
+.qcm-opt.selected{background:rgba(160,96,255,.1);border-color:rgba(160,96,255,.4);color:var(--txt)}
+.qcm-opt.correct{background:rgba(176,240,96,.1);border-color:rgba(176,240,96,.4);color:var(--lime)}
+.qcm-opt.wrong  {background:rgba(255,96,144,.1);border-color:rgba(255,96,144,.4);color:var(--rose)}
+.qcm-letter{
+  width:26px;height:26px;border-radius:50%;border:1.5px solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fira Mono',monospace;font-size:11px;font-weight:500;
+  flex-shrink:0;
+}
+.qcm-explication{
+  background:rgba(160,96,255,.06);border:1px solid rgba(160,96,255,.2);
+  border-radius:12px;padding:14px 16px;margin-top:14px;
+  font-size:14px;color:var(--txt2);line-height:1.75;
+}
+.qcm-explication strong{color:var(--txt)}
+.score-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 18px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:14px;font-weight:500;
+}
+
+/* ── CAS CLINIQUES ── */
+.cas-header{
+  background:linear-gradient(135deg,rgba(160,96,255,.12),rgba(64,160,255,.08));
+  border:1px solid rgba(160,96,255,.2);border-radius:14px;padding:18px;margin-bottom:16px;
+}
+.cas-patient{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
+.cas-context{font-size:14px;color:var(--txt2);line-height:1.7}
+.cas-question{
+  background:rgba(0,0,0,.25);border-left:3px solid var(--em);
+  border-radius:0 10px 10px 0;padding:14px 16px;margin:14px 0;
+  font-size:15px;color:var(--txt);font-weight:500;
+}
+.cas-input{
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:10px;color:var(--txt);padding:12px 14px;
+  font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;
+  outline:none;width:100%;min-height:80px;resize:vertical;
+  transition:border-color .2s;line-height:1.6;
+}
+.cas-input:focus{border-color:rgba(160,96,255,.4)}
+
+/* ── FICHES ── */
+.fiche-card{
+  background:rgba(255,255,255,.025);border:1.5px solid var(--bdr);
+  border-radius:14px;padding:0;overflow:hidden;margin-bottom:10px;
+  cursor:pointer;transition:all .2s;
+}
+.fiche-card:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+.fiche-header{
+  display:flex;align-items:center;gap:12px;padding:16px 18px;
+}
+.fiche-icon{font-size:24px;flex-shrink:0}
+.fiche-title{font-weight:600;font-size:15px}
+.fiche-ue{font-size:11px;color:var(--txt3);font-family:'Fira Mono',monospace;margin-top:2px}
+.fiche-arrow{margin-left:auto;color:var(--txt3);transition:transform .2s}
+.fiche-card.open .fiche-arrow{transform:rotate(90deg)}
+.fiche-body{
+  padding:0 18px 18px;font-size:14px;color:var(--txt2);
+  line-height:1.8;border-top:1px solid var(--bdr);padding-top:14px;
+}
+.fiche-body h4{color:var(--em);font-size:13px;font-weight:600;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.fiche-body ul{padding-left:18px}
+.fiche-body li{margin-bottom:4px}
+.fiche-body strong{color:var(--txt);font-weight:600}
+.fiche-body .mnemo{
+  background:rgba(176,240,96,.06);border:1px solid rgba(176,240,96,.2);
+  border-radius:8px;padding:10px 12px;margin-top:8px;
+  font-family:'Fira Mono',monospace;font-size:13px;color:var(--lime);
+}
+
+/* ── STATS / SCORE ── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-box{background:rgba(0,0,0,.25);border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center}
+.stat-n{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:700;display:block}
+.stat-l{font-size:10px;color:var(--txt3);font-family:'Fira Mono',monospace;letter-spacing:1px;text-transform:uppercase;display:block;margin-top:4px}
+
+/* ── BUTTONS ── */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  border:none;border-radius:12px;color:#0e0e14;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;
+  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
+  border-radius:12px;color:var(--txt2);
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;
+  padding:11px 20px;cursor:pointer;transition:all .18s;
+}
+.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-full{width:100%}
+
+/* ── INFO ── */
+.info{border-radius:11px;padding:12px 15px;font-size:13px;line-height:1.7}
+.info-em {background:rgba(160,96,255,.07);border:1px solid rgba(160,96,255,.2);color:var(--em)}
+.info-grn{background:rgba(176,240,96,.07);border:1px solid rgba(176,240,96,.2);color:var(--lime)}
+.info-amb{background:rgba(255,176,64,.07);border:1px solid rgba(255,176,64,.2);color:var(--amber)}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:28px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt3);font-size:13px;margin-top:10px;font-style:italic}
+
+/* ── WELCOME ── */
+.welcome{text-align:center;padding:4px 0 24px}
+.welcome-icon{font-size:60px;display:block;margin-bottom:16px}
+.welcome p{color:var(--txt2);font-size:15px;line-height:1.8;max-width:480px;margin:0 auto}
+.pts{display:flex;flex-direction:column;gap:12px;margin:20px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:20px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB  {0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+@keyframes popIn {from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+.popin{animation:popIn .25s ease forwards}
+
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .mode-tabs{gap:4px}
+  .mode-tab{font-size:12px;padding:9px 8px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES QCM
+// ═══════════════════════════════════════
+const QCM = {
+  1: [ // 1ère année
+    { ue:'UE 2.1', q:'Quelle est la valeur normale de la pression artérielle chez un adulte sain ?', opts:['80/50 mmHg','120/80 mmHg','150/100 mmHg','90/60 mmHg'], rep:1, expl:'La pression artérielle normale chez l\'adulte est de **120/80 mmHg**. On parle d\'hypertension au-delà de 140/90 mmHg et d\'hypotension en dessous de 90/60 mmHg.' },
+    { ue:'UE 2.1', q:'La fréquence cardiaque normale d\'un adulte au repos est de :', opts:['40–60 bpm','60–100 bpm','100–120 bpm','120–160 bpm'], rep:1, expl:'La **fréquence cardiaque normale** de l\'adulte est de 60 à 100 bpm. En dessous de 60 : bradycardie. Au-dessus de 100 : tachycardie.' },
+    { ue:'UE 2.2', q:'Parmi les éléments suivants, lequel n\'est PAS un signe clinique d\'hypoglycémie ?', opts:['Sueurs froides','Tremblements','Bradycardie','Pâleur'], rep:2, expl:'La bradycardie n\'est PAS un signe d\'hypoglycémie. Les signes adrénergiques de l\'hypoglycémie sont : **sueurs, tremblements, tachycardie, pâleur, anxiété**. La bradycardie est masquée par les bêtabloquants.' },
+    { ue:'UE 4.1', q:'La règle des 5B en administration médicamenteuse comprend :', opts:['Bon patient, Bon médicament, Bonne dose, Bonne voie, Bon moment','Bon patient, Bon médecin, Bon bilan, Bonne voie, Bon moment','Bon patient, Bon médicament, Bonne dose, Bon bilan, Bon moment','Bon patient, Bon médicament, Bonne durée, Bonne voie, Bon médecin'], rep:0, expl:'La règle des **5B** : Bon patient · Bon médicament · Bonne dose · Bonne voie · Bon moment. C\'est la base de la sécurisation de l\'administration médicamenteuse.' },
+    { ue:'UE 1.1', q:'La SpO₂ normale chez un patient BPCO est :', opts:['95–100%','92–95%','88–92%','80–88%'], rep:2, expl:'Chez le patient **BPCO**, la cible SpO₂ est **88–92%**. Une saturation trop élevée (>92%) risque de supprimer la commande ventilatoire hypoxique et d\'aggraver l\'hypercapnie.' },
+    { ue:'UE 2.4', q:'L\'échelle de Glasgow évalue :', opts:['La douleur','La conscience','La saturation','La pression artérielle'], rep:1, expl:'Le **Score de Glasgow** évalue le niveau de conscience sur 3 critères : ouverture des yeux (1–4), réponse verbale (1–5), réponse motrice (1–6). Score total : 3 (coma profond) à 15 (normal).' },
+    { ue:'UE 4.2', q:'Une solution isotonique a une osmolarité de :', opts:['< 280 mOsm/L','280–320 mOsm/L','> 320 mOsm/L','> 500 mOsm/L'], rep:1, expl:'Une solution **isotonique** a une osmolarité proche du plasma : **280–320 mOsm/L**. Hypotonique < 280. Hypertonique > 320. Le NaCl 0,9% et le Ringer Lactate sont isotoniques.' },
+    { ue:'UE 2.1', q:'La fréquence respiratoire normale d\'un adulte au repos est de :', opts:['8–12 cycles/min','12–20 cycles/min','20–30 cycles/min','30–40 cycles/min'], rep:1, expl:'La **fréquence respiratoire normale** de l\'adulte est de 12 à 20 cycles/minute. Bradypnée < 12. Tachypnée > 20. La FR est souvent négligée mais c\'est un signe vital précoce de décompensation.' },
+  ],
+  2: [ // 2ème année
+    { ue:'UE 4.4', q:'Lors d\'une perfusion de NaCl 0,9% 500mL en 4h, le débit en mL/h est de :', opts:['100 mL/h','125 mL/h','150 mL/h','250 mL/h'], rep:1, expl:'Débit = Volume ÷ Durée = **500 ÷ 4 = 125 mL/h**. En gouttes/min (macrogouttes) : 125 ÷ 3 ≈ 42 gouttes/min.' },
+    { ue:'UE 4.4', q:'Quel est le débit d\'O₂ maximal recommandé avec des lunettes nasales ?', opts:['4 L/min','6 L/min','8 L/min','10 L/min'], rep:1, expl:'Le débit maximal avec des **lunettes nasales** est de **6 L/min**. Au-delà, le débit est inefficace et dessèche les muqueuses. Pour des FiO₂ plus élevées, utiliser un masque simple ou haute concentration.' },
+    { ue:'UE 2.6', q:'L\'insuline lente (Lantus®) a une durée d\'action d\'environ :', opts:['4–6 heures','8–12 heures','20–24 heures','48 heures'], rep:2, expl:'L\'**insuline glargine (Lantus®)** est une insuline basale de durée d\'action de **20 à 24 heures**, sans pic marqué. Injectée 1 fois/jour. Ne pas la mélanger à une autre insuline.' },
+    { ue:'UE 4.7', q:'La contention de classe II correspond à une pression de :', opts:['10–15 mmHg','15–20 mmHg','20–36 mmHg','> 36 mmHg'], rep:2, expl:'La **classe II** correspond à une compression de **20–36 mmHg**. C\'est la classe la plus prescrite en pratique : varices symptomatiques, TVP, post-opératoire, grossesse compliquée.' },
+    { ue:'UE 2.8', q:'En cas d\'hypoglycémie sévère (< 0,5 g/L) chez un patient inconscient, l\'IDE administre :', opts:['Sucre per os','Glucagon IM','G30% IV','G5% en perfusion lente'], rep:1, expl:'Chez un patient **inconscient**, la voie orale est contre-indiquée (fausse route). L\'IDE administre **Glucagon 1mg en IM ou SC**. L\'injection de G30% IV est réservée au médecin.' },
+    { ue:'UE 4.3', q:'Le score DOLOPLUS-2 seuil de douleur significative est :', opts:['≥ 3','≥ 5','≥ 8','≥ 10'], rep:1, expl:'Le **DOLOPLUS-2** explore 10 items (max 30 points). Un score **≥ 5** signe une douleur significative nécessitant une prise en charge. Utilisé pour les patients non communicants.' },
+    { ue:'UE 4.4', q:'Avant une injection d\'insuline rapide au stylo, l\'IDE doit vérifier :', opts:['La glycémie capillaire uniquement','La glycémie + la prescription + l\'heure du repas','La glycémie + la TA','La prescription uniquement'], rep:1, expl:'Avant toute injection d\'insuline rapide : **glycémie capillaire** (adaptée à la dose) + **prescription médicale** (dose, type, moment) + **heure du repas** (insuline rapide = repas dans les 30 min).' },
+    { ue:'UE 2.11', q:'Une kaliémie à 6,2 mmol/L est :', opts:['Hypokaliémie modérée','Valeur normale','Hyperkaliémie légère','Hyperkaliémie sévère'], rep:3, expl:'La **kaliémie normale** est 3,5–5 mmol/L. K⁺ à 6,2 = **hyperkaliémie sévère** (> 6 mmol/L) — risque de troubles du rythme cardiaque graves. Alerte médicale immédiate.' },
+  ],
+  3: [ // 3ème année
+    { ue:'UE 5.7', q:'Le démarche clinique infirmière comprend, dans l\'ordre :', opts:['Diagnostic → Recueil → Planification → Évaluation','Recueil → Analyse → Planification → Évaluation → Réajustement','Anamnèse → Diagnostic → Soins → Bilan','Prescription → Recueil → Soins → Transmissions'], rep:1, expl:'La **démarche clinique infirmière** suit 5 étapes : **Recueil de données → Analyse/Diagnostic infirmier → Planification → Réalisation → Évaluation**. C\'est un processus cyclique et continu.' },
+    { ue:'UE 3.3', q:'Le secret professionnel de l\'IDE s\'impose vis-à-vis de :', opts:['Le patient uniquement','La famille uniquement','Toute personne sauf l\'équipe soignante et le médecin traitant','Toute personne sans exception'],rep:2, expl:'Le **secret professionnel** (Art. R4311-1) s\'impose à tous, sauf partage possible au sein de l\'**équipe soignante** (secret partagé) et avec le **médecin traitant**. La famille n\'a pas accès sans accord du patient.' },
+    { ue:'UE 4.2', q:'La prévention des escarres passe en priorité par :', opts:['Les pansements hydrocolloïdes préventifs','Les changements de position toutes les 2 à 3 heures','L\'utilisation de matelas anti-escarres uniquement','L\'hydratation cutanée exclusive'], rep:1, expl:'La prévention principale des escarres repose sur la **mobilisation régulière toutes les 2 à 3h**. Le matelas anti-escarres est complémentaire mais ne remplace pas les changements de position.' },
+    { ue:'UE 4.2', q:'L\'échelle de Braden évalue le risque d\'escarre sur :', opts:['3 items','4 items','6 items','8 items'], rep:2, expl:'L\'**échelle de Braden** comporte **6 items** : perception sensorielle, humidité, activité, mobilité, nutrition, friction/cisaillement. Score de 6 à 23. Score ≤ 18 = risque d\'escarre.' },
+    { ue:'UE 5.1', q:'Dans le cadre d\'un mémoire IFSI, la problématique doit être :', opts:['Une affirmation issue de la pratique','Une question de recherche construite à partir du terrain','Un résumé de la littérature','Une hypothèse médicale'], rep:1, expl:'La **problématique** de mémoire est une **question de recherche** (pas une affirmation), construite à partir d\'une situation professionnelle, puis affinée par les lectures et les entretiens exploratoires.' },
+    { ue:'UE 1.3', q:'La loi Léonetti-Claeys (2016) introduit le droit à :', opts:['L\'euthanasie active','La sédation profonde et continue jusqu\'au décès','L\'arrêt des traitements uniquement','L\'aide médicale à mourir'], rep:1, expl:'La loi **Léonetti-Claeys de 2016** introduit le droit à la **sédation profonde et continue jusqu\'au décès** pour les patients en phase terminale, dont le pronostic vital est engagé à court terme, sur demande du patient.' },
+    { ue:'UE 4.8', q:'L\'éducation thérapeutique du patient (ETP) vise en priorité à :', opts:['Informer le patient de son traitement','Rendre le patient acteur de sa santé','Améliorer l\'observance médicamenteuse','Réduire les hospitalisations'], rep:1, expl:'L\'**ETP** (Art. L1161-1 CSP) vise à **rendre le patient acteur de sa santé**, capable de gérer lui-même sa maladie chronique. L\'information et l\'observance sont des résultats mais pas l\'objectif principal.' },
+    { ue:'UE 2.10', q:'L\'IDE peut pratiquer une injection IV directe :', opts:['Toujours, en autonomie','Jamais, c\'est une compétence médicale','Sur prescription médicale écrite, datée et signée','Seulement en urgence'], rep:2, expl:'Selon l\'Art. R4311-7, l\'injection IV directe est réalisée par l\'IDE **sur prescription médicale écrite, datée et signée**. En urgence, elle peut agir dans le cadre du R4311-14 (rôle propre en cas de danger immédiat).' },
+  ],
+};
+
+// ═══════════════════════════════════════
+//  CAS CLINIQUES
+// ═══════════════════════════════════════
+const CAS = {
+  1: [
+    { id:'c1a1', titre:'M. Martin, 68 ans', contexte:'M. Martin est hospitalisé pour décompensation cardiaque. À 14h, vous prenez ses constantes : FC 98 bpm, PA 108/62 mmHg, SpO₂ 93%, FR 22/min, T° 37,2°C. Il se plaint d\'une dyspnée d\'effort depuis 2 jours. Ses œdèmes des membres inférieurs ont augmenté.',
+      question:'Quelles sont les constantes anormales ? Quelle est votre priorité d\'action ?',
+      elements_reponse:'FC limite haute (98, normal < 100). **SpO₂ 93% anormale** pour insuffisant cardiaque (cible > 95%). **FR 22 anormale** (norme 12–20). PA basse pour un patient hypertendu connu. Priorité : installer le patient en position demi-assise, vérifier l\'O₂ en cours, alerter le médecin pour la SpO₂ et les œdèmes majorés.' },
+  ],
+  2: [
+    { id:'c1a2', titre:'Mme Dubois, 54 ans — Diabète type 2', contexte:'Mme Dubois est hospitalisée pour équilibration du diabète. Prescription : Novorapid® 8 UI SC avant chaque repas si glycémie > 1,8 g/L. À 12h, glycémie capillaire = 2,4 g/L. Elle dit ne pas avoir faim et hésite à manger.',
+      question:'Pouvez-vous administrer l\'insuline ? Quelle est votre démarche ?',
+      elements_reponse:'**Non** sans vérification préalable. Démarche : vérifier la prescription (8 UI Novorapid si > 1,8 — condition remplie). **Mais** : l\'insuline rapide nécessite que le repas soit pris dans les 20–30 min. Si la patiente ne mange pas, risque d\'hypoglycémie sévère. Solution : contacter le médecin pour adapter la prescription, proposer une collation minimale, surveiller la glycémie.' },
+  ],
+  3: [
+    { id:'c1a3', titre:'M. Leblanc, 82 ans — Soins palliatifs', contexte:'M. Leblanc est en phase terminale d\'un cancer du poumon. Sa famille demande que tout soit fait pour le maintenir en vie. Lui-même avait exprimé oralement à l\'IDE qu\'il ne voulait pas être réanimé. Il n\'a pas de directives anticipées écrites.',
+      question:'Quelle est la conduite à tenir face à ce conflit entre la volonté du patient et celle de la famille ?',
+      elements_reponse:'La **volonté du patient prime** sur celle de la famille (Loi Léonetti-Claeys 2016). En l\'absence de directives anticipées écrites, les **déclarations orales au soignant** ont valeur de témoignage. L\'équipe soignante doit réunir une concertation pluridisciplinaire, consulter la personne de confiance si désignée, documenter la volonté exprimée dans le dossier, et accompagner la famille dans la compréhension de la démarche palliative.' },
+  ],
+};
+
+// ═══════════════════════════════════════
+//  FICHES DE RÉVISION
+// ═══════════════════════════════════════
+const FICHES = {
+  1: [
+    { id:'f1', icon:'❤️', titre:'Constantes vitales normales adulte', ue:'UE 2.1', contenu:`
+      <h4>Valeurs de référence</h4>
+      <ul>
+        <li><strong>FC :</strong> 60–100 bpm</li>
+        <li><strong>FR :</strong> 12–20 cycles/min</li>
+        <li><strong>PA :</strong> 90–140 / 60–90 mmHg</li>
+        <li><strong>SpO₂ :</strong> 95–100% (BPCO : 88–92%)</li>
+        <li><strong>Température :</strong> 36,1–37,8°C</li>
+        <li><strong>Glasgow :</strong> 15/15 (normal)</li>
+      </ul>
+      <h4>Alertes critiques</h4>
+      <ul>
+        <li>SpO₂ < 90% → Alerte immédiate</li>
+        <li>GCS < 8 → Risque d'obstruction voies aériennes → PLS</li>
+        <li>PA sys < 90 mmHg → Choc possible</li>
+      </ul>
+      <div class="mnemo">🧠 Mnémotechnique : <strong>FC-FR-PA-SpO₂-T°-GCS</strong> = "François-François-Pierre-Aurait-Pu-Tomber-Gentiment"</div>
+    `},
+    { id:'f2', icon:'💊', titre:'Règle des 5B — Administration médicaments', ue:'UE 4.1', contenu:`
+      <h4>Les 5 Bons</h4>
+      <ul>
+        <li><strong>Bon patient</strong> — Vérifier l'identité (bracelet + demande verbale)</li>
+        <li><strong>Bon médicament</strong> — Nom DCI, présentation, aspect</li>
+        <li><strong>Bonne dose</strong> — Vérifier le calcul, les unités</li>
+        <li><strong>Bonne voie</strong> — PO, SC, IM, IV, sublinguale…</li>
+        <li><strong>Bon moment</strong> — Heure, à jeun ou non, avant/après repas</li>
+      </ul>
+      <h4>+ 3B complémentaires</h4>
+      <ul>
+        <li><strong>Bonne traçabilité</strong> — Signer immédiatement après</li>
+        <li><strong>Bon débit</strong> — Pour les perfusions</li>
+        <li><strong>Bonne surveillance</strong> — Effets attendus et indésirables</li>
+      </ul>
+      <div class="mnemo">🧠 <strong>5B = Patient · Médicament · Dose · Voie · Moment</strong></div>
+    `},
+  ],
+  2: [
+    { id:'f3', icon:'💉', titre:'Insulines — Types et durées d\'action', ue:'UE 2.6', contenu:`
+      <h4>Classification</h4>
+      <ul>
+        <li><strong>Ultrarapides</strong> (NovoRapid®, Humalog®) — Début 15 min, pic 1h, durée 4h</li>
+        <li><strong>Rapides</strong> (Actrapid®) — Début 30 min, pic 2h, durée 8h</li>
+        <li><strong>Intermédiaires NPH</strong> (Insulatard®) — Début 1-2h, pic 6h, durée 12h</li>
+        <li><strong>Lentes</strong> (Lantus®, Levemir®) — Début 2h, sans pic, durée 24h</li>
+      </ul>
+      <h4>Points critiques IDE</h4>
+      <ul>
+        <li>Toujours contrôler la glycémie avant injection</li>
+        <li>Insuline rapide → repas dans les 20–30 min</li>
+        <li>Lantus® = ne jamais mélanger</li>
+        <li>Conservation : réfrigérateur (ouverte : 28 jours à T° ambiante)</li>
+      </ul>
+      <div class="mnemo">🧠 <strong>U-R-I-L</strong> = Ultra · Rapide · Intermédiaire · Lente</div>
+    `},
+    { id:'f4', icon:'🩸', titre:'Perfusion IV — Calculs et surveillance', ue:'UE 4.4', contenu:`
+      <h4>Formules essentielles</h4>
+      <ul>
+        <li><strong>Débit mL/h</strong> = Volume (mL) ÷ Durée (h)</li>
+        <li><strong>Gouttes/min (macro)</strong> = Débit mL/h ÷ 3</li>
+        <li><strong>Gouttes/min (micro)</strong> = Débit mL/h</li>
+        <li><strong>Osmolarité NaCl 0,9%</strong> = 308 mOsm/L (isotonique)</li>
+      </ul>
+      <h4>Signes de surveillance</h4>
+      <ul>
+        <li>Point de ponction : rougeur, œdème, douleur → extravasation</li>
+        <li>Signes généraux : frisson, fièvre → contamination</li>
+        <li>Surcharge : dyspnée, œdèmes, crépitants → alerter</li>
+      </ul>
+      <div class="mnemo">🧠 <strong>Macro : ÷3 / Micro : =débit</strong></div>
+    `},
+  ],
+  3: [
+    { id:'f5', icon:'⚖️', titre:'Lois fondamentales en soins infirmiers', ue:'UE 3.3', contenu:`
+      <h4>Textes clés</h4>
+      <ul>
+        <li><strong>Art. R4311-7 CSP</strong> — Actes IDE sur prescription médicale</li>
+        <li><strong>Art. R4311-5 CSP</strong> — Rôle propre de l'IDE</li>
+        <li><strong>Loi du 4/03/2002 (Kouchner)</strong> — Droits des malades, consentement</li>
+        <li><strong>Loi Léonetti 2005</strong> — Fin de vie, arrêt des traitements</li>
+        <li><strong>Loi Léonetti-Claeys 2016</strong> — Sédation profonde, directives anticipées</li>
+      </ul>
+      <h4>Consentement</h4>
+      <ul>
+        <li>Libre, éclairé, révocable à tout moment</li>
+        <li>Patient inconscient → personne de confiance → famille</li>
+        <li>Mineur → représentants légaux (sauf urgence)</li>
+      </ul>
+      <div class="mnemo">🧠 <strong>Kouchner 2002 = droits patients / Claeys 2016 = fin de vie</strong></div>
+    `},
+    { id:'f6', icon:'📝', titre:'Démarche clinique infirmière', ue:'UE 5.7', contenu:`
+      <h4>Les 5 étapes</h4>
+      <ul>
+        <li><strong>1. Recueil de données</strong> — Anamnèse, observation, dossier</li>
+        <li><strong>2. Analyse / Diagnostic infirmier</strong> — Problèmes réels et potentiels</li>
+        <li><strong>3. Planification</strong> — Objectifs, actions, ressources</li>
+        <li><strong>4. Réalisation</strong> — Actes, transmissions, traçabilité</li>
+        <li><strong>5. Évaluation</strong> — Atteinte des objectifs, réajustement</li>
+      </ul>
+      <h4>Diagnostic infirmier (NANDA)</h4>
+      <ul>
+        <li>Problème + Facteurs liés + Caractéristiques</li>
+        <li>Ex : "Douleur aiguë liée à l'inflammation post-op, se manifestant par EVA 7/10"</li>
+      </ul>
+      <div class="mnemo">🧠 <strong>RAPR-E</strong> = Recueil · Analyse · Planification · Réalisation · Évaluation</div>
+    `},
+  ],
+};
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+const SCORES_KEY='simrev_scores';
+let savedScores=JSON.parse(localStorage.getItem(SCORES_KEY)||'{"1":{"ok":0,"total":0},"2":{"ok":0,"total":0},"3":{"ok":0,"total":0}}');
+
+let S={
+  view:'welcome',
+  annee:null, anneeChoisie:false, mode:'qcm',
+  promoNom: localStorage.getItem('simrev_promo')||'',
+  rentreeAnnee: localStorage.getItem('simrev_rentree')||'',
+  qcmIdx:0, qcmSelected:null, qcmShown:false,
+  casIdx:0, casReponse:'', casRevele:false, casAnalyse:'', casLoading:false,
+  ficheOpen:null,
+  apiKey:localStorage.getItem('simrev_key')||'',
+  apiKeySaved:!!localStorage.getItem('simrev_key'),
+  showKey:false,
+};
+
+function saveScore(annee,ok){
+  savedScores[annee].total++;
+  if(ok) savedScores[annee].ok++;
+  localStorage.setItem(SCORES_KEY,JSON.stringify(savedScores));
+}
+function resetScore(annee){savedScores[annee]={ok:0,total:0};localStorage.setItem(SCORES_KEY,JSON.stringify(savedScores))}
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function anLabel(a){return a===1?'1ʳᵉ année':a===2?'2ᵉ année':'3ᵉ année'}
+function anColor(a){return a===1?'var(--a1)':a===2?'var(--a2)':'var(--a3)'}
+function anRgba(a){return a===1?'rgba(64,224,208,':a===2?'rgba(160,96,255,':'rgba(255,96,144,'}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  // Restaurer depuis localStorage si première visite
+  if(!S.anneeChoisie && localStorage.getItem('simrev_annee')){
+    S.annee=+localStorage.getItem('simrev_annee');
+    S.rentreeAnnee=localStorage.getItem('simrev_rentree')||'';
+    S.promoNom=localStorage.getItem('simrev_promo')||'';
+    S.anneeChoisie=true;
+  }
+  const qList=QCM[S.annee]||[];
+  const cList=CAS[S.annee]||[];
+  const fList=FICHES[S.annee]||[];
+  const q=qList[S.qcmIdx%qList.length];
+  const cas=cList[S.casIdx%cList.length];
+  const sc=savedScores[S.annee];
+
+  let h='';
+
+  if(S.view!=='welcome'){
+    h+=`
+    <div class="site-header">
+      <div class="badge">📚 Module 8 · SimCare IFSI</div>
+      <h1>Sim<span>Révision</span></h1>
+      <p>QCM · Cas cliniques · Fiches — toutes les années IFSI</p>
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+          <div class="badge">📚 Module 8 · SimCare IFSI</div>
+          <h1>Sim<span>Révision</span></h1>
+        </div>`;
+  }
+
+  h+='<div class="wrap">';
+
+  // ─── WELCOME ──────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(160,96,255,.18)">
+      <div class="welcome">
+        <span class="welcome-icon">📚</span>
+        <p>Réviser autrement — par l'entraînement actif, pas la relecture passive. QCM, cas cliniques et fiches synthèse pour les 3 années de formation.</p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>QCM par UE</strong> — questions avec correction immédiate et explication clinique détaillée</span></div>
+          <div class="pt"><span class="pt-i">🏥</span><span class="pt-t"><strong>Cas cliniques</strong> — situations réelles, réponse libre, correction guidée par l'IA</span></div>
+          <div class="pt"><span class="pt-i">📄</span><span class="pt-t"><strong>Fiches de révision</strong> — synthèses visuelles avec mnémotechniques pour chaque UE clé</span></div>
+          <div class="pt"><span class="pt-i">📊</span><span class="pt-t"><strong>Suivi de progression</strong> — score par année, identifiez vos points faibles</span></div>
+        </div>
+        <button class="btn-p" onclick="go('choix_annee')">Choisir mon année →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── ONBOARDING ───────────────────────────────────────────────────
+  else if(S.view==='choix_annee'){
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth(); // 0=Jan
+    // Rentrées possibles : 4 dernières années en septembre
+    const rentrees = [
+      currentYear - (currentMonth < 8 ? 3 : 2),
+      currentYear - (currentMonth < 8 ? 2 : 1),
+      currentYear - (currentMonth < 8 ? 1 : 0),
+      currentMonth < 8 ? currentYear - 0 : currentYear + 1,
+    ].filter(y => y <= currentYear);
+
+    function anneeFromRentree(rentreeY){
+      const sep = new Date(rentreeY, 8, 1); // 1er septembre
+      const diff = now - sep;
+      const months = diff / (1000*60*60*24*30.5);
+      if(months < 12) return 1;
+      if(months < 24) return 2;
+      return 3;
+    }
+
+    h+=\`
+    <div class="fadeup" style="margin-top:10px">
+
+      <!-- Étape 1 — Rentrée -->
+      <div class="card" style="border-color:rgba(160,96,255,.2);margin-bottom:14px">
+        <div style="text-align:center;margin-bottom:24px">
+          <div style="font-size:44px;margin-bottom:10px">🎓</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px">Bienvenue dans SimRévision</div>
+          <div style="font-size:14px;color:var(--txt2);line-height:1.65;max-width:420px;margin:0 auto">
+            Pour vous proposer uniquement les contenus de votre niveau, nous avons besoin de connaître votre rentrée IFSI.
+          </div>
+        </div>
+
+        <label class="lbl">Votre rentrée en IFSI</label>
+        <div class="col8" style="margin-bottom:20px">
+          \${rentrees.map(y => {
+            const a = anneeFromRentree(y);
+            const selected = S.rentreeAnnee === String(y);
+            return \`<div class="sel \${selected?'on':''}" onclick="selectRentree('\${y}')" style="border-color:\${selected?'rgba(160,96,255,.4)':'var(--bdr)'};padding:18px">
+              <span style="font-size:28px">\${a===1?'🩵':a===2?'💜':'🩷'}</span>
+              <div style="flex:1">
+                <div style="font-weight:700;font-size:16px;color:\${a===1?'var(--a1)':a===2?'var(--a2)':'var(--a3)'}">Septembre \${y}</div>
+                <div style="font-size:12px;color:var(--txt3);margin-top:3px">Promotion \${y}–\${y+3} · Actuellement en \${a===1?'1ʳᵉ':a===2?'2ᵉ':'3ᵉ'} année</div>
+              </div>
+              \${selected?\`<span style="color:var(--em);font-size:18px">✓</span>\`:''}
+            </div>\`;
+          }).join('')}
+        </div>
+
+        <!-- Nom de promotion -->
+        <label class="lbl">Nom de votre promotion <span style="color:var(--txt3);font-size:10px;letter-spacing:0;text-transform:none">(optionnel)</span></label>
+        <div style="position:relative;margin-bottom:8px">
+          <input type="text" id="inp-promo"
+            placeholder="Ex : Promotion Florence Nightingale, Promo Simone Veil, Les Indestructibles…"
+            value="\${esc(S.promoNom)}"
+            oninput="S.promoNom=this.value"
+            style="border-color:rgba(160,96,255,.25);padding-right:44px">
+        </div>
+        <div style="font-size:12px;color:var(--txt3);margin-bottom:20px;font-style:italic">
+          Ce nom apparaîtra en haut de SimRévision comme votre identité de promotion.
+        </div>
+
+        <button class="btn-p btn-full" onclick="validerOnboarding()"
+          style="\${!S.rentreeAnnee?'opacity:.4;cursor:not-allowed':''}">
+          Accéder à mes révisions →
+        </button>
+      </div>
+
+      <!-- Suggestions de noms -->
+      <div class="card" style="border-color:rgba(255,255,255,.05);padding:18px">
+        <div style="font-size:12px;color:var(--txt3);margin-bottom:10px;font-family:'Fira Mono',monospace;letter-spacing:1px;text-transform:uppercase">Inspirations de noms</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          \${['Florence Nightingale','Marie Curie','Albert Schweitzer','Simone Veil','Louis Pasteur','Charles Nicolle','Françoise Barré-Sinoussi','René Leriche'].map(n=>\`
+            <button onclick="document.getElementById('inp-promo').value=n;S.promoNom=n;" style="padding:5px 12px;border-radius:20px;border:1px solid var(--bdr);background:rgba(255,255,255,.03);color:var(--txt2);font-size:12px;cursor:pointer;transition:all .18s;font-family:'Plus Jakarta Sans',sans-serif" onmouseover="this.style.borderColor='rgba(160,96,255,.3)';this.style.color='var(--em)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--txt2)'">
+              \${n}
+            </button>\`).join('')}
+        </div>
+      </div>
+    </div>\`;
+  }
+
+  // ─── MAIN ─────────────────────────────────────────────────────
+  else{
+
+    // Sélecteur d'année
+    h+=`
+    <div class="annee-tabs">
+      ${[1,2,3].map(a=>`
+        <button class="annee-tab a${a} ${S.annee===a?'active':''}" onclick="setAnnee(${a})" 
+          title="${a!==S.annee?'⚠️ Contenu d'une autre année — confirmation requise':'Votre année'}">
+          ${S.annee===a?'✓ ':a>S.annee?'🔒 ':''}${anLabel(a)}
+        </button>`).join('')}
+    </div>
+    <div style="font-size:11px;color:var(--txt3);font-family:'Fira Mono',monospace;margin-bottom:12px;text-align:center;line-height:1.8">
+      ${S.promoNom?`<span style="color:var(--em);font-weight:600">✦ Promotion ${esc(S.promoNom)}</span> · `:''}
+      <span style="color:${anColor(S.annee)};font-weight:600">${anLabel(S.annee)}</span>
+      · <button onclick="S.view='choix_annee';render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace;text-decoration:underline">Modifier</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" style="margin-bottom:14px">
+      <div class="stat-box">
+        <span class="stat-n" style="color:${anColor(S.annee)}">${sc.total}</span>
+        <span class="stat-l">Questions</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-n" style="color:var(--lime)">${sc.ok}</span>
+        <span class="stat-l">Correctes</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-n" style="color:${sc.total>0?(sc.ok/sc.total)>.7?'var(--lime)':(sc.ok/sc.total)>.5?'var(--amber)':'var(--rose)':'var(--txt3)'}">${sc.total>0?Math.round(sc.ok/sc.total*100)+'%':'—'}</span>
+        <span class="stat-l">Réussite</span>
+      </div>
+    </div>
+
+    <!-- Modes -->
+    <div class="mode-tabs">
+      ${[
+        {id:'qcm',    label:'🎯 QCM'},
+        {id:'cas',    label:'🏥 Cas cliniques'},
+        {id:'fiches', label:'📄 Fiches'},
+      ].map(m=>`<button class="mode-tab ${S.mode===m.id?'active':''}" onclick="setMode('${m.id}')">${m.label}</button>`).join('')}
+    </div>`;
+
+    // ─── QCM ──────────────────────────────────────────────────
+    if(S.mode==='qcm'){
+      const pct=Math.round((S.qcmIdx%qList.length)/qList.length*100);
+      h+=`<div class="fadeup">
+        <div class="qcm-meta">
+          <span>Question ${(S.qcmIdx%qList.length)+1} / ${qList.length}</span>
+          <button onclick="resetScore(${S.annee});render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace">↺ Réinitialiser</button>
+        </div>
+        <div class="qcm-progress"><div class="qcm-bar" style="width:${pct}%"></div></div>
+        <div class="card" style="border-color:${anRgba(S.annee)}.2)">
+          <span class="qcm-ue">${q.ue}</span>
+          <div class="qcm-question">${esc(q.q)}</div>
+          <div class="qcm-opts">
+            ${q.opts.map((opt,i)=>{
+              let cls='';
+              if(S.qcmShown){
+                if(i===q.rep) cls='correct';
+                else if(i===S.qcmSelected) cls='wrong';
+              } else if(i===S.qcmSelected) cls='selected';
+              return `
+              <div class="qcm-opt ${cls}" onclick="${S.qcmShown?'':'selectQcm('+i+')'}">
+                <span class="qcm-letter">${['A','B','C','D'][i]}</span>
+                <span>${esc(opt)}</span>
+              </div>`;
+            }).join('')}
+          </div>
+          ${S.qcmShown?`
+          <div class="qcm-explication popin">
+            ${S.qcmSelected===q.rep?'✅ Bonne réponse !':'❌ Mauvaise réponse'}
+            <br><br>${q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}
+          </div>
+          <div style="display:flex;gap:10px;margin-top:14px">
+            <button class="btn-p" style="flex:1" onclick="nextQcm()">Question suivante →</button>
+          </div>`:''}
+        </div>
+      </div>`;
+    }
+
+    // ─── CAS CLINIQUES ─────────────────────────────────────────
+    else if(S.mode==='cas'){
+      h+=`<div class="fadeup">
+        <div class="cas-header">
+          <div class="cas-patient" style="color:${anColor(S.annee)}">${esc(cas.titre)}</div>
+          <div class="cas-context">${esc(cas.contexte)}</div>
+        </div>
+        <div class="cas-question">❓ ${esc(cas.question)}</div>
+        <textarea class="cas-input" placeholder="Rédigez votre réponse…" oninput="S.casReponse=this.value">${esc(S.casReponse)}</textarea>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn-p" style="flex:1" onclick="voirCorrection()">Voir la correction →</button>
+          <button class="btn-g" onclick="nextCas()">Autre cas</button>
+        </div>
+        ${S.casRevele?`
+        <div class="card fadeup" style="margin-top:14px;border-color:${anRgba(S.annee)}.25)">
+          <div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:${anColor(S.annee)};margin-bottom:10px">ÉLÉMENTS DE RÉPONSE</div>
+          <div style="font-size:14px;color:var(--txt2);line-height:1.8">${cas.elements_reponse.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</div>
+        </div>
+        ${S.casLoading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Évaluation de votre réponse en cours…</div></div>`:''}
+        ${!S.casLoading&&S.casAnalyse?`
+        <div class="card fadeup" style="margin-top:10px;border-color:rgba(176,240,96,.2)">
+          <div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:var(--lime);margin-bottom:10px">RETOUR PERSONNALISÉ</div>
+          <div style="font-size:14px;color:var(--txt2);line-height:1.8">${S.casAnalyse.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>
+        </div>`:''}
+        ${!S.casLoading&&!S.casAnalyse&&S.apiKeySaved?`
+        <button class="btn-g btn-full" onclick="evaluerReponse()" style="margin-top:10px;color:var(--lime);border-color:rgba(176,240,96,.2)">🤖 Évaluer ma réponse avec l'IA (Premium)</button>`:''}
+        ${!S.casLoading&&!S.casAnalyse&&!S.apiKeySaved?`
+        <div class="info info-em" style="margin-top:10px">🔑 Ajoutez votre clé API dans les paramètres pour l'évaluation IA de vos réponses.</div>`:''}
+        `:''}
+      </div>`;
+    }
+
+    // ─── FICHES ────────────────────────────────────────────────
+    else if(S.mode==='fiches'){
+      h+=`<div class="fadeup">
+        ${fList.map(f=>`
+          <div class="fiche-card ${S.ficheOpen===f.id?'open':''}" onclick="toggleFiche('${f.id}')">
+            <div class="fiche-header">
+              <span class="fiche-icon">${f.icon}</span>
+              <div>
+                <div class="fiche-title">${f.titre}</div>
+                <div class="fiche-ue">${f.ue}</div>
+              </div>
+              <span class="fiche-arrow">▶</span>
+            </div>
+            ${S.ficheOpen===f.id?`<div class="fiche-body">${f.contenu}</div>`:''}
+          </div>`).join('')}
+        <div class="info info-em" style="margin-top:8px">
+          💡 Ces fiches couvrent les UE clés de ${anLabel(S.annee)}. Les QCM et cas cliniques permettent de valider la compréhension.
+        </div>
+      </div>`;
+    }
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function selectRentree(y){
+  S.rentreeAnnee=String(y);
+  // Calculer l'année automatiquement
+  const now=new Date();
+  const sep=new Date(+y,8,1);
+  const months=(now-sep)/(1000*60*60*24*30.5);
+  S.annee = months<12?1:months<24?2:3;
+  render();
+}
+
+function validerOnboarding(){
+  if(!S.rentreeAnnee) return;
+  S.anneeChoisie=true;
+  // Sauvegarder
+  localStorage.setItem('simrev_rentree',S.rentreeAnnee);
+  localStorage.setItem('simrev_promo',S.promoNom);
+  localStorage.setItem('simrev_annee',String(S.annee));
+  S.view='main';
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function go(v){
+  if(v==='main' && !S.anneeChoisie){ S.view='choix_annee'; render(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});
+}
+function setAnnee(a){
+  if(S.anneeChoisie && S.annee!==a){
+    if(!confirm('⚠️ Vous allez accéder au contenu de '+anLabel(a)+'. Si vous n\'avez pas encore suivi ces cours, vous risquez de voir des réponses avant d\'avoir réfléchi aux questions.\n\nConfirmer quand même ?')) return;
+  }
+  S.annee=a;S.anneeChoisie=true;S.qcmIdx=0;S.qcmSelected=null;S.qcmShown=false;
+  S.casIdx=0;S.casReponse='';S.casRevele=false;S.casAnalyse='';S.ficheOpen=null;
+  if(S.view==='welcome') S.view='main';
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
+function setMode(m){S.mode=m;render();window.scrollTo({top:0,behavior:'smooth'})}
+function toggleFiche(id){S.ficheOpen=S.ficheOpen===id?null:id;render()}
+
+function selectQcm(i){
+  if(S.qcmShown) return;
+  S.qcmSelected=i;S.qcmShown=true;
+  const q=QCM[S.annee][S.qcmIdx%QCM[S.annee].length];
+  saveScore(S.annee, i===q.rep);
+  render();
+}
+
+function nextQcm(){
+  S.qcmIdx++;S.qcmSelected=null;S.qcmShown=false;render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextCas(){
+  S.casIdx++;S.casReponse='';S.casRevele=false;S.casAnalyse='';render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function voirCorrection(){S.casRevele=true;render()}
+
+// ═══════════════════════════════════════
+//  API CLAUDE — Évaluation cas clinique
+// ═══════════════════════════════════════
+async function evaluerReponse(){
+  if(!S.casReponse.trim()){return}
+  const cas=CAS[S.annee][S.casIdx%CAS[S.annee].length];
+  S.casLoading=true;S.casAnalyse='';render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:600,
+        messages:[{role:'user',content:`Tu es un formateur IFSI. Évalue la réponse d'un étudiant à ce cas clinique.
+
+CAS : ${cas.titre}
+QUESTION : ${cas.question}
+ÉLÉMENTS ATTENDUS : ${cas.elements_reponse}
+RÉPONSE ÉTUDIANT : ${S.casReponse}
+
+En 3-4 phrases : ce qui est bien, ce qui manque, ce qui est à corriger. Tutoie l'étudiant. Sois constructif et précis. Pas de liste — du texte fluide.`}]
+      })
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.casAnalyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){S.casAnalyse='Erreur : '+e.message}
+  S.casLoading=false;render();
+}
+
+render();
+</script>
+</body>
+</html>
