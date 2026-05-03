@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimEnvironnement · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Gloock:ital@0;1&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #030a04;
+  --bg2:    #071009;
+  --card:   rgba(255,255,255,.028);
+  --bdr:    rgba(255,255,255,.07);
+  --txt:    #e8f0e0;
+  --txt2:   #6a8a60;
+  --txt3:   #2a3a20;
+  --em:     #7ecb50;
+  --em2:    #5aaa30;
+  --earth:  #c8a050;
+  --water:  #50b0d0;
+  --air:    #a0d0f0;
+  --fire:   #e87040;
+  --teal:   #40c8a0;
+  --rose:   #d08060;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Instrument Sans',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 90% 60% at 5% 0%,   rgba(126,203,80,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 70% 50% at 95% 100%, rgba(80,176,208,.04) 0%,transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(40,60,30,.6)    0%,transparent 70%);
+  color:var(--txt); min-height:100vh; padding-bottom:80px;
+  position:relative; overflow-x:hidden;
+}
+
+/* Grain organique */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.7;
+}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.site-header{text-align:center;padding:44px 24px 24px;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(126,203,80,.08);border:1px solid rgba(126,203,80,.2);
+  color:var(--em);padding:5px 16px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+}
+.site-header h1{
+  font-family:'Gloock',serif;
+  font-size:clamp(28px,6vw,48px);font-weight:400;letter-spacing:-.5px;line-height:1.1;
+  font-style:italic;
+}
+.site-header h1 span{font-style:normal;color:var(--em)}
+.site-header p{color:var(--txt3);font-size:14px;margin-top:8px}
+
+/* ── ONGLETS ── */
+.tabs{display:flex;gap:4px;padding:0 0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+.tab{
+  padding:9px 16px;border-radius:10px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:all .18s;-webkit-tap-highlight-color:transparent;
+  font-family:'Instrument Sans',sans-serif;
+}
+.tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+.tab.active{background:rgba(126,203,80,.1);border-color:rgba(126,203,80,.35);color:var(--em)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:20px;padding:26px;margin-bottom:14px;position:relative;z-index:1}
+.card-title{font-family:'Gloock',serif;font-size:21px;font-weight:400;font-style:italic;margin-bottom:5px}
+.card-sub{color:var(--txt3);font-size:13px;margin-bottom:20px;line-height:1.65}
+
+/* ── BOUTONS ── */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  border:none;border-radius:12px;color:#030a04;
+  font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:600;
+  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
+  border-radius:12px;color:var(--txt2);
+  font-family:'Instrument Sans',sans-serif;font-size:14px;
+  padding:11px 20px;cursor:pointer;transition:all .18s;
+}
+.btn-g:hover{background:rgba(255,255,255,.06);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+.nav-col{display:flex;flex-direction:column;gap:10px}
+
+/* ── SEL ── */
+.sel{
+  cursor:pointer;border:1.5px solid var(--bdr);border-radius:12px;
+  padding:12px 16px;background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:14px;transition:all .18s;
+  display:flex;align-items:center;gap:12px;user-select:none;
+}
+.sel:hover{background:rgba(255,255,255,.05);color:var(--txt);border-color:rgba(255,255,255,.14)}
+.sel.on{background:rgba(126,203,80,.08);color:var(--txt);border-color:rgba(126,203,80,.4)}
+.sel .si{font-size:20px;flex-shrink:0}
+.sel .sd{font-size:11px;color:var(--txt3);margin-top:2px}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.05);border-radius:13px;padding:14px;text-align:center}
+.stat-v{font-family:'Fira Mono',monospace;font-size:20px;font-weight:500;color:var(--em);display:block}
+.stat-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1.5px;font-family:'Fira Mono',monospace;display:block;margin-top:4px}
+.stat-s{font-size:11px;color:#1a2c10;font-style:italic;display:block;margin-top:5px;line-height:1.4}
+
+/* ── INFO ── */
+.info{border-radius:11px;padding:12px 15px;font-size:13px;line-height:1.7}
+.info-em  {background:rgba(126,203,80,.07); border:1px solid rgba(126,203,80,.18); color:var(--em)}
+.info-earth{background:rgba(200,160,80,.07);border:1px solid rgba(200,160,80,.18);color:var(--earth)}
+.info-water{background:rgba(80,176,208,.07);border:1px solid rgba(80,176,208,.18);color:var(--water)}
+.info-fire {background:rgba(232,112,64,.07);border:1px solid rgba(232,112,64,.18);color:var(--fire)}
+.info-teal {background:rgba(64,200,160,.07);border:1px solid rgba(64,200,160,.18);color:var(--teal)}
+
+/* ── ONE HEALTH ── */
+.oneh-diagram{
+  display:flex;justify-content:center;align-items:center;
+  gap:0;margin:20px 0;flex-wrap:wrap;
+}
+.oneh-circle{
+  border-radius:50%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;text-align:center;
+  padding:12px;cursor:pointer;transition:all .3s;
+  position:relative;
+}
+.oneh-center{
+  position:relative;z-index:10;
+  width:110px;height:110px;
+  background:rgba(126,203,80,.15);border:2px solid rgba(126,203,80,.4);
+  font-size:11px;color:var(--em);
+}
+
+/* ── CARTE RISQUE ── */
+.risque-card{
+  background:rgba(0,0,0,.25);border-radius:14px;padding:16px;margin-bottom:10px;
+  border-left:3px solid transparent;transition:all .2s;cursor:pointer;
+}
+.risque-card:hover{background:rgba(0,0,0,.35)}
+.risque-title{font-family:'Gloock',serif;font-size:15px;font-weight:400;font-style:italic;margin-bottom:4px}
+.risque-detail{font-size:13px;color:var(--txt2);line-height:1.6;display:none}
+.risque-card.open .risque-detail{display:block;margin-top:8px}
+.risque-impact{
+  display:inline-block;padding:2px 8px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:10px;margin-top:6px;
+}
+
+/* ── ECOGESTES ── */
+.geste-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.geste-card{
+  background:rgba(255,255,255,.025);border:1.5px solid var(--bdr);
+  border-radius:14px;padding:16px;transition:all .2s;cursor:pointer;
+}
+.geste-card:hover{background:rgba(126,203,80,.06);border-color:rgba(126,203,80,.25)}
+.geste-card.done{background:rgba(126,203,80,.1);border-color:rgba(126,203,80,.35)}
+.geste-icon{font-size:28px;margin-bottom:8px}
+.geste-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.geste-eco{font-family:'Fira Mono',monospace;font-size:11px;color:var(--em)}
+.geste-desc{font-size:12px;color:var(--txt2);margin-top:4px;line-height:1.5}
+
+/* ── PLANET. HEALTH ── */
+.planet-bar-wrap{
+  background:rgba(255,255,255,.06);border-radius:100px;height:12px;
+  overflow:hidden;margin:6px 0;position:relative;
+}
+.planet-bar{height:100%;border-radius:100px;transition:width .8s ease}
+
+/* ── QUIZ ── */
+.quiz-opt{
+  padding:12px 16px;border-radius:10px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);
+  cursor:pointer;font-size:14px;margin-bottom:8px;
+  transition:all .18s;display:flex;align-items:center;gap:10px;
+  -webkit-tap-highlight-color:transparent;
+}
+.quiz-opt:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+.quiz-opt.correct{background:rgba(126,203,80,.1);border-color:rgba(126,203,80,.4);color:var(--em)}
+.quiz-opt.wrong  {background:rgba(232,112,64,.1); border-color:rgba(232,112,64,.4); color:var(--fire)}
+.quiz-expl{
+  background:rgba(126,203,80,.05);border:1px solid rgba(126,203,80,.15);
+  border-radius:10px;padding:12px 14px;margin-top:10px;
+  font-size:13px;color:var(--txt2);line-height:1.7;
+}
+.quiz-expl strong{color:var(--txt)}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:24px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt3);font-size:13px;margin-top:10px;font-style:italic}
+
+/* ── PREMIUM ── */
+.premium-box{background:rgba(0,0,0,.3);border:1.5px solid rgba(126,203,80,.15);border-radius:18px;padding:26px;margin-bottom:14px}
+.apikey-box{background:rgba(126,203,80,.04);border:1px solid rgba(126,203,80,.12);border-radius:12px;padding:14px}
+.apikey-box p{font-size:13px;color:var(--txt3);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:13px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:8px;color:var(--txt);font-family:'Fira Mono',monospace;outline:none}
+.apikey-row input:focus{border-color:rgba(126,203,80,.3)}
+.apikey-row button{padding:9px 16px;border:none;border-radius:8px;background:var(--em2);color:#030a04;font-weight:700;cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px}
+.apikey-saved{color:var(--teal);font-size:11px;margin-top:5px;font-family:'Fira Mono',monospace}
+
+/* ── ANALYSIS ── */
+.analysis p{margin-bottom:14px;color:#90a880;font-size:15px;line-height:1.85}
+.analysis strong{color:var(--txt);font-size:16px}
+
+/* ── WELCOME ── */
+.welcome{text-align:center;padding:4px 0 24px}
+.welcome-icon{font-size:60px;display:block;margin-bottom:16px}
+.welcome p{color:var(--txt2);font-size:15px;line-height:1.8;max-width:480px;margin:0 auto}
+.pts{display:flex;flex-direction:column;gap:12px;margin:20px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:20px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.col8{display:flex;flex-direction:column;gap:8px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:18px 0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB  {0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+
+@media(max-width:480px){
+  .grid2,.grid3,.geste-grid{grid-template-columns:1fr}
+  .nav-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+
+const RISQUES_CLIMAT = [
+  { id:'chaleur', icon:'🌡️', titre:'Vagues de chaleur', col:'#e87040',
+    detail:'Les épisodes caniculaires augmentent la mortalité cardiovasculaire et rénale, notamment chez les personnes âgées, les nourrissons et les travailleurs en extérieur. L\'IDE doit savoir identifier les signes de coup de chaleur (T° > 40°C, confusion, peau sèche) et activer les protocoles de refroidissement.',
+    impact:'Canicule', soins:'Hydratation, refroidissement progressif, surveillance rénale' },
+  { id:'air', icon:'💨', titre:'Pollution atmosphérique', col:'#a0d0f0',
+    detail:'Les particules fines (PM2.5) et l\'ozone exacerbent les pathologies respiratoires (asthme, BPCO) et cardiovasculaires. L\'IDE joue un rôle dans l\'éducation des patients sur les pics de pollution, l\'adaptation des activités physiques et l\'utilisation correcte des inhalateurs.',
+    impact:'Respiratoire', soins:'Éducation thérapeutique, surveillance SpO₂, plans d\'action asthme' },
+  { id:'zoonoses', icon:'🦟', titre:'Maladies vectorielles émergentes', col:'#7ecb50',
+    detail:'Le réchauffement climatique étend les zones de présence des moustiques tigres (dengue, chikungunya, Zika) et des tiques (maladie de Lyme). L\'IDE doit connaître les zones à risque, les signes précoces et les mesures de prévention.',
+    impact:'Infectieux', soins:'Prévention, détection précoce, éducation aux mesures de protection' },
+  { id:'eau', icon:'💧', titre:'Qualité de l\'eau et sécheresse', col:'#50b0d0',
+    detail:'Les sécheresses et inondations compromettent la qualité de l\'eau potable, favorisant les infections gastro-intestinales. La déshydratation liée aux épisodes chauds est un risque majeur chez les patients vulnérables.',
+    impact:'Digestif / Rénal', soins:'Surveillance bilan hydrique, éducation aux signes de déshydratation' },
+  { id:'mental', icon:'🧠', titre:'Éco-anxiété et santé mentale', col:'#b080e8',
+    detail:'L\'inquiétude face aux changements climatiques génère une détresse psychologique réelle, notamment chez les jeunes. Les désastres naturels (inondations, incendies) provoquent des PTSD et dépressions. L\'IDE doit pouvoir identifier et orienter ces patients.',
+    impact:'Psychologique', soins:'Écoute active, orientation vers ressources spécialisées, résilience communautaire' },
+  { id:'alim', icon:'🌾', titre:'Insécurité alimentaire', col:'#c8a050',
+    detail:'Les perturbations climatiques affectent les rendements agricoles et la sécurité alimentaire, favorisant les carences nutritionnelles. Dans certaines régions, l\'accès à une alimentation diversifiée devient un déterminant de santé.',
+    impact:'Nutritionnel', soins:'Dépistage malnutrition, éducation nutritionnelle, orientation sociale' },
+];
+
+const ECOGESTES = [
+  { icon:'💉', titre:'Médicaments & déchets', eco:'−30% CO₂', desc:'Éliminer correctement les médicaments non utilisés (officine). Ne jamais les jeter aux toilettes — ils contaminent les eaux.' },
+  { icon:'🧴', titre:'Produits désinfectants', eco:'−15% pollution', desc:'Préférer les désinfectants concentrés à diluer. Respecter les dosages — un excès n\'améliore pas l\'efficacité et pollue.' },
+  { icon:'🩺', titre:'Matériel réutilisable', eco:'−40% déchets', desc:'Favoriser le matériel stérilisable quand le protocole le permet. Un tensiomètre réutilisable vs 1000 manchettes jetables.' },
+  { icon:'🚗', titre:'Déplacements soignants', eco:'−25% CO₂', desc:'Regrouper les visites à domicile géographiquement. Le vélo électrique pour les tournées courtes réduit l\'empreinte de 90%.' },
+  { icon:'♻️', titre:'Tri des DASRI', eco:'Obligation légale', desc:'Les Déchets d\'Activités de Soins à Risques Infectieux ont une filière spécifique. Un tri correct réduit le volume à incinérer.' },
+  { icon:'🌡️', titre:'Gestion thermique', eco:'−20% énergie', desc:'Adapter la température des locaux de soins. Chaque degré de moins en hiver = −7% de consommation énergétique.' },
+];
+
+const QUIZ_QUESTIONS = [
+  { q:'Qu\'est-ce que l\'approche "One Health" ?', opts:['Un programme de vaccination mondial','La reconnaissance que santé humaine, animale et environnementale sont liées','Un régime alimentaire pour les soignants','Un protocole de soins intensifs'], rep:1, expl:'**One Health** (Une seule santé) reconnaît que la santé des humains, des animaux et des écosystèmes est interdépendante. 75% des maladies émergentes sont d\'origine animale (zoonoses). L\'IDE est acteur de cette vision globale.' },
+  { q:'À quelle température la mortalité augmente-t-elle significativement lors d\'une canicule ?', opts:['> 30°C','> 35°C','> 38°C','> 40°C'], rep:1, expl:'Les études épidémiologiques montrent une **surmortalité significative dès 35°C** de température maximale quotidienne. Pour les personnes âgées et les nourrissons, ce seuil peut être atteint plus tôt, notamment la nuit.' },
+  { q:'Quel gaz est principalement responsable du réchauffement climatique d\'origine humaine ?', opts:['L\'oxygène (O₂)','L\'azote (N₂)','Le dioxyde de carbone (CO₂)','La vapeur d\'eau'], rep:2, expl:'Le **CO₂** est le principal gaz à effet de serre d\'origine humaine (combustion fossile, déforestation). Le secteur de la santé représente environ **5% des émissions mondiales de CO₂**, dont la moitié vient de la chaîne d\'approvisionnement médicale.' },
+  { q:'L\'éco-anxiété est :', opts:['Une pathologie psychiatrique inventée','Une détresse psychologique liée aux changements environnementaux, reconnue cliniquement','Un trouble de l\'adaptation propre aux enfants','Un effet secondaire des antidépresseurs'], rep:1, expl:'L\'**éco-anxiété** est une détresse psychologique réelle et reconnue, liée à l\'inquiétude face aux changements climatiques. Elle touche particulièrement les 18–35 ans. L\'IDE peut être un premier interlocuteur pour identifier et orienter ces patients.' },
+  { q:'Quel est le principal vecteur de la maladie de Lyme en France ?', opts:['Le moustique tigre','La puce','La tique','Le pou'], rep:2, expl:'La **tique** (Ixodes ricinus) est le vecteur principal de la borréliose de Lyme en Europe. Le changement climatique étend sa présence en altitude et en latitude. L\'IDE doit connaître les signes précoces : érythème migrant, syndrome grippal après morsure.' },
+  { q:'Qu\'est-ce qu\'un DASRI ?', opts:['Un médicament dérivé de soins intensifs','Un Déchet d\'Activités de Soins à Risques Infectieux','Un Diagnostic Avancé en Soins Relationnels et Infirmiers','Un protocole de désinfection'], rep:1, expl:'Un **DASRI** (Déchet d\'Activités de Soins à Risques Infectieux) inclut aiguilles, compresses souillées, poches de perfusion usagées. Ils ont une filière d\'élimination spécifique obligatoire — leur incinération est plus énergivore que le tri correct.' },
+];
+
+const EMPREINTE_SANTE = [
+  { label:'Transport médicaments', pct:22, col:'#e87040' },
+  { label:'Équipements médicaux', pct:18, col:'#c8a050' },
+  { label:'Chauffage / énergie', pct:16, col:'#7ecb50' },
+  { label:'Déplacements soignants', pct:14, col:'#50b0d0' },
+  { label:'Alimentation patients', pct:12, col:'#a0d0f0' },
+  { label:'Déchets de soins', pct:10, col:'#b080e8' },
+  { label:'Autres', pct:8, col:'#6a8a60' },
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let S = {
+  view:'welcome',
+  onglet:'onehealth',
+  risqueOpen:null,
+  gesteDone:[],
+  quizIdx:0, quizSelected:null, quizShown:false, quizScore:0, quizTotal:0,
+  analyse:'', loading:false, showKey:false,
+  apiKey:localStorage.getItem('simenv_key')||'',
+  apiKeySaved:!!localStorage.getItem('simenv_key'),
+};
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  let h='';
+
+  if(S.view!=='welcome'){
+    h+=`
+    <div class="site-header">
+      <div class="badge">🌿 C.2 · Référentiel 2026 IFSI</div>
+      <h1><span>Sim</span>Environnement</h1>
+      <p>Santé environnementale · Transition écologique · One Health</p>
+    </div>
+    <div class="tabs">
+      ${[
+        {id:'onehealth', label:'🌍 One Health'},
+        {id:'risques',   label:'⚠️ Risques climatiques'},
+        {id:'ecogestes', label:'♻️ Éco-soins'},
+        {id:'empreinte', label:'📊 Empreinte santé'},
+        {id:'quiz',      label:'🎯 Quiz C.2'},
+        {id:'analyse',   label:'🔬 Analyse IA'},
+      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+          <div class="badge">🌿 C.2 · Référentiel 2026 IFSI</div>
+          <h1><span>Sim</span>Environnement</h1>
+        </div>`;
+  }
+
+  h+='<div class="wrap">';
+
+  // ─── WELCOME ──────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(126,203,80,.15)">
+      <div class="welcome">
+        <span class="welcome-icon">🌿</span>
+        <p>L'UE C.2 du référentiel 2026 — <strong>entièrement nouvelle</strong>. La santé des humains, des animaux et des écosystèmes est une seule et même santé. L'IDE est acteur de cette transition.</p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">🌍</span><span class="pt-t"><strong>One Health</strong> — comprendre le lien entre santé humaine, animale et environnementale</span></div>
+          <div class="pt"><span class="pt-i">⚠️</span><span class="pt-t"><strong>Risques climatiques</strong> — canicule, pollution, maladies vectorielles : rôle de l'IDE</span></div>
+          <div class="pt"><span class="pt-i">♻️</span><span class="pt-t"><strong>Éco-soins</strong> — réduire l'empreinte environnementale de l'acte infirmier</span></div>
+          <div class="pt"><span class="pt-i">📊</span><span class="pt-t"><strong>Empreinte du système de santé</strong> — comprendre pour agir</span></div>
+          <div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>Quiz C.2</strong> — valider ses connaissances sur l'UE</span></div>
+        </div>
+        <button class="btn-p" onclick="go('main')">Explorer SimEnvironnement →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── MAIN ─────────────────────────────────────────────────────
+  else{
+
+    // ── ONE HEALTH ───────────────────────────────────────────────
+    if(S.onglet==='onehealth'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:rgba(126,203,80,.15)">
+          <div class="card-title" style="color:var(--em)">One Health — Une seule santé</div>
+          <div class="card-sub">La santé humaine, animale et environnementale sont indissociables. C'est le fondement de l'UE C.2.</div>
+
+          <!-- Diagramme de Venn simplifié -->
+          <div style="position:relative;height:200px;margin:20px 0;display:flex;align-items:center;justify-content:center">
+            <!-- Cercle Humain -->
+            <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(126,203,80,.1);border:2px solid rgba(126,203,80,.4);display:flex;align-items:center;justify-content:center;flex-direction:column;top:10px;left:50%;transform:translateX(-90px);z-index:2">
+              <span style="font-size:24px">🧑‍⚕️</span>
+              <span style="font-size:11px;color:var(--em);font-weight:600;margin-top:4px">Santé humaine</span>
+            </div>
+            <!-- Cercle Animal -->
+            <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(200,160,80,.1);border:2px solid rgba(200,160,80,.4);display:flex;align-items:center;justify-content:center;flex-direction:column;top:10px;left:50%;transform:translateX(-40px);z-index:2">
+              <span style="font-size:24px">🐾</span>
+              <span style="font-size:11px;color:var(--earth);font-weight:600;margin-top:4px">Santé animale</span>
+            </div>
+            <!-- Cercle Environnement -->
+            <div style="position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(80,176,208,.1);border:2px solid rgba(80,176,208,.4);display:flex;align-items:center;justify-content:center;flex-direction:column;bottom:0px;left:50%;transform:translateX(-65px);z-index:2">
+              <span style="font-size:24px">🌿</span>
+              <span style="font-size:11px;color:var(--water);font-weight:600;margin-top:4px">Écosystèmes</span>
+            </div>
+            <!-- Centre -->
+            <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-40%);z-index:10;background:rgba(10,20,8,.8);border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(126,203,80,.5)">
+              <span style="font-size:10px;color:var(--em);font-weight:700;text-align:center;line-height:1.2">ONE<br>HEALTH</span>
+            </div>
+          </div>
+
+          <div class="info info-em" style="margin-bottom:14px">
+            🔬 <strong>75% des maladies infectieuses émergentes</strong> sont d'origine animale (zoonoses) : COVID-19, Ebola, grippe aviaire, maladie de Lyme… La santé des écosystèmes est un bouclier sanitaire.
+          </div>
+
+          <div class="grid2" style="margin-bottom:14px">
+            <div class="stat">
+              <span class="stat-v" style="color:var(--em)">75%</span>
+              <span class="stat-l">Maladies émergentes d'origine animale</span>
+            </div>
+            <div class="stat">
+              <span class="stat-v" style="color:var(--water)">5%</span>
+              <span class="stat-l">Émissions mondiales CO₂ du secteur santé</span>
+            </div>
+            <div class="stat">
+              <span class="stat-v" style="color:var(--earth)">+1,5°C</span>
+              <span class="stat-l">Réchauffement actuel vs ère préindustrielle</span>
+            </div>
+            <div class="stat">
+              <span class="stat-v" style="color:var(--fire)">150 000</span>
+              <span class="stat-l">Décès/an liés au climat en Europe</span>
+            </div>
+          </div>
+
+          <div style="font-family:'Gloock',serif;font-size:16px;font-weight:400;font-style:italic;color:var(--em);margin-bottom:10px">Rôle de l'IDE dans One Health</div>
+          <div class="col8">
+            ${[
+              { i:'🔍', t:'Repérer les déterminants environnementaux de santé', d:'Qualité du logement, exposition aux polluants, accès aux espaces verts — ces facteurs influencent la santé autant que les comportements individuels.' },
+              { i:'📚', t:'Éduquer à la santé environnementale', d:'Expliquer le lien entre pollution et pathologies respiratoires, chaleur et déshydratation, moustiques et maladies vectorielles.' },
+              { i:'🌱', t:'Pratiquer des éco-soins', d:'Réduire l\'empreinte carbone des actes infirmiers : tri des déchets, préférence pour le matériel réutilisable, optimisation des déplacements.' },
+              { i:'🤝', t:'Coordonner avec les acteurs environnementaux', d:'Cellules de crise canicule, ARS, collectivités locales — l\'IDE est un acteur de la résilience communautaire.' },
+            ].map(r=>`
+              <div class="risque-card" style="border-left-color:rgba(126,203,80,.3)" onclick="this.querySelector('.risque-detail').style.display=this.querySelector('.risque-detail').style.display==='none'?'block':'none'">
+                <div class="risque-title">${r.i} ${r.t}</div>
+                <div class="risque-detail" style="display:none">${r.d}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ── RISQUES CLIMATIQUES ──────────────────────────────────────
+    else if(S.onglet==='risques'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:rgba(232,112,64,.15)">
+          <div class="card-title" style="color:var(--fire)">Risques climatiques & rôle IDE</div>
+          <div class="card-sub">Le changement climatique génère de nouveaux risques sanitaires. L'IDE doit les connaître pour agir en prévention et en soin.</div>
+          <div class="col8">
+            ${RISQUES_CLIMAT.map(r=>`
+              <div class="risque-card ${S.risqueOpen===r.id?'open':''}" style="border-left-color:${r.col}" onclick="toggleRisque('${r.id}')">
+                <div class="risque-title">${r.icon} ${r.titre}</div>
+                <div class="risque-detail">
+                  <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:10px">${r.detail}</p>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <span class="risque-impact" style="background:${r.col}18;border:1px solid ${r.col}35;color:${r.col}">Impact : ${r.impact}</span>
+                    <span class="risque-impact" style="background:rgba(126,203,80,.08);border:1px solid rgba(126,203,80,.2);color:var(--em)">Soins IDE : ${r.soins}</span>
+                  </div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="info info-em">
+          💡 <strong>Plan Canicule national :</strong> L'IDE est en première ligne lors des vagues de chaleur. Connaître les niveaux d'alerte (veille, avertissement, urgence absolue) et les publics vulnérables prioritaires est une compétence attendue en UE C.2.
+        </div>
+      </div>`;
+    }
+
+    // ── ÉCO-SOINS ───────────────────────────────────────────────
+    else if(S.onglet==='ecogestes'){
+      const done=S.gesteDone.length;
+      const total=ECOGESTES.length;
+      const pct=Math.round(done/total*100);
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:rgba(126,203,80,.15)">
+          <div class="card-title" style="color:var(--em)">Éco-soins — L'infirmier acteur écologique</div>
+          <div class="card-sub">Le secteur de la santé représente 5% des émissions mondiales de CO₂. L'IDE peut agir à son échelle. Cochez les gestes que vous intégrez dans votre pratique.</div>
+
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:6px">
+              <span>Progression</span><span>${done}/${total} gestes · ${pct}%</span>
+            </div>
+            <div class="planet-bar-wrap"><div class="planet-bar" style="width:${pct}%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>
+          </div>
+
+          <div class="geste-grid">
+            ${ECOGESTES.map((g,i)=>`
+              <div class="geste-card ${S.gesteDone.includes(i)?'done':''}" onclick="toggleGeste(${i})">
+                <div class="geste-icon">${g.icon}</div>
+                <div class="geste-title">${g.titre} ${S.gesteDone.includes(i)?'✓':''}</div>
+                <div class="geste-eco">${g.eco}</div>
+                <div class="geste-desc">${g.desc}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="info info-earth">
+          🌱 <strong>Savoir clé UE C.2 :</strong> Les DASRI (Déchets d'Activités de Soins à Risques Infectieux) représentent un enjeu environnemental majeur. Un tri rigoureux réduit le volume à incinérer et limite la production de dioxines.
+        </div>
+      </div>`;
+    }
+
+    // ── EMPREINTE SANTÉ ─────────────────────────────────────────
+    else if(S.onglet==='empreinte'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:rgba(80,176,208,.15)">
+          <div class="card-title" style="color:var(--water)">Empreinte carbone du système de santé</div>
+          <div class="card-sub">Comprendre d'où viennent les émissions pour savoir où agir. Le secteur santé en France représente environ 8% des émissions nationales.</div>
+
+          <div style="margin-bottom:20px">
+            ${EMPREINTE_SANTE.map(e=>`
+              <div style="margin-bottom:12px">
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
+                  <span style="color:var(--txt2)">${e.label}</span>
+                  <span style="font-family:'Fira Mono',monospace;color:${e.col};font-weight:500">${e.pct}%</span>
+                </div>
+                <div class="planet-bar-wrap"><div class="planet-bar" style="width:${e.pct*4}%;background:${e.col};max-width:100%"></div></div>
+              </div>`).join('')}
+          </div>
+
+          <div class="info info-water" style="margin-bottom:14px">
+            💧 La <strong>chaîne d'approvisionnement médicale</strong> (transport, fabrication) représente à elle seule environ 40% de l'empreinte du secteur. Choisir un matériel local ou réutilisable, c'est agir sur ce levier.
+          </div>
+
+          <div style="font-family:'Gloock',serif;font-size:16px;font-weight:400;font-style:italic;color:var(--water);margin-bottom:12px">Chiffres clés à retenir</div>
+          <div class="grid2">
+            <div class="stat">
+              <span class="stat-v" style="color:var(--water)">8%</span>
+              <span class="stat-l">Émissions nationales</span>
+              <span class="stat-s">Secteur santé en France</span>
+            </div>
+            <div class="stat">
+              <span class="stat-v" style="color:var(--em)">−50%</span>
+              <span class="stat-l">Objectif 2030</span>
+              <span class="stat-s">Accord de Paris · Santé</span>
+            </div>
+            <div class="stat">
+              <span class="stat-v" style="color:var(--earth)">1 kg</span>
+              <span class="stat-l">CO₂ / consultation</span>
+              <span class="stat-s">En cabinet, en moyenne</span>
+            </div>
+            <div class="stat">
+              <span class="stat-v" style="color:var(--fire)">10 kg</span>
+              <span class="stat-l">CO₂ / hospitalisation</span>
+              <span class="stat-s">Courte durée · France</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ── QUIZ C.2 ────────────────────────────────────────────────
+    else if(S.onglet==='quiz'){
+      const q=QUIZ_QUESTIONS[S.quizIdx%QUIZ_QUESTIONS.length];
+      const pct=Math.round(S.quizIdx/QUIZ_QUESTIONS.length*100);
+      h+=`<div class="fadeup">
+        <div style="display:flex;justify-content:space-between;font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:8px">
+          <span>Question ${S.quizIdx%QUIZ_QUESTIONS.length+1} / ${QUIZ_QUESTIONS.length}</span>
+          <span style="color:var(--em)">${S.quizTotal>0?Math.round(S.quizScore/S.quizTotal*100)+'% correct':'—'}</span>
+        </div>
+        <div class="planet-bar-wrap" style="margin-bottom:16px"><div class="planet-bar" style="width:${pct}%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>
+        <div class="card" style="border-color:rgba(126,203,80,.15)">
+          <div style="font-family:'Gloock',serif;font-size:clamp(15px,2.5vw,19px);font-weight:400;line-height:1.5;margin-bottom:18px;color:var(--txt)">${esc(q.q)}</div>
+          ${q.opts.map((opt,i)=>{
+            let cls='';
+            if(S.quizShown){ if(i===q.rep)cls='correct'; else if(i===S.quizSelected)cls='wrong'; }
+            else if(i===S.quizSelected) cls='selected';
+            return `<div class="quiz-opt ${cls}" onclick="${S.quizShown?'':'selectQuiz('+i+')'}">
+              <span style="font-family:'Fira Mono',monospace;font-size:11px;color:inherit;flex-shrink:0">${['A','B','C','D'][i]}</span>
+              <span>${esc(opt)}</span>
+            </div>`;
+          }).join('')}
+          ${S.quizShown?`
+          <div class="quiz-expl">${q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</div>
+          <button class="btn-p btn-full" style="margin-top:14px" onclick="nextQuiz()">Question suivante →</button>
+          `:''}
+        </div>
+        <button class="btn-g btn-full" onclick="S.quizIdx=0;S.quizScore=0;S.quizTotal=0;S.quizSelected=null;S.quizShown=false;render()" style="margin-top:8px;color:var(--teal);border-color:rgba(64,200,160,.2)">↺ Recommencer</button>
+      </div>`;
+    }
+
+    // ── ANALYSE IA ───────────────────────────────────────────────
+    else if(S.onglet==='analyse'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:rgba(126,203,80,.15)">
+          <div class="card-title" style="color:var(--em)">Analyse IA — UE C.2</div>
+          <div class="card-sub">Posez une question sur la santé environnementale, les éco-soins ou One Health — l'IA vous répond dans une perspective pédagogique IFSI.</div>
+
+          <textarea id="question-env"
+            style="width:100%;min-height:80px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:10px;color:var(--txt);padding:12px;font-size:14px;font-family:'Instrument Sans',sans-serif;outline:none;resize:vertical;line-height:1.6;margin-bottom:10px"
+            placeholder="Ex : Quel est le rôle de l'IDE lors d'une vague de chaleur ? Comment expliquer One Health à un patient ? Quels sont les éco-gestes prioritaires en soins à domicile ?"></textarea>
+          <button class="btn-p btn-full" onclick="runAnalyse()">🌿 Obtenir une réponse pédagogique →</button>
+
+          ${S.loading?`<div class="dots" style="margin-top:16px"><span></span><span></span><span></span><div class="dots-msg">Recherche dans les données environnementales et sanitaires…</div></div>`:''}
+          ${!S.loading&&S.analyse?`<div class="analysis fadeup" style="margin-top:16px">${renderMd(S.analyse)}</div>`:''}
+
+          <hr class="div">
+          <div style="font-size:12px;color:var(--txt3)">
+            ${!S.apiKeySaved?`<div class="apikey-box">
+              <p>Clé API Anthropic pour activer l'analyse IA. <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
+              <div class="apikey-row">
+                <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+                <button onclick="saveKey()">Sauver</button>
+              </div>
+              ${S.apiKeySaved?'<div class="apikey-saved">✓ Enregistrée</div>':''}
+            </div>`:`<div style="color:var(--teal);font-family:'Fira Mono',monospace;font-size:11px">✓ Clé API configurée</div>`}
+          </div>
+        </div>
+
+        <!-- Premium -->
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:20px">
+            <div style="font-size:36px;margin-bottom:8px">🔒</div>
+            <div style="font-family:'Gloock',serif;font-size:18px;color:var(--txt);margin-bottom:5px">Analyse IA — Accès Premium</div>
+            <div style="font-size:13px;color:var(--txt3)">Les 5 onglets de contenu sont entièrement gratuits</div>
+          </div>
+          <div class="grid3" style="margin-bottom:18px">
+            <div style="border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center;background:rgba(255,255,255,.02)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Module seul</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">4,99€</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">Accès à vie</div>
+            </div>
+            <div style="border:1px solid rgba(126,203,80,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(126,203,80,.05)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--em);margin-bottom:8px">Suite complète</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">12,99€</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">9 modules à vie</div>
+            </div>
+            <div style="border:1px solid rgba(64,200,160,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(64,200,160,.05)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Institution</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">Sur devis</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">IFSI · Syndicat</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:10px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:12px 28px;border-radius:12px;background:linear-gradient(135deg,var(--em2),var(--em));color:#030a04;font-weight:700;font-size:14px;text-decoration:none">Obtenir l'accès →</a>
+          </div>
+          <div style="text-align:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace">🔑 Espace formateur</button>
+          </div>
+          ${S.showKey?`<div class="apikey-box" style="margin-top:12px">
+            <p>Clé API Anthropic — formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div>':''}
+          </div>`:''}
+        </div>
+      </div>`;
+    }
+
+    h+=`<div style="margin-top:12px"><button class="btn-g" onclick="go('welcome')" style="color:var(--em);border-color:rgba(126,203,80,.2)">← Accueil SimEnvironnement</button></div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'})}
+function setOnglet(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'})}
+function toggleRisque(id){S.risqueOpen=S.risqueOpen===id?null:id;render()}
+function toggleGeste(i){
+  S.gesteDone=S.gesteDone.includes(i)?S.gesteDone.filter(x=>x!==i):[...S.gesteDone,i];
+  render();
+}
+function selectQuiz(i){
+  if(S.quizShown)return;
+  S.quizSelected=i;S.quizShown=true;
+  const q=QUIZ_QUESTIONS[S.quizIdx%QUIZ_QUESTIONS.length];
+  S.quizTotal++;
+  if(i===q.rep)S.quizScore++;
+  render();
+}
+function nextQuiz(){
+  S.quizIdx++;S.quizSelected=null;S.quizShown=false;render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function saveKey(){localStorage.setItem('simenv_key',S.apiKey);S.apiKeySaved=true;render()}
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const q=document.getElementById('question-env')?.value||'';
+  if(!q.trim())return;
+  S.loading=true;S.analyse='';render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:800,
+        messages:[{role:'user',content:`Tu es un formateur IFSI expert en santé environnementale et transition écologique, spécialiste de l'UE C.2 du référentiel 2026. Un étudiant infirmier te pose une question.
+
+Question : ${q}
+
+Réponds de façon pédagogique, en 3-4 paragraphes. Utilise des exemples concrets liés à la pratique infirmière. Fais le lien avec One Health quand c'est pertinent. Tutoie l'étudiant. Inclus au moins un fait chiffré ou scientifique. Utilise **gras** pour les termes clés.`}]
+      })
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){S.analyse=`**⚠️ Erreur**\n\n${e.message}`}
+  S.loading=false;render();
+}
+
+render();
+</script>
+</body>
+</html>
