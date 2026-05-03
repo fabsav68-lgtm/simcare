@@ -241,34 +241,34 @@ body{
 // ═══════════════════════════════════════
 const QCM = {
   1: [ // 1ère année
-    { ue:'UE 2.1', q:'Quelle est la valeur normale de la pression artérielle chez un adulte sain ?', opts:['80/50 mmHg','120/80 mmHg','150/100 mmHg','90/60 mmHg'], rep:1, expl:'La pression artérielle normale chez l\'adulte est de **120/80 mmHg**. On parle d\'hypertension au-delà de 140/90 mmHg et d\'hypotension en dessous de 90/60 mmHg.' },
-    { ue:'UE 2.1', q:'La fréquence cardiaque normale d\'un adulte au repos est de :', opts:['40–60 bpm','60–100 bpm','100–120 bpm','120–160 bpm'], rep:1, expl:'La **fréquence cardiaque normale** de l\'adulte est de 60 à 100 bpm. En dessous de 60 : bradycardie. Au-dessus de 100 : tachycardie.' },
-    { ue:'UE 2.2', q:'Parmi les éléments suivants, lequel n\'est PAS un signe clinique d\'hypoglycémie ?', opts:['Sueurs froides','Tremblements','Bradycardie','Pâleur'], rep:2, expl:'La bradycardie n\'est PAS un signe d\'hypoglycémie. Les signes adrénergiques de l\'hypoglycémie sont : **sueurs, tremblements, tachycardie, pâleur, anxiété**. La bradycardie est masquée par les bêtabloquants.' },
-    { ue:'UE 4.1', q:'La règle des 5B en administration médicamenteuse comprend :', opts:['Bon patient, Bon médicament, Bonne dose, Bonne voie, Bon moment','Bon patient, Bon médecin, Bon bilan, Bonne voie, Bon moment','Bon patient, Bon médicament, Bonne dose, Bon bilan, Bon moment','Bon patient, Bon médicament, Bonne durée, Bonne voie, Bon médecin'], rep:0, expl:'La règle des **5B** : Bon patient · Bon médicament · Bonne dose · Bonne voie · Bon moment. C\'est la base de la sécurisation de l\'administration médicamenteuse.' },
-    { ue:'UE 1.1', q:'La SpO₂ normale chez un patient BPCO est :', opts:['95–100%','92–95%','88–92%','80–88%'], rep:2, expl:'Chez le patient **BPCO**, la cible SpO₂ est **88–92%**. Une saturation trop élevée (>92%) risque de supprimer la commande ventilatoire hypoxique et d\'aggraver l\'hypercapnie.' },
-    { ue:'UE 2.4', q:'L\'échelle de Glasgow évalue :', opts:['La douleur','La conscience','La saturation','La pression artérielle'], rep:1, expl:'Le **Score de Glasgow** évalue le niveau de conscience sur 3 critères : ouverture des yeux (1–4), réponse verbale (1–5), réponse motrice (1–6). Score total : 3 (coma profond) à 15 (normal).' },
-    { ue:'UE 4.2', q:'Une solution isotonique a une osmolarité de :', opts:['< 280 mOsm/L','280–320 mOsm/L','> 320 mOsm/L','> 500 mOsm/L'], rep:1, expl:'Une solution **isotonique** a une osmolarité proche du plasma : **280–320 mOsm/L**. Hypotonique < 280. Hypertonique > 320. Le NaCl 0,9% et le Ringer Lactate sont isotoniques.' },
-    { ue:'UE 2.1', q:'La fréquence respiratoire normale d\'un adulte au repos est de :', opts:['8–12 cycles/min','12–20 cycles/min','20–30 cycles/min','30–40 cycles/min'], rep:1, expl:'La **fréquence respiratoire normale** de l\'adulte est de 12 à 20 cycles/minute. Bradypnée < 12. Tachypnée > 20. La FR est souvent négligée mais c\'est un signe vital précoce de décompensation.' },
+    { ue:'B.1', q:'Quelle est la valeur normale de la pression artérielle chez un adulte sain ?', opts:['80/50 mmHg','120/80 mmHg','150/100 mmHg','90/60 mmHg'], rep:1, expl:'La pression artérielle normale chez l\'adulte est de **120/80 mmHg**. On parle d\'hypertension au-delà de 140/90 mmHg et d\'hypotension en dessous de 90/60 mmHg.' },
+    { ue:'B.1', q:'La fréquence cardiaque normale d\'un adulte au repos est de :', opts:['40–60 bpm','60–100 bpm','100–120 bpm','120–160 bpm'], rep:1, expl:'La **fréquence cardiaque normale** de l\'adulte est de 60 à 100 bpm. En dessous de 60 : bradycardie. Au-dessus de 100 : tachycardie.' },
+    { ue:'B.1', q:'Parmi les éléments suivants, lequel n\'est PAS un signe clinique d\'hypoglycémie ?', opts:['Sueurs froides','Tremblements','Bradycardie','Pâleur'], rep:2, expl:'La bradycardie n\'est PAS un signe d\'hypoglycémie. Les signes adrénergiques de l\'hypoglycémie sont : **sueurs, tremblements, tachycardie, pâleur, anxiété**. La bradycardie est masquée par les bêtabloquants.' },
+    { ue:'B.3', q:'La règle des 5B en administration médicamenteuse comprend :', opts:['Bon patient, Bon médicament, Bonne dose, Bonne voie, Bon moment','Bon patient, Bon médecin, Bon bilan, Bonne voie, Bon moment','Bon patient, Bon médicament, Bonne dose, Bon bilan, Bon moment','Bon patient, Bon médicament, Bonne durée, Bonne voie, Bon médecin'], rep:0, expl:'La règle des **5B** : Bon patient · Bon médicament · Bonne dose · Bonne voie · Bon moment. C\'est la base de la sécurisation de l\'administration médicamenteuse.' },
+    { ue:'A.1', q:'La SpO₂ normale chez un patient BPCO est :', opts:['95–100%','92–95%','88–92%','80–88%'], rep:2, expl:'Chez le patient **BPCO**, la cible SpO₂ est **88–92%**. Une saturation trop élevée (>92%) risque de supprimer la commande ventilatoire hypoxique et d\'aggraver l\'hypercapnie.' },
+    { ue:'B.1', q:'L\'échelle de Glasgow évalue :', opts:['La douleur','La conscience','La saturation','La pression artérielle'], rep:1, expl:'Le **Score de Glasgow** évalue le niveau de conscience sur 3 critères : ouverture des yeux (1–4), réponse verbale (1–5), réponse motrice (1–6). Score total : 3 (coma profond) à 15 (normal).' },
+    { ue:'A.1', q:'Une solution isotonique a une osmolarité de :', opts:['< 280 mOsm/L','280–320 mOsm/L','> 320 mOsm/L','> 500 mOsm/L'], rep:1, expl:'Une solution **isotonique** a une osmolarité proche du plasma : **280–320 mOsm/L**. Hypotonique < 280. Hypertonique > 320. Le NaCl 0,9% et le Ringer Lactate sont isotoniques.' },
+    { ue:'B.1', q:'La fréquence respiratoire normale d\'un adulte au repos est de :', opts:['8–12 cycles/min','12–20 cycles/min','20–30 cycles/min','30–40 cycles/min'], rep:1, expl:'La **fréquence respiratoire normale** de l\'adulte est de 12 à 20 cycles/minute. Bradypnée < 12. Tachypnée > 20. La FR est souvent négligée mais c\'est un signe vital précoce de décompensation.' },
   ],
   2: [ // 2ème année
-    { ue:'UE 4.4', q:'Lors d\'une perfusion de NaCl 0,9% 500mL en 4h, le débit en mL/h est de :', opts:['100 mL/h','125 mL/h','150 mL/h','250 mL/h'], rep:1, expl:'Débit = Volume ÷ Durée = **500 ÷ 4 = 125 mL/h**. En gouttes/min (macrogouttes) : 125 ÷ 3 ≈ 42 gouttes/min.' },
-    { ue:'UE 4.4', q:'Quel est le débit d\'O₂ maximal recommandé avec des lunettes nasales ?', opts:['4 L/min','6 L/min','8 L/min','10 L/min'], rep:1, expl:'Le débit maximal avec des **lunettes nasales** est de **6 L/min**. Au-delà, le débit est inefficace et dessèche les muqueuses. Pour des FiO₂ plus élevées, utiliser un masque simple ou haute concentration.' },
-    { ue:'UE 2.6', q:'L\'insuline lente (Lantus®) a une durée d\'action d\'environ :', opts:['4–6 heures','8–12 heures','20–24 heures','48 heures'], rep:2, expl:'L\'**insuline glargine (Lantus®)** est une insuline basale de durée d\'action de **20 à 24 heures**, sans pic marqué. Injectée 1 fois/jour. Ne pas la mélanger à une autre insuline.' },
-    { ue:'UE 4.7', q:'La contention de classe II correspond à une pression de :', opts:['10–15 mmHg','15–20 mmHg','20–36 mmHg','> 36 mmHg'], rep:2, expl:'La **classe II** correspond à une compression de **20–36 mmHg**. C\'est la classe la plus prescrite en pratique : varices symptomatiques, TVP, post-opératoire, grossesse compliquée.' },
-    { ue:'UE 2.8', q:'En cas d\'hypoglycémie sévère (< 0,5 g/L) chez un patient inconscient, l\'IDE administre :', opts:['Sucre per os','Glucagon IM','G30% IV','G5% en perfusion lente'], rep:1, expl:'Chez un patient **inconscient**, la voie orale est contre-indiquée (fausse route). L\'IDE administre **Glucagon 1mg en IM ou SC**. L\'injection de G30% IV est réservée au médecin.' },
-    { ue:'UE 4.3', q:'Le score DOLOPLUS-2 seuil de douleur significative est :', opts:['≥ 3','≥ 5','≥ 8','≥ 10'], rep:1, expl:'Le **DOLOPLUS-2** explore 10 items (max 30 points). Un score **≥ 5** signe une douleur significative nécessitant une prise en charge. Utilisé pour les patients non communicants.' },
-    { ue:'UE 4.4', q:'Avant une injection d\'insuline rapide au stylo, l\'IDE doit vérifier :', opts:['La glycémie capillaire uniquement','La glycémie + la prescription + l\'heure du repas','La glycémie + la TA','La prescription uniquement'], rep:1, expl:'Avant toute injection d\'insuline rapide : **glycémie capillaire** (adaptée à la dose) + **prescription médicale** (dose, type, moment) + **heure du repas** (insuline rapide = repas dans les 30 min).' },
-    { ue:'UE 2.11', q:'Une kaliémie à 6,2 mmol/L est :', opts:['Hypokaliémie modérée','Valeur normale','Hyperkaliémie légère','Hyperkaliémie sévère'], rep:3, expl:'La **kaliémie normale** est 3,5–5 mmol/L. K⁺ à 6,2 = **hyperkaliémie sévère** (> 6 mmol/L) — risque de troubles du rythme cardiaque graves. Alerte médicale immédiate.' },
+    { ue:'B.3', q:'Lors d\'une perfusion de NaCl 0,9% 500mL en 4h, le débit en mL/h est de :', opts:['100 mL/h','125 mL/h','150 mL/h','250 mL/h'], rep:1, expl:'Débit = Volume ÷ Durée = **500 ÷ 4 = 125 mL/h**. En gouttes/min (macrogouttes) : 125 ÷ 3 ≈ 42 gouttes/min.' },
+    { ue:'B.3', q:'Quel est le débit d\'O₂ maximal recommandé avec des lunettes nasales ?', opts:['4 L/min','6 L/min','8 L/min','10 L/min'], rep:1, expl:'Le débit maximal avec des **lunettes nasales** est de **6 L/min**. Au-delà, le débit est inefficace et dessèche les muqueuses. Pour des FiO₂ plus élevées, utiliser un masque simple ou haute concentration.' },
+    { ue:'B.1', q:'L\'insuline lente (Lantus®) a une durée d\'action d\'environ :', opts:['4–6 heures','8–12 heures','20–24 heures','48 heures'], rep:2, expl:'L\'**insuline glargine (Lantus®)** est une insuline basale de durée d\'action de **20 à 24 heures**, sans pic marqué. Injectée 1 fois/jour. Ne pas la mélanger à une autre insuline.' },
+    { ue:'B.3', q:'La contention de classe II correspond à une pression de :', opts:['10–15 mmHg','15–20 mmHg','20–36 mmHg','> 36 mmHg'], rep:2, expl:'La **classe II** correspond à une compression de **20–36 mmHg**. C\'est la classe la plus prescrite en pratique : varices symptomatiques, TVP, post-opératoire, grossesse compliquée.' },
+    { ue:'B.1', q:'En cas d\'hypoglycémie sévère (< 0,5 g/L) chez un patient inconscient, l\'IDE administre :', opts:['Sucre per os','Glucagon IM','G30% IV','G5% en perfusion lente'], rep:1, expl:'Chez un patient **inconscient**, la voie orale est contre-indiquée (fausse route). L\'IDE administre **Glucagon 1mg en IM ou SC**. L\'injection de G30% IV est réservée au médecin.' },
+    { ue:'B.3', q:'Le score DOLOPLUS-2 seuil de douleur significative est :', opts:['≥ 3','≥ 5','≥ 8','≥ 10'], rep:1, expl:'Le **DOLOPLUS-2** explore 10 items (max 30 points). Un score **≥ 5** signe une douleur significative nécessitant une prise en charge. Utilisé pour les patients non communicants.' },
+    { ue:'B.3', q:'Avant une injection d\'insuline rapide au stylo, l\'IDE doit vérifier :', opts:['La glycémie capillaire uniquement','La glycémie + la prescription + l\'heure du repas','La glycémie + la TA','La prescription uniquement'], rep:1, expl:'Avant toute injection d\'insuline rapide : **glycémie capillaire** (adaptée à la dose) + **prescription médicale** (dose, type, moment) + **heure du repas** (insuline rapide = repas dans les 30 min).' },
+    { ue:'B.1', q:'Une kaliémie à 6,2 mmol/L est :', opts:['Hypokaliémie modérée','Valeur normale','Hyperkaliémie légère','Hyperkaliémie sévère'], rep:3, expl:'La **kaliémie normale** est 3,5–5 mmol/L. K⁺ à 6,2 = **hyperkaliémie sévère** (> 6 mmol/L) — risque de troubles du rythme cardiaque graves. Alerte médicale immédiate.' },
   ],
   3: [ // 3ème année
-    { ue:'UE 5.7', q:'Le démarche clinique infirmière comprend, dans l\'ordre :', opts:['Diagnostic → Recueil → Planification → Évaluation','Recueil → Analyse → Planification → Évaluation → Réajustement','Anamnèse → Diagnostic → Soins → Bilan','Prescription → Recueil → Soins → Transmissions'], rep:1, expl:'La **démarche clinique infirmière** suit 5 étapes : **Recueil de données → Analyse/Diagnostic infirmier → Planification → Réalisation → Évaluation**. C\'est un processus cyclique et continu.' },
-    { ue:'UE 3.3', q:'Le secret professionnel de l\'IDE s\'impose vis-à-vis de :', opts:['Le patient uniquement','La famille uniquement','Toute personne sauf l\'équipe soignante et le médecin traitant','Toute personne sans exception'],rep:2, expl:'Le **secret professionnel** (Art. R4311-1) s\'impose à tous, sauf partage possible au sein de l\'**équipe soignante** (secret partagé) et avec le **médecin traitant**. La famille n\'a pas accès sans accord du patient.' },
-    { ue:'UE 4.2', q:'La prévention des escarres passe en priorité par :', opts:['Les pansements hydrocolloïdes préventifs','Les changements de position toutes les 2 à 3 heures','L\'utilisation de matelas anti-escarres uniquement','L\'hydratation cutanée exclusive'], rep:1, expl:'La prévention principale des escarres repose sur la **mobilisation régulière toutes les 2 à 3h**. Le matelas anti-escarres est complémentaire mais ne remplace pas les changements de position.' },
-    { ue:'UE 4.2', q:'L\'échelle de Braden évalue le risque d\'escarre sur :', opts:['3 items','4 items','6 items','8 items'], rep:2, expl:'L\'**échelle de Braden** comporte **6 items** : perception sensorielle, humidité, activité, mobilité, nutrition, friction/cisaillement. Score de 6 à 23. Score ≤ 18 = risque d\'escarre.' },
-    { ue:'UE 5.1', q:'Dans le cadre d\'un mémoire IFSI, la problématique doit être :', opts:['Une affirmation issue de la pratique','Une question de recherche construite à partir du terrain','Un résumé de la littérature','Une hypothèse médicale'], rep:1, expl:'La **problématique** de mémoire est une **question de recherche** (pas une affirmation), construite à partir d\'une situation professionnelle, puis affinée par les lectures et les entretiens exploratoires.' },
-    { ue:'UE 1.3', q:'La loi Léonetti-Claeys (2016) introduit le droit à :', opts:['L\'euthanasie active','La sédation profonde et continue jusqu\'au décès','L\'arrêt des traitements uniquement','L\'aide médicale à mourir'], rep:1, expl:'La loi **Léonetti-Claeys de 2016** introduit le droit à la **sédation profonde et continue jusqu\'au décès** pour les patients en phase terminale, dont le pronostic vital est engagé à court terme, sur demande du patient.' },
-    { ue:'UE 4.8', q:'L\'éducation thérapeutique du patient (ETP) vise en priorité à :', opts:['Informer le patient de son traitement','Rendre le patient acteur de sa santé','Améliorer l\'observance médicamenteuse','Réduire les hospitalisations'], rep:1, expl:'L\'**ETP** (Art. L1161-1 CSP) vise à **rendre le patient acteur de sa santé**, capable de gérer lui-même sa maladie chronique. L\'information et l\'observance sont des résultats mais pas l\'objectif principal.' },
-    { ue:'UE 2.10', q:'L\'IDE peut pratiquer une injection IV directe :', opts:['Toujours, en autonomie','Jamais, c\'est une compétence médicale','Sur prescription médicale écrite, datée et signée','Seulement en urgence'], rep:2, expl:'Selon l\'Art. R4311-7, l\'injection IV directe est réalisée par l\'IDE **sur prescription médicale écrite, datée et signée**. En urgence, elle peut agir dans le cadre du R4311-14 (rôle propre en cas de danger immédiat).' },
+    { ue:'A.1', q:'Le démarche clinique infirmière comprend, dans l\'ordre :', opts:['Diagnostic → Recueil → Planification → Évaluation','Recueil → Analyse → Planification → Évaluation → Réajustement','Anamnèse → Diagnostic → Soins → Bilan','Prescription → Recueil → Soins → Transmissions'], rep:1, expl:'La **démarche clinique infirmière** suit 5 étapes : **Recueil de données → Analyse/Diagnostic infirmier → Planification → Réalisation → Évaluation**. C\'est un processus cyclique et continu.' },
+    { ue:'A.2', q:'Le secret professionnel de l\'IDE s\'impose vis-à-vis de :', opts:['Le patient uniquement','La famille uniquement','Toute personne sauf l\'équipe soignante et le médecin traitant','Toute personne sans exception'],rep:2, expl:'Le **secret professionnel** (Art. R4311-1) s\'impose à tous, sauf partage possible au sein de l\'**équipe soignante** (secret partagé) et avec le **médecin traitant**. La famille n\'a pas accès sans accord du patient.' },
+    { ue:'A.1', q:'La prévention des escarres passe en priorité par :', opts:['Les pansements hydrocolloïdes préventifs','Les changements de position toutes les 2 à 3 heures','L\'utilisation de matelas anti-escarres uniquement','L\'hydratation cutanée exclusive'], rep:1, expl:'La prévention principale des escarres repose sur la **mobilisation régulière toutes les 2 à 3h**. Le matelas anti-escarres est complémentaire mais ne remplace pas les changements de position.' },
+    { ue:'A.1', q:'L\'échelle de Braden évalue le risque d\'escarre sur :', opts:['3 items','4 items','6 items','8 items'], rep:2, expl:'L\'**échelle de Braden** comporte **6 items** : perception sensorielle, humidité, activité, mobilité, nutrition, friction/cisaillement. Score de 6 à 23. Score ≤ 18 = risque d\'escarre.' },
+    { ue:'D.3', q:'Dans le cadre d\'un mémoire IFSI, la problématique doit être :', opts:['Une affirmation issue de la pratique','Une question de recherche construite à partir du terrain','Un résumé de la littérature','Une hypothèse médicale'], rep:1, expl:'La **problématique** de mémoire est une **question de recherche** (pas une affirmation), construite à partir d\'une situation professionnelle, puis affinée par les lectures et les entretiens exploratoires.' },
+    { ue:'A.2', q:'La loi Léonetti-Claeys (2016) introduit le droit à :', opts:['L\'euthanasie active','La sédation profonde et continue jusqu\'au décès','L\'arrêt des traitements uniquement','L\'aide médicale à mourir'], rep:1, expl:'La loi **Léonetti-Claeys de 2016** introduit le droit à la **sédation profonde et continue jusqu\'au décès** pour les patients en phase terminale, dont le pronostic vital est engagé à court terme, sur demande du patient.' },
+    { ue:'C.1', q:'L\'éducation thérapeutique du patient (ETP) vise en priorité à :', opts:['Informer le patient de son traitement','Rendre le patient acteur de sa santé','Améliorer l\'observance médicamenteuse','Réduire les hospitalisations'], rep:1, expl:'L\'**ETP** (Art. L1161-1 CSP) vise à **rendre le patient acteur de sa santé**, capable de gérer lui-même sa maladie chronique. L\'information et l\'observance sont des résultats mais pas l\'objectif principal.' },
+    { ue:'A.2', q:'L\'IDE peut pratiquer une injection IV directe :', opts:['Toujours, en autonomie','Jamais, c\'est une compétence médicale','Sur prescription médicale écrite, datée et signée','Seulement en urgence'], rep:2, expl:'Selon l\'Art. R4311-7, l\'injection IV directe est réalisée par l\'IDE **sur prescription médicale écrite, datée et signée**. En urgence, elle peut agir dans le cadre du R4311-14 (rôle propre en cas de danger immédiat).' },
   ],
 };
 
@@ -298,7 +298,7 @@ const CAS = {
 // ═══════════════════════════════════════
 const FICHES = {
   1: [
-    { id:'f1', icon:'❤️', titre:'Constantes vitales normales adulte', ue:'UE 2.1', contenu:`
+    { id:'f1', icon:'❤️', titre:'Constantes vitales normales adulte', ue:'B.1', contenu:`
       <h4>Valeurs de référence</h4>
       <ul>
         <li><strong>FC :</strong> 60–100 bpm</li>
@@ -316,7 +316,7 @@ const FICHES = {
       </ul>
       <div class="mnemo">🧠 Mnémotechnique : <strong>FC-FR-PA-SpO₂-T°-GCS</strong> = "François-François-Pierre-Aurait-Pu-Tomber-Gentiment"</div>
     `},
-    { id:'f2', icon:'💊', titre:'Règle des 5B — Administration médicaments', ue:'UE 4.1', contenu:`
+    { id:'f2', icon:'💊', titre:'Règle des 5B — Administration médicaments', ue:'B.3', contenu:`
       <h4>Les 5 Bons</h4>
       <ul>
         <li><strong>Bon patient</strong> — Vérifier l'identité (bracelet + demande verbale)</li>
@@ -335,7 +335,7 @@ const FICHES = {
     `},
   ],
   2: [
-    { id:'f3', icon:'💉', titre:'Insulines — Types et durées d\'action', ue:'UE 2.6', contenu:`
+    { id:'f3', icon:'💉', titre:'Insulines — Types et durées d\'action', ue:'B.1', contenu:`
       <h4>Classification</h4>
       <ul>
         <li><strong>Ultrarapides</strong> (NovoRapid®, Humalog®) — Début 15 min, pic 1h, durée 4h</li>
@@ -352,7 +352,7 @@ const FICHES = {
       </ul>
       <div class="mnemo">🧠 <strong>U-R-I-L</strong> = Ultra · Rapide · Intermédiaire · Lente</div>
     `},
-    { id:'f4', icon:'🩸', titre:'Perfusion IV — Calculs et surveillance', ue:'UE 4.4', contenu:`
+    { id:'f4', icon:'🩸', titre:'Perfusion IV — Calculs et surveillance', ue:'B.3', contenu:`
       <h4>Formules essentielles</h4>
       <ul>
         <li><strong>Débit mL/h</strong> = Volume (mL) ÷ Durée (h)</li>
@@ -370,7 +370,7 @@ const FICHES = {
     `},
   ],
   3: [
-    { id:'f5', icon:'⚖️', titre:'Lois fondamentales en soins infirmiers', ue:'UE 3.3', contenu:`
+    { id:'f5', icon:'⚖️', titre:'Lois fondamentales en soins infirmiers', ue:'A.2', contenu:`
       <h4>Textes clés</h4>
       <ul>
         <li><strong>Art. R4311-7 CSP</strong> — Actes IDE sur prescription médicale</li>
@@ -387,7 +387,7 @@ const FICHES = {
       </ul>
       <div class="mnemo">🧠 <strong>Kouchner 2002 = droits patients / Claeys 2016 = fin de vie</strong></div>
     `},
-    { id:'f6', icon:'📝', titre:'Démarche clinique infirmière', ue:'UE 5.7', contenu:`
+    { id:'f6', icon:'📝', titre:'Démarche clinique infirmière', ue:'A.1', contenu:`
       <h4>Les 5 étapes</h4>
       <ul>
         <li><strong>1. Recueil de données</strong> — Anamnèse, observation, dossier</li>
