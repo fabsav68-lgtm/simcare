@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SimCare · Suite pédagogique IFSI</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="apple-touch-icon" href="SimCare-icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SimCare">
 <meta name="theme-color" content="#04090f">
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,600;0,700;1,400&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -120,7 +122,7 @@ hr{border:none;border-top:1px solid rgba(255,255,255,.06);margin:40px 0}
 </nav>
 
 <div class="hero">
-  <div class="hero-badge">Suite pédagogique · 4 modules</div>
+  <div class="hero-badge">Suite pédagogique · 5 modules</div>
   <h1><em>L'intuition</em> <strong>clinique</strong><br>ne s'enseigne pas<br>par les formules</h1>
   <p>SimCare transforme chaque acte technique en <strong>compréhension incarnée</strong> — à partir du patient réel, pas du protocole abstrait.</p>
 </div>
@@ -129,7 +131,7 @@ hr{border:none;border-top:1px solid rgba(255,255,255,.06);margin:40px 0}
 
   <div class="modules-section">
     <span class="section-tag">Les modules disponibles</span>
-    <h2 class="section-title"><strong>Quatre actes.</strong> <em>Un principe.</em></h2>
+    <h2 class="section-title"><strong>Cinq modules.</strong> <em>Un principe.</em></h2>
 
     <div class="modules-grid">
 
@@ -171,6 +173,16 @@ hr{border:none;border-top:1px solid rgba(255,255,255,.06);margin:40px 0}
         <div class="module-sub">Contention veineuse</div>
         <div class="module-desc">Mesures, classes de compression, retour veineux — pour ce patient précis.</div>
         <div class="module-btn btn-cont">Ouvrir SimContention →</div>
+      </a>
+
+      <!-- SimAlmanach -->
+      <a href="SimAlmanach-IFSI.html" class="module-card" style="border-color:rgba(192,57,43,.2)">
+        <div class="module-num" style="color:rgba(192,57,43,.4)">MODULE 05</div>
+        <div class="module-icon">📰</div>
+        <div class="module-name" style="color:#c0392b">SimAlmanach</div>
+        <div class="module-sub">L'almanach du soignant</div>
+        <div class="module-desc">Actualité santé quotidienne, humour soignant, petites annonces nationales et éphéméride médical.</div>
+        <div class="module-btn" style="background:rgba(192,57,43,.1);color:#c0392b;border:1.5px solid rgba(192,57,43,.25)">Ouvrir SimAlmanach →</div>
       </a>
 
     </div>
@@ -222,11 +234,21 @@ hr{border:none;border-top:1px solid rgba(255,255,255,.06);margin:40px 0}
     <a href="SimPerf-IFSI.html">SimPerf</a>
     <a href="SimGluco-IFSI.html">SimGluco</a>
     <a href="SimContention-IFSI.html">SimContention</a>
+    <a href="SimAlmanach-IFSI.html">SimAlmanach</a>
   </div>
   <div style="margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#2a3a45">
     Formateur certifié PRAP 2S · BCI · contact@simcare.fr
   </div>
 </footer>
 
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('SimCare PWA prête'))
+      .catch(e => console.log('SW error:', e));
+  });
+}
+</script>
 </body>
 </html>
