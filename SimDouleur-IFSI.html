@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimDouleur · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #1a0a0a;
+  --bg2:   #240d0d;
+  --card:  rgba(255,255,255,.032);
+  --bdr:   rgba(255,255,255,.08);
+  --txt:   #f0e8e8;
+  --txt2:  #a08080;
+  --txt3:  #4a2828;
+  --em:    #e8604a;
+  --em2:   #c44030;
+  --rose:  #e8a0a0;
+  --amber: #e8c060;
+  --green: #60c880;
+  --teal:  #60c8b8;
+  --blue:  #6090e8;
+  /* Niveaux douleur */
+  --d0:  #60c880;
+  --d2:  #a8d860;
+  --d4:  #e8d840;
+  --d6:  #e89840;
+  --d8:  #e86040;
+  --d10: #c02020;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% 0%,  rgba(232,96,74,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(96,144,232,.04) 0%,transparent 50%);
+  color:var(--txt); min-height:100vh; padding-bottom:80px;
+}
+.wrap{max-width:700px;margin:0 auto;padding:0 20px}
+
+/* ── HEADER ── */
+.site-header{text-align:center;padding:42px 24px 22px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(232,96,74,.08);border:1px solid rgba(232,96,74,.22);
+  color:var(--em);padding:5px 16px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+}
+.site-header h1{
+  font-family:'Spectral',serif;
+  font-size:clamp(26px,6vw,44px);font-weight:700;letter-spacing:-.5px;line-height:1.1;
+}
+.site-header h1 em{font-style:italic;color:var(--em)}
+.site-header p{color:var(--txt3);font-size:14px;margin-top:8px;font-style:italic}
+
+/* ── STEPS ── */
+.steps-bar{display:flex;justify-content:center;align-items:center;gap:4px;padding:0 16px 28px;flex-wrap:wrap}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;transition:all .28s;
+  border:2px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt3);
+  font-family:'Fira Mono',monospace;
+}
+.step-dot.active{background:rgba(232,96,74,.12);border-color:var(--em);color:var(--em)}
+.step-dot.done  {background:var(--em2);border-color:var(--em2);color:#1a0a0a}
+.step-lbl{font-size:12px;color:var(--txt3);transition:color .28s}
+.step-lbl.active{color:var(--txt2)}
+.step-line{width:14px;height:1px;background:var(--bdr)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:20px;padding:28px;margin-bottom:16px}
+.card-title{font-family:'Spectral',serif;font-size:22px;font-weight:700;margin-bottom:5px}
+.card-sub{color:var(--txt3);font-size:13px;margin-bottom:22px;line-height:1.65}
+
+/* ── FORM ── */
+.lbl{display:block;font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px}
+.lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.lbl-val{font-family:'Fira Mono',monospace;color:var(--em);font-size:14px;font-weight:500}
+
+input[type=text]{
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
+  border-radius:10px;color:var(--txt);padding:11px 14px;
+  font-size:15px;font-family:'Fira Mono',monospace;
+  outline:none;width:100%;transition:border-color .2s;
+}
+input[type=text]:focus{border-color:rgba(232,96,74,.4)}
+
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:10px;
+  border-radius:5px;background:rgba(255,255,255,.08);outline:none;cursor:pointer;margin-top:4px;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:32px;height:32px;
+  border-radius:50%;background:var(--em);cursor:pointer;
+  box-shadow:0 0 10px rgba(232,96,74,.5);
+  border:3px solid rgba(255,255,255,.18);transition:transform .15s;
+}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.18)}
+.range-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-top:5px;font-family:'Fira Mono',monospace}
+
+.sl-wrap{display:flex;align-items:center;gap:10px;width:100%}
+.sl-wrap input[type=range]{flex:1}
+.sl-btn{
+  flex-shrink:0;width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.55);font-size:20px;line-height:1;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,color .15s,transform .1s;
+  user-select:none;-webkit-user-select:none;
+}
+.sl-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.sl-btn:active{transform:scale(.9)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.col  {display:flex;flex-direction:column;gap:18px}
+.col8 {display:flex;flex-direction:column;gap:8px}
+
+/* ── SEL ── */
+.sel{
+  cursor:pointer;border:1.5px solid var(--bdr);border-radius:12px;
+  padding:12px 16px;background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:14px;transition:all .18s;
+  display:flex;align-items:center;gap:12px;user-select:none;
+}
+.sel:hover{background:rgba(255,255,255,.05);color:var(--txt);border-color:rgba(255,255,255,.14)}
+.sel.on   {background:rgba(232,96,74,.08);color:var(--txt);border-color:rgba(232,96,74,.4)}
+.sel .si  {font-size:20px;flex-shrink:0}
+.sel .sd  {font-size:11px;color:var(--txt3);margin-top:2px}
+
+/* ── BOUTONS ── */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  border:none;border-radius:12px;color:#1a0a0a;
+  font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;
+  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
+  border-radius:12px;color:var(--txt2);
+  font-family:'Barlow',sans-serif;font-size:14px;
+  padding:11px 20px;cursor:pointer;transition:all .18s;
+}
+.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+.nav-col{display:flex;flex-direction:column;gap:10px}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.055);border-radius:13px;padding:14px;text-align:center}
+.stat-v{font-family:'Fira Mono',monospace;font-size:22px;font-weight:500;color:var(--em);display:block}
+.stat-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1.5px;font-family:'Fira Mono',monospace;display:block;margin-top:4px}
+.stat-s{font-size:11px;color:#3a1818;font-style:italic;display:block;margin-top:5px;line-height:1.4}
+
+/* ── ÉCHELLE VISUELLE ── */
+.echelle-bar{
+  height:36px;border-radius:10px;overflow:hidden;
+  background:linear-gradient(90deg,
+    var(--d0) 0%,var(--d2) 20%,var(--d4) 40%,
+    var(--d6) 60%,var(--d8) 80%,var(--d10) 100%);
+  position:relative;margin:10px 0;
+}
+.echelle-cursor{
+  position:absolute;top:-4px;bottom:-4px;width:4px;
+  border-radius:2px;background:#fff;
+  box-shadow:0 0 10px rgba(255,255,255,.8);
+  transition:left .5s cubic-bezier(.34,1.56,.64,1);
+  transform:translateX(-50%);
+}
+.echelle-labels{display:flex;justify-content:space-between;font-size:10px;font-family:'Fira Mono',monospace;color:var(--txt3)}
+.score-display{
+  text-align:center;margin-bottom:16px;
+}
+.score-val{
+  font-family:'Spectral',serif;font-size:64px;font-weight:700;line-height:1;
+}
+.score-zone{font-size:14px;font-weight:600;margin-top:4px}
+.score-analog{font-size:13px;color:var(--txt3);font-style:italic;margin-top:6px}
+
+/* ── VISAGE ÉMOTIONNEL ── */
+.faces-row{display:flex;justify-content:space-between;margin:14px 0 8px}
+.face{font-size:26px;transition:all .3s;opacity:.3;cursor:pointer;text-align:center;flex:1}
+.face.active{opacity:1;transform:scale(1.35)}
+
+/* ── DOLOPLUS TABLE ── */
+.dolo-section{margin-bottom:14px}
+.dolo-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--em);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid rgba(232,96,74,.2)}
+.dolo-item{
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;
+  background:rgba(255,255,255,.02);border-radius:8px;padding:10px 12px;
+}
+.dolo-label{flex:1;font-size:13px;color:var(--txt2);line-height:1.4}
+.dolo-score-btns{display:flex;gap:4px}
+.dolo-btn{
+  width:32px;height:32px;border-radius:6px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.03);color:var(--txt3);
+  font-family:'Fira Mono',monospace;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;
+}
+.dolo-btn.on{background:rgba(232,96,74,.15);border-color:rgba(232,96,74,.4);color:var(--em)}
+.dolo-total{
+  font-family:'Fira Mono',monospace;font-size:24px;font-weight:500;color:var(--em);
+  text-align:center;margin:12px 0 4px;
+}
+.dolo-interp{font-size:13px;color:var(--txt3);text-align:center;font-style:italic}
+
+/* ── FLACC TABLE ── */
+.flacc-row{
+  display:grid;grid-template-columns:140px 1fr;gap:10px;
+  align-items:start;margin-bottom:10px;
+}
+.flacc-cat{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--em);padding-top:2px}
+.flacc-opts{display:flex;flex-direction:column;gap:4px}
+.flacc-opt{
+  padding:8px 12px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);font-size:12px;color:var(--txt2);
+  cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;
+}
+.flacc-opt:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+.flacc-opt.on{background:rgba(232,96,74,.1);border-color:rgba(232,96,74,.35);color:var(--txt)}
+.flacc-num{font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);flex-shrink:0;width:14px}
+
+/* ── INFO BOXES ── */
+.info{border-radius:11px;padding:12px 15px;font-size:13px;line-height:1.7}
+.info-em  {background:rgba(232,96,74,.07); border:1px solid rgba(232,96,74,.2); color:var(--em)}
+.info-teal{background:rgba(96,200,184,.07);border:1px solid rgba(96,200,184,.2);color:var(--teal)}
+.info-amb {background:rgba(232,192,96,.07);border:1px solid rgba(232,192,96,.2);color:var(--amber)}
+.info-grn {background:rgba(96,200,128,.07);border:1px solid rgba(96,200,128,.2);color:var(--green)}
+.info-blu {background:rgba(96,144,232,.07);border:1px solid rgba(96,144,232,.2);color:var(--blue)}
+
+/* ── RECAP ── */
+.recap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.rc{background:rgba(0,0,0,.22);border-radius:10px;padding:10px 13px}
+.rc-k{font-size:10px;color:#3a1818;text-transform:uppercase;letter-spacing:1px;font-family:'Fira Mono',monospace}
+.rc-v{font-size:13px;color:var(--txt);margin-top:4px;line-height:1.4}
+
+/* ── ANALYSIS ── */
+.analysis p{margin-bottom:16px;color:#c4a8a8;font-size:15px;line-height:1.85}
+.analysis strong{color:var(--txt);font-size:16px}
+
+/* ── PREMIUM ── */
+.premium-box{background:rgba(0,0,0,.32);border:1.5px solid rgba(232,96,74,.18);border-radius:18px;padding:28px;margin-bottom:16px}
+.apikey-box{background:rgba(232,96,74,.04);border:1px solid rgba(232,96,74,.15);border-radius:12px;padding:14px 16px}
+.apikey-box p{font-size:13px;color:var(--txt3);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:13px}
+.apikey-row button{padding:9px 16px;border:none;border-radius:9px;background:var(--em2);color:#1a0a0a;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;font-size:13px}
+.apikey-saved{color:var(--green);font-size:11px;margin-top:6px;font-family:'Fira Mono',monospace}
+
+/* ── WELCOME ── */
+.welcome{text-align:center;padding:4px 0 28px}
+.welcome-icon{font-size:60px;display:block;margin-bottom:18px}
+.welcome p{color:var(--txt2);font-size:15px;line-height:1.8;max-width:480px;margin:0 auto}
+.pts{display:flex;flex-direction:column;gap:14px;margin:24px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:20px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:28px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt3);font-size:13px;margin-top:10px;font-style:italic}
+
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:20px 0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB  {0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+
+@media(max-width:480px){.grid2,.recap{grid-template-columns:1fr}.nav-row{flex-direction:column}.flacc-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+const PROFILS = [
+  { id:'adulte_comm',   label:'Adulte communicant',              icon:'🗣️', age:'adulte',  echelles:['eva','en','edn'],        desc:'Peut exprimer sa douleur verbalement' },
+  { id:'adulte_nc',     label:'Adulte non communicant',          icon:'🤐', age:'adulte',  echelles:['algoplus','doloplus'],    desc:'Trouble cognitif, aphasie, sédation' },
+  { id:'personne_agee', label:'Personne âgée communicante',      icon:'👴', age:'senior',  echelles:['en','edn','doloplus'],    desc:'65 ans et plus, capable de s\'exprimer' },
+  { id:'personne_agee_nc',label:'Personne âgée non communicante',icon:'🧓', age:'senior',  echelles:['doloplus','algoplus'],    desc:'Démence, trouble de conscience' },
+  { id:'enfant_4_12',   label:'Enfant 4–12 ans',                 icon:'🧒', age:'enfant',  echelles:['eva','faces','flacc'],    desc:'Peut coopérer à l\'évaluation' },
+  { id:'nourrisson',    label:'Nourrisson / Enfant < 4 ans',     icon:'👶', age:'bebe',    echelles:['flacc','evendol'],        desc:'Évaluation comportementale uniquement' },
+  { id:'postop',        label:'Post-opératoire immédiat',        icon:'🏥', age:'adulte',  echelles:['en','eva','algoplus'],    desc:'Surveillance rapprochée en réveil' },
+];
+
+const PATHOLOGIES_DOULEUR = [
+  { id:'aigue',     label:'Douleur aiguë',          icon:'⚡', desc:'Récente, signal d\'alarme' },
+  { id:'chronique', label:'Douleur chronique',       icon:'🔄', desc:'> 3 mois, composante psychologique' },
+  { id:'neuropath', label:'Douleur neuropathique',   icon:'⚡', desc:'Brûlure, décharge électrique' },
+  { id:'cancereuse',label:'Douleur cancéreuse',      icon:'🩺', desc:'Mixte, traitements spécifiques' },
+  { id:'postop',    label:'Douleur post-opératoire', icon:'✂️', desc:'Pic à J0-J1, surveillance hourly' },
+  { id:'traumatique',label:'Douleur traumatique',    icon:'🦴', desc:'Fracture, plaie, brûlure' },
+];
+
+// FLACC catégories
+const FLACC_CATS = [
+  { id:'face',       label:'Face',       opts:['Pas d\'expression / sourire', 'Grimaces occasionnelles, sourcils froncés', 'Plissement fréquent, mâchoires serrées, menton tremblant'] },
+  { id:'legs',       label:'Jambes',     opts:['Position normale ou détendue', 'Agitation, tension, mouvements intermittents', 'Coups de pieds ou jambes relevées'] },
+  { id:'activity',   label:'Activité',   opts:['Couché tranquille, position normale', 'Se tortille, se balance, est tendu', 'Arc-bouté, rigide ou convulsions'] },
+  { id:'cry',        label:'Cri',        opts:['Pas de cri (éveillé ou endormi)', 'Gémissements, pleurs intermittents', 'Pleurs continus, cris ou sanglots'] },
+  { id:'consolability',label:'Consolabilité',opts:['Content, détendu', 'Rassuré par le toucher, diversion possible', 'Difficile à consoler'] },
+];
+
+// DOLOPLUS-2 items
+const DOLOPLUS_ITEMS = {
+  somatique: [
+    { id:'plainte', label:'Plaintes somatiques' },
+    { id:'position', label:'Positions antalgiques au repos' },
+    { id:'protection', label:'Protection des zones douloureuses' },
+    { id:'mimique', label:'Mimique' },
+    { id:'sommeil', label:'Sommeil' },
+  ],
+  psychomoteur: [
+    { id:'toilette', label:'Toilette et/ou habillage' },
+    { id:'mouvements', label:'Mouvements' },
+  ],
+  psychosocial: [
+    { id:'communication', label:'Communication' },
+    { id:'vie_sociale', label:'Vie sociale' },
+    { id:'comportement', label:'Problèmes de comportement' },
+  ],
+};
+
+function dolColor(score){
+  if(score<=4) return '#60c880';
+  if(score<=7) return '#e8d840';
+  return '#e86040';
+}
+function dolInterp(score){
+  if(score<=4) return 'Douleur absente ou légère';
+  if(score<=7) return 'Douleur modérée — réévaluer après antalgique';
+  return 'Douleur intense — traitement antalgique urgent';
+}
+
+function scoreColor(score, max){
+  const pct = score/max;
+  if(pct<=0.2) return '#60c880';
+  if(pct<=0.4) return '#a8d860';
+  if(pct<=0.6) return '#e8d840';
+  if(pct<=0.8) return '#e86040';
+  return '#c02020';
+}
+function scoreZone(score, max){
+  const pct = score/max;
+  if(pct<=0.2) return {z:'Pas de douleur',   col:'#60c880'};
+  if(pct<=0.4) return {z:'Douleur légère',    col:'#a8d860'};
+  if(pct<=0.6) return {z:'Douleur modérée',   col:'#e8d840'};
+  if(pct<=0.8) return {z:'Douleur intense',   col:'#e86040'};
+  return               {z:'Douleur maximale', col:'#c02020'};
+}
+function scoreAnalog(score, max, profil){
+  const pct = score/max;
+  if(pct===0) return 'Absence totale de douleur ressentie';
+  if(pct<=0.2) return 'Comme une légère gêne — perceptible mais supportable sans effort';
+  if(pct<=0.4) return 'Comme une douleur dentaire débutante — présente mais ne perturbe pas les activités';
+  if(pct<=0.6) return 'Comme une migraine modérée — difficile d\'ignorer, impacte la concentration';
+  if(pct<=0.8) return 'Comme une fracture ou coliques — occupe entièrement la pensée, impossible de se distraire';
+  return 'Douleur maximale imaginable — état de détresse totale';
+}
+
+function ageLabel(a){if(a<3)return 'Nourrisson';if(a<12)return 'Enfant';if(a<18)return 'Adolescent';if(a<65)return 'Adulte';return 'Personne âgée'}
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let S = {
+  view:'welcome',
+  patient:{ prenom:'Jeanne', sexe:'F', age:78, poids:62, pathologie_douleur:'aigue', profil:'personne_agee' },
+  echelle_choisie: 'en',
+  scores:{
+    en:4, eva:4,
+    flacc:{ face:0, legs:0, activity:0, cry:0, consolability:0 },
+    doloplus:{ plainte:0, position:0, protection:0, mimique:0, sommeil:0, toilette:0, mouvements:0, communication:0, vie_sociale:0, comportement:0 },
+  },
+  analyse:'', loading:false, showKey:false,
+  apiKey:localStorage.getItem('simdoul_key')||'',
+  apiKeySaved:!!localStorage.getItem('simdoul_key'),
+};
+
+function profilObj(){ return PROFILS.find(p=>p.id===S.patient.profil)||PROFILS[0] }
+function pathoObj(){ return PATHOLOGIES_DOULEUR.find(p=>p.id===S.patient.pathologie_douleur)||PATHOLOGIES_DOULEUR[0] }
+
+function flaccTotal(){
+  return Object.values(S.scores.flacc).reduce((a,b)=>a+b,0);
+}
+function doloplusTotal(){
+  return Object.values(S.scores.doloplus).reduce((a,b)=>a+b,0);
+}
+function echelleMax(){
+  if(S.echelle_choisie==='en'||S.echelle_choisie==='eva') return 10;
+  if(S.echelle_choisie==='flacc') return 10;
+  if(S.echelle_choisie==='doloplus') return 30;
+  return 10;
+}
+function echelleScore(){
+  if(S.echelle_choisie==='en') return S.scores.en;
+  if(S.echelle_choisie==='eva') return S.scores.eva;
+  if(S.echelle_choisie==='flacc') return flaccTotal();
+  if(S.echelle_choisie==='doloplus') return doloplusTotal();
+  return 0;
+}
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  const pr   = S.patient.prenom;
+  const pf   = profilObj();
+  const pa   = pathoObj();
+  const score= echelleScore();
+  const max  = echelleMax();
+  const sz   = scoreZone(score, max);
+  const stepNum = {step1:1,step2:2,step3:3,step4:4}[S.view]||0;
+
+  let h='';
+
+  if(S.view!=='welcome'){
+    const steps=['Patient','Physiologie','Évaluation','Analyse'];
+    h+=`
+    <div class="site-header">
+      <div class="badge">🌡️ Module 6 · SimCare IFSI</div>
+      <h1>Sim<em>Douleur</em></h1>
+      <p>Comprendre et évaluer la douleur pour ce patient précis</p>
+    </div>
+    <div class="steps-bar">
+      ${steps.map((s,i)=>`
+        <div class="step-dot ${stepNum>i+1?'done':stepNum===i+1?'active':''}">${stepNum>i+1?'✓':i+1}</div>
+        <span class="step-lbl ${stepNum===i+1?'active':''}">${s}</span>
+        ${i<3?'<div class="step-line"></div>':''}
+      `).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+          <div class="badge">🌡️ Module 6 · SimCare IFSI</div>
+          <h1>Sim<em>Douleur</em></h1>
+        </div>`;
+  }
+
+  h+='<div class="wrap">';
+
+  // ─── WELCOME ──────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(232,96,74,.16)">
+      <div class="welcome">
+        <span class="welcome-icon">🌡️</span>
+        <p>La douleur est subjective, invisible, et universelle. L'évaluer correctement, c'est d'abord comprendre <strong>qui souffre</strong> — avant de choisir une échelle.</p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez le patient</strong> — âge, profil de communication, type de douleur : tout détermine quelle échelle utiliser</span></div>
+          <div class="pt"><span class="pt-i">🧠</span><span class="pt-t"><strong>Comprenez sa physiologie douloureuse</strong> — ce que cette douleur représente dans son corps et son vécu précis</span></div>
+          <div class="pt"><span class="pt-i">📏</span><span class="pt-t"><strong>Évaluez avec la bonne échelle</strong> — EN, EVA, FLACC, DOLOPLUS, ALGOPLUS : l'outil adapté à CE profil</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analysez la cohérence</strong> — ce score est-il crédible pour ce patient ? Quelle prise en charge ?</span></div>
+        </div>
+        <button class="btn-p" onclick="go('step1')">Construire un patient →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 1 — PATIENT ───────────────────────────────────────
+  else if(S.view==='step1'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(232,96,74,.16)">
+      <div class="card-title" style="color:var(--em)">👤 Votre patient</div>
+      <div class="card-sub">Le profil détermine quelle échelle est valide — une EN pour un nourrisson ou une personne démente est inutilisable.</div>
+      <div class="col">
+
+        <div>
+          <label class="lbl">Prénom</label>
+          <input type="text" value="${esc(pr)}" placeholder="Ex : Jeanne, Mohamed, Emma…" oninput="up('prenom',this.value)">
+        </div>
+
+        <div>
+          <label class="lbl">Sexe biologique</label>
+          <div class="grid2">
+            ${[{v:'F',l:'Femme',i:'👩'},{v:'H',l:'Homme',i:'👨'}].map(s=>`
+              <div class="sel ${S.patient.sexe===s.v?'on':''}" style="justify-content:center;flex-direction:column;text-align:center;padding:16px 8px" onclick="up('sexe','${s.v}')">
+                <span style="font-size:28px">${s.i}</span>
+                <span style="font-size:13px;margin-top:5px">${s.l}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="lbl-row">
+            <label class="lbl" style="margin:0">Âge</label>
+            <span><span class="lbl-val">${S.patient.age} ans</span><span style="font-size:11px;color:var(--txt3);margin-left:6px">${ageLabel(S.patient.age)}</span></span>
+          </div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upStep('age',-1)">−</button>
+            <input type="range" min="0" max="100" value="${S.patient.age}" oninput="up('age',+this.value)">
+            <button class="sl-btn" onclick="upStep('age',1)">+</button>
+          </div>
+          <div class="range-lbl"><span>0</span><span>Enfant</span><span>Adulte</span><span>75+</span></div>
+        </div>
+
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Poids</label><span class="lbl-val">${S.patient.poids} kg</span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upStep('poids',-1)">−</button>
+            <input type="range" min="3" max="200" value="${S.patient.poids}" oninput="up('poids',+this.value)">
+            <button class="sl-btn" onclick="upStep('poids',1)">+</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="lbl">Profil de communication</label>
+          <div class="col8">
+            ${PROFILS.map(p=>`
+              <div class="sel ${S.patient.profil===p.id?'on':''}" onclick="up('profil','${p.id}');autoEchelle('${p.id}')">
+                <span class="si">${p.icon}</span>
+                <div>
+                  <div style="font-weight:500">${p.label}</div>
+                  <div class="sd">${p.desc}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <label class="lbl">Type de douleur</label>
+          <div class="col8">
+            ${PATHOLOGIES_DOULEUR.map(p=>`
+              <div class="sel ${S.patient.pathologie_douleur===p.id?'on':''}" onclick="up('pathologie_douleur','${p.id}')">
+                <span class="si">${p.icon}</span>
+                <div>
+                  <div style="font-weight:500">${p.label}</div>
+                  <div class="sd">${p.desc}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-p" onclick="go('step2')">Comprendre sa douleur →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 2 — PHYSIOLOGIE DOULOUREUSE ──────────────────────
+  else if(S.view==='step2'){
+    const typesDouleur = {
+      aigue:     { meca:'Signal d\'alarme — activation des nocicepteurs. Utile et protecteur. Disparaît avec la cause.', voies:'Fibres Aδ (rapide, localisée) puis fibres C (lente, diffuse)', adapt:'Excellente adaptation thérapeutique', icone:'⚡' },
+      chronique:  { meca:'Sensibilisation centrale — les voies douloureuses restent activées après guérison. Composante psychologique majeure.', voies:'Fibres C hypersensibilisées, mémoire de la douleur', adapt:'Traitement multimodal nécessaire (antalgiques + psychologique)', icone:'🔄' },
+      neuropath:  { meca:'Lésion ou dysfonction du système nerveux. Douleur spontanée sans stimulus, allodynie, hyperalgésie.', voies:'Système nerveux périphérique ou central lésé', adapt:'Antidépresseurs, antiépileptiques — pas les AINS', icone:'⚡' },
+      cancereuse: { meca:'Mixte : nociceptive (tumeur) + neuropathique (compressions). Composante psychologique et existentielle.', voies:'Multiples, souvent diffuses', adapt:'Paliers OMS, morphiniques — réévaluation fréquente', icone:'🩺' },
+      postop:     { meca:'Inflammation tissulaire + lésions nerveuses locales. Pic à J0-J1, décroissance progressive.', voies:'Fibres Aδ dominantes dans les 24h', adapt:'Protocole anticipatif, réévaluation toutes les 4h', icone:'✂️' },
+      traumatique:{ meca:'Lésion directe des tissus, libération de prostaglandines et bradykinine. Douleur proportionnelle au trauma.', voies:'Fibres Aδ et C selon l\'intensité', adapt:'AINS + antalgiques palier I ou II selon EVA', icone:'🦴' },
+    };
+    const td = typesDouleur[S.patient.pathologie_douleur] || typesDouleur.aigue;
+
+    const impactAge = S.patient.age < 4 ? 'Le nourrisson ne peut exprimer la douleur que par le comportement (cri, agitation, mimique). Les échelles auto-rapportées sont impossibles.'
+      : S.patient.age < 12 ? 'L\'enfant peut coopérer mais surestime ou sous-estime selon la peur. Préférer les échelles visuelles (faces, EVA illustrée).'
+      : S.patient.age > 75 ? 'La personne âgée sous-évalue souvent sa douleur (stoïcisme). Les troubles cognitifs rendent l\'auto-évaluation peu fiable dès un MMS < 15.'
+      : 'Adulte communicant — auto-évaluation fiable via EN ou EVA si patient coopérant.';
+
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(232,96,74,.16)">
+      <div class="card-title" style="color:var(--em)">🧠 La douleur de ${esc(pr)||'ce patient'}</div>
+      <div class="card-sub">Avant de choisir une échelle — comprendre ce que cette douleur représente physiologiquement pour ce profil précis.</div>
+
+      <!-- Type de douleur -->
+      <div style="background:rgba(232,96,74,.07);border:1px solid rgba(232,96,74,.2);border-radius:14px;padding:18px;margin-bottom:16px">
+        <div style="font-size:24px;margin-bottom:8px">${td.icone}</div>
+        <div style="font-family:'Spectral',serif;font-size:18px;font-weight:700;color:var(--em);margin-bottom:10px">${pa.label}</div>
+        <div style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:10px"><strong style="color:var(--txt)">Mécanisme :</strong> ${td.meca}</div>
+        <div style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:10px"><strong style="color:var(--txt)">Voies impliquées :</strong> ${td.voies}</div>
+        <div style="font-size:13px;color:var(--txt2);line-height:1.7"><strong style="color:var(--txt)">Approche thérapeutique :</strong> ${td.adapt}</div>
+      </div>
+
+      <!-- Impact âge/profil -->
+      <div class="info info-teal" style="margin-bottom:14px">
+        👤 <strong>Impact du profil (${S.patient.age} ans — ${pf.label}) :</strong><br>${impactAge}
+      </div>
+
+      <!-- Échelles recommandées -->
+      <div style="background:rgba(0,0,0,.2);border-radius:13px;padding:16px;margin-bottom:14px">
+        <label class="lbl" style="margin-bottom:10px">Échelles recommandées pour ce profil</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${pf.echelles.map(e=>{
+            const labels = {en:'EN 0–10',eva:'EVA',flacc:'FLACC',doloplus:'DOLOPLUS-2',algoplus:'ALGOPLUS',faces:'Échelle des visages',evendol:'EVENDOL'};
+            return `<span style="background:rgba(232,96,74,.12);border:1px solid rgba(232,96,74,.3);color:var(--em);padding:5px 14px;border-radius:20px;font-family:'Fira Mono',monospace;font-size:12px">${labels[e]||e}</span>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Paliers OMS -->
+      <div class="info info-blu">
+        💊 <strong>Paliers OMS :</strong>
+        Palier I (EVA 1–3) → Paracétamol, AINS ·
+        Palier II (EVA 4–6) → Tramadol, codéine ·
+        Palier III (EVA 7–10) → Morphine, opioïdes forts
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step1')">← Modifier le patient</button>
+      <button class="btn-p" onclick="go('step3')">Évaluer la douleur →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 3 — ÉVALUATION ────────────────────────────────────
+  else if(S.view==='step3'){
+    const echelles_disponibles = profilObj().echelles;
+    const labels = {en:'Échelle Numérique (EN)',eva:'Échelle Visuelle Analogique (EVA)',flacc:'FLACC (comportemental)',doloplus:'DOLOPLUS-2',algoplus:'ALGOPLUS',faces:'Échelle des visages',evendol:'EVENDOL'};
+    const sc = echelleScore();
+    const mx = echelleMax();
+    const szc = scoreZone(sc, mx);
+    const pct = Math.min(98, Math.round((sc/mx)*100));
+
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(232,96,74,.16)">
+      <div class="card-title" style="color:var(--em)">📏 Évaluation — ${esc(pr)||'ce patient'}</div>
+      <div class="card-sub">Choisissez l'échelle adaptée puis cotez. Chaque chiffre correspond à une réalité précise pour CE patient.</div>
+
+      <!-- Choix échelle -->
+      <div style="margin-bottom:22px">
+        <label class="lbl">Échelle d'évaluation</label>
+        <div class="col8">
+          ${echelles_disponibles.map(e=>`
+            <div class="sel ${S.echelle_choisie===e?'on':''}" onclick="S.echelle_choisie='${e}';render()">
+              <span class="si">${e==='en'?'🔢':e==='eva'?'📏':e==='flacc'?'👶':e==='doloplus'?'🧓':'😐'}</span>
+              <span style="font-weight:500">${labels[e]||e}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Score actuel -->
+      <div class="score-display">
+        <div class="score-val" style="color:${szc.col}">${sc}<span style="font-size:24px;color:var(--txt3)">/${mx}</span></div>
+        <div class="score-zone" style="color:${szc.col}">${szc.z}</div>
+        <div class="score-analog">${scoreAnalog(sc, mx, S.patient.profil)}</div>
+      </div>
+      <div class="echelle-bar"><div class="echelle-cursor" style="left:${pct}%"></div></div>
+      <div class="echelle-labels"><span style="color:var(--d0)">0</span><span>Léger</span><span>Modéré</span><span>Intense</span><span style="color:var(--d10)">${mx}</span></div>
+
+      <!-- EN / EVA -->
+      ${(S.echelle_choisie==='en'||S.echelle_choisie==='eva')?`
+      <div style="margin-top:22px">
+        <div class="lbl-row">
+          <label class="lbl" style="margin:0">${S.echelle_choisie==='en'?'Score EN (0 = pas de douleur, 10 = douleur maximale)':'Positionnez le curseur'}</label>
+          <span class="lbl-val" style="font-size:22px">${S.scores[S.echelle_choisie]}/10</span>
+        </div>
+        <div class="sl-wrap">
+          <button class="sl-btn" onclick="upScore('${S.echelle_choisie}',-1)">−</button>
+          <input type="range" min="0" max="10" value="${S.scores[S.echelle_choisie]}" oninput="S.scores['${S.echelle_choisie}']=+this.value;render()">
+          <button class="sl-btn" onclick="upScore('${S.echelle_choisie}',1)">+</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px">
+          ${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`
+            <div onclick="S.scores['${S.echelle_choisie}']=${n};render()" style="width:26px;height:26px;border-radius:50%;border:2px solid ${n<=2?'#60c880':n<=5?'#e8d840':n<=7?'#e86040':'#c02020'};background:${S.scores[S.echelle_choisie]===n?(n<=2?'#60c880':n<=5?'#e8d840':n<=7?'#e86040':'#c02020'):'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'Fira Mono',monospace;color:${S.scores[S.echelle_choisie]===n?'#1a0a0a':n<=2?'#60c880':n<=5?'#e8d840':n<=7?'#e86040':'#c02020'}">${n}</div>
+          `).join('')}
+        </div>
+
+        ${S.echelle_choisie==='en'?`
+        <div class="faces-row" style="margin-top:16px">
+          ${['😊','🙂','😐','😕','😣','😖'].map((f,i)=>`<div class="face ${Math.round(S.scores.en/2)===i?'active':''}" onclick="S.scores.en=${i*2};render()" title="Score ${i*2}">${f}</div>`).join('')}
+        </div>`:''}
+      </div>`:''}
+
+      <!-- FLACC -->
+      ${S.echelle_choisie==='flacc'?`
+      <div style="margin-top:20px">
+        <div class="info info-em" style="margin-bottom:14px">
+          👶 <strong>FLACC</strong> — Observation comportementale. 5 critères de 0 à 2. Score total : 0–10.
+        </div>
+        ${FLACC_CATS.map(cat=>`
+          <div class="flacc-row">
+            <div class="flacc-cat">${cat.label}</div>
+            <div class="flacc-opts">
+              ${cat.opts.map((opt,i)=>`
+                <div class="flacc-opt ${S.scores.flacc[cat.id]===i?'on':''}" onclick="S.scores.flacc['${cat.id}']=${i};render()">
+                  <span class="flacc-num">${i}</span>${opt}
+                </div>`).join('')}
+            </div>
+          </div>`).join('')}
+        <div class="dolo-total" style="color:${scoreColor(flaccTotal(),10)}">${flaccTotal()} / 10</div>
+        <div class="dolo-interp">${scoreZone(flaccTotal(),10).z}</div>
+      </div>`:''}
+
+      <!-- DOLOPLUS-2 -->
+      ${S.echelle_choisie==='doloplus'?`
+      <div style="margin-top:20px">
+        <div class="info info-teal" style="margin-bottom:14px">
+          🧓 <strong>DOLOPLUS-2</strong> — 10 items, 0 à 3 chacun. Score ≥ 5 = douleur significative.
+        </div>
+        ${Object.entries(DOLOPLUS_ITEMS).map(([section, items])=>`
+          <div class="dolo-section">
+            <div class="dolo-title">${section==='somatique'?'Retentissement somatique':section==='psychomoteur'?'Retentissement psychomoteur':'Retentissement psychosocial'}</div>
+            ${items.map(item=>`
+              <div class="dolo-item">
+                <div class="dolo-label">${item.label}</div>
+                <div class="dolo-score-btns">
+                  ${[0,1,2,3].map(n=>`
+                    <button class="dolo-btn ${S.scores.doloplus[item.id]===n?'on':''}" onclick="S.scores.doloplus['${item.id}']=${n};render()">${n}</button>
+                  `).join('')}
+                </div>
+              </div>`).join('')}
+          </div>`).join('')}
+        <div class="dolo-total" style="color:${dolColor(doloplusTotal())}">${doloplusTotal()} / 30</div>
+        <div class="dolo-interp">${dolInterp(doloplusTotal())}</div>
+      </div>`:''}
+
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step2')">← Physiologie</button>
+      <button class="btn-p" onclick="goAnalyse()">Analyser →</button>
+    </div>`;
+  }
+
+  // ─── ÉTAPE 4 — ANALYSE ──────────────────────────────────────
+  else if(S.view==='step4'){
+    const sc = echelleScore();
+    const mx = echelleMax();
+    const szc = scoreZone(sc, mx);
+    const labels = {en:'Échelle Numérique (EN)',eva:'EVA',flacc:'FLACC',doloplus:'DOLOPLUS-2'};
+
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(232,96,74,.2)">
+      <div class="card-title" style="color:var(--em)">🔬 Analyse clinique — ${esc(pr)||'ce patient'}</div>
+
+      <div class="recap">
+        ${[
+          ['Patient',    `${esc(pr)||'—'}, ${S.patient.sexe==='H'?'♂':'♀'} ${S.patient.age} ans · ${S.patient.poids} kg`],
+          ['Profil',     pf.label],
+          ['Type douleur', pa.label],
+          ['Échelle utilisée', labels[S.echelle_choisie]||S.echelle_choisie],
+          ['Score',      `${sc} / ${mx}`],
+          ['Zone',       szc.z],
+        ].map(([k,v])=>`<div class="rc"><div class="rc-k">${k}</div><div class="rc-v">${v}</div></div>`).join('')}
+      </div>
+
+      <div style="background:${szc.col}18;border:1px solid ${szc.col}40;border-radius:12px;padding:16px;margin-bottom:18px;text-align:center">
+        <div style="font-family:'Spectral',serif;font-size:48px;font-weight:700;color:${szc.col};line-height:1">${sc}<span style="font-size:20px;color:var(--txt3)">/${mx}</span></div>
+        <div style="color:${szc.col};font-weight:600;margin-top:4px">${szc.z}</div>
+        <div style="font-size:12px;color:var(--txt3);margin-top:6px;font-style:italic">${scoreAnalog(sc, mx)}</div>
+      </div>
+
+      <hr class="div">
+      <label class="lbl" style="margin-bottom:14px">Ce que dit la physiologie de la douleur</label>
+
+      ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse clinique en cours…</div></div>`:''}
+
+      ${!S.loading&&!S.analyse?`
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:22px">
+            <div style="font-size:38px;margin-bottom:10px">🔒</div>
+            <div style="font-family:'Spectral',serif;font-size:18px;font-weight:700;color:var(--txt);margin-bottom:5px">Analyse clinique — Accès Premium</div>
+            <div style="font-size:13px;color:var(--txt3)">Les étapes 1 à 3 sont gratuites et fonctionnent sans connexion</div>
+          </div>
+          <div class="grid2" style="margin-bottom:16px">
+            <div style="border:1px solid rgba(96,200,128,.2);background:rgba(96,200,128,.05);border-radius:12px;padding:14px">
+              <div style="color:var(--green);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✓ GRATUIT</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Étape 1 — Patient<br>Étape 2 — Physiologie<br>Étape 3 — Évaluation</div>
+            </div>
+            <div style="border:1px solid rgba(232,96,74,.25);background:rgba(232,96,74,.06);border-radius:12px;padding:14px">
+              <div style="color:var(--em);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✦ PREMIUM</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Étape 4 — Analyse IA<br>Cohérence du score<br>Prise en charge</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+            <div style="border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center;background:rgba(255,255,255,.02)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Module seul</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">4,99€</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">Accès à vie<br>1 module</div>
+            </div>
+            <div style="border:1px solid rgba(232,96,74,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(232,96,74,.05)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--em);margin-bottom:8px">Suite complète</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">12,99€</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">6 modules<br>à vie</div>
+            </div>
+            <div style="border:1px solid rgba(167,139,250,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(167,139,250,.05)">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#a78bfa;margin-bottom:8px">Institution</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">Sur devis</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">IFSI · Syndicat<br>Promotion entière</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:12px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:13px 32px;border-radius:12px;background:linear-gradient(135deg,var(--em2),var(--em));color:#1a0a0a;font-weight:700;font-size:15px;text-decoration:none">
+              Obtenir l'accès →
+            </a>
+            <div style="margin-top:8px;font-size:12px;color:var(--txt3)">
+              IFSI & établissements : <a href="mailto:contact@simcare.fr" style="color:var(--em);text-decoration:none">tarif institution sur devis</a>
+            </div>
+          </div>
+          <div style="text-align:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace;letter-spacing:.5px">
+              🔑 Espace formateur / développeur
+            </button>
+          </div>
+        </div>
+        ${S.showKey?`<div class="apikey-box">
+          <p>Clé API Anthropic — réservé au formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
+          <div class="apikey-row">
+            <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+            <button onclick="saveKey()">Sauver</button>
+          </div>
+          ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:12px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
+        </div>`:''}
+      `:''}
+
+      ${!S.loading&&S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
+    </div>
+
+    <div class="nav-col">
+      <div class="nav-row">
+        <button class="btn-g" onclick="go('step3')">← Modifier l'évaluation</button>
+        <button class="btn-g" onclick="runAnalyse()" style="color:var(--em);border-color:rgba(232,96,74,.22)">↺ Relancer</button>
+      </div>
+      <button class="btn-g btn-full" onclick="reset()" style="color:var(--teal);border-color:rgba(96,200,184,.2)">✦ Nouveau patient</button>
+    </div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'})}
+function up(k,v){S.patient={...S.patient,[k]:v};render()}
+function upStep(k,d){S.patient={...S.patient,[k]:Math.max(0,Math.min(200,S.patient[k]+d))};render()}
+function upScore(k,d){S.scores[k]=Math.max(0,Math.min(10,S.scores[k]+d));render()}
+function goAnalyse(){S.view='step4';S.analyse='';render();runAnalyse()}
+function saveKey(){localStorage.setItem('simdoul_key',S.apiKey);S.apiKeySaved=true;render()}
+function autoEchelle(profilId){
+  const pf=PROFILS.find(p=>p.id===profilId);
+  if(pf&&pf.echelles.length>0) S.echelle_choisie=pf.echelles[0];
+}
+function reset(){
+  S={...S,view:'step1',
+    patient:{prenom:'',sexe:'F',age:45,poids:65,pathologie_douleur:'aigue',profil:'adulte_comm'},
+    echelle_choisie:'en',
+    scores:{en:0,eva:0,flacc:{face:0,legs:0,activity:0,cry:0,consolability:0},doloplus:{plainte:0,position:0,protection:0,mimique:0,sommeil:0,toilette:0,mouvements:0,communication:0,vie_sociale:0,comportement:0}},
+    analyse:''};
+  render();
+}
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const pf   = profilObj();
+  const pa   = pathoObj();
+  const sc   = echelleScore();
+  const mx   = echelleMax();
+  const szc  = scoreZone(sc, mx);
+  const pr   = S.patient.prenom||'le patient';
+  const labels = {en:'Échelle Numérique (EN)',eva:'EVA',flacc:'FLACC',doloplus:'DOLOPLUS-2'};
+
+  S.loading=true;S.analyse='';render();
+
+  const prompt=`Tu es un formateur infirmier expert en algologie et évaluation de la douleur. Un étudiant IFSI en formation initiale vient d'évaluer la douleur d'un patient. Aide-le à développer son intuition clinique.
+
+PATIENT : ${pr}, ${S.patient.sexe==='H'?'homme':'femme'} de ${S.patient.age} ans, ${S.patient.poids} kg.
+Profil de communication : ${pf.label} — ${pf.desc}.
+Type de douleur : ${pa.label} — ${pa.desc}.
+
+ÉVALUATION RÉALISÉE :
+- Échelle utilisée : ${labels[S.echelle_choisie]||S.echelle_choisie}
+- Score obtenu : ${sc} / ${mx}
+- Zone : ${szc.z}
+
+Réponds avec EXACTEMENT ces 4 blocs (titres en gras obligatoires) :
+
+**🎯 Pertinence de l'échelle choisie**
+[2 phrases. Cette échelle est-elle bien adaptée à CE profil ? Pourquoi oui ou non ? Quelle autre échelle aurait été possible ?]
+
+**🌡️ Ce que ${sc}/${mx} représente pour ${pr}**
+[2-3 phrases. Traduis ce score en réalité vécue pour CE patient précis. Utilise une image concrète. Lien avec son type de douleur.]
+
+**💊 Prise en charge recommandée**
+[2-3 phrases. Palier OMS correspondant, antalgiques adaptés à CE profil (âge, pathologie). Fréquence de réévaluation.]
+
+**⚠️ Pièges spécifiques pour CE patient**
+[2-3 phrases. Risque de sous-évaluation ou sur-évaluation lié à SON profil précis. Ce que l'IDE doit surveiller en plus du score.]
+
+Tutoie l'étudiant. Direct, chaleureux, cliniquement précis.`;
+
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1100,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){
+    S.analyse=`**⚠️ Erreur**\n\n${e.message||'Vérifiez votre clé API et votre connexion.'}`;
+  }
+  S.loading=false;render();
+}
+
+render();
+</script>
+</body>
+</html>
