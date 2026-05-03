@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimConstantes · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Newsreader:ital,wght@0,300;0,600;0,700;1,300;1,600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #080c12;
+  --bg2:   #0d1420;
+  --card:  rgba(255,255,255,.032);
+  --bdr:   rgba(255,255,255,.08);
+  --txt:   #e8f0f8;
+  --txt2:  #6080a0;
+  --txt3:  #283848;
+  --em:    #40b0f8;
+  --em2:   #2890d8;
+  --green: #40d880;
+  --amber: #f8c040;
+  --red:   #f85050;
+  --violet:#b060f8;
+  --teal:  #40d8c0;
+  /* Zones valeurs */
+  --z-ok:   #40d880;
+  --z-warn: #f8c040;
+  --z-crit: #f85050;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% 5%,  rgba(64,176,248,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 95%, rgba(64,216,192,.04) 0%,transparent 50%);
+  color:var(--txt); min-height:100vh; padding-bottom:80px;
+}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+
+/* ── HEADER ── */
+.site-header{text-align:center;padding:42px 24px 22px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(64,176,248,.08);border:1px solid rgba(64,176,248,.22);
+  color:var(--em);padding:5px 16px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+}
+.site-header h1{
+  font-family:'Newsreader',serif;
+  font-size:clamp(26px,6vw,44px);font-weight:700;letter-spacing:-.5px;line-height:1.1;
+}
+.site-header h1 em{font-style:italic;color:var(--em)}
+.site-header p{color:var(--txt3);font-size:14px;margin-top:8px;font-style:italic}
+
+/* ── ONGLETS ── */
+.tabs{
+  display:flex;gap:4px;padding:0 0 20px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  flex-wrap:nowrap;
+}
+.tab{
+  padding:9px 18px;border-radius:10px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:all .18s;
+  -webkit-tap-highlight-color:transparent;
+  font-family:'Space Grotesk',sans-serif;
+}
+.tab:hover{color:var(--txt);background:rgba(255,255,255,.05)}
+.tab.active{background:rgba(64,176,248,.12);border-color:rgba(64,176,248,.4);color:var(--em)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:18px;padding:24px;margin-bottom:14px}
+.card-title{font-family:'Newsreader',serif;font-size:20px;font-weight:700;margin-bottom:4px}
+.card-sub{color:var(--txt3);font-size:13px;margin-bottom:18px;line-height:1.6}
+
+/* ── FORM ── */
+.lbl{display:block;font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px}
+.lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.lbl-val{font-family:'Fira Mono',monospace;color:var(--em);font-size:14px;font-weight:500}
+
+input[type=text],input[type=number]{
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
+  border-radius:10px;color:var(--txt);padding:10px 14px;
+  font-size:15px;font-family:'Fira Mono',monospace;
+  outline:none;width:100%;transition:border-color .2s;
+}
+input[type=text]:focus,input[type=number]:focus{border-color:rgba(64,176,248,.4)}
+
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:10px;
+  border-radius:5px;background:rgba(255,255,255,.08);outline:none;cursor:pointer;margin-top:4px;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:32px;height:32px;
+  border-radius:50%;background:var(--em);cursor:pointer;
+  box-shadow:0 0 10px rgba(64,176,248,.5);
+  border:3px solid rgba(255,255,255,.18);transition:transform .15s;
+}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.18)}
+
+.sl-wrap{display:flex;align-items:center;gap:10px;width:100%}
+.sl-wrap input[type=range]{flex:1}
+.sl-btn{
+  flex-shrink:0;width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.55);font-size:20px;line-height:1;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,color .15s,transform .1s;
+  user-select:none;-webkit-user-select:none;
+}
+.sl-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.sl-btn:active{transform:scale(.9)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.col  {display:flex;flex-direction:column;gap:16px}
+.col8 {display:flex;flex-direction:column;gap:8px}
+
+/* ── SEL ── */
+.sel{
+  cursor:pointer;border:1.5px solid var(--bdr);border-radius:10px;
+  padding:11px 14px;background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:14px;transition:all .18s;
+  display:flex;align-items:center;gap:10px;user-select:none;
+}
+.sel:hover{background:rgba(255,255,255,.05);color:var(--txt);border-color:rgba(255,255,255,.14)}
+.sel.on{background:rgba(64,176,248,.08);color:var(--txt);border-color:rgba(64,176,248,.4)}
+.sel .si{font-size:20px;flex-shrink:0}
+.sel .sd{font-size:11px;color:var(--txt3);margin-top:2px}
+.sel.center{justify-content:center;flex-direction:column;text-align:center;padding:14px 8px}
+
+/* ── BOUTONS ── */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  border:none;border-radius:12px;color:#080c12;
+  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;
+  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
+  border-radius:12px;color:var(--txt2);
+  font-family:'Space Grotesk',sans-serif;font-size:14px;
+  padding:11px 20px;cursor:pointer;transition:all .18s;
+}
+.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+.nav-col{display:flex;flex-direction:column;gap:10px}
+
+/* ── CONSTANTE CARD ── */
+.cst-card{
+  background:rgba(0,0,0,.25);border:1.5px solid var(--bdr);
+  border-radius:14px;padding:16px;margin-bottom:10px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.cst-header{display:flex;align-items:center;gap:10px}
+.cst-icon{font-size:24px}
+.cst-name{font-weight:600;font-size:15px}
+.cst-abbr{font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);margin-top:2px}
+.cst-input-row{display:flex;align-items:center;gap:10px}
+.cst-input{
+  background:rgba(255,255,255,.05);border:2px solid var(--bdr);
+  border-radius:10px;color:var(--txt);padding:10px 14px;
+  font-size:20px;font-family:'Fira Mono',monospace;font-weight:500;
+  outline:none;width:120px;text-align:center;transition:border-color .2s;
+}
+.cst-input:focus{border-color:rgba(64,176,248,.4)}
+.cst-unit{font-family:'Fira Mono',monospace;font-size:13px;color:var(--txt3)}
+.cst-norme{font-size:12px;color:var(--txt3);font-style:italic}
+
+/* Zone indicator */
+.zone-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:12px;font-weight:500;
+  transition:all .3s;
+}
+.zone-ok   {background:rgba(64,216,128,.12); border:1px solid rgba(64,216,128,.3); color:var(--z-ok)}
+.zone-warn {background:rgba(248,192,64,.12);  border:1px solid rgba(248,192,64,.3);  color:var(--z-warn)}
+.zone-crit {background:rgba(248,80,80,.12);   border:1px solid rgba(248,80,80,.3);   color:var(--z-crit)}
+.zone-nc   {background:rgba(255,255,255,.04); border:1px solid var(--bdr);           color:var(--txt3)}
+
+/* Barre de zone */
+.zone-bar-wrap{position:relative;height:10px;border-radius:5px;overflow:visible;background:rgba(255,255,255,.06);margin:6px 0}
+.zone-bar-ok  {position:absolute;height:100%;background:var(--z-ok);  border-radius:5px;opacity:.25}
+.zone-bar-warn{position:absolute;height:100%;background:var(--z-warn);border-radius:5px;opacity:.25}
+.zone-bar-crit{position:absolute;height:100%;background:var(--z-crit);border-radius:5px;opacity:.25}
+.zone-cursor  {position:absolute;top:-3px;bottom:-3px;width:4px;border-radius:2px;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.7);transition:left .4s cubic-bezier(.34,1.56,.64,1);transform:translateX(-50%)}
+
+/* ── TABLEAU BIO ── */
+.bio-section-title{
+  font-family:'Newsreader',serif;font-size:16px;font-weight:700;
+  color:var(--em);margin:18px 0 10px;padding-bottom:6px;
+  border-bottom:1px solid rgba(64,176,248,.2);
+}
+.bio-row{
+  display:grid;grid-template-columns:1fr 100px 120px 80px;gap:8px;
+  align-items:center;padding:9px 12px;border-radius:8px;
+  background:rgba(255,255,255,.02);margin-bottom:4px;font-size:13px;
+}
+.bio-row:hover{background:rgba(255,255,255,.04)}
+.bio-name{color:var(--txt);font-weight:500}
+.bio-val{font-family:'Fira Mono',monospace;font-weight:500;text-align:center}
+.bio-norme{font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);text-align:center}
+.bio-header{
+  display:grid;grid-template-columns:1fr 100px 120px 80px;gap:8px;
+  padding:6px 12px;margin-bottom:6px;
+  font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--txt3);
+}
+
+/* ── SURVEILLANCE ── */
+.surv-timeline{
+  position:relative;padding-left:28px;
+}
+.surv-line{position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(64,176,248,.2)}
+.surv-item{position:relative;margin-bottom:16px}
+.surv-dot{
+  position:absolute;left:-24px;top:2px;width:14px;height:14px;
+  border-radius:50%;border:2px solid var(--em);background:var(--bg);
+}
+.surv-dot.alert{border-color:var(--z-warn);animation:pulse-dot 2s ease-in-out infinite}
+.surv-dot.crit {border-color:var(--z-crit);animation:pulse-dot 1s ease-in-out infinite}
+.surv-time{font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:3px}
+.surv-content{background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:10px;padding:12px 14px}
+.surv-title{font-weight:600;font-size:14px;margin-bottom:4px}
+.surv-vals{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.surv-val-chip{
+  font-family:'Fira Mono',monospace;font-size:12px;
+  padding:3px 10px;border-radius:20px;
+}
+
+/* ── INFO BOXES ── */
+.info{border-radius:11px;padding:12px 15px;font-size:13px;line-height:1.7}
+.info-em  {background:rgba(64,176,248,.07); border:1px solid rgba(64,176,248,.2); color:var(--em)}
+.info-grn {background:rgba(64,216,128,.07); border:1px solid rgba(64,216,128,.2); color:var(--green)}
+.info-amb {background:rgba(248,192,64,.07); border:1px solid rgba(248,192,64,.2); color:var(--amber)}
+.info-red {background:rgba(248,80,80,.07);  border:1px solid rgba(248,80,80,.2);  color:var(--red)}
+.info-vio {background:rgba(176,96,248,.07); border:1px solid rgba(176,96,248,.2); color:var(--violet)}
+
+/* ── ANALYSIS / PREMIUM ── */
+.analysis p{margin-bottom:16px;color:#a0b8d0;font-size:15px;line-height:1.85}
+.analysis strong{color:var(--txt);font-size:16px}
+.premium-box{background:rgba(0,0,0,.32);border:1.5px solid rgba(64,176,248,.18);border-radius:18px;padding:28px;margin-bottom:16px}
+.apikey-box{background:rgba(64,176,248,.04);border:1px solid rgba(64,176,248,.15);border-radius:12px;padding:14px 16px}
+.apikey-box p{font-size:13px;color:var(--txt3);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:13px}
+.apikey-row button{padding:9px 16px;border:none;border-radius:9px;background:var(--em2);color:#080c12;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px}
+.apikey-saved{color:var(--green);font-size:11px;margin-top:6px;font-family:'Fira Mono',monospace}
+
+/* ── WELCOME ── */
+.welcome{text-align:center;padding:4px 0 28px}
+.welcome-icon{font-size:60px;display:block;margin-bottom:18px}
+.welcome p{color:var(--txt2);font-size:15px;line-height:1.8;max-width:480px;margin:0 auto}
+.pts{display:flex;flex-direction:column;gap:14px;margin:24px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:20px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:28px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt3);font-size:13px;margin-top:10px;font-style:italic}
+
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:18px 0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB  {0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+@keyframes pulse-dot{0%,100%{opacity:.5}50%{opacity:1;box-shadow:0 0 8px currentColor}}
+.fadeup{animation:fadeUp .35s ease forwards}
+
+@media(max-width:480px){
+  .grid2,.grid3{grid-template-columns:1fr}
+  .bio-row,.bio-header{grid-template-columns:1fr 80px 100px 60px}
+  .nav-row{flex-direction:column}
+  .tabs{padding-bottom:16px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES PATIENT
+// ═══════════════════════════════════════
+const PATHOLOGIES = [
+  { id:'sain',    label:'Aucune pathologie',           icon:'💚' },
+  { id:'hta',     label:'HTA',                         icon:'🩺' },
+  { id:'card',    label:'Insuffisance cardiaque',      icon:'❤️' },
+  { id:'bpco',    label:'BPCO',                        icon:'🫁' },
+  { id:'diabete', label:'Diabète',                     icon:'🩸' },
+  { id:'renal',   label:'Insuffisance rénale',         icon:'🫘' },
+  { id:'hepato',  label:'Insuffisance hépatique',      icon:'🟤' },
+  { id:'sepsis',  label:'Sepsis / Infection sévère',   icon:'🦠' },
+  { id:'postop',  label:'Post-opératoire',             icon:'🏥' },
+];
+
+// ═══════════════════════════════════════
+//  NORMES PAR ÂGE ET PATHOLOGIE
+// ═══════════════════════════════════════
+function getNormes(age, pathologie){
+  // FC
+  const fc_norm = age<1?[100,160]:age<3?[90,150]:age<6?[80,140]:age<12?[70,120]:age<18?[60,100]:[60,100];
+  // FR
+  const fr_norm = age<1?[30,60]:age<3?[24,40]:age<6?[22,34]:age<12?[18,30]:age<18?[12,20]:[12,20];
+  if(pathologie==='bpco') fr_norm[1]=24;
+  // PA Systolique
+  let pas_norm = age<1?[70,100]:age<3?[80,110]:age<12?[90,120]:age<18?[100,130]:[90,140];
+  if(pathologie==='hta') pas_norm=[130,180];
+  // SpO2
+  let spo2_norm = [95,100];
+  if(pathologie==='bpco') spo2_norm=[88,92];
+  // Température
+  const temp_norm = [36.1,37.8];
+  // Glasgow
+  const gcs_norm = [15,15];
+
+  return { fc:fc_norm, fr:fr_norm, pas:pas_norm, spo2:spo2_norm, temp:temp_norm, gcs:gcs_norm };
+}
+
+function getBioNormes(sexe, age, pathologie){
+  return {
+    // NFS
+    hb:     sexe==='H'?[13.5,17.5]:[12,16],
+    ht:     sexe==='H'?[40,52]:[37,47],
+    plq:    [150,400],
+    gb:     [4,10],
+    // Ionogramme
+    na:     [136,145],
+    k:      [3.5,5],
+    cl:     [98,107],
+    co2:    [22,29],
+    // Rein
+    creat:  sexe==='H'?[62,115]:[53,97],
+    uree:   [2.5,7.5],
+    dfu:    pathologie==='renal'?[0,30]:[60,120],
+    // Foie
+    ast:    [10,40],
+    alt:    [10,40],
+    bili:   [3,17],
+    // Autres
+    crp:    [0,5],
+    glyc:   [3.9,6.1],
+    alb:    [35,50],
+  };
+}
+
+function zoneVitale(val, norm){
+  if(val===''||val===null||isNaN(+val)) return 'nc';
+  const v=+val, lo=norm[0], hi=norm[1];
+  const range=hi-lo;
+  if(v>=lo&&v<=hi) return 'ok';
+  if(v<lo-range*.3||v>hi+range*.3) return 'crit';
+  return 'warn';
+}
+
+function zoneBio(val, norm){
+  if(val===''||val===null||isNaN(+val)) return 'nc';
+  const v=+val, lo=norm[0], hi=norm[1];
+  if(v>=lo&&v<=hi) return 'ok';
+  const range=hi-lo;
+  if(v<lo-range*.5||v>hi+range*.5) return 'crit';
+  return 'warn';
+}
+
+function zoneLabel(z){
+  return z==='ok'?'✓ Normal':z==='warn'?'⚠ Limite':z==='crit'?'🔴 Critique':'— Non saisi';
+}
+function zoneClass(z){ return `zone-${z}` }
+
+function cursorPct(val, norm, extend=0.4){
+  if(val===''||isNaN(+val)) return 50;
+  const v=+val, lo=norm[0], hi=norm[1], range=hi-lo;
+  const vizLo=lo-range*extend, vizHi=hi+range*extend;
+  return Math.min(98,Math.max(2, Math.round((v-vizLo)/(vizHi-vizLo)*100)));
+}
+
+function ageLabel(a){if(a<1)return 'Nourrisson';if(a<3)return 'Bambin';if(a<12)return 'Enfant';if(a<18)return 'Adolescent';if(a<65)return 'Adulte';return 'Personne âgée'}
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let S = {
+  view:'welcome',
+  onglet:'vitales',
+  patient:{ prenom:'Henri', sexe:'H', age:72, poids:78, taille:175, pathologie:'bpco' },
+  vitales:{ fc:'', fr:'', pas:'', pad:'', spo2:'', temp:'', gcs:'' },
+  bio:{ hb:'',ht:'',plq:'',gb:'', na:'',k:'',cl:'',co2:'', creat:'',uree:'',dfu:'', ast:'',alt:'',bili:'', crp:'',glyc:'',alb:'' },
+  surv_interval: 60,
+  analyse:'', loading:false, showKey:false,
+  apiKey:localStorage.getItem('simcst_key')||'',
+  apiKeySaved:!!localStorage.getItem('simcst_key'),
+};
+
+function pathoObj(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0] }
+function normes(){ return getNormes(S.patient.age, S.patient.pathologie) }
+function bioNormes(){ return getBioNormes(S.patient.sexe, S.patient.age, S.patient.pathologie) }
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+function bioZones(){
+  const bn=bioNormes();
+  const res={};
+  Object.entries(S.bio).forEach(([k,v])=>{
+    if(bn[k]) res[k]=zoneBio(v,bn[k]);
+  });
+  return res;
+}
+
+function countAnomalies(){
+  const n=normes(), bn=bioNormes();
+  let c=0;
+  const vit=[['fc',n.fc],['fr',n.fr],['pas',n.pas],['spo2',n.spo2],['temp',n.temp],['gcs',n.gcs]];
+  vit.forEach(([k,norm])=>{ const z=zoneVitale(S.vitales[k],norm); if(z==='warn'||z==='crit') c++; });
+  Object.entries(S.bio).forEach(([k,v])=>{ if(bn[k]){ const z=zoneBio(v,bn[k]); if(z==='warn'||z==='crit') c++; } });
+  return c;
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  const pr  = S.patient.prenom;
+  const pa  = pathoObj();
+  const n   = normes();
+  const bn  = bioNormes();
+  const bz  = bioZones();
+  const anom= countAnomalies();
+
+  let h='';
+
+  if(S.view!=='welcome'){
+    h+=`
+    <div class="site-header">
+      <div class="badge">📊 Module 7 · SimCare IFSI</div>
+      <h1>Sim<em>Constantes</em></h1>
+      <p>Mesurer, interpréter, surveiller — pour ce patient précis</p>
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+          <div class="badge">📊 Module 7 · SimCare IFSI</div>
+          <h1>Sim<em>Constantes</em></h1>
+        </div>`;
+  }
+
+  h+='<div class="wrap">';
+
+  // ─── WELCOME ──────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(64,176,248,.16)">
+      <div class="welcome">
+        <span class="welcome-icon">📊</span>
+        <p>Une FC à 110 bpm est-elle normale pour ce patient précis, à cet âge, avec cette pathologie ? SimConstantes transforme chaque chiffre en signification clinique.</p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez le patient</strong> — les normes s'adaptent automatiquement à l'âge, au sexe et à la pathologie</span></div>
+          <div class="pt"><span class="pt-i">🌡️</span><span class="pt-t"><strong>Saisissez les constantes vitales</strong> — FC, FR, PA, SpO₂, température, Glasgow — et visualisez leur zone immédiatement</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Interprétez les valeurs biologiques</strong> — NFS, ionogramme, bilan rénal et hépatique avec les normes adaptées</span></div>
+          <div class="pt"><span class="pt-i">⏱️</span><span class="pt-t"><strong>Simulez la surveillance</strong> — fréquence, traçabilité, alertes — et comprenez pourquoi cette anomalie pour CE patient</span></div>
+        </div>
+        <button class="btn-p" onclick="go('main')">Construire un patient →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── VUE PRINCIPALE ─────────────────────────────────────────
+  else if(S.view==='main'){
+
+    // Patient selector en haut
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(64,176,248,.12);margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="font-size:28px">${pa.icon}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:16px">${esc(pr)||'Patient'} — ${S.patient.age} ans · ${S.patient.sexe==='H'?'♂':'♀'} · ${S.patient.poids} kg</div>
+          <div style="font-size:13px;color:var(--txt3);">${pa.label} · ${ageLabel(S.patient.age)}</div>
+        </div>
+        ${anom>0?`<span class="zone-pill ${anom>=3?'zone-crit':'zone-warn'}">${anom} anomalie${anom>1?'s':''}</span>`:'<span class="zone-pill zone-ok">Tout normal</span>'}
+        <button class="btn-g" onclick="go('patient')" style="padding:8px 16px;font-size:13px">✎ Modifier</button>
+      </div>
+    </div>
+
+    <!-- ONGLETS -->
+    <div class="tabs">
+      ${[
+        {id:'vitales',  label:'🌡️ Constantes vitales'},
+        {id:'bio',      label:'🔬 Bilan biologique'},
+        {id:'surv',     label:'⏱️ Surveillance'},
+        {id:'analyse',  label:'📋 Analyse'},
+      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`).join('')}
+    </div>`;
+
+    // ─── CONSTANTES VITALES ────────────────────────────────────
+    if(S.onglet==='vitales'){
+      const vitales = [
+        { key:'fc',   label:'Fréquence cardiaque', abbr:'FC', icon:'❤️', unit:'bpm',    norm:n.fc,   step:1,  min:0,  max:250, info:'Mesurée au pouls radial ou par scope' },
+        { key:'fr',   label:'Fréquence respiratoire', abbr:'FR', icon:'🫁', unit:'/min', norm:n.fr,   step:1,  min:0,  max:60,  info:'Comptée sur 1 minute complète, patient au repos' },
+        { key:'pas',  label:'Pression artérielle syst.', abbr:'PAS', icon:'💉', unit:'mmHg', norm:n.pas,  step:1,  min:0,  max:250, info:'Bras droit, patient assis depuis 5 min' },
+        { key:'pad',  label:'Pression artérielle diast.', abbr:'PAD', icon:'💉', unit:'mmHg', norm:[60,90], step:1,  min:0,  max:150, info:'Toujours mesurée avec la PAS' },
+        { key:'spo2', label:'Saturation en O₂', abbr:'SpO₂', icon:'🫀', unit:'%',      norm:n.spo2, step:.1, min:70, max:100, info:`Norme adaptée : ${n.spo2[0]}–${n.spo2[1]}% pour ce profil` },
+        { key:'temp', label:'Température', abbr:'T°', icon:'🌡️', unit:'°C',    norm:n.temp, step:.1, min:34, max:42,  info:'Voie axillaire (+0,5°C pour voie rectale)' },
+        { key:'gcs',  label:'Score de Glasgow', abbr:'GCS', icon:'🧠', unit:'/15',  norm:n.gcs,  step:1,  min:3,  max:15,  info:'3 (coma) → 15 (conscient et orienté)' },
+      ];
+
+      h+=`<div class="fadeup">
+        <div class="info info-em" style="margin-bottom:16px">
+          Les normes affichées sont <strong>adaptées au profil de ${esc(pr)||'ce patient'}</strong> — ${S.patient.age} ans, ${pa.label}.
+          ${pa.id==='bpco'?'SpO₂ cible 88–92% pour BPCO (risque hypercapnie si O₂ excessif).'
+           :pa.id==='hta'?'PA habituelle plus élevée — seuil d\'alerte ajusté.'
+           :''}
+        </div>`;
+
+      vitales.forEach(v=>{
+        const val=S.vitales[v.key];
+        const z=zoneVitale(val, v.norm);
+        const pct=cursorPct(val, v.norm);
+        const hasVal=val!=='';
+
+        h+=`
+        <div class="cst-card">
+          <div class="cst-header">
+            <span class="cst-icon">${v.icon}</span>
+            <div style="flex:1">
+              <div class="cst-name">${v.label}</div>
+              <div class="cst-abbr">${v.abbr} · Norme : ${v.norm[0]}–${v.norm[1]} ${v.unit}</div>
+            </div>
+            <span class="zone-pill ${zoneClass(hasVal?z:'nc')}">${hasVal?zoneLabel(z):'— Non saisi'}</span>
+          </div>
+          <div class="cst-input-row">
+            <input class="cst-input" type="number" step="${v.step}" min="${v.min}" max="${v.max}"
+              value="${esc(val)}" placeholder="—"
+              oninput="S.vitales['${v.key}']=this.value;render()"
+              style="border-color:${hasVal?(z==='ok'?'rgba(64,216,128,.4)':z==='warn'?'rgba(248,192,64,.4)':'rgba(248,80,80,.4)'):'rgba(255,255,255,.08)'}">
+            <span class="cst-unit">${v.unit}</span>
+            <div class="sl-wrap" style="flex:1">
+              <button class="sl-btn" onclick="stepVitale('${v.key}',-${v.step})">−</button>
+              <input type="range" min="${v.min}" max="${v.max}" step="${v.step}"
+                value="${hasVal?val:((v.norm[0]+v.norm[1])/2)}"
+                oninput="S.vitales['${v.key}']=this.value;render()">
+              <button class="sl-btn" onclick="stepVitale('${v.key}',${v.step})">+</button>
+            </div>
+          </div>
+          ${hasVal?`
+          <div>
+            <div class="zone-bar-wrap">
+              <div class="zone-bar-ok"   style="left:${cursorPct(v.norm[0],v.norm)}%;right:${100-cursorPct(v.norm[1],v.norm)}%"></div>
+              <div class="zone-cursor"   style="left:${pct}%;background:${z==='ok'?'var(--z-ok)':z==='warn'?'var(--z-warn)':'var(--z-crit)'}"></div>
+            </div>
+            ${z==='warn'||z==='crit'?`<div class="info ${z==='crit'?'info-red':'info-amb'}" style="margin-top:6px;font-size:12px">
+              ${z==='crit'?'🔴 Valeur critique':'⚠️ Valeur limite'} — ${getExplication(v.key, +val, v.norm, S.patient)}
+            </div>`:''}
+          </div>`:''}
+          <div class="cst-norme">${v.info}</div>
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+
+    // ─── BILAN BIOLOGIQUE ──────────────────────────────────────
+    else if(S.onglet==='bio'){
+      const bioItems = [
+        { section:'Numération Formule Sanguine', items:[
+          { key:'hb',  label:'Hémoglobine',    unit:'g/dL',  norm:bn.hb },
+          { key:'ht',  label:'Hématocrite',    unit:'%',     norm:bn.ht },
+          { key:'plq', label:'Plaquettes',     unit:'G/L',   norm:bn.plq },
+          { key:'gb',  label:'Globules blancs',unit:'G/L',   norm:bn.gb },
+        ]},
+        { section:'Ionogramme sanguin', items:[
+          { key:'na',  label:'Sodium (Na⁺)',   unit:'mmol/L',norm:bn.na },
+          { key:'k',   label:'Potassium (K⁺)', unit:'mmol/L',norm:bn.k },
+          { key:'cl',  label:'Chlore (Cl⁻)',   unit:'mmol/L',norm:bn.cl },
+          { key:'co2', label:'Bicarbonates',   unit:'mmol/L',norm:bn.co2 },
+        ]},
+        { section:'Bilan rénal', items:[
+          { key:'creat',label:'Créatinine',     unit:'µmol/L',norm:bn.creat },
+          { key:'uree', label:'Urée',           unit:'mmol/L',norm:bn.uree },
+          { key:'dfu',  label:'DFG estimé',     unit:'mL/min',norm:bn.dfu },
+        ]},
+        { section:'Bilan hépatique', items:[
+          { key:'ast',  label:'ASAT (TGO)',     unit:'UI/L',  norm:bn.ast },
+          { key:'alt',  label:'ALAT (TGP)',     unit:'UI/L',  norm:bn.alt },
+          { key:'bili', label:'Bilirubine totale',unit:'µmol/L',norm:bn.bili },
+        ]},
+        { section:'Marqueurs biologiques', items:[
+          { key:'crp',  label:'CRP',            unit:'mg/L',  norm:bn.crp },
+          { key:'glyc', label:'Glycémie',       unit:'mmol/L',norm:bn.glyc },
+          { key:'alb',  label:'Albumine',       unit:'g/L',   norm:bn.alb },
+        ]},
+      ];
+
+      h+=`<div class="fadeup">
+        <div class="info info-em" style="margin-bottom:16px">
+          Saisissez les valeurs du bilan. Les normes tiennent compte du <strong>sexe</strong> (${S.patient.sexe==='H'?'homme':'femme'}) et de la <strong>pathologie</strong> (${pa.label}).
+        </div>
+        <div class="bio-header">
+          <span>Paramètre</span><span style="text-align:center">Valeur</span><span style="text-align:center">Norme</span><span style="text-align:center">Zone</span>
+        </div>`;
+
+      bioItems.forEach(section=>{
+        h+=`<div class="bio-section-title">${section.section}</div>`;
+        section.items.forEach(item=>{
+          const val=S.bio[item.key];
+          const z=zoneBio(val,item.norm);
+          const hasVal=val!=='';
+          h+=`
+          <div class="bio-row">
+            <div class="bio-name">${item.label}</div>
+            <div class="bio-val">
+              <input type="number" step="0.1"
+                value="${esc(val)}" placeholder="—"
+                oninput="S.bio['${item.key}']=this.value;render()"
+                style="width:80px;padding:6px 8px;font-size:14px;text-align:center;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid ${hasVal?(z==='ok'?'rgba(64,216,128,.4)':z==='warn'?'rgba(248,192,64,.4)':'rgba(248,80,80,.4)'):'rgba(255,255,255,.08)'};color:var(--txt);font-family:'Fira Mono',monospace;outline:none">
+            </div>
+            <div class="bio-norme">${item.norm[0]}–${item.norm[1]} ${item.unit}</div>
+            <div style="text-align:center"><span class="zone-pill ${zoneClass(hasVal?z:'nc')}" style="font-size:11px;padding:3px 8px">${hasVal?zoneLabel(z):'—'}</span></div>
+          </div>`;
+        });
+      });
+      h+=`</div>`;
+    }
+
+    // ─── SURVEILLANCE ──────────────────────────────────────────
+    else if(S.onglet==='surv'){
+      const intervals = [
+        {v:15,  l:'Toutes les 15 min'},
+        {v:30,  l:'Toutes les 30 min'},
+        {v:60,  l:'Toutes les heures'},
+        {v:120, l:'Toutes les 2h'},
+        {v:240, l:'Toutes les 4h'},
+        {v:480, l:'Toutes les 8h (3×/24h)'},
+      ];
+
+      // Générer une timeline de surveillance fictive
+      const now=new Date();
+      const times=[];
+      for(let i=4;i>=0;i--){
+        const t=new Date(now-i*S.surv_interval*60000);
+        times.push({ h:t.getHours(), m:t.getMinutes().toString().padStart(2,'0'), i });
+      }
+
+      const fc_ref=Math.round((normes().fc[0]+normes().fc[1])/2);
+      const spo2_ref=normes().spo2[0];
+
+      h+=`<div class="fadeup">
+        <div style="margin-bottom:20px">
+          <label class="lbl">Fréquence de surveillance prescrite</label>
+          <div class="col8">
+            ${intervals.map(iv=>`
+              <div class="sel ${S.surv_interval===iv.v?'on':''}" onclick="S.surv_interval=${iv.v};render()">
+                <span class="si">⏱️</span>${iv.l}
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="info info-em" style="margin-bottom:16px">
+          💡 La fréquence de surveillance dépend de l'état clinique, des prescriptions médicales, du protocole de service. Pour ${esc(pr)||'ce patient'} (${pa.label}), une surveillance ${S.surv_interval<=30?'rapprochée est justifiée':S.surv_interval<=120?'régulière est adaptée':'espacée est possible si stable'}.
+        </div>
+
+        <div style="font-family:'Newsreader',serif;font-size:16px;font-weight:700;margin-bottom:14px">Feuille de surveillance simulée</div>
+        <div class="surv-timeline">
+          <div class="surv-line"></div>
+          ${times.map((t,idx)=>{
+            const isAlert = idx===3;
+            const isCrit  = idx===2;
+            const fc_val  = isCrit?fc_ref+38:isAlert?fc_ref+22:fc_ref+Math.round((Math.random()-0.5)*8);
+            const spo2_val= isCrit?spo2_ref-8:isAlert?spo2_ref-3:spo2_ref+1;
+            const temp_val= isCrit?38.9:isAlert?38.1:36.8;
+            const z_fc    = isCrit?'crit':isAlert?'warn':'ok';
+            const z_spo2  = isCrit?'crit':isAlert?'warn':'ok';
+            const z_temp  = isCrit?'crit':isAlert?'warn':'ok';
+            return `
+            <div class="surv-item">
+              <div class="surv-dot ${isCrit?'crit':isAlert?'alert':''}"></div>
+              <div class="surv-time">${t.h}h${t.m}</div>
+              <div class="surv-content">
+                <div class="surv-title" style="color:${isCrit?'var(--z-crit)':isAlert?'var(--z-warn)':'var(--txt)'}">
+                  ${isCrit?'🔴 Alerte critique':isAlert?'⚠️ Valeur limite':'✓ Constantes stables'}
+                </div>
+                <div class="surv-vals">
+                  <span class="surv-val-chip zone-${z_fc}">FC ${fc_val} bpm</span>
+                  <span class="surv-val-chip zone-${z_spo2}">SpO₂ ${spo2_val}%</span>
+                  <span class="surv-val-chip zone-${z_temp}">T° ${temp_val}°C</span>
+                  <span class="surv-val-chip zone-ok">PA 128/76</span>
+                </div>
+                ${isCrit?`<div style="font-size:12px;color:var(--z-crit);margin-top:6px">→ Alerte médecin immédiate · Réévaluation dans 15 min</div>`:''}
+                ${isAlert?`<div style="font-size:12px;color:var(--z-warn);margin-top:6px">→ Surveillance rapprochée · Informer l'IDE référent</div>`:''}
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="info info-vio" style="margin-top:16px">
+          📋 <strong>Traçabilité :</strong> Toute constante anormale doit être <strong>tracée dans le dossier patient, horodatée, et transmise</strong> selon le protocole du service. Une valeur non tracée n'existe pas juridiquement.
+        </div>
+      </div>`;
+    }
+
+    // ─── ANALYSE ──────────────────────────────────────────────
+    else if(S.onglet==='analyse'){
+      const saisies=Object.values(S.vitales).filter(v=>v!=='').length + Object.values(S.bio).filter(v=>v!=='').length;
+      h+=`<div class="fadeup">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+          <div style="flex:1">
+            <div style="font-family:'Newsreader',serif;font-size:18px;font-weight:700">Analyse clinique — ${esc(pr)||'ce patient'}</div>
+            <div style="font-size:13px;color:var(--txt3)">${saisies} valeur${saisies>1?'s':''} saisie${saisies>1?'s':''} · ${anom} anomalie${anom>1?'s':''}</div>
+          </div>
+          ${anom>0?`<span class="zone-pill ${anom>=3?'zone-crit':'zone-warn'}">${anom} anomalie${anom>1?'s':''}</span>`:'<span class="zone-pill zone-ok">Tout normal</span>'}
+        </div>
+
+        ${saisies===0?`<div class="info info-em">Saisissez d'abord des constantes dans les onglets "Constantes vitales" et "Bilan biologique".</div>`:''}
+
+        <hr class="div">
+        <label class="lbl" style="margin-bottom:14px">Ce que dit la clinique</label>
+
+        ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse clinique en cours…</div></div>`:''}
+
+        ${!S.loading&&!S.analyse?`
+          <div class="premium-box">
+            <div style="text-align:center;margin-bottom:22px">
+              <div style="font-size:38px;margin-bottom:10px">🔒</div>
+              <div style="font-family:'Newsreader',serif;font-size:18px;font-weight:700;color:var(--txt);margin-bottom:5px">Analyse clinique — Accès Premium</div>
+              <div style="font-size:13px;color:var(--txt3)">La saisie et la visualisation des constantes sont gratuites</div>
+            </div>
+            <div class="grid2" style="margin-bottom:16px">
+              <div style="border:1px solid rgba(64,216,128,.2);background:rgba(64,216,128,.05);border-radius:12px;padding:14px">
+                <div style="color:var(--green);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✓ GRATUIT</div>
+                <div style="font-size:12px;color:var(--txt3);line-height:1.8">Constantes vitales<br>Bilan biologique<br>Surveillance / Traçabilité</div>
+              </div>
+              <div style="border:1px solid rgba(64,176,248,.25);background:rgba(64,176,248,.06);border-radius:12px;padding:14px">
+                <div style="color:var(--em);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✦ PREMIUM</div>
+                <div style="font-size:12px;color:var(--txt3);line-height:1.8">Analyse IA des anomalies<br>Cohérence clinique<br>Conduite à tenir</div>
+              </div>
+            </div>
+            <div class="grid3" style="margin-bottom:20px">
+              <div style="border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center;background:rgba(255,255,255,.02)">
+                <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Module seul</div>
+                <div style="font-size:22px;font-weight:700;color:var(--txt)">4,99€</div>
+                <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">Accès à vie<br>1 module</div>
+              </div>
+              <div style="border:1px solid rgba(64,176,248,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(64,176,248,.05)">
+                <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--em);margin-bottom:8px">Suite complète</div>
+                <div style="font-size:22px;font-weight:700;color:var(--txt)">12,99€</div>
+                <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">7 modules<br>à vie</div>
+              </div>
+              <div style="border:1px solid rgba(176,96,248,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(176,96,248,.05)">
+                <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--violet);margin-bottom:8px">Institution</div>
+                <div style="font-size:22px;font-weight:700;color:var(--txt)">Sur devis</div>
+                <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">IFSI · Syndicat<br>Promotion entière</div>
+              </div>
+            </div>
+            <div style="text-align:center;margin-bottom:12px">
+              <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:13px 32px;border-radius:12px;background:linear-gradient(135deg,var(--em2),var(--em));color:#080c12;font-weight:700;font-size:15px;text-decoration:none">Obtenir l'accès →</a>
+              <div style="margin-top:8px;font-size:12px;color:var(--txt3)">IFSI & établissements : <a href="mailto:contact@simcare.fr" style="color:var(--em);text-decoration:none">tarif institution sur devis</a></div>
+            </div>
+            <div style="text-align:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)">
+              <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace;letter-spacing:.5px">🔑 Espace formateur / développeur</button>
+            </div>
+          </div>
+          ${S.showKey?`<div class="apikey-box">
+            <p>Clé API Anthropic — réservé au formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:12px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
+          </div>`:''}
+        `:''}
+        ${!S.loading&&S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div><button class="btn-g btn-full" onclick="S.analyse='';render()" style="margin-top:10px">↺ Nouvelle analyse</button>`:''}
+      </div>`;
+    }
+
+    h+=`<div style="margin-top:16px"><button class="btn-g" onclick="reset()" style="color:var(--teal);border-color:rgba(64,216,192,.2)">✦ Nouveau patient</button></div>`;
+  }
+
+  // ─── PATIENT EDITOR ─────────────────────────────────────────
+  else if(S.view==='patient'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(64,176,248,.16)">
+      <div class="card-title" style="color:var(--em)">👤 Votre patient</div>
+      <div class="card-sub">Les normes s'adaptent automatiquement à chaque paramètre.</div>
+      <div class="col">
+        <div>
+          <label class="lbl">Prénom</label>
+          <input type="text" value="${esc(S.patient.prenom)}" placeholder="Ex : Henri, Lucie, Jean-Paul…" oninput="up('prenom',this.value)">
+        </div>
+        <div>
+          <label class="lbl">Sexe biologique</label>
+          <div class="grid2">
+            ${[{v:'F',l:'Femme',i:'👩'},{v:'H',l:'Homme',i:'👨'}].map(s=>`
+              <div class="sel center ${S.patient.sexe===s.v?'on':''}" onclick="up('sexe','${s.v}')">
+                <span style="font-size:28px">${s.i}</span>
+                <span style="font-size:13px;margin-top:5px">${s.l}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Âge</label><span><span class="lbl-val">${S.patient.age} ans</span><span style="font-size:11px;color:var(--txt3);margin-left:6px">${ageLabel(S.patient.age)}</span></span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upStep('age',-1)">−</button>
+            <input type="range" min="0" max="100" value="${S.patient.age}" oninput="up('age',+this.value)">
+            <button class="sl-btn" onclick="upStep('age',1)">+</button>
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="lbl-row"><label class="lbl" style="margin:0">Poids</label><span class="lbl-val">${S.patient.poids} kg</span></div>
+            <div class="sl-wrap">
+              <button class="sl-btn" onclick="upStep('poids',-1)">−</button>
+              <input type="range" min="3" max="200" value="${S.patient.poids}" oninput="up('poids',+this.value)">
+              <button class="sl-btn" onclick="upStep('poids',1)">+</button>
+            </div>
+          </div>
+          <div>
+            <div class="lbl-row"><label class="lbl" style="margin:0">Taille</label><span class="lbl-val">${S.patient.taille} cm</span></div>
+            <div class="sl-wrap">
+              <button class="sl-btn" onclick="upStep('taille',-1)">−</button>
+              <input type="range" min="45" max="210" value="${S.patient.taille}" oninput="up('taille',+this.value)">
+              <button class="sl-btn" onclick="upStep('taille',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="lbl">Pathologie principale</label>
+          <div class="col8">
+            ${PATHOLOGIES.map(p=>`
+              <div class="sel ${S.patient.pathologie===p.id?'on':''}" onclick="up('pathologie','${p.id}')">
+                <span class="si">${p.icon}</span><span>${p.label}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-p" onclick="go('main')">Voir les constantes →</button>
+    </div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+// ═══════════════════════════════════════
+//  EXPLICATIONS ANOMALIES
+// ═══════════════════════════════════════
+function getExplication(key, val, norm, patient){
+  const lo=norm[0], hi=norm[1];
+  const expl={
+    fc: val<lo ? `Bradycardie — peut indiquer un bloc auriculo-ventriculaire, une hypothyroïdie, ou un effet médicamenteux (bêtabloquants).`
+               : `Tachycardie — chercher une fièvre, une douleur, une hypovolémie, une anxiété ou une décompensation cardiaque.`,
+    fr: val<lo ? `Bradypnée — risque de dépression respiratoire. Surveiller saturation et gaz du sang.`
+               : `Tachypnée — signe d'effort ventilatoire. Chercher une infection, douleur, acidose, embolie pulmonaire.`,
+    pas: val<lo ? `Hypotension — peut indiquer une déshydratation, un choc, un médicament hypotenseur. Évaluer la perfusion périphérique.`
+                : `Hypertension — ${patient.pathologie==='hta'?'à comparer avec la PA habituelle de ce patient.':'risque cardio-vasculaire. Vérifier la prise de traitement.'}`,
+    spo2: val<lo ? `${patient.pathologie==='bpco'?'Désaturation sous le seuil cible BPCO (88-92%). Réévaluer l\'O₂ en cours. Éviter de dépasser 2 L/min.':'Désaturation — majorer la surveillance respiratoire. Contrôle gazométrique si < 90%.'}` : ``,
+    temp: val<lo ? `Hypothermie — risque de troubles du rythme cardiaque et de confusion. Réchauffer progressivement.`
+                 : `Fièvre — chercher un foyer infectieux. Hémocultures avant antibiotiques si T° > 38,5°C.`,
+    gcs: val<lo ? `Score de Glasgow abaissé — vigilance altérée. Position latérale de sécurité si GCS ≤ 8. Alerte médicale immédiate.` : ``,
+  };
+  return expl[key]||`Valeur hors norme — surveiller et informer le médecin.`;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'})}
+function setOnglet(o){S.onglet=o;render();window.scrollTo({top:0,behavior:'smooth'})}
+function up(k,v){S.patient={...S.patient,[k]:v};render()}
+function upStep(k,d){S.patient={...S.patient,[k]:Math.max(0,Math.min(220,S.patient[k]+d))};render()}
+function stepVitale(k,d){
+  const cur=parseFloat(S.vitales[k])||0;
+  S.vitales[k]=Math.round((cur+d)*10)/10;render();
+}
+function saveKey(){localStorage.setItem('simcst_key',S.apiKey);S.apiKeySaved=true;render()}
+function reset(){
+  S={...S,view:'welcome',
+    patient:{prenom:'',sexe:'F',age:45,poids:65,taille:165,pathologie:'sain'},
+    vitales:{fc:'',fr:'',pas:'',pad:'',spo2:'',temp:'',gcs:''},
+    bio:{hb:'',ht:'',plq:'',gb:'',na:'',k:'',cl:'',co2:'',creat:'',uree:'',dfu:'',ast:'',alt:'',bili:'',crp:'',glyc:'',alb:''},
+    analyse:''};
+  render();
+}
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const pa=pathoObj(), n=normes(), bn=bioNormes();
+  const pr=S.patient.prenom||'le patient';
+
+  const anomaliesVitales=[];
+  [['fc','FC',n.fc,'bpm'],['fr','FR',n.fr,'/min'],['pas','PAS',n.pas,'mmHg'],['spo2','SpO₂',n.spo2,'%'],['temp','T°',n.temp,'°C'],['gcs','GCS',n.gcs,'/15']].forEach(([k,label,norm,unit])=>{
+    const v=S.vitales[k];
+    if(v!==''){const z=zoneVitale(v,norm);if(z!=='ok') anomaliesVitales.push(`${label}: ${v} ${unit} (norme ${norm[0]}-${norm[1]}) — ${z}`);}
+  });
+
+  const anomaliesBio=[];
+  Object.entries(S.bio).forEach(([k,v])=>{
+    if(v!==''&&bn[k]){const z=zoneBio(v,bn[k]);if(z!=='ok'){const labels={hb:'Hb',ht:'Ht',plq:'Plaquettes',gb:'GB',na:'Na',k:'K',cl:'Cl',co2:'HCO3',creat:'Créatinine',uree:'Urée',dfu:'DFG',ast:'ASAT',alt:'ALAT',bili:'Bilirubine',crp:'CRP',glyc:'Glycémie',alb:'Albumine'};anomaliesBio.push(`${labels[k]||k}: ${v} (${z})`);}};
+  });
+
+  S.loading=true;S.analyse='';render();
+
+  const prompt=`Tu es un formateur infirmier expert en surveillance clinique. Un étudiant IFSI vient de saisir les constantes d'un patient. Aide-le à comprendre la signification clinique de ces valeurs.
+
+PATIENT : ${pr}, ${S.patient.sexe==='H'?'homme':'femme'} de ${S.patient.age} ans, ${S.patient.poids} kg.
+Pathologie : ${pa.label}.
+
+ANOMALIES CONSTATÉES :
+Constantes vitales : ${anomaliesVitales.length>0?anomaliesVitales.join(' | '):'Aucune anomalie saisie'}
+Bilan biologique : ${anomaliesBio.length>0?anomaliesBio.join(' | '):'Aucune anomalie saisie'}
+
+Réponds avec EXACTEMENT ces 4 blocs :
+
+**🔍 Tableau clinique global**
+[2-3 phrases. Que raconte l'ensemble de ces valeurs sur l'état de CE patient ? Lien entre les anomalies. Y a-t-il une cohérence qui oriente vers un diagnostic ?]
+
+**⚠️ L'anomalie prioritaire à surveiller**
+[2 phrases. Quelle est LA valeur la plus préoccupante pour CE profil ? Pourquoi précisément ?]
+
+**🏃 Conduite à tenir immédiate**
+[3 actions concrètes numérotées. Ce que l'IDE doit faire maintenant, dans l'ordre de priorité.]
+
+**⏱️ Fréquence de surveillance recommandée**
+[1-2 phrases. À quelle fréquence réévaluer et pourquoi, en lien avec les anomalies trouvées.]
+
+Tutoie l'étudiant. Direct, précis, cliniquement ancré.`;
+
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1100,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){
+    S.analyse=`**⚠️ Erreur**\n\n${e.message||'Vérifiez votre clé API et votre connexion.'}`;
+  }
+  S.loading=false;render();
+}
+
+render();
+</script>
+</body>
+</html>
