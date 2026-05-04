@@ -309,8 +309,8 @@
 </head>
 <body>
 <div id="app"></div>
-
 <script>
+
 // ═══════════════════════════════════════════════════════
 //  DONNÉES
 // ═══════════════════════════════════════════════════════
@@ -425,284 +425,346 @@ function disp() { return DISPOSITIFS.find(d=>d.id===S.rx.dispositif)||DISPOSITIF
 function patho(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0]; }
 
 // ═══════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════
 //  RENDU PRINCIPAL
 // ═══════════════════════════════════════════════════════
-function render() {
-  const ph = physio();
-  const fi = fio2();
-  const lv = lvl(fi);
-  const dp = disp();
-  const pa = patho();
-  const pr = S.patient.prenom;
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(t){
+  return t.split('\n\n').filter(p=>p.trim()).map(p=>{
+    const parts=p.split(/\*\*([^*]+)\*\*/g);
+    return '<p>'+parts.map((x,i)=>i%2===1?'<strong>'+esc(x)+'</strong>':esc(x)).join('')+'</p>';
+  }).join('');
+}
 
-  if (S.view==='step2') updateBreath(ph.rr, ph.vt);
+function render(scrollTop=false){
+  const ph=physio(), fi=fio2(), lv=lvl(fi), dp=disp(), pa=patho();
+  const pr=S.patient.prenom||'votre patient';
+  const stepNum={step1:1,step2:2,step3:3,step4:4}[S.view]||0;
+  let h='';
 
-  const stepNum = {step1:1,step2:2,step3:3,step4:4}[S.view]||0;
-
-  let h = '';
-
-  // HEADER + STEPS (toutes vues sauf welcome)
-  if (S.view !== 'welcome') {
-    const steps = ['Patient','Physiologie','Prescription','Analyse'];
-    h += `
-      <div class="site-header">
-        <div class="badge">Outil pédagogique · IFSI · Formation initiale</div>
-        <h1>SimO₂</h1>
-        <p>Comprendre l'oxygénothérapie à travers la physiologie d'un patient réel</p>
-      </div>
-      <div class="steps-bar">
-        ${steps.map((s,i)=>`
-          <div class="step-dot ${stepNum>i+1?'done':stepNum===i+1?'active':''}">${stepNum>i+1?'✓':i+1}</div>
-          <span class="step-lbl ${stepNum===i+1?'active':''}">${s}</span>
-          ${i<3?'<div class="step-line"></div>':''}
-        `).join('')}
-      </div>`;
+  if(S.view!=='welcome'){
+    const steps=['Patient','Physiologie','Prescription','Analyse'];
+    h+=`<div class="site-header">
+      <div class="badge">B.3 · Pratiques infirmières · Référentiel 2026</div>
+      <h1>SimO₂</h1>
+      <p>Comprendre l'oxygénothérapie à travers la physiologie d'un patient réel</p>
+    </div>
+    <div class="steps-bar">
+      ${steps.map((s,i)=>`
+        <div class="step-dot ${stepNum>i+1?'done':stepNum===i+1?'active':''}">${stepNum>i+1?'✓':i+1}</div>
+        <span class="step-lbl ${stepNum===i+1?'active':''}">${s}</span>
+        ${i<3?'<div class="step-line"></div>':''}
+      `).join('')}
+    </div>`;
   } else {
-    h += `<div class="site-header" style="padding-top:44px">
-            <div class="badge">Outil pédagogique · IFSI · Formation initiale</div>
-            <h1>SimO₂</h1>
-          </div>`;
+    h+=`<div class="site-header" style="padding-top:44px">
+      <div class="badge">B.3 · Pratiques infirmières · Référentiel 2026</div>
+      <h1>SimO₂</h1>
+    </div>`;
   }
 
-  h += '<div class="wrap">';
+  h+='<div class="wrap">';
 
-  // ─────────────────────────── WELCOME ───────────────────────────
-  if (S.view==='welcome') {
-    h += `
-    <div class="card fadeup" style="border-color:rgba(56,189,248,.18)">
+  // ── WELCOME ──
+  if(S.view==='welcome'){
+    h+=`<div class="card fadeup" style="border-color:rgba(56,189,248,.18)">
       <div class="welcome">
         <span class="welcome-icon">🫁</span>
-        <p>Ce n'est pas un outil de calcul. C'est un outil de <strong style="color:var(--txt)">compréhension clinique</strong> : pour ressentir ce qu'une prescription d'O₂ représente concrètement dans les poumons d'un patient précis, quel que soit son parcours.</p>
+        <p>Ce n'est pas un outil de calcul. C'est un outil de <strong style="color:var(--txt)">compréhension clinique</strong> — visualisez les poumons de votre patient se soulever en temps réel.</p>
         <div class="pts">
-          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez un patient réel</strong> — homme, femme, enfant, personne âgée, corpulente ou non, avec sa pathologie spécifique</span></div>
-          <div class="pt"><span class="pt-i">🫁</span><span class="pt-t"><strong>Visualisez ses poumons en direct</strong> — son volume courant, sa fréquence respiratoire, sa SpO₂ de base, tout lié à son corps</span></div>
-          <div class="pt"><span class="pt-i">📋</span><span class="pt-t"><strong>Entrez la prescription médicale</strong> — et voyez immédiatement ce que cette FiO₂ représente pour lui, pas en général</span></div>
-          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analysez la cohérence clinique</strong> — est-ce adapté à ce profil précis ? Que se passe-t-il si c'est trop ou pas assez ?</span></div>
+          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez un patient réel</strong> — âge, sexe, pathologie</span></div>
+          <div class="pt"><span class="pt-i">🫁</span><span class="pt-t"><strong>Visualisez ses poumons en direct</strong> — FR, volume courant, VM</span></div>
+          <div class="pt"><span class="pt-i">📋</span><span class="pt-t"><strong>Entrez la prescription médicale</strong> — dispositif, débit, FiO₂</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analysez la cohérence clinique</strong> — Premium</span></div>
         </div>
         <button class="btn-p" onclick="go('step1')">Commencer avec un patient →</button>
       </div>
     </div>`;
   }
 
-  // ─────────────────────────── ÉTAPE 1 — PATIENT ─────────────────
-  else if (S.view==='step1') {
-    h += `
-    <div class="card fadeup" style="border-color:rgba(245,158,11,.18)">
+  // ── STEP 1 — PATIENT ──
+  else if(S.view==='step1'){
+    h+=`<div class="card fadeup" style="border-color:rgba(245,158,11,.18)">
       <div class="card-title" style="color:var(--amber)">👤 Construisez votre patient</div>
       <div class="card-sub">Chaque paramètre modifiera en temps réel la physiologie affichée à l'étape suivante.</div>
       <div class="col">
-
         <div>
           <label class="lbl">Prénom</label>
-          <input type="text" id="inp-prenom" value="${esc(S.patient.prenom)}" placeholder="Ex : Marie, Jean, Amina, Sébastien, Li…" oninput="up('prenom',this.value)">
+          <input type="text" value="${esc(S.patient.prenom)}" placeholder="Ex : Marie, Jean, Amina…" oninput="S.patient.prenom=this.value">
         </div>
-
         <div>
           <label class="lbl">Sexe biologique</label>
-                    <div class="grid2" style="margin-bottom:18px">
-            <div style="border:1px solid rgba(34,197,94,.2);background:rgba(34,197,94,.05);border-radius:12px;padding:14px">
-              <div style="color:#4ade80;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✓ GRATUIT</div>
-              <div style="font-size:12px;color:#64748b;line-height:1.8">Étape 1 — Patient<br>Étape 2 — Physiologie<br>Étape 3 — Prescription</div>
+          <div class="grid2">
+            <div class="sel ${S.patient.sexe==='F'?'on':''}" onclick="S.patient.sexe='F';render()" style="justify-content:center;flex-direction:column;text-align:center;padding:14px">
+              <span style="font-size:26px">👩</span><span style="margin-top:5px;font-weight:500">Femme</span>
             </div>
-            <div style="border:1px solid rgba(56,189,248,.25);background:rgba(56,189,248,.06);border-radius:12px;padding:14px">
-              <div style="color:#38bdf8;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✦ PREMIUM</div>
-              <div style="font-size:12px;color:#64748b;line-height:1.8">Étape 4 — Analyse IA<br>Cohérence clinique<br>Signes de surveillance</div>
+            <div class="sel ${S.patient.sexe==='H'?'on':''}" onclick="S.patient.sexe='H';render()" style="justify-content:center;flex-direction:column;text-align:center;padding:14px">
+              <span style="font-size:26px">👨</span><span style="margin-top:5px;font-weight:500">Homme</span>
             </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:22px">
-            <div style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;text-align:center;background:rgba(255,255,255,.02)">
-              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#475569;margin-bottom:8px">Module seul</div>
-              <div style="font-size:24px;font-weight:700;color:#f1f5f9">4,99€</div>
-              <div style="font-size:11px;color:#475569;margin-top:6px;line-height:1.5">Accès à vie<br>1 module</div>
-            </div>
-            <div style="border:1px solid rgba(56,189,248,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(56,189,248,.05)">
-              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#38bdf8;margin-bottom:8px">Suite complète</div>
-              <div style="font-size:24px;font-weight:700;color:#f1f5f9">12,99€</div>
-              <div style="font-size:11px;color:#475569;margin-top:6px;line-height:1.5">4 modules<br>à vie</div>
-            </div>
-            <div style="border:1px solid rgba(167,139,250,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(167,139,250,.05)">
-              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#a78bfa;margin-bottom:8px">Institution</div>
-              <div style="font-size:24px;font-weight:700;color:#f1f5f9">Sur devis</div>
-              <div style="font-size:11px;color:#475569;margin-top:6px;line-height:1.5">IFSI · Syndicat<br>Promotion entière</div>
-            </div>
-          </div>
-          </div>
-          <div style="text-align:center;margin-bottom:12px">
-            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:13px 32px;border-radius:12px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);color:#06101f;font-weight:700;font-size:15px;text-decoration:none">
-              Obtenir l'accès →
-            </a>
-            <div style="margin-top:10px;font-size:12px;color:#475569">
-              IFSI & établissements : <a href="mailto:contact@simcare.fr" style="color:#38bdf8;text-decoration:none">tarif institution sur devis</a>
-            </div>
-          </div>
-          <div style="text-align:center;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)">
-            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:#334155;font-size:11px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.5px">
-              🔑 Espace formateur / développeur
-            </button>
           </div>
         </div>
-        ${S.showKey?`<div class="apikey-box">
-          <p>Clé API Anthropic — réservé au formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
-          <div class="apikey-input-row">
-            <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
-            <button onclick="saveKey()">Enregistrer</button>
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Âge</label><span class="lbl-val">${S.patient.age} ans</span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upPat('age',-1)">−</button>
+            <input type="range" min="0" max="100" value="${S.patient.age}" oninput="S.patient.age=+this.value;render()">
+            <button class="sl-btn" onclick="upPat('age',1)">+</button>
           </div>
-          ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:12px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
-        </div>`:''}
-      `:''}
-
-      ${!S.loading && S.analyse?`
-        <div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
-    </div>
-
-    <div class="nav-col">
-      <div class="nav-row">
-        <button class="btn-g" onclick="go('step3')">← Modifier la prescription</button>
-        <button class="btn-g" onclick="runAnalyse()" style="color:var(--violet);border-color:rgba(167,139,250,.22)">↺ Relancer</button>
+        </div>
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Poids</label><span class="lbl-val">${S.patient.poids} kg</span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upPat('poids',-1)">−</button>
+            <input type="range" min="3" max="200" value="${S.patient.poids}" oninput="S.patient.poids=+this.value;render()">
+            <button class="sl-btn" onclick="upPat('poids',1)">+</button>
+          </div>
+        </div>
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Taille</label><span class="lbl-val">${S.patient.taille} cm</span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upPat('taille',-1)">−</button>
+            <input type="range" min="100" max="210" value="${S.patient.taille}" oninput="S.patient.taille=+this.value;render()">
+            <button class="sl-btn" onclick="upPat('taille',1)">+</button>
+          </div>
+        </div>
+        <div>
+          <label class="lbl">Pathologie respiratoire</label>
+          <div class="col8">
+            ${PATHOLOGIES.map(p=>`
+              <div class="sel ${S.patient.pathologie===p.id?'on':''}" onclick="S.patient.pathologie='${p.id}';render()">
+                <span class="si">${p.icon}</span>
+                <div style="font-weight:500">${p.label}</div>
+              </div>`).join('')}
+          </div>
+        </div>
       </div>
-      <button class="btn-g btn-full" onclick="reset()" style="color:var(--teal);border-color:rgba(20,184,166,.22)">✦ Nouveau patient</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-p" onclick="go('step2')">Visualiser la physiologie →</button>
     </div>`;
   }
 
-  h += '</div>'; // .wrap
-  document.getElementById('app').innerHTML = h;
-  if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
-  setTimeout(enhanceSliders, 0);
-}
+  // ── STEP 2 — PHYSIOLOGIE ──
+  else if(S.view==='step2'){
+    const imc=(S.patient.poids/((S.patient.taille/100)**2)).toFixed(1);
+    h+=`<div class="card fadeup" style="border-color:rgba(56,189,248,.18)">
+      <div class="card-title" style="color:var(--em)">🫁 Physiologie respiratoire — ${esc(pr)}</div>
+      <div class="card-sub">Ces valeurs sont calculées pour CE patient précis. Elles changent si vous modifiez son profil.</div>
+      
+      <!-- Animation poumons -->
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:72px;animation:breathe ${(60/ph.rr).toFixed(1)}s ease-in-out infinite;display:inline-block">🫁</div>
+      </div>
+      
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="stat">
+          <span class="stat-v" style="color:var(--em)">${ph.rr}</span>
+          <span class="stat-l">cycles/min</span>
+          <span class="stat-s">Fréquence respiratoire</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v" style="color:var(--em)">${ph.vt}</span>
+          <span class="stat-l">mL</span>
+          <span class="stat-s">Volume courant</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v" style="color:var(--em)">${ph.vm}</span>
+          <span class="stat-l">L/min</span>
+          <span class="stat-s">Volume minute</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v" style="color:${ph.spo2<90?'var(--red)':ph.spo2<95?'var(--amber)':'var(--green)'}">
+            ${ph.spo2}%
+          </span>
+          <span class="stat-l">SpO₂ estimée</span>
+          <span class="stat-s">Sans O₂ supplémentaire</span>
+        </div>
+      </div>
 
-// ═══════════════════════════════════════════════════════
-//  ACTIONS
-// ═══════════════════════════════════════════════════════
-function go(view) { S.view=view; render(); }
+      <div class="info info-em">
+        💡 Volume courant de ${esc(pr)} ≈ <strong>${esc(ph.analog)}</strong>
+      </div>
 
-function up(k,v) { S.patient={...S.patient,[k]:v}; render(); }
-
-function upRx(k,v) { S.rx={...S.rx,[k]:v}; render(); }
-
-function selDisp(id) {
-  const d = DISPOSITIFS.find(x=>x.id===id);
-  let dbt = S.rx.debit;
-  if (dbt<d.dMin) dbt=d.dMin;
-  if (dbt>d.dMax) dbt=d.dMax;
-  S.rx = { dispositif:id, debit:dbt };
-  render(true);
-}
-
-function goAnalyse() { S.view='step4'; S.analyse=''; render(); runAnalyse(); }
-
-function saveKey() {
-  localStorage.setItem('simo2_key', S.apiKey);
-  S.apiKeySaved = true;
-  render();
-}
-
-function reset() {
-  S = { ...S, view:'step1', patient:{prenom:'',sexe:'F',age:40,taille:165,poids:70,pathologie:'sain'}, rx:{dispositif:'lunettes',debit:2}, analyse:'' };
-  render();
-}
-
-// ═══════════════════════════════════════════════════════
-//  APPEL API CLAUDE
-// ═══════════════════════════════════════════════════════
-async function runAnalyse() {
-  const ph = physio();
-  const fi = fio2();
-  const pa = patho();
-  const dp = disp();
-  const pr = S.patient.prenom || 'le patient';
-  const key = S.apiKey || '';
-
-  S.loading=true; S.analyse=''; render();
-
-  const prompt = `Tu es un formateur infirmier bienveillant et expert en physiologie respiratoire. Un étudiant IFSI en formation initiale vient de simuler une prescription d'O₂. Aide-le à développer son intuition clinique — pas à mémoriser des formules.
-
-PATIENT : ${pr}, ${S.patient.sexe==='H'?'homme':'femme'} de ${S.patient.age} ans, ${S.patient.poids} kg, ${S.patient.taille} cm.
-Pathologie : ${pa.label}.
-
-PHYSIOLOGIE AU REPOS :
-- Volume courant ≈ ${ph.vt} mL/inspiration (soit ${ph.analog})
-- Fréquence respiratoire : ${ph.rr}/min (1 cycle toutes les ${(60/ph.rr).toFixed(1)}s)
-- Ventilation-minute : ${ph.vm} L/min
-- SpO₂ de base estimée : ${ph.spo2}%
-
-PRESCRIPTION SIMULÉE :
-- ${dp.label}, ${S.rx.debit} L/min
-- FiO₂ estimée : ${fi}% (vs 21% pour l'air ambiant)
-
-Réponds avec EXACTEMENT ces 3 blocs (titres en gras obligatoires) :
-
-**✅ Cohérence pour ce patient**
-[2-3 phrases. Dit clairement si c'est approprié/trop peu/trop pour CE profil. Lien direct avec sa physio ou pathologie précise — jamais de généralités.]
-
-**💨 Ce que ${fi}% d'O₂ représente pour ses poumons**
-[2-3 phrases. Explique concrètement ce que cette FiO₂ signifie pour lui. Utilise une comparaison de la vie quotidienne ("c'est comme si…", "imagine que…").]
-
-**⚠️ Ce qui se passe si le débit est trop élevé**
-[2-3 phrases. Risque précis lié à SA pathologie. Mécanisme physiologique expliqué simplement — pas de formule, une image mentale.]
-
-Tutoie l'étudiant. Direct, chaleureux, précis. Évite les formulations vagues.`;
-
-  try {
-    const headers = { 'Content-Type':'application/json' };
-    if (key) { headers['x-api-key']=key; headers['anthropic-version']='2023-06-01'; }
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers,
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    S.analyse = data.content?.find(b=>b.type==='text')?.text || '';
-  } catch(e) {
-    S.analyse = `**⚠️ Erreur de connexion**\n\n${e.message||'Vérifiez votre clé API et votre connexion réseau.'}`;
+      <div class="info info-${pa.id==='sain'?'grn':pa.id.includes('bpco')||pa.id==='detresse'?'red':'amb'}" style="margin-top:10px">
+        ${pa.icon} <strong>${pa.label}</strong> — ${
+          pa.id==='sain'?'Physiologie normale. Aucune adaptation particulière nécessaire.':
+          pa.id==='bpco_stable'?'Hypoxémie chronique. Cible SpO₂ 88–92% — éviter l'hyperoxie.':
+          pa.id==='bpco_decompense'?'Décompensation. Attention au drive hypoxique — O₂ titré.':
+          pa.id==='detresse'?'Détresse respiratoire aiguë. Majoration urgente du support ventilatoire.':
+          pa.id==='cardiac'?'Insuffisance cardiaque. Dyspnée d'origine centrale — traiter la cause.':
+          pa.id==='pneumonie'?'Pneumonie. Hypoxémie inflammatoire — O₂ pour maintenir SpO₂ > 94%.':
+          pa.id==='postop'?'Post-opératoire. Surveillance rapprochée — risque atélectasie.':''}
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step1')">← Modifier le patient</button>
+      <button class="btn-p" onclick="go('step3')">Simuler la prescription →</button>
+    </div>`;
   }
 
-  S.loading=false; render();
+  // ── STEP 3 — PRESCRIPTION ──
+  else if(S.view==='step3'){
+    const spo2_cible = pa.id==='bpco_stable'||pa.id==='bpco_decompense' ? '88–92%' : '94–98%';
+    h+=`<div class="card fadeup" style="border-color:rgba(245,158,11,.18)">
+      <div class="card-title" style="color:var(--amber)">📋 Prescription O₂ — ${esc(pr)}</div>
+      <div class="card-sub">Cible SpO₂ pour ce profil : <strong style="color:var(--em)">${spo2_cible}</strong></div>
+
+      <div style="margin-bottom:20px">
+        <label class="lbl">Dispositif d'oxygénothérapie</label>
+        <div class="col8">
+          ${DISPOSITIFS.map(d=>`
+            <div class="sel ${S.rx.dispositif===d.id?'on':''}" onclick="S.rx.dispositif='${d.id}';S.rx.debit=Math.min(Math.max(S.rx.debit,${d.dMin}),${d.dMax});render()">
+              <span class="si">${d.icon}</span>
+              <div>
+                <div style="font-weight:500">${d.label}</div>
+                <div class="sd">${d.dMin}–${d.dMax} L/min</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div>
+        <div class="lbl-row">
+          <label class="lbl" style="margin:0">Débit O₂</label>
+          <span class="lbl-val">${S.rx.debit} L/min</span>
+        </div>
+        <div class="sl-wrap">
+          <button class="sl-btn" onclick="upDebit(-0.5)">−</button>
+          <input type="range" min="${dp.dMin}" max="${dp.dMax}" step="0.5" value="${S.rx.debit}" oninput="S.rx.debit=+this.value;render()">
+          <button class="sl-btn" onclick="upDebit(0.5)">+</button>
+        </div>
+      </div>
+
+      <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:14px;padding:18px;margin-top:16px;text-align:center">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;font-family:monospace">FiO₂ délivrée estimée</div>
+        <div style="font-size:52px;font-weight:700;color:var(--em);font-family:monospace">${fi}%</div>
+        <div style="font-size:14px;color:var(--txt3);margin-top:4px">${lv.t}</div>
+        <div style="height:10px;border-radius:5px;background:rgba(255,255,255,.06);margin-top:12px;overflow:hidden">
+          <div style="height:100%;width:${Math.min(100,(fi-21)/74*100)}%;background:${lv.c};border-radius:5px;transition:width .5s"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-family:monospace;font-size:10px;color:var(--txt3);margin-top:4px">
+          <span>21% (air)</span><span>100%</span>
+        </div>
+      </div>
+
+      <div class="info info-${fi>55&&(pa.id==='bpco_stable'||pa.id==='bpco_decompense')?'red':fi<24?'amb':'grn'}" style="margin-top:12px">
+        ${fi>55&&(pa.id==='bpco_stable'||pa.id==='bpco_decompense')?
+          '⚠️ <strong>Attention :</strong> FiO₂ trop élevée pour un patient BPCO — risque de dépression du drive hypoxique. Cibler 88–92%.':
+          fi<24?'⚠️ Débit insuffisant — FiO₂ proche de l'air ambiant. Augmenter le débit.':
+          '✓ Prescription cohérente avec le profil du patient.'}
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step2')">← Physiologie</button>
+      <button class="btn-p" onclick="go('step4')">Analyse clinique →</button>
+    </div>`;
+  }
+
+  // ── STEP 4 — ANALYSE ──
+  else if(S.view==='step4'){
+    h+=`<div class="card fadeup" style="border-color:rgba(56,189,248,.18)">
+      <div class="card-title" style="color:var(--em)">🔬 Analyse clinique — ${esc(pr)}</div>
+      
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="stat"><span class="stat-v">${esc(pa.label)}</span><span class="stat-l">Pathologie</span></div>
+        <div class="stat"><span class="stat-v">${esc(dp.label)}</span><span class="stat-l">Dispositif</span></div>
+        <div class="stat"><span class="stat-v">${S.rx.debit} L/min</span><span class="stat-l">Débit</span></div>
+        <div class="stat"><span class="stat-v" style="color:var(--em)">${fi}%</span><span class="stat-l">FiO₂</span></div>
+      </div>
+
+      ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse clinique en cours…</div></div>`:''}
+      ${!S.loading&&!S.analyse?`
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:18px">
+            <div style="font-size:36px;margin-bottom:8px">🔒</div>
+            <div style="font-family:'Spectral',serif;font-size:17px;font-weight:700;color:var(--txt);margin-bottom:5px">Analyse clinique — Accès Premium</div>
+          </div>
+          <div class="grid2" style="margin-bottom:14px">
+            <div style="border:1px solid rgba(56,189,248,.2);background:rgba(56,189,248,.05);border-radius:12px;padding:12px">
+              <div style="color:var(--grn);font-size:11px;font-weight:700;margin-bottom:6px">✓ GRATUIT</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Étapes 1–3</div>
+            </div>
+            <div style="border:1px solid rgba(56,189,248,.25);background:rgba(56,189,248,.06);border-radius:12px;padding:12px">
+              <div style="color:var(--em);font-size:11px;font-weight:700;margin-bottom:6px">✦ PREMIUM</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Analyse IA · 4,99€</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:10px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:11px 26px;border-radius:10px;background:linear-gradient(135deg,var(--em2,#0ea5e9),var(--em));color:#04090f;font-weight:700;font-size:14px;text-decoration:none">Obtenir l'accès →</a>
+          </div>
+          <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:monospace">🔑 Espace formateur</button>
+          </div>
+          ${S.showKey?`<div class="apikey-box" style="margin-top:10px">
+            <p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:10px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l'analyse</button></div>':''}
+          </div>`:''}
+        </div>`:''}
+      ${!S.loading&&S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
+    </div>
+    <div class="nav-col">
+      <div class="nav-row">
+        <button class="btn-g" onclick="go('step3')">← Prescription</button>
+        <button class="btn-g" onclick="runAnalyse()" style="color:var(--em);border-color:rgba(56,189,248,.25)">↺ Relancer</button>
+      </div>
+      <button class="btn-g btn-full" onclick="reset()" style="color:var(--teal);border-color:rgba(56,189,248,.2)">✦ Nouveau patient</button>
+    </div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+  if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ═══════════════════════════════════════════════════════
-//  INITIALISATION
-// ═══════════════════════════════════════════════════════
-render();
+// ── ACTIONS ──
+function go(v){S.view=v;render(true)}
+function upPat(k,d){S.patient[k]=Math.max(0,Math.min(220,S.patient[k]+d));render()}
+function upDebit(d){
+  const dp=disp();
+  S.rx.debit=Math.round((Math.max(dp.dMin,Math.min(dp.dMax,S.rx.debit+d)))*2)/2;
+  render();
+}
+function saveKey(){localStorage.setItem('simo2_key',S.apiKey);S.apiKeySaved=true;render()}
+function reset(){S={...S,view:'welcome',patient:{prenom:'',sexe:'F',age:65,poids:65,taille:165,pathologie:'sain'},rx:{dispositif:'lunettes',debit:2},analyse:'',showKey:false};render(true)}
 
-// ── ENHANCEMENT SLIDERS : boutons −/+ ──────────────────────
-function enhanceSliders() {
-  document.querySelectorAll('input[type=range]').forEach(input => {
-    if (input.closest('.sl-wrap')) return;
-    const wrap = document.createElement('div');
-    wrap.className = 'sl-wrap';
-    input.parentNode.insertBefore(wrap, input);
-
-    const btnM = document.createElement('button');
-    btnM.className = 'sl-btn'; btnM.textContent = '−'; btnM.type = 'button';
-    btnM.addEventListener('click', e => {
-      e.preventDefault();
-      const step = parseFloat(input.step) || 1;
-      const nv   = Math.max(parseFloat(input.min), parseFloat(input.value) - step);
-      input.value = nv;
-      input.dispatchEvent(new Event('input', { bubbles:true }));
+async function runAnalyse(){
+  const ph=physio(),fi=fio2(),dp=disp(),pa=patho();
+  S.loading=true;S.analyse='';render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:`Tu es formateur IFSI expert en oxygénothérapie. Analyse cette prescription pour un étudiant.
+Patient: ${S.patient.prenom}, ${S.patient.sexe==='H'?'homme':'femme'} ${S.patient.age} ans, ${S.patient.poids}kg, ${S.patient.taille}cm.
+Pathologie: ${pa.label}. Physiologie: FR ${ph.rr}/min, VT ${ph.vt}mL, SpO₂ estimée ${ph.spo2}%.
+Prescription: ${dp.label} à ${S.rx.debit} L/min → FiO₂ estimée ${fi}%.
+Réponds en 4 blocs avec titres en gras: **🎯 Cohérence**, **⚠️ Points de vigilance**, **🔬 Physiologie**, **✅ Surveillance**. Tutoie l'étudiant.`}]})
     });
-
-    const btnP = document.createElement('button');
-    btnP.className = 'sl-btn'; btnP.textContent = '+'; btnP.type = 'button';
-    btnP.addEventListener('click', e => {
-      e.preventDefault();
-      const step = parseFloat(input.step) || 1;
-      const nv   = Math.min(parseFloat(input.max), parseFloat(input.value) + step);
-      input.value = nv;
-      input.dispatchEvent(new Event('input', { bubbles:true }));
-    });
-
-    wrap.appendChild(btnM);
-    wrap.appendChild(input);
-    wrap.appendChild(btnP);
-  });
+    const d=await res.json();
+    if(d.error)throw new Error(d.error.message);
+    S.analyse=d.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){S.analyse=`**Erreur**\n\n${e.message}`}
+  S.loading=false;render();
 }
 
+try {
+  render();
+} catch(e) {
+  document.getElementById('app').innerHTML = `
+    <div style="padding:30px;color:#ef4444;font-family:monospace;font-size:14px;background:#1a0a0a;min-height:100vh">
+      <h2 style="margin-bottom:16px">Erreur JavaScript détectée</h2>
+      <p style="color:#e2e8f0;margin-bottom:8px"><strong>Message :</strong> ${e.message}</p>
+      <p style="color:#e2e8f0;margin-bottom:8px"><strong>Type :</strong> ${e.name}</p>
+      <p style="color:#94a3b8;font-size:12px;margin-top:16px">Transmettez ce message au développeur.</p>
+    </div>`;
+}
 </script>
 </body>
 </html>
