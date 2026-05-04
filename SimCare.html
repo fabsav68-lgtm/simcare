@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimCare · Suite pédagogique IFSI</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" href="SimCare-icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SimCare">
+<meta name="theme-color" content="#04090f">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,600;0,700;1,400&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Syne',sans-serif;
+  background:linear-gradient(160deg,#04090f 0%,#071220 55%,#04090f 100%);
+  color:#e8edf2;min-height:100vh;padding-bottom:60px;
+}
+.wrap{max-width:680px;margin:0 auto;padding:0 20px}
+
+/* NAV */
+nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.07);
+  background:rgba(4,9,15,.9);position:sticky;top:0;z-index:100;
+}
+.nav-logo{font-family:'Cormorant Garant',serif;font-size:24px;font-weight:600;color:#f0f4f8}
+.nav-logo span{color:#38bdf8}
+.nav-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#2a3a45;border:1px solid rgba(255,255,255,.07);padding:4px 12px;border-radius:20px}
+
+/* HERO */
+.hero{text-align:center;padding:60px 24px 50px}
+.hero-badge{
+  display:inline-block;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);
+  color:#38bdf8;padding:5px 16px;border-radius:20px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hero h1{
+  font-family:'Cormorant Garant',serif;
+  font-size:clamp(42px,8vw,80px);font-weight:300;line-height:1.08;letter-spacing:-1.5px;
+  margin-bottom:20px;
+}
+.hero h1 em{font-style:italic;color:#38bdf8}
+.hero h1 strong{font-weight:700}
+.hero p{font-size:16px;color:#5a7080;line-height:1.75;max-width:480px;margin:0 auto 36px}
+.hero p strong{color:#e8edf2;font-weight:500}
+
+/* MODULES */
+.modules-section{padding:20px 0 40px}
+.section-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#2a3a45;display:block;margin-bottom:12px;text-align:center}
+.section-title{font-family:'Cormorant Garant',serif;font-size:clamp(28px,5vw,44px);font-weight:300;text-align:center;margin-bottom:32px;letter-spacing:-0.5px}
+.section-title strong{font-weight:700}
+.section-title em{font-style:italic;color:#38bdf8}
+
+.modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:480px){.modules-grid{grid-template-columns:1fr}}
+
+.module-card{
+  border-radius:18px;padding:24px 20px;
+  border:1.5px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  display:flex;flex-direction:column;
+  text-decoration:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.module-card:active{transform:scale(.98);opacity:.9}
+
+.module-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.2);margin-bottom:14px}
+.module-icon{font-size:32px;margin-bottom:12px}
+.module-name{font-family:'Cormorant Garant',serif;font-size:30px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;line-height:1}
+.module-sub{font-size:12px;color:#5a7080;margin-bottom:12px;font-weight:400}
+.module-desc{font-size:13px;color:#5a7080;line-height:1.65;flex:1;margin-bottom:18px}
+.module-btn{
+  display:block;text-align:center;padding:11px;border-radius:10px;
+  font-size:13px;font-weight:700;transition:all .2s;
+  border:1.5px solid transparent;
+  font-family:'Syne',sans-serif;
+  cursor:pointer;
+}
+
+/* Couleurs modules */
+.card-o2   {border-color:rgba(56,189,248,.2) }
+.card-perf {border-color:rgba(212,168,83,.2) }
+.card-gluco{border-color:rgba(94,203,122,.2) }
+.card-cont {border-color:rgba(184,160,232,.2)}
+
+.btn-o2   {background:rgba(56,189,248,.1); color:#38bdf8; border-color:rgba(56,189,248,.3) }
+.btn-perf {background:rgba(212,168,83,.1); color:#d4a853; border-color:rgba(212,168,83,.3) }
+.btn-gluco{background:rgba(94,203,122,.1); color:#5ecb7a; border-color:rgba(94,203,122,.3) }
+.btn-cont {background:rgba(184,160,232,.1);color:#b8a0e8; border-color:rgba(184,160,232,.3)}
+
+/* MÉTHODE */
+.methode{padding:40px 0}
+.methode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+@media(max-width:480px){.methode-grid{grid-template-columns:1fr}}
+.methode-step{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:20px}
+.methode-n{font-family:'Cormorant Garant',serif;font-size:48px;font-weight:700;color:rgba(255,255,255,.08);line-height:1;margin-bottom:8px}
+.methode-t{font-size:14px;font-weight:600;margin-bottom:6px}
+.methode-d{font-size:12px;color:#5a7080;line-height:1.6}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,.07);padding:32px 20px;text-align:center}
+.footer-logo{font-family:'Cormorant Garant',serif;font-size:26px;font-weight:600;margin-bottom:6px}
+.footer-logo span{color:#38bdf8}
+.footer-sub{font-size:12px;color:#2a3a45;margin-bottom:16px}
+.footer-dots{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.footer-dot{width:6px;height:6px;border-radius:50%}
+.footer-links{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.footer-links a{font-size:12px;color:#2a3a45;text-decoration:none}
+
+hr{border:none;border-top:1px solid rgba(255,255,255,.06);margin:40px 0}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Sim<span>Care</span></div>
+  <div class="nav-tag">IFSI · Formation initiale</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Suite pédagogique · 10 modules</div>
+  <h1><em>L'intuition</em> <strong>clinique</strong><br>ne s'enseigne pas<br>par les formules</h1>
+  <p>SimCare transforme chaque acte technique en <strong>compréhension incarnée</strong> — à partir du patient réel, pas du protocole abstrait.</p>
+</div>
+
+<div class="wrap">
+
+  <div class="modules-section">
+    <span class="section-tag">Les modules disponibles</span>
+    <h2 class="section-title"><strong>Dix modules.</strong> <em>Un principe.</em></h2>
+
+    <div class="modules-grid">
+
+      <!-- SimO2 -->
+      <a href="SimO2-IFSI.html" target="_self" onclick="window.location.href='SimO2-IFSI.html';return false;" class="module-card card-o2">
+        <div class="module-num">MODULE 01</div>
+        <div class="module-icon">🫁</div>
+        <div class="module-name" style="color:#38bdf8">SimO₂</div>
+        <div class="module-sub">Oxygénothérapie</div>
+        <div class="module-desc">Visualisez les poumons de votre patient — FiO₂, SpO₂, volume courant animés en temps réel.</div>
+        <div class="module-btn btn-o2">Ouvrir SimO₂ →</div>
+      </a>
+
+      <!-- SimPerf -->
+      <a href="SimPerf-IFSI.html" target="_self" onclick="window.location.href='SimPerf-IFSI.html';return false;" class="module-card card-perf">
+        <div class="module-num">MODULE 02</div>
+        <div class="module-icon">💉</div>
+        <div class="module-name" style="color:#d4a853">SimPerf</div>
+        <div class="module-sub">Perfusion IV</div>
+        <div class="module-desc">Comprenez ce que 125 mL/h représente dans le système vasculaire d'un patient précis.</div>
+        <div class="module-btn btn-perf">Ouvrir SimPerf →</div>
+      </a>
+
+      <!-- SimGluco -->
+      <a href="SimGluco-IFSI.html" target="_self" onclick="window.location.href='SimGluco-IFSI.html';return false;" class="module-card card-gluco">
+        <div class="module-num">MODULE 03</div>
+        <div class="module-icon">🩸</div>
+        <div class="module-name" style="color:#5ecb7a">SimGluco</div>
+        <div class="module-sub">Glycémie & Insuline</div>
+        <div class="module-desc">Liez la valeur glycémique au profil du patient et à la courbe d'action de l'insuline.</div>
+        <div class="module-btn btn-gluco">Ouvrir SimGluco →</div>
+      </a>
+
+      <!-- SimContention -->
+      <a href="SimContention-IFSI.html" target="_self" onclick="window.location.href='SimContention-IFSI.html';return false;" class="module-card card-cont">
+        <div class="module-num">MODULE 04</div>
+        <div class="module-icon">
+          <svg width="42" height="52" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 8 C26 8 22 10 21 18 L18 85 C17 92 20 100 26 104 C30 107 36 108 42 107 C52 106 60 101 62 95 C64 89 62 82 58 78 L54 72 L54 18 C54 10 50 8 48 8 Z" fill="rgba(184,160,232,0.75)"/>
+            <path d="M18 85 C17 92 20 100 26 104 C30 107 36 108 42 107 C48 106 55 103 59 98 L65 90 C67 87 66 83 63 81 L58 78 L54 72 L50 85 C48 90 43 93 37 93 C31 93 26 89 25 85 Z" fill="rgba(155,127,196,0.85)"/>
+            <rect x="21" y="5" width="33" height="6" rx="3" fill="#b8a0e8"/>
+            <line x1="22" y1="22" x2="53" y2="22" stroke="rgba(255,255,255,.3)" stroke-width="1.2"/>
+            <line x1="21" y1="30" x2="53" y2="30" stroke="rgba(255,255,255,.28)" stroke-width="1.2"/>
+            <line x1="21" y1="39" x2="53" y2="39" stroke="rgba(255,255,255,.24)" stroke-width="1.2"/>
+            <line x1="20" y1="49" x2="53" y2="49" stroke="rgba(255,255,255,.20)" stroke-width="1.2"/>
+            <line x1="20" y1="60" x2="53" y2="60" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/>
+            <line x1="19" y1="71" x2="53" y2="71" stroke="rgba(255,255,255,.12)" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="module-name" style="color:#b8a0e8">SimContention</div>
+        <div class="module-sub">Contention veineuse</div>
+        <div class="module-desc">Mesures, classes de compression, retour veineux — pour ce patient précis.</div>
+        <div class="module-btn btn-cont">Ouvrir SimContention →</div>
+      </a>
+
+      <!-- SimAlmanach -->
+      <a href="SimAlmanach-IFSI.html" target="_self" onclick="window.location.href='SimAlmanach-IFSI.html';return false;" class="module-card" style="border-color:rgba(192,57,43,.2)">
+        <div class="module-num" style="color:rgba(192,57,43,.4)">MODULE 05</div>
+        <div class="module-icon">📰</div>
+        <div class="module-name" style="color:#c0392b">SimAlmanach</div>
+        <div class="module-sub">L'almanach du soignant</div>
+        <div class="module-desc">Actualité santé quotidienne, humour soignant, petites annonces nationales et éphéméride médical.</div>
+        <div class="module-btn" style="background:rgba(192,57,43,.1);color:#c0392b;border:1.5px solid rgba(192,57,43,.25)">Ouvrir SimAlmanach →</div>
+      </a>
+
+      <!-- SimDouleur -->
+      <a href="SimDouleur-IFSI.html" target="_self" onclick="window.location.href='SimDouleur-IFSI.html';return false;" class="module-card" style="border-color:rgba(232,96,74,.2)">
+        <div class="module-num" style="color:rgba(232,96,74,.4)">MODULE 06</div>
+        <div class="module-icon">🌡️</div>
+        <div class="module-name" style="color:#e8604a">SimDouleur</div>
+        <div class="module-sub">Évaluation de la douleur</div>
+        <div class="module-desc">EN, EVA, FLACC, DOLOPLUS-2 — la bonne échelle pour ce patient, avec la compréhension physiologique qui va avec.</div>
+        <div class="module-btn" style="background:rgba(232,96,74,.1);color:#e8604a;border:1.5px solid rgba(232,96,74,.25)">Ouvrir SimDouleur →</div>
+      </a>
+
+      <!-- SimConstantes -->
+      <a href="SimConstantes-IFSI.html" target="_self" onclick="window.location.href='SimConstantes-IFSI.html';return false;" class="module-card" style="border-color:rgba(64,176,248,.2)">
+        <div class="module-num" style="color:rgba(64,176,248,.4)">MODULE 07</div>
+        <div class="module-icon">📊</div>
+        <div class="module-name" style="color:#40b0f8">SimConstantes</div>
+        <div class="module-sub">Constantes vitales & biologiques</div>
+        <div class="module-desc">FC, FR, PA, SpO₂, NFS, ionogramme — saisir, interpréter et surveiller avec les normes adaptées à ce patient précis.</div>
+        <div class="module-btn" style="background:rgba(64,176,248,.1);color:#40b0f8;border:1.5px solid rgba(64,176,248,.25)">Ouvrir SimConstantes →</div>
+      </a>
+
+      <!-- SimRevision -->
+      <a href="SimRevision-IFSI.html" target="_self" onclick="window.location.href='SimRevision-IFSI.html';return false;" class="module-card" style="border-color:rgba(160,96,255,.2)">
+        <div class="module-num" style="color:rgba(160,96,255,.4)">MODULE 08</div>
+        <div class="module-icon">📚</div>
+        <div class="module-name" style="color:#a060ff">SimRévision</div>
+        <div class="module-sub">QCM · Cas cliniques · Fiches</div>
+        <div class="module-desc">Entraînement actif pour les 3 années IFSI — QCM par UE, cas cliniques avec correction IA, fiches synthèse avec mnémotechniques.</div>
+        <div class="module-btn" style="background:rgba(160,96,255,.1);color:#a060ff;border:1.5px solid rgba(160,96,255,.25)">Ouvrir SimRévision →</div>
+      </a>
+
+      <!-- SimEnvironnement -->
+      <a href="SimEnvironnement-IFSI.html" target="_self" onclick="window.location.href='SimEnvironnement-IFSI.html';return false;" class="module-card" style="border-color:rgba(126,203,80,.2)">
+        <div class="module-num" style="color:rgba(126,203,80,.4)">MODULE 09</div>
+        <div class="module-icon">🌿</div>
+        <div class="module-name" style="color:#7ecb50">SimEnvironnement</div>
+        <div class="module-sub">C.2 · Santé environnementale</div>
+        <div class="module-desc">One Health, risques climatiques, éco-soins, empreinte carbone du système de santé — le module pionnier du référentiel 2026.</div>
+        <div class="module-btn" style="background:rgba(126,203,80,.1);color:#7ecb50;border:1.5px solid rgba(126,203,80,.25)">Ouvrir SimEnvironnement →</div>
+      </a>
+
+      <!-- SimConsultation -->
+      <a href="SimConsultation-IFSI.html" target="_self" onclick="window.location.href='SimConsultation-IFSI.html';return false;" class="module-card" style="border-color:rgba(212,168,83,.2)">
+        <div class="module-num" style="color:rgba(212,168,83,.4)">MODULE 10</div>
+        <div class="module-icon">📋</div>
+        <div class="module-name" style="color:#d4a853">SimConsultation</div>
+        <div class="module-sub">A.1 · B.3 · 3ᵉ année · Consultation IDE</div>
+        <div class="module-desc">Anamnèse, examen clinique, diagnostic infirmier NANDA, prescription encadrée — la compétence phare du décret 2026.</div>
+        <div class="module-btn" style="background:rgba(212,168,83,.1);color:#d4a853;border:1.5px solid rgba(212,168,83,.25)">Ouvrir SimConsultation →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- MÉTHODE -->
+  <div class="methode">
+    <span class="section-tag">La méthode SimCare</span>
+    <h2 class="section-title"><strong>Quatre étapes.</strong><br><em>Le patient d'abord.</em></h2>
+    <div class="methode-grid">
+      <div class="methode-step">
+        <div class="methode-n">01</div>
+        <div class="methode-t">Construire le patient</div>
+        <div class="methode-d">Âge, morphologie, pathologie — chaque paramètre a un impact immédiat sur la physiologie.</div>
+      </div>
+      <div class="methode-step">
+        <div class="methode-n">02</div>
+        <div class="methode-t">Visualiser la physiologie</div>
+        <div class="methode-d">Poumons, système vasculaire, glycémie — animés et traduits en analogies concrètes.</div>
+      </div>
+      <div class="methode-step">
+        <div class="methode-n">03</div>
+        <div class="methode-t">Simuler la prescription</div>
+        <div class="methode-d">L'impact sur ce patient précis s'affiche en temps réel — pas une formule, une réalité.</div>
+      </div>
+      <div class="methode-step">
+        <div class="methode-n" style="color:rgba(155,127,196,.25)">04</div>
+        <div class="methode-t">Analyse clinique IA</div>
+        <div class="methode-d" style="color:#9b7fc4">Cohérence, risques spécifiques, signes de surveillance — Premium.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">Sim<span>Care</span></div>
+  <div class="footer-sub">Suite pédagogique · Formation initiale IFSI · B.3 · A.1 · B.3</div>
+  <div class="footer-dots">
+    <div class="footer-dot" style="background:#38bdf8"></div>
+    <div class="footer-dot" style="background:#d4a853"></div>
+    <div class="footer-dot" style="background:#5ecb7a"></div>
+    <div class="footer-dot" style="background:#b8a0e8"></div>
+  </div>
+  <div class="footer-links">
+    <a href="SimO2-IFSI.html" target="_self" onclick="window.location.href='SimO2-IFSI.html';return false;">SimO₂</a>
+    <a href="SimPerf-IFSI.html" target="_self" onclick="window.location.href='SimPerf-IFSI.html';return false;">SimPerf</a>
+    <a href="SimGluco-IFSI.html" target="_self" onclick="window.location.href='SimGluco-IFSI.html';return false;">SimGluco</a>
+    <a href="SimContention-IFSI.html" target="_self" onclick="window.location.href='SimContention-IFSI.html';return false;">SimContention</a>
+    <a href="SimAlmanach-IFSI.html" target="_self" onclick="window.location.href='SimAlmanach-IFSI.html';return false;">SimAlmanach</a>
+    <a href="SimDouleur-IFSI.html" target="_self" onclick="window.location.href='SimDouleur-IFSI.html';return false;">SimDouleur</a>
+    <a href="SimConstantes-IFSI.html" target="_self" onclick="window.location.href='SimConstantes-IFSI.html';return false;">SimConstantes</a>
+    <a href="SimRevision-IFSI.html" target="_self" onclick="window.location.href='SimRevision-IFSI.html';return false;">SimRévision</a>
+    <a href="SimEnvironnement-IFSI.html" target="_self" onclick="window.location.href='SimEnvironnement-IFSI.html';return false;">SimEnvironnement</a>
+    <a href="SimConsultation-IFSI.html" target="_self" onclick="window.location.href='SimConsultation-IFSI.html';return false;">SimConsultation</a>
+  </div>
+  <div style="margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#2a3a45">
+    Formateur certifié PRAP 2S · BCI · contact@simcare.fr
+  </div>
+</footer>
+
+<script>
+// Désactiver et supprimer l'ancien service worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.unregister());
+  });
+  // Vider tous les caches
+  if('caches' in window){
+    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+  }
+}
+</script>
+</body>
+</html>
