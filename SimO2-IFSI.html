@@ -448,7 +448,7 @@ function render(scrollTop=false){
     h+=`<div class="site-header">
       <div class="badge">B.3 · Pratiques infirmières · Référentiel 2026</div>
       <h1>SimO₂</h1>
-      <p>Comprendre l'oxygénothérapie à travers la physiologie d'un patient réel</p>
+      <p>Comprendre l\'oxygénothérapie à travers la physiologie d\'un patient réel</p>
     </div>
     <div class="steps-bar">
       ${steps.map((s,i)=>`
@@ -471,7 +471,7 @@ function render(scrollTop=false){
     h+=`<div class="card fadeup" style="border-color:rgba(56,189,248,.18)">
       <div class="welcome">
         <span class="welcome-icon">🫁</span>
-        <p>Ce n'est pas un outil de calcul. C'est un outil de <strong style="color:var(--txt)">compréhension clinique</strong> — visualisez les poumons de votre patient se soulever en temps réel.</p>
+        <p>Ce n\'est pas un outil de calcul. C\'est un outil de <strong style="color:var(--txt)">compréhension clinique</strong> — visualisez les poumons de votre patient se soulever en temps réel.</p>
         <div class="pts">
           <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez un patient réel</strong> — âge, sexe, pathologie</span></div>
           <div class="pt"><span class="pt-i">🫁</span><span class="pt-t"><strong>Visualisez ses poumons en direct</strong> — FR, volume courant, VM</span></div>
@@ -487,7 +487,7 @@ function render(scrollTop=false){
   else if(S.view==='step1'){
     h+=`<div class="card fadeup" style="border-color:rgba(245,158,11,.18)">
       <div class="card-title" style="color:var(--amber)">👤 Construisez votre patient</div>
-      <div class="card-sub">Chaque paramètre modifiera en temps réel la physiologie affichée à l'étape suivante.</div>
+      <div class="card-sub">Chaque paramètre modifiera en temps réel la physiologie affichée à l\'étape suivante.</div>
       <div class="col">
         <div>
           <label class="lbl">Prénom</label>
@@ -589,10 +589,10 @@ function render(scrollTop=false){
       <div class="info info-${pa.id==='sain'?'grn':pa.id.includes('bpco')||pa.id==='detresse'?'red':'amb'}" style="margin-top:10px">
         ${pa.icon} <strong>${pa.label}</strong> — ${
           pa.id==='sain'?'Physiologie normale. Aucune adaptation particulière nécessaire.':
-          pa.id==='bpco_stable'?'Hypoxémie chronique. Cible SpO₂ 88–92% — éviter l'hyperoxie.':
+          pa.id==='bpco_stable'?'Hypoxémie chronique. Cible SpO₂ 88–92% — éviter l\'hyperoxie.':
           pa.id==='bpco_decompense'?'Décompensation. Attention au drive hypoxique — O₂ titré.':
           pa.id==='detresse'?'Détresse respiratoire aiguë. Majoration urgente du support ventilatoire.':
-          pa.id==='cardiac'?'Insuffisance cardiaque. Dyspnée d'origine centrale — traiter la cause.':
+          pa.id==='cardiac'?'Insuffisance cardiaque. Dyspnée d\'origine centrale — traiter la cause.':
           pa.id==='pneumonie'?'Pneumonie. Hypoxémie inflammatoire — O₂ pour maintenir SpO₂ > 94%.':
           pa.id==='postop'?'Post-opératoire. Surveillance rapprochée — risque atélectasie.':''}
       </div>
@@ -611,7 +611,7 @@ function render(scrollTop=false){
       <div class="card-sub">Cible SpO₂ pour ce profil : <strong style="color:var(--em)">${spo2_cible}</strong></div>
 
       <div style="margin-bottom:20px">
-        <label class="lbl">Dispositif d'oxygénothérapie</label>
+        <label class="lbl">Dispositif d\'oxygénothérapie</label>
         <div class="col8">
           ${DISPOSITIFS.map(d=>`
             <div class="sel ${S.rx.dispositif===d.id?'on':''}" onclick="S.rx.dispositif='${d.id}';S.rx.debit=Math.min(Math.max(S.rx.debit,${d.dMin}),${d.dMax});render()">
@@ -651,7 +651,7 @@ function render(scrollTop=false){
       <div class="info info-${fi>55&&(pa.id==='bpco_stable'||pa.id==='bpco_decompense')?'red':fi<24?'amb':'grn'}" style="margin-top:12px">
         ${fi>55&&(pa.id==='bpco_stable'||pa.id==='bpco_decompense')?
           '⚠️ <strong>Attention :</strong> FiO₂ trop élevée pour un patient BPCO — risque de dépression du drive hypoxique. Cibler 88–92%.':
-          fi<24?'⚠️ Débit insuffisant — FiO₂ proche de l'air ambiant. Augmenter le débit.':
+          fi<24?'⚠️ Débit insuffisant — FiO₂ proche de l\'air ambiant. Augmenter le débit.':
           '✓ Prescription cohérente avec le profil du patient.'}
       </div>
     </div>
@@ -691,7 +691,7 @@ function render(scrollTop=false){
             </div>
           </div>
           <div style="text-align:center;margin-bottom:10px">
-            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:11px 26px;border-radius:10px;background:linear-gradient(135deg,var(--em2,#0ea5e9),var(--em));color:#04090f;font-weight:700;font-size:14px;text-decoration:none">Obtenir l'accès →</a>
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:11px 26px;border-radius:10px;background:linear-gradient(135deg,var(--em2,#0ea5e9),var(--em));color:#04090f;font-weight:700;font-size:14px;text-decoration:none">Obtenir l\'accès →</a>
           </div>
           <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
             <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:monospace">🔑 Espace formateur</button>
@@ -702,7 +702,7 @@ function render(scrollTop=false){
               <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
               <button onclick="saveKey()">Sauver</button>
             </div>
-            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:10px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l'analyse</button></div>':''}
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:10px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
           </div>`:''}
         </div>`:''}
       ${!S.loading&&S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
@@ -745,7 +745,7 @@ async function runAnalyse(){
 Patient: ${S.patient.prenom}, ${S.patient.sexe==='H'?'homme':'femme'} ${S.patient.age} ans, ${S.patient.poids}kg, ${S.patient.taille}cm.
 Pathologie: ${pa.label}. Physiologie: FR ${ph.rr}/min, VT ${ph.vt}mL, SpO₂ estimée ${ph.spo2}%.
 Prescription: ${dp.label} à ${S.rx.debit} L/min → FiO₂ estimée ${fi}%.
-Réponds en 4 blocs avec titres en gras: **🎯 Cohérence**, **⚠️ Points de vigilance**, **🔬 Physiologie**, **✅ Surveillance**. Tutoie l'étudiant.`}]})
+Réponds en 4 blocs avec titres en gras: **🎯 Cohérence**, **⚠️ Points de vigilance**, **🔬 Physiologie**, **✅ Surveillance**. Tutoie l\'étudiant.`}]})
     });
     const d=await res.json();
     if(d.error)throw new Error(d.error.message);
