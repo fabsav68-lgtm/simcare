@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SimCare Icon Generator</title>
+<style>
+  body{background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;gap:20px}
+  canvas{border-radius:22.4%;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+  button{padding:14px 32px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);border:none;border-radius:12px;color:#04090f;font-size:16px;font-weight:700;cursor:pointer}
+  p{color:#5a7080;font-size:13px;text-align:center;max-width:400px;line-height:1.6}
+</style>
+</head>
+<body>
+<canvas id="c" width="512" height="512"></canvas>
+<button onclick="download()">⬇️ Télécharger apple-touch-icon.png</button>
+<p>Téléchargez ce fichier puis uploadez-le sur GitHub. Safari utilisera automatiquement cette icône.</p>
+
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const W = 512, H = 512;
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+// Fond arrondi
+roundRect(0,0,W,H,112);
+const bgGrad = ctx.createLinearGradient(0,0,W,H);
+bgGrad.addColorStop(0,'#0d1520');
+bgGrad.addColorStop(1,'#06080f');
+ctx.fillStyle=bgGrad;
+ctx.fill();
+
+// Halo central
+const halo = ctx.createRadialGradient(256,220,0,256,220,280);
+halo.addColorStop(0,'rgba(26,46,74,0.9)');
+halo.addColorStop(1,'rgba(6,8,15,0)');
+ctx.save();
+roundRect(0,0,W,H,112);
+ctx.clip();
+ctx.fillStyle=halo;
+ctx.fillRect(0,0,W,H);
+
+// Ligne ECG
+ctx.save();
+ctx.shadowColor='#38bdf8';
+ctx.shadowBlur=15;
+const ecgGrad = ctx.createLinearGradient(0,0,W,0);
+ecgGrad.addColorStop(0,'rgba(56,189,248,0)');
+ecgGrad.addColorStop(0.2,'rgba(56,189,248,0.9)');
+ecgGrad.addColorStop(0.45,'rgba(212,168,83,0.9)');
+ecgGrad.addColorStop(0.7,'rgba(94,203,122,0.9)');
+ecgGrad.addColorStop(0.85,'rgba(184,160,232,0.9)');
+ecgGrad.addColorStop(1,'rgba(184,160,232,0)');
+ctx.strokeStyle=ecgGrad;
+ctx.lineWidth=4;
+ctx.lineJoin='round';
+ctx.lineCap='round';
+ctx.beginPath();
+ctx.moveTo(0,295);
+ctx.lineTo(70,295);
+ctx.lineTo(90,295);
+ctx.lineTo(108,228);
+ctx.lineTo(126,362);
+ctx.lineTo(144,195);
+ctx.lineTo(162,385);
+ctx.lineTo(180,295);
+ctx.lineTo(230,295);
+ctx.lineTo(248,252);
+ctx.lineTo(266,338);
+ctx.lineTo(284,272);
+ctx.lineTo(302,295);
+ctx.lineTo(390,295);
+ctx.lineTo(512,295);
+ctx.stroke();
+ctx.restore();
+
+// Cercles des 4 modules
+const modules = [
+  {x:155, y:180, col:'rgba(56,189,248,', bdr:'rgba(56,189,248,'},
+  {x:357, y:180, col:'rgba(212,168,83,', bdr:'rgba(212,168,83,'},
+  {x:155, y:348, col:'rgba(94,203,122,', bdr:'rgba(94,203,122,'},
+  {x:357, y:348, col:'rgba(184,160,232,', bdr:'rgba(184,160,232,'},
+];
+
+modules.forEach(m => {
+  // Glow
+  ctx.save();
+  ctx.shadowColor = m.col+'0.8)';
+  ctx.shadowBlur = 30;
+  ctx.beginPath();
+  ctx.arc(m.x,m.y,36,0,Math.PI*2);
+  ctx.fillStyle = m.col+'0.15)';
+  ctx.fill();
+  ctx.restore();
+
+  // Cercle
+  ctx.beginPath();
+  ctx.arc(m.x,m.y,34,0,Math.PI*2);
+  ctx.fillStyle = m.col+'0.12)';
+  ctx.fill();
+  ctx.strokeStyle = m.bdr+'0.4)';
+  ctx.lineWidth=1.5;
+  ctx.stroke();
+});
+
+// Emojis modules
+ctx.font='30px serif';
+ctx.textAlign='center';
+ctx.textBaseline='middle';
+ctx.fillText('🫁',155,180);
+ctx.fillText('💉',357,180);
+ctx.fillText('🩸',155,348);
+ctx.fillText('🩹',357,348);
+
+// Texte SimCare
+ctx.font='bold 52px Georgia, serif';
+ctx.textAlign='center';
+ctx.textBaseline='alphabetic';
+ctx.fillStyle='rgba(255,255,255,0.92)';
+ctx.fillText('SimCare',256,486);
+
+// Reflet haut
+const reflet = ctx.createLinearGradient(0,0,0,160);
+reflet.addColorStop(0,'rgba(255,255,255,0.06)');
+reflet.addColorStop(1,'rgba(255,255,255,0)');
+roundRect(0,0,W,160,112);
+ctx.fillStyle=reflet;
+ctx.fill();
+
+// Bordure
+roundRect(0,0,W,H,112);
+ctx.strokeStyle='rgba(255,255,255,0.08)';
+ctx.lineWidth=1.5;
+ctx.stroke();
+
+ctx.restore();
+
+function download(){
+  const link = document.createElement('a');
+  link.download = 'apple-touch-icon.png';
+  link.href = c.toDataURL('image/png');
+  link.click();
+}
+</script>
+</body>
+</html>
