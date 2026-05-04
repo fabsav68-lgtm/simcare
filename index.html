@@ -234,13 +234,10 @@ function ouvrirModule(fichier){
   const btnRetour = document.getElementById('btn-retour');
   const home = document.getElementById('home');
 
-  // Charger le module dans l'iframe
   frame.src = fichier;
   frame.style.display = 'block';
   btnRetour.style.display = 'block';
   home.style.display = 'none';
-
-  // Scroll en haut
   window.scrollTo(0,0);
 }
 
@@ -250,10 +247,32 @@ function retourAccueil(){
   const home = document.getElementById('home');
 
   frame.style.display = 'none';
-  frame.src = '';
+  frame.src = 'about:blank';
   btnRetour.style.display = 'none';
   home.style.display = 'flex';
 }
+
+// Intercepter la navigation depuis l'iframe
+window.addEventListener('message', function(e){
+  if(e.data && e.data.type === 'navigate'){
+    ouvrirModule(e.data.url);
+  }
+  if(e.data && e.data.type === 'retour'){
+    retourAccueil();
+  }
+});
+
+// Surveiller les changements d'URL dans l'iframe
+document.getElementById('module-frame').addEventListener('load', function(){
+  try {
+    const frameUrl = this.contentWindow.location.href;
+    const btnRetour = document.getElementById('btn-retour');
+    // Si l'iframe a navigué vers un module, afficher le bouton retour
+    if(frameUrl && frameUrl !== 'about:blank'){
+      btnRetour.style.display = 'block';
+    }
+  } catch(e){}
+});
 
 // Désactiver l'ancien service worker
 if('serviceWorker' in navigator){

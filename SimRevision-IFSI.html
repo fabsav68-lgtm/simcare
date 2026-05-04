@@ -232,6 +232,22 @@ body{
   .mode-tab{font-size:12px;padding:9px 8px}
 }
 </style>
+
+<script>
+// Si on est dans une iframe, forcer la navigation dans la fenêtre parente
+if(window.self !== window.top){
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('a[href]');
+    if(a){
+      const href = a.getAttribute('href');
+      if(href && !href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('#')){
+        e.preventDefault();
+        window.top.location.href = href;
+      }
+    }
+  }, true);
+}
+</script>
 </head>
 <body>
 <div id="app"></div>
