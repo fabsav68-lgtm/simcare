@@ -342,6 +342,37 @@ hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:20px 0}
     .sl-btn:hover  { background: rgba(255,255,255,.12); color: #fff; }
     .sl-btn:active { transform: scale(.9); }
 
+
+/* ── VIDÉOS YOUTUBE ── */
+.video-wrap{
+  position:relative;width:100%;padding-top:56.25%;
+  border-radius:12px;overflow:hidden;background:#000;
+  margin:14px 0;
+}
+.video-wrap iframe{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  border:none;
+}
+.video-label{
+  font-family:'Fira Mono',monospace;font-size:10px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--txt3);margin-bottom:6px;margin-top:16px;
+}
+.video-source{
+  font-size:11px;color:var(--txt3);font-style:italic;
+  margin-top:6px;
+}
+
+/* ── ANIMATION RETOUR VEINEUX ── */
+.anim-veine{
+  background:rgba(0,0,0,.3);border:1px solid var(--bdr);
+  border-radius:14px;padding:20px;margin:14px 0;text-align:center;
+}
+.anim-label{
+  font-family:'Fira Mono',monospace;font-size:10px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--txt3);margin-bottom:12px;
+}
 </style>
 </head>
 <body>
@@ -658,7 +689,8 @@ function render(scrollTop=false){
 
     <div style="display:flex;justify-content:flex-end">
       <button class="btn-p" onclick="go('step2')">Voir sa physiologie veineuse →</button>
-    </div>`;
+    </div>
+`;
   }
 
   // ─── ÉTAPE 2 — PHYSIOLOGIE VEINEUSE ─────────────────────────
@@ -745,6 +777,122 @@ function render(scrollTop=false){
     <div class="nav-row">
       <button class="btn-g" onclick="go('step1')">← Modifier le patient</button>
       <button class="btn-p" onclick="go('step3')">Prendre les mesures →</button>
+    </div>
+    <!-- Animation retour veineux SVG -->
+    <div class="card" style="border-color:rgba(184,160,232,.12);margin-top:4px">
+      <div class="anim-label">🩸 Animation — Retour veineux & effet de la contention</div>
+      <div class="anim-veine">
+        <svg width="100%" viewBox="0 0 320 200" style="max-width:320px">
+          <defs>
+            <linearGradient id="sangGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c04060"/>
+              <stop offset="100%" stop-color="#802030"/>
+            </linearGradient>
+            <!-- Gradient pour veine comprimée -->
+            <linearGradient id="sangGrad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#e06080"/>
+              <stop offset="100%" stop-color="#a03050"/>
+            </linearGradient>
+          </defs>
+
+          <!-- CÔTÉ GAUCHE : Sans contention -->
+          <text x="60" y="18" text-anchor="middle" font-size="10" fill="#6a8a60" font-family="monospace">SANS contention</text>
+          
+          <!-- Jambe gauche silhouette -->
+          <path d="M 30,30 Q 25,100 28,170 L 90,170 Q 93,100 90,30 Z" fill="rgba(184,160,232,.06)" stroke="rgba(184,160,232,.2)" stroke-width="1"/>
+          
+          <!-- Veine dilatée gauche -->
+          <path d="M 55,35 Q 48,100 52,165" stroke="rgba(192,64,96,.5)" stroke-width="14" fill="none" stroke-linecap="round"/>
+          
+          <!-- Sang qui remonte lentement (sans contention) -->
+          <circle r="5" fill="url(#sangGrad)" opacity="0.8">
+            <animateMotion dur="3s" repeatCount="indefinite" keyTimes="0;1" calcMode="linear">
+              <mpath href="#path-left"/>
+            </animateMotion>
+          </circle>
+          <circle r="4" fill="url(#sangGrad)" opacity="0.6">
+            <animateMotion dur="3s" begin="1s" repeatCount="indefinite">
+              <mpath href="#path-left"/>
+            </animateMotion>
+          </circle>
+          <circle r="3" fill="url(#sangGrad)" opacity="0.4">
+            <animateMotion dur="3s" begin="2s" repeatCount="indefinite">
+              <mpath href="#path-left"/>
+            </animateMotion>
+          </circle>
+          <path id="path-left" d="M 55,165 Q 52,100 55,35" fill="none"/>
+          
+          <!-- Valvules gauche (insuffisantes) -->
+          <path d="M 48,80 L 55,72 L 62,80" stroke="rgba(192,64,96,.7)" stroke-width="1.5" fill="none"/>
+          <path d="M 48,120 L 55,112 L 62,120" stroke="rgba(192,64,96,.4)" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+          
+          <!-- Légende gauche -->
+          <text x="60" y="185" text-anchor="middle" font-size="9" fill="#c04060" font-family="monospace">Veine dilatée</text>
+          <text x="60" y="195" text-anchor="middle" font-size="9" fill="#c04060" font-family="monospace">Retour lent</text>
+
+          <!-- SÉPARATEUR -->
+          <line x1="160" y1="20" x2="160" y2="175" stroke="rgba(255,255,255,.08)" stroke-width="1" stroke-dasharray="4,4"/>
+
+          <!-- CÔTÉ DROIT : Avec contention -->
+          <text x="250" y="18" text-anchor="middle" font-size="10" fill="#6a8a60" font-family="monospace">AVEC contention</text>
+          
+          <!-- Jambe droite silhouette -->
+          <path d="M 210,30 Q 205,100 208,170 L 295,170 Q 298,100 295,30 Z" fill="rgba(184,160,232,.06)" stroke="rgba(184,160,232,.2)" stroke-width="1"/>
+          
+          <!-- Bandes de contention -->
+          <rect x="207" y="45"  width="88" height="6" rx="2" fill="rgba(184,160,232,.3)"/>
+          <rect x="207" y="65"  width="88" height="6" rx="2" fill="rgba(184,160,232,.28)"/>
+          <rect x="207" y="85"  width="88" height="6" rx="2" fill="rgba(184,160,232,.25)"/>
+          <rect x="207" y="105" width="88" height="6" rx="2" fill="rgba(184,160,232,.22)"/>
+          <rect x="207" y="125" width="88" height="6" rx="2" fill="rgba(184,160,232,.19)"/>
+          <rect x="207" y="145" width="88" height="6" rx="2" fill="rgba(184,160,232,.16)"/>
+          
+          <!-- Veine comprimée droite -->
+          <path d="M 248,35 Q 244,100 246,165" stroke="rgba(192,64,96,.6)" stroke-width="7" fill="none" stroke-linecap="round"/>
+          
+          <!-- Sang qui remonte vite (avec contention) -->
+          <circle r="4" fill="url(#sangGrad2)" opacity="0.9">
+            <animateMotion dur="1.5s" repeatCount="indefinite">
+              <mpath href="#path-right"/>
+            </animateMotion>
+          </circle>
+          <circle r="3.5" fill="url(#sangGrad2)" opacity="0.7">
+            <animateMotion dur="1.5s" begin="0.5s" repeatCount="indefinite">
+              <mpath href="#path-right"/>
+            </animateMotion>
+          </circle>
+          <circle r="3" fill="url(#sangGrad2)" opacity="0.5">
+            <animateMotion dur="1.5s" begin="1s" repeatCount="indefinite">
+              <mpath href="#path-right"/>
+            </animateMotion>
+          </circle>
+          <path id="path-right" d="M 248,165 Q 246,100 248,35" fill="none"/>
+          
+          <!-- Valvules droite (compétentes) -->
+          <path d="M 243,75 L 248,65 L 253,75" stroke="rgba(94,203,122,.8)" stroke-width="1.5" fill="none"/>
+          <path d="M 243,115 L 248,105 L 253,115" stroke="rgba(94,203,122,.8)" stroke-width="1.5" fill="none"/>
+          
+          <!-- Flèches vitesse -->
+          <text x="265" y="100" font-size="14" fill="rgba(94,203,122,.8)">↑↑</text>
+          
+          <!-- Légende droite -->
+          <text x="250" y="185" text-anchor="middle" font-size="9" fill="#5ecb7a" font-family="monospace">Veine comprimée</text>
+          <text x="250" y="195" text-anchor="middle" font-size="9" fill="#5ecb7a" font-family="monospace">Retour accéléré</text>
+        </svg>
+        <div style="font-size:12px;color:var(--txt3);margin-top:8px;font-style:italic">
+          La pression externe de la contention réduit le calibre veineux → accélère le flux → améliore le retour veineux vers le cœur.
+        </div>
+      </div>
+
+      <!-- Vidéo physiologie retour veineux -->
+      <div class="video-label" style="margin-top:16px">📺 Physiologie du retour veineux</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/426EaefdcDM"
+          title="La physiologie du retour veineux"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Physiologie du retour veineux · Cours médical 2022</div>
     </div>`;
   }
 
@@ -847,6 +995,41 @@ function render(scrollTop=false){
     <div class="nav-row">
       <button class="btn-g" onclick="go('step2')">← Physiologie</button>
       <button class="btn-p" onclick="goAnalyse()">Analyser la cohérence →</button>
+    </div>
+    <!-- Vidéos et checklist pose -->
+    <div class="card" style="border-color:rgba(184,160,232,.1);margin-top:4px">
+      <div class="video-label">📺 Démonstration — Pose du bas de contention</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/CeHWgT9y2X4"
+          title="Comment mettre les bas de contention"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Pose du bas de contention en EHPAD · 2023</div>
+      <div style="margin-top:16px">
+        <div class="video-label">✅ Points clés — Rôle IDE</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+          ${['Mesures prises le matin avant lever — membre déclive',
+             'Vérification de la prescription (classe, type, côté)',
+             'Vérification des contre-indications (pouls, plaie, infection)',
+             'Talonnette positionnée avant enfilage',
+             'Pas de plis — compression homogène',
+             "Éducation du patient sur le port et l\'entretien"].map((item,i) =>
+            `<div style="display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:8px;padding:9px 12px">
+              <span style="color:var(--em);font-weight:700;flex-shrink:0;font-family:'Fira Mono',monospace;font-size:11px">${i+1}</span>
+              <span style="font-size:13px;color:var(--txt2)">${item}</span>
+            </div>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="video-label" style="margin-top:16px">📺 Technique CHU — Contention veineuse</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/6JhDrp9uKA0"
+          title="La contention veineuse"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Contention veineuse · Coordination Cicatrisation · Hôpital universitaire</div>
     </div>`;
   }
 

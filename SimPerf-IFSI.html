@@ -334,6 +334,11 @@ hr.div { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 20px
     .sl-btn:hover  { background: rgba(255,255,255,.12); color: #fff; }
     .sl-btn:active { transform: scale(.9); }
 
+
+.video-wrap{position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000;margin:10px 0}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-label{font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;margin-top:14px}
+.video-source{font-size:11px;color:var(--txt3);font-style:italic;margin-top:5px}
 </style>
 </head>
 <body>
@@ -590,6 +595,24 @@ function render(scrollTop=false){
     </div>
     <div style="display:flex;justify-content:flex-end">
       <button class="btn-p" onclick="go('step2')">Visualiser la physiologie →</button>
+    </div>
+    <div class="card fadeup" style="border-color:rgba(212,168,83,.1);margin-top:4px">
+      <div class="video-label">📺 Au coeur des organes — Coeur et vaisseaux · INSERM</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/rBZyKYoh2BU"
+          title="Au coeur des organes : Coeur et vaisseaux"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Systeme vasculaire · Arteres, veines, capillaires · INSERM</div>
+      <div class="video-label">📺 Le systeme cardiovasculaire — Anatomie et physiologie</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/Vqk5rtN1Bqw"
+          title="Le systeme cardiovasculaire"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Anatomie cardiovasculaire · Arteres, veines et capillaires</div>
     </div>`;
   }
 
@@ -611,6 +634,24 @@ function render(scrollTop=false){
     <div class="nav-row">
       <button class="btn-g" onclick="go('step1')">← Patient</button>
       <button class="btn-p" onclick="go('step3')">Simuler la perfusion →</button>
+    </div>
+    <div class="card fadeup" style="border-color:rgba(212,168,83,.1);margin-top:4px">
+      <div class="video-label">📺 Pose de catheter veineux peripherique — Guide complet (Septembre 2025)</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/EQjzupxthak"
+          title="Catheter veineux peripherique : maitriser la pose"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Pose VVP etape par etape · Soin infirmier · Septembre 2025</div>
+      <div class="video-label">📺 Pose VVP + Prelevement sanguin — Tutoriel IDE complet (Janvier 2025)</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/AITlMSuptog"
+          title="Pose de voie veineuse + prelevement sanguin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">VVP + prelevement · Tutoriel infirmier complet · Janvier 2025</div>
     </div>`;
   }
 

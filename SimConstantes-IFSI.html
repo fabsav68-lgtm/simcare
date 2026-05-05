@@ -284,6 +284,11 @@ hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:18px 0}
   .nav-row{flex-direction:column}
   .tabs{padding-bottom:16px}
 }
+
+.video-wrap{position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000;margin:10px 0}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-label{font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;margin-top:14px}
+.video-source{font-size:11px;color:var(--txt3);font-style:italic;margin-top:5px}
 </style>
 </head>
 <body>
@@ -572,7 +577,26 @@ function render(){
           <div class="cst-norme">${v.info}</div>
         </div>`;
       });
-      h+=`</div>`;
+     
+      <div class="card fadeup" style="border-color:rgba(64,176,248,.1);margin-top:4px">
+        <div class="video-label">📺 Bien prendre la tension arterielle — Technique (Septembre 2025)</div>
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/06nDV0imIbs"
+            title="Comment bien prendre sa tension arterielle"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-source">Technique de prise de tension · Dr Gerald Kierzek · Septembre 2025</div>
+        <div class="video-label">📺 Hypertension arterielle — Physiopathologie et recherche INSERM</div>
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/33cpRXmQnL8"
+            title="Hypertension arterielle : symptomes, traitements et recherche"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-source">HTA · Physiopathologie · INSERM · 2023</div>
+      </div>
+ h+=`</div>`;
     }
 
     // ─── BILAN BIOLOGIQUE ──────────────────────────────────────
@@ -635,7 +659,26 @@ function render(){
           </div>`;
         });
       });
-      h+=`</div>`;
+     
+      <div class="card fadeup" style="border-color:rgba(64,176,248,.1);margin-top:4px">
+        <div class="video-label">📺 Ionogramme sanguin — Normes et interpretation · Guide IDE (Decembre 2025)</div>
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/McnzcLy1c_Y"
+            title="Ionogramme sanguin : normes et interpretation guide infirmier"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-source">Ionogramme · Normes IDE · Guide complet · Decembre 2025</div>
+        <div class="video-label">📺 Les 9 principaux marqueurs de la prise de sang</div>
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/VMYQREaQ8b0"
+            title="Les 9 principaux marqueurs de la prise de sang"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-source">NFS, CRP, cholesterol, creatinine · 9 marqueurs biologiques cles</div>
+      </div>
+ h+=`</div>`;
     }
 
     // ─── SURVEILLANCE ──────────────────────────────────────────
