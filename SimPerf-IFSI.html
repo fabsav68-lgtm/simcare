@@ -639,8 +639,11 @@ function render(scrollTop=false){
               </div>`).join('')}
           </div>
         </div>
+        <div class="info" style="background:rgba(212,168,83,.07);border:1px solid rgba(212,168,83,.2);border-radius:10px;padding:12px;margin-bottom:4px">
+          ⚕️ <strong>Rôle IDE :</strong> Le volume, la durée et le débit sont <strong>prescrits par le médecin</strong>. L'IDE applique, surveille et adapte selon les paramètres cliniques du patient.
+        </div>
         <div>
-          <div class="lbl-row"><label class="lbl" style="margin:0">Volume</label><span class="lbl-val">${S.perf.volume} mL</span></div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Volume prescrit</label><span class="lbl-val">${S.perf.volume} mL</span></div>
           <div class="sl-wrap">
             <button class="sl-btn" onclick="upPerf('volume',-50)">−</button>
             <input type="range" min="50" max="1000" step="50" value="${S.perf.volume}" oninput="S.perf.volume=+this.value;render()">
@@ -648,7 +651,7 @@ function render(scrollTop=false){
           </div>
         </div>
         <div>
-          <div class="lbl-row"><label class="lbl" style="margin:0">Durée</label><span class="lbl-val">${S.perf.duree}h</span></div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Durée prescrite</label><span class="lbl-val">${S.perf.duree}h</span></div>
           <div class="sl-wrap">
             <button class="sl-btn" onclick="upPerf('duree',-0.5)">−</button>
             <input type="range" min="0.5" max="24" step="0.5" value="${S.perf.duree}" oninput="S.perf.duree=+this.value;render()">
@@ -657,9 +660,13 @@ function render(scrollTop=false){
         </div>
       </div>
       <div style="background:rgba(212,168,83,.08);border:1px solid rgba(212,168,83,.25);border-radius:14px;padding:18px;margin-top:16px">
+        <div style="font-family:monospace;font-size:11px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Débit résultant de la prescription</div>
         <div class="grid2" style="text-align:center">
           <div><div style="font-size:36px;font-weight:700;color:var(--em);font-family:monospace">${pf2.debitH}</div><div style="font-size:12px;color:var(--txt3)">mL/h</div></div>
           <div><div style="font-size:36px;font-weight:700;color:var(--em);font-family:monospace">${pf2.gouttes}</div><div style="font-size:12px;color:var(--txt3)">gttes/min (macro)</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--txt3);margin-top:10px;font-style:italic">
+          L'IDE vérifie la cohérence du débit affiché avec la prescription et surveille le point de ponction, le débit réel et l'état clinique du patient.
         </div>
       </div>
     </div>
