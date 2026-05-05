@@ -675,7 +675,7 @@ function render(scrollTop=false){
     h+=`
     <div class="card fadeup" style="border-color:rgba(94,207,190,.16)">
       <div class="card-title" style="color:var(--teal)">🫀 Physiologie veineuse de ${esc(pr)||'ce patient'}</div>
-      <div class="card-sub">Avant de choisir une contention — comprendre l'état du retour veineux de cette personne précise, dans ce corps précis.</div>
+      <div class="card-sub">Avant d'appliquer la contention prescrite — comprendre l'état du retour veineux de cette personne précise, dans ce corps précis.</div>
 
       <!-- Schéma jambe simplifié -->
       <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap">
@@ -758,9 +758,13 @@ function render(scrollTop=false){
 
     h+=`
     <div class="card fadeup" style="border-color:rgba(184,160,232,.16)">
-      <div class="card-title" style="color:var(--em)">📏 Mesures & Prescription</div>
+      <div class="card-title" style="color:var(--em)">📏 Mesures & Application de la prescription</div>
       <div class="card-sub">
-        Les mesures se prennent <strong>le matin, avant tout lever</strong>, en position allongée ou assise — jamais debout, jamais en fin de journée. L'œdème fausse tout.
+        Les mesures se prennent <strong>le matin, avant tout lever</strong>, en position allongée ou assise — jamais debout, jamais en fin de journée. L'œdème fausse tout. <strong>La classe est prescrite par le médecin</strong> — l'IDE réalise les mesures et applique le dispositif.
+      </div>
+
+      <div class="info" style="background:rgba(184,160,232,.07);border:1px solid rgba(184,160,232,.2);border-radius:10px;padding:12px;margin-bottom:18px">
+        ⚕️ <strong>Rôle IDE :</strong> La classe de compression est <strong>prescrite par le médecin</strong>. L'IDE réalise les mesures, applique le dispositif prescrit et éduque le patient.
       </div>
 
       <!-- Dispositif -->
@@ -777,7 +781,7 @@ function render(scrollTop=false){
 
       <!-- Classe -->
       <div style="margin-bottom:22px">
-        <label class="lbl">Classe de compression</label>
+        <label class="lbl">Classe de compression prescrite</label>
         <div class="pression-bar"><div class="pression-cursor" style="left:${pressPct}%"></div></div>
         <div class="pression-labels"><span>Classe 1 · 10–15 mmHg</span><span>Classe 4 · &gt;36 mmHg</span></div>
         <div class="grid2" style="margin-top:12px">
