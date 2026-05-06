@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimPédiatrie · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Josefin+Sans:wght@300;400;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #05111a;
+  --bg2:   #081820;
+  --card:  rgba(255,255,255,.03);
+  --bdr:   rgba(255,255,255,.07);
+  --txt:   #e4f0f8;
+  --txt2:  #5a7a90;
+  --txt3:  #1a3040;
+  --em:    #4cb8e8;
+  --em2:   #2898c8;
+  --peach: #e89060;
+  --mint:  #60c8a0;
+  --lav:   #a080d8;
+  --sun:   #e8c84c;
+  --rose:  #e87090;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 0%,   rgba(76,184,232,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 85% 100%,  rgba(96,200,160,.05) 0%,transparent 50%),
+    radial-gradient(ellipse 40% 30% at 50% 50%,   rgba(5,17,26,.8)     0%,transparent 70%);
+  color:var(--txt);min-height:100vh;padding-bottom:80px;
+  position:relative;overflow-x:hidden;
+}
+
+/* Étoiles légères en fond */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.15) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,.1) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,.12) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 40%, rgba(255,255,255,.08) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,.1) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 75%, rgba(76,184,232,.2) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 70% 30%, rgba(96,200,160,.15) 0%, transparent 100%);
+}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.site-header{text-align:center;padding:44px 24px 28px;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(76,184,232,.08);border:1px solid rgba(76,184,232,.22);
+  color:var(--em);padding:5px 16px;border-radius:20px;
+  font-family:'Fira Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+}
+.site-header h1{
+  font-family:'Josefin Sans',sans-serif;
+  font-size:clamp(28px,6vw,50px);font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;line-height:1.1;
+}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt3);font-size:13px;margin-top:8px;letter-spacing:.5px}
+
+/* ── ONGLETS ── */
+.tabs{display:flex;gap:4px;padding:0 0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+.tab{
+  padding:8px 14px;border-radius:20px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:13px;font-weight:600;cursor:pointer;
+  white-space:nowrap;transition:all .18s;font-family:'Josefin Sans',sans-serif;
+  letter-spacing:.5px;-webkit-tap-highlight-color:transparent;
+}
+.tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+.tab.active{background:rgba(76,184,232,.1);border-color:rgba(76,184,232,.35);color:var(--em)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:18px;padding:24px;margin-bottom:14px;position:relative;z-index:1}
+.card-title{font-family:'Josefin Sans',sans-serif;font-size:19px;font-weight:600;letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase}
+.card-sub{color:var(--txt3);font-size:13px;margin-bottom:20px;line-height:1.65}
+
+/* ── BOUTONS ── */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  border:none;border-radius:20px;color:#fff;
+  font-family:'Josefin Sans',sans-serif;font-size:15px;font-weight:700;
+  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
+  border-radius:20px;color:var(--txt2);
+  font-family:'Josefin Sans',sans-serif;font-size:13px;font-weight:600;
+  padding:11px 20px;cursor:pointer;transition:all .18s;letter-spacing:.5px;
+}
+.btn-g:hover{background:rgba(255,255,255,.06);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+
+/* ── NORMES TABLE ── */
+.age-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.age-tab{
+  padding:6px 14px;border-radius:20px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);font-size:12px;
+  cursor:pointer;font-family:'Fira Mono',monospace;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.age-tab.on{background:rgba(76,184,232,.1);border-color:rgba(76,184,232,.35);color:var(--em)}
+
+.norme-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;border-radius:10px;margin-bottom:6px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);
+  transition:background .15s;
+}
+.norme-row:hover{background:rgba(255,255,255,.04)}
+.norme-label{font-size:13px;color:var(--txt2);font-weight:600}
+.norme-val{font-family:'Fira Mono',monospace;font-size:14px;font-weight:500}
+.norme-unit{font-size:11px;color:var(--txt3);margin-left:4px;font-family:'Fira Mono',monospace}
+
+/* ── DOULEUR ── */
+.echelle-card{
+  background:rgba(0,0,0,.2);border-radius:12px;padding:16px;margin-bottom:10px;
+  border-left:3px solid transparent;cursor:pointer;transition:all .2s;
+}
+.echelle-card:hover{background:rgba(0,0,0,.3)}
+.echelle-title{font-family:'Josefin Sans',sans-serif;font-size:15px;font-weight:600;letter-spacing:.5px;margin-bottom:4px;text-transform:uppercase}
+.echelle-body{font-size:13px;color:var(--txt2);line-height:1.7;display:none;margin-top:10px}
+.echelle-card.open .echelle-body{display:block}
+
+/* Visages douleur */
+.faces-row{display:flex;justify-content:space-around;padding:10px 0;flex-wrap:wrap;gap:6px}
+.face{text-align:center;cursor:pointer;transition:transform .15s}
+.face:hover{transform:scale(1.15)}
+.face-emoji{font-size:32px;display:block}
+.face-score{font-family:'Fira Mono',monospace;font-size:10px;color:var(--txt3);margin-top:3px}
+.face-label{font-size:10px;color:var(--txt2);margin-top:2px}
+
+/* ── INFO ── */
+.info{border-radius:10px;padding:12px 15px;font-size:13px;line-height:1.75}
+.info-em  {background:rgba(76,184,232,.07); border-left:3px solid rgba(76,184,232,.5); color:var(--em)}
+.info-peach{background:rgba(232,144,96,.07);border-left:3px solid rgba(232,144,96,.5);color:var(--peach)}
+.info-mint {background:rgba(96,200,160,.07);border-left:3px solid rgba(96,200,160,.5); color:var(--mint)}
+.info-lav  {background:rgba(160,128,216,.07);border-left:3px solid rgba(160,128,216,.5);color:var(--lav)}
+.info-rose {background:rgba(232,112,144,.07);border-left:3px solid rgba(232,112,144,.5);color:var(--rose)}
+.info-sun  {background:rgba(232,200,76,.07); border-left:3px solid rgba(232,200,76,.5); color:var(--sun)}
+
+/* ── QUIZ ── */
+.quiz-opt{
+  padding:12px 16px;border-radius:12px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);
+  cursor:pointer;font-size:14px;margin-bottom:8px;
+  transition:all .18s;display:flex;align-items:center;gap:10px;
+  -webkit-tap-highlight-color:transparent;
+}
+.quiz-opt:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+.quiz-opt.correct{background:rgba(76,184,232,.1);border-color:rgba(76,184,232,.4);color:var(--em)}
+.quiz-opt.wrong  {background:rgba(232,112,144,.1);border-color:rgba(232,112,144,.4);color:var(--rose)}
+.quiz-expl{
+  background:rgba(76,184,232,.05);border:1px solid rgba(76,184,232,.15);
+  border-radius:10px;padding:12px 14px;margin-top:10px;
+  font-size:13px;color:var(--txt2);line-height:1.7;
+}
+.quiz-expl strong{color:var(--txt)}
+
+/* ── VIDÉOS ── */
+.video-wrap{position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000;margin:10px 0}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-label{font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;margin-top:14px}
+.video-source{font-size:11px;color:var(--txt3);font-style:italic;margin-top:5px}
+
+/* ── PREMIUM ── */
+.premium-box{background:rgba(0,0,0,.3);border:1.5px solid rgba(76,184,232,.15);border-radius:18px;padding:26px;margin-bottom:14px}
+.apikey-box{background:rgba(76,184,232,.04);border:1px solid rgba(76,184,232,.12);border-radius:10px;padding:14px}
+.apikey-box p{font-size:13px;color:var(--txt3);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:13px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:8px;color:var(--txt);font-family:'Fira Mono',monospace;outline:none}
+.apikey-row input:focus{border-color:rgba(76,184,232,.3)}
+.apikey-row button{padding:9px 16px;border:none;border-radius:8px;background:var(--em2);color:#fff;font-weight:700;cursor:pointer;font-size:13px}
+.apikey-saved{color:var(--mint);font-size:11px;margin-top:5px;font-family:'Fira Mono',monospace}
+.analysis p{margin-bottom:14px;color:#7090a0;font-size:15px;line-height:1.85}
+.analysis strong{color:var(--txt)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.col8{display:flex;flex-direction:column;gap:8px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:18px 0}
+.stat{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:13px;text-align:center}
+.stat-v{font-family:'Fira Mono',monospace;font-size:20px;font-weight:500;color:var(--em);display:block}
+.stat-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1.5px;font-family:'Fira Mono',monospace;display:block;margin-top:4px}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:24px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt3);font-size:13px;margin-top:10px;font-style:italic}
+
+/* ── WELCOME ── */
+.welcome-icon{font-size:56px;display:block;margin-bottom:16px;text-align:center}
+.pts{display:flex;flex-direction:column;gap:12px;margin:20px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:20px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.grid2,.grid3{grid-template-columns:1fr}.nav-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+// ═══════════════════════════════════════
+//  DONNÉES — NORMES PAR TRANCHE D'ÂGE
+// ═══════════════════════════════════════
+const AGES = [
+  {
+    id:'nn', label:'Nouveau-né', detail:'0–28 jours',
+    normes:[
+      {label:'FC',    val:'120–160', unit:'bpm',   col:'var(--rose)'},
+      {label:'FR',    val:'40–60',   unit:'/min',  col:'var(--em)'},
+      {label:'PA sys',val:'60–80',   unit:'mmHg',  col:'var(--peach)'},
+      {label:'SpO₂',  val:'95–100',  unit:'%',     col:'var(--mint)'},
+      {label:'T°',    val:'36,5–37,5',unit:'°C',   col:'var(--sun)'},
+      {label:'Poids', val:'2,5–4',   unit:'kg',    col:'var(--lav)'},
+    ],
+    particularites:'Thermorégulation immature — risque d\'hypothermie. Respiration nasale obligatoire. Fontanelle antérieure palpable. Réflexes archaïques (Moro, grasping, succion). Glycémie à surveiller (risque d\'hypoglycémie néonatale).',
+    soins_ide:'Surveillance du score d\'Apgar, poids quotidien, ictère néonatal (bilirubine), allaitement ou biberon, soins de cordon, dépistage néonatal.',
+  },
+  {
+    id:'nour', label:'Nourrisson', detail:'1 mois – 2 ans',
+    normes:[
+      {label:'FC',    val:'100–160', unit:'bpm',   col:'var(--rose)'},
+      {label:'FR',    val:'25–40',   unit:'/min',  col:'var(--em)'},
+      {label:'PA sys',val:'80–100',  unit:'mmHg',  col:'var(--peach)'},
+      {label:'SpO₂',  val:'96–100',  unit:'%',     col:'var(--mint)'},
+      {label:'T°',    val:'36,5–37,5',unit:'°C',   col:'var(--sun)'},
+      {label:'Poids', val:'Naissance ×3 à 1 an', unit:'', col:'var(--lav)'},
+    ],
+    particularites:'Développement psychomoteur rapide. Vaccination selon calendrier. Alimentation diversifiée à partir de 4-6 mois. Risque de mort subite du nourrisson (MSN) jusqu\'à 1 an. Grande vulnérabilité aux infections respiratoires.',
+    soins_ide:'Courbes de croissance (poids, taille, PC), carnet de santé, vaccinations, soutien à l\'allaitement, éducation parentale, repérage des signes de maltraitance.',
+  },
+  {
+    id:'petit', label:'Petit enfant', detail:'2–6 ans',
+    normes:[
+      {label:'FC',    val:'80–120',  unit:'bpm',   col:'var(--rose)'},
+      {label:'FR',    val:'20–30',   unit:'/min',  col:'var(--em)'},
+      {label:'PA sys',val:'90–110',  unit:'mmHg',  col:'var(--peach)'},
+      {label:'SpO₂',  val:'97–100',  unit:'%',     col:'var(--mint)'},
+      {label:'T°',    val:'36,5–37,5',unit:'°C',   col:'var(--sun)'},
+      {label:'Poids', val:'≈ 2n+8 kg', unit:'(n=âge)', col:'var(--lav)'},
+    ],
+    particularites:'Pensée magique — peur de l\'abandon, de la mutilation. Hospitalisation vécue comme une punition possible. Importance du jeu dans le soin. Langage en développement — utiliser des mots simples. Régression possible lors d\'hospitalisation.',
+    soins_ide:'Communication adaptée à l\'âge, présence des parents encouragée, préparation ludique aux soins, distraction pendant les gestes, respect du doudou / objet transitionnel.',
+  },
+  {
+    id:'school', label:'Enfant scolarisé', detail:'6–12 ans',
+    normes:[
+      {label:'FC',    val:'70–100',  unit:'bpm',   col:'var(--rose)'},
+      {label:'FR',    val:'18–25',   unit:'/min',  col:'var(--em)'},
+      {label:'PA sys',val:'100–120', unit:'mmHg',  col:'var(--peach)'},
+      {label:'SpO₂',  val:'97–100',  unit:'%',     col:'var(--mint)'},
+      {label:'T°',    val:'36,5–37,5',unit:'°C',   col:'var(--sun)'},
+      {label:'Poids', val:'≈ 3n+3 kg', unit:'(n=âge)', col:'var(--lav)'},
+    ],
+    particularites:'Pensée logique et concrète. Comprend les explications simples. Peur de la perte de contrôle et de la douleur. Importance des pairs. Peut participer aux soins. Comprend les notions de maladie et de guérison.',
+    soins_ide:'Expliquer les soins clairement et honnêtement, impliquer l\'enfant dans les décisions (âge de raison), respecter la pudeur, maintenir le lien scolaire si hospitalisation prolongée.',
+  },
+  {
+    id:'ado', label:'Adolescent', detail:'12–18 ans',
+    normes:[
+      {label:'FC',    val:'60–90',   unit:'bpm',   col:'var(--rose)'},
+      {label:'FR',    val:'15–20',   unit:'/min',  col:'var(--em)'},
+      {label:'PA sys',val:'110–130', unit:'mmHg',  col:'var(--peach)'},
+      {label:'SpO₂',  val:'97–100',  unit:'%',     col:'var(--mint)'},
+      {label:'T°',    val:'36,5–37,5',unit:'°C',   col:'var(--sun)'},
+      {label:'Poids', val:'Proche adulte', unit:'', col:'var(--lav)'},
+    ],
+    particularites:'Identité en construction. Pudeur ++. Secret médical partiel (contraception, IVG, addiction). Refus de soins possible. Risques : conduites à risque, addictions, troubles alimentaires, dépression, automutilation. Prise d\'autonomie à respecter.',
+    soins_ide:'Entretien sans les parents si demandé, confidentialité (dans les limites légales), approche non jugeante, dépistage des conduites à risque, éducation à la santé sexuelle, repérage des signes de dépression/automutilation.',
+  },
+];
+
+const ECHELLES_DOULEUR = [
+  {
+    id:'evendol', col:'var(--em)', titre:'EVENDOL',
+    age:'0–7 ans — urgences pédiatriques',
+    desc:'5 critères comportementaux : Expression vocale ou verbale / Mimique / Mouvements / Positions antalgiques / Relations avec l\'environnement. Score 0–15 — douleur si score ≥ 4.',
+    usage:'Adaptée aux situations d\'urgence et aux enfants ne pouvant s\'exprimer verbalement. Simple et rapide.',
+  },
+  {
+    id:'flacc', col:'var(--peach)', titre:'FLACC',
+    age:'0–7 ans — douleur aiguë',
+    desc:'Face (visage) / Legs (jambes) / Activity (activité) / Cry (pleurs) / Consolability (consolabilité). Chaque item coté 0-2. Score 0–10.',
+    usage:'Standard international pour l\'évaluation de la douleur postopératoire chez le jeune enfant. Utilisable chez l\'enfant porteur de handicap.',
+  },
+  {
+    id:'visages', col:'var(--mint)', titre:'Échelle des visages (FPS-R)',
+    age:'4–12 ans — douleur modérée à sévère',
+    desc:'6 visages allant du neutre (0) au plus douloureux (10). L\'enfant pointe le visage qui correspond à sa douleur. Simple, validée, acceptée par les enfants.',
+    usage:'Première échelle d\'auto-évaluation possible. À partir de 4 ans avec une capacité de compréhension suffisante.',
+  },
+  {
+    id:'eva_ped', col:'var(--lav)', titre:'EVA / EN Pédiatrique',
+    age:'Dès 6–8 ans',
+    desc:'Échelle visuelle analogique (réglette) ou échelle numérique (0–10). L\'enfant indique son niveau de douleur. Nécessite un niveau de compréhension abstraite suffisant.',
+    usage:'Standard à partir de 6-8 ans. Complémentaire à l\'observation comportementale. Toujours confronter l\'auto-évaluation à l\'évaluation comportementale.',
+  },
+];
+
+const SITUATIONS = [
+  {
+    titre:'Théo, 4 ans — Fièvre et otite',
+    contexte:`Théo, 4 ans, est amené aux urgences pédiatriques par sa maman. T° 39,2°C, il est irritable, se touche l'oreille gauche, refuse de boire. FC 128 bpm. Il pleure dès que vous approchez et se blottit contre sa mère.`,
+    question:'Comment abordez-vous Théo pour réaliser votre évaluation clinique ?',
+    reponse:`**Approche pédiatrique du petit enfant** — Ne jamais commencer par le geste douloureux. S'installer à la hauteur de Théo, sourire, parler doucement. Laisser Théo sur les genoux de sa maman — c'est sa zone de sécurité. Commencer par observer (couleur, respiration, position) AVANT de toucher. Utiliser la distraction (jouet, bulle, histoire). Expliquer chaque geste simplement : "Je vais écouter ton coeur, ça ne fait pas mal." Évaluer la douleur avec l'EVENDOL ou FLACC. La FLACC indique une douleur modérée (pleurs, agitation, difficulté à consoler) → antalgiques selon prescription avant tout geste supplémentaire.`,
+  },
+  {
+    titre:'Léa, 14 ans — Suspicion de maltraitance',
+    contexte:`Léa, 14 ans, est hospitalisée pour fracture du poignet. Ses parents expliquent qu'elle est "tombée". Léa est silencieuse, évite le regard, porte des manches longues malgré la chaleur. En la lavant, vous remarquez des ecchymoses anciennes à différents stades à l'épaule et au dos.`,
+    question:'Quelle est votre conduite à tenir face à cette suspicion de maltraitance ?',
+    reponse:`**Suspicion de maltraitance — protocole IDE** — Ne JAMAIS confronter les parents devant l'enfant à ce stade. Créer un moment seul avec Léa si possible — lien de confiance, écoute sans jugement, pas de questions suggestives. Observer et décrire précisément les lésions dans le dossier (localisation, taille, couleur, stade). Informer le médecin senior IMMÉDIATEMENT — c'est lui qui fera la déclaration. La loi impose le signalement dès qu'il y a suspicion sérieuse. Ne pas promettre à Léa de garder le secret — expliquer honnêtement que l'équipe doit protéger les enfants. Contacter l'assistante sociale de l'établissement. Tracer minutieusement.`,
+  },
+  {
+    titre:'Lucas, 8 ans — Asthme aigu',
+    contexte:`Lucas, 8 ans, asthmatique connu, est admis pour dyspnée aiguë. FR 34/min, SpO₂ 92%, tirage intercostal visible, difficultés à parler en phrases complètes. Sa mère est très anxieuse et vous pose des questions en rafale.`,
+    question:'Comment gérez-vous simultanément l\'urgence clinique et la détresse maternelle ?',
+    reponse:`**Double priorité : enfant + famille** — Urgence d'abord : position assise ou semi-assise, oxygénothérapie selon prescription (cible SpO₂ > 94%), bronchodilatateur selon protocole, monitoring continu, alerter le médecin. En parallèle, adresser la mère clairement et calmement : "Nous nous occupons de Lucas maintenant, vous pouvez rester avec lui." L'anxiété maternelle se transmet à l'enfant — une mère rassurée aide Lucas à se détendre. Lui donner un rôle : "Tenez sa main et parlez-lui doucement." Surveiller : FR, SpO₂, tirage, auscultation, capacité à parler. Score de gravité asthme (PRAM ou GINA). L'amélioration attendue sous 20 min — réévaluer.`,
+  },
+];
+
+const QUIZ = [
+  { q:'Quelle est la fréquence cardiaque normale d\'un nouveau-né ?', opts:['60–80 bpm','80–100 bpm','120–160 bpm','100–120 bpm'], rep:2,
+    expl:'La FC normale du **nouveau-né** est de **120–160 bpm**. Elle diminue progressivement avec l\'âge. Une FC < 100 bpm chez un nourrisson (bradycardie) est un signe d\'alarme nécessitant une évaluation urgente.' },
+  { q:'L\'échelle FLACC évalue la douleur selon 5 critères. Lesquels ?', opts:['Fièvre, Larmes, Agitation, Cris, Cyanose','Face, Legs, Activity, Cry, Consolability','Fréquence, Localisation, Age, Comportement, Caractère','Force, Larmes, Anxiété, Communication, Coloration'], rep:1,
+    expl:'**FLACC** : Face (visage), Legs (membres inférieurs), Activity (activité), Cry (pleurs), Consolability (consolabilité). Chaque critère est coté 0-2 pour un total de 0-10. C\'est l\'échelle comportementale de référence pour les enfants de 0-7 ans.' },
+  { q:'À quel âge l\'auto-évaluation de la douleur devient-elle possible ?', opts:['Dès la naissance','À partir de 2 ans','À partir de 4 ans avec l\'échelle des visages','Uniquement à partir de 10 ans'], rep:2,
+    expl:'L\'**auto-évaluation** est possible dès **4 ans** avec l\'échelle des visages (FPS-R). L\'EVA/EN nécessite une compréhension abstraite et s\'utilise à partir de 6-8 ans. Avant 4 ans, on s\'appuie uniquement sur les échelles comportementales (FLACC, EVENDOL).' },
+  { q:'Face à une suspicion de maltraitance chez un enfant, l\'IDE doit :', opts:['Confronter les parents immédiatement','Garder l\'information confidentielle si l\'enfant le demande','Informer le médecin senior et tracer précisément les observations','Attendre d\'avoir la certitude absolue avant d\'agir'], rep:2,
+    expl:'**Signalement = protection.** L\'IDE informe immédiatement le médecin senior qui déclenchera la procédure. La loi impose le signalement dès la suspicion sérieuse, sans certitude absolue. Le secret médical ne protège pas l\'auteur de maltraitance. Tracer minutieusement est fondamental.' },
+  { q:'La formule approximative du poids d\'un enfant de 3 à 12 ans est :', opts:['Poids = âge × 2','Poids = 2 × âge + 8','Poids = 3 × âge + 3','Poids = âge + 10'], rep:1,
+    expl:'La formule **Poids = 2n + 8** (n = âge en années) est la formule courante pour les 3-12 ans. Elle permet une estimation rapide en urgence pour calculer les doses médicamenteuses. Par exemple : un enfant de 5 ans pèse approximativement 2×5+8 = 18 kg.' },
+  { q:'Le droit au secret médical de l\'adolescent concerne :', opts:['Toutes les situations sans exception','La contraception, l\'IVG, les addictions — même sans accord parental','Uniquement les soins dentaires','Uniquement les soins réalisés en urgence'], rep:1,
+    expl:'La loi du 4 mars 2002 reconnaît à l\'**adolescent** un droit au secret pour certaines situations : contraception, IVG, addictions — il peut consulter sans que ses parents en soient informés. L\'IDE respecte cette confidentialité tout en évaluant les risques. En cas de danger grave, le secret peut être levé.' },
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let S = {
+  view: 'welcome',
+  onglet: 'normes',
+  ageSelected: 'petit',
+  echelleOpen: null,
+  situation: null,
+  quizIdx: 0, quizSelected: null, quizShown: false, quizScore: 0, quizTotal: 0,
+  analyse: '', loading: false, showKey: false,
+  apiKey: localStorage.getItem('simped_key') || '',
+  apiKeySaved: !!localStorage.getItem('simped_key'),
+};
+
+function ageObj(){ return AGES.find(a=>a.id===S.ageSelected)||AGES[2]; }
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  let h = '';
+  const ag = ageObj();
+
+  if(S.view !== 'welcome'){
+    h += `
+    <div class="site-header">
+      <div class="badge">👶 B.3 · D.2 · Référentiel 2026</div>
+      <h1><span>Sim</span>Pédiatrie</h1>
+      <p>Soins infirmiers de l'enfant · Spécificités pédiatriques · Rôle IDE</p>
+    </div>
+    <div class="tabs">
+      ${[
+        {id:'normes',    label:'📊 Normes'},
+        {id:'douleur',   label:'🌡️ Douleur'},
+        {id:'maltraitance', label:'🛡️ Protection'},
+        {id:'situations',label:'🎭 Situations'},
+        {id:'quiz',      label:'🎯 Quiz'},
+        {id:'videos',    label:'📺 Vidéos'},
+        {id:'analyse',   label:'🔬 Analyse IA'},
+      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`).join('')}
+    </div>`;
+  } else {
+    h += `<div class="site-header" style="padding-top:44px">
+      <div class="badge">👶 B.3 · D.2 · Référentiel 2026</div>
+      <h1><span>Sim</span>Pédiatrie</h1>
+    </div>`;
+  }
+
+  h += '<div class="wrap">';
+
+  // ─── WELCOME ───────────────────────────────────────────────────
+  if(S.view === 'welcome'){
+    h += `
+    <div class="card fadeup" style="border-color:rgba(76,184,232,.15);margin-top:20px">
+      <div style="text-align:center;padding:8px 0 24px">
+        <span class="welcome-icon">👶</span>
+        <p style="color:var(--txt2);font-size:15px;line-height:1.85;max-width:480px;margin:0 auto">
+          L'enfant n'est pas un adulte en miniature. Chaque tranche d'âge a ses propres normes, sa propre façon de communiquer la douleur, et sa propre relation au soin.
+        </p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">📊</span><span class="pt-t"><strong>Normes par âge</strong> — FC, FR, PA, SpO₂ du nouveau-né à l'adolescent</span></div>
+          <div class="pt"><span class="pt-i">🌡️</span><span class="pt-t"><strong>Douleur pédiatrique</strong> — FLACC, EVENDOL, visages, EVA — bonne échelle selon l'âge</span></div>
+          <div class="pt"><span class="pt-i">🛡️</span><span class="pt-t"><strong>Protection de l'enfant</strong> — repérage maltraitance, droits, secret médical adolescent</span></div>
+          <div class="pt"><span class="pt-i">🎭</span><span class="pt-t"><strong>Situations cliniques</strong> — 3 cas avec correction détaillée</span></div>
+          <div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>Quiz B.3 · D.2</strong> — 6 questions sur les soins pédiatriques</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analyse IA</strong> — réponse à toute question de pédiatrie infirmière (Premium)</span></div>
+        </div>
+        <button class="btn-p" onclick="go('main')">Explorer SimPédiatrie →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── MAIN ──────────────────────────────────────────────────────
+  else {
+
+    // ── NORMES ───────────────────────────────────────────────────
+    if(S.onglet === 'normes'){
+      h += `<div class="fadeup">
+        <div class="card" style="border-color:rgba(76,184,232,.15)">
+          <div class="card-title" style="color:var(--em)">Normes pédiatriques par âge</div>
+          <div class="card-sub">Sélectionnez la tranche d'âge — les valeurs normales changent considérablement au fil du développement.</div>
+
+          <div class="age-tabs">
+            ${AGES.map(a=>`<button class="age-tab ${S.ageSelected===a.id?'on':''}" onclick="S.ageSelected='${a.id}';render()">${a.label}<br><span style="font-size:9px;opacity:.6">${a.detail}</span></button>`).join('')}
+          </div>
+
+          <div class="col8" style="margin-bottom:16px">
+            ${ag.normes.map(n=>`
+              <div class="norme-row">
+                <span class="norme-label">${n.label}</span>
+                <div>
+                  <span class="norme-val" style="color:${n.col}">${n.val}</span>
+                  <span class="norme-unit">${n.unit}</span>
+                </div>
+              </div>`).join('')}
+          </div>
+
+          <div class="info info-em" style="margin-bottom:12px">
+            <strong>⚠️ Particularités cliniques — ${ag.label}</strong><br>
+            <span style="font-size:12px;opacity:.9">${ag.particularites}</span>
+          </div>
+
+          <div class="info info-mint">
+            <strong>🩺 Rôle IDE — ${ag.label}</strong><br>
+            <span style="font-size:12px;opacity:.9">${ag.soins_ide}</span>
+          </div>
+        </div>
+
+        <div class="info info-peach">
+          💊 <strong>Dosages médicamenteux :</strong> Toujours calculés en mg/kg chez l'enfant. Formule poids estimé (3–12 ans) : <strong>P = 2n + 8</strong> (n = âge en années). Vérifier deux fois avant administration — l'erreur de dosage est le risque #1 en pédiatrie.
+        </div>
+      </div>`;
+    }
+
+    // ── DOULEUR PÉDIATRIQUE ──────────────────────────────────────
+    else if(S.onglet === 'douleur'){
+      h += `<div class="fadeup">
+        <div class="card" style="border-color:rgba(232,144,96,.15)">
+          <div class="card-title" style="color:var(--peach)">Évaluation de la douleur chez l'enfant</div>
+          <div class="card-sub">L'enfant ressent la douleur — mais ne l'exprime pas toujours par les mots. L'IDE choisit l'échelle adaptée à l'âge et aux capacités de l'enfant.</div>
+
+          <!-- Repères d'âge rapides -->
+          <div class="grid2" style="margin-bottom:16px">
+            <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:12px;text-align:center">
+              <div style="font-size:11px;font-family:'Fira Mono',monospace;color:var(--txt3);margin-bottom:6px;letter-spacing:1px">0–4 ANS</div>
+              <div style="font-size:13px;color:var(--peach);font-weight:600">Hétéro-évaluation</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:4px">FLACC · EVENDOL</div>
+            </div>
+            <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:12px;text-align:center">
+              <div style="font-size:11px;font-family:'Fira Mono',monospace;color:var(--txt3);margin-bottom:6px;letter-spacing:1px">DÈS 4 ANS</div>
+              <div style="font-size:13px;color:var(--mint);font-weight:600">Auto-évaluation</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:4px">Visages · EVA</div>
+            </div>
+          </div>
+
+          <!-- Échelle des visages interactive -->
+          <div style="background:rgba(0,0,0,.2);border-radius:12px;padding:16px;margin-bottom:14px">
+            <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:12px">Échelle des visages — FPS-R (dès 4 ans)</div>
+            <div class="faces-row">
+              ${[
+                {e:'😌', s:0,  l:'Pas de douleur', c:'var(--mint)'},
+                {e:'🙂', s:2,  l:'Très légère', c:'#8acc60'},
+                {e:'😐', s:4,  l:'Légère', c:'var(--sun)'},
+                {e:'😟', s:6,  l:'Modérée', c:'var(--peach)'},
+                {e:'😣', s:8,  l:'Forte', c:'#e86060'},
+                {e:'😭', s:10, l:'Insupportable', c:'var(--rose)'},
+              ].map(f=>`
+                <div class="face" onclick="alert('Score ${f.s}/10 — ${f.l}')">
+                  <span class="face-emoji">${f.e}</span>
+                  <span class="face-score" style="color:${f.c}">${f.s}/10</span>
+                  <span class="face-label">${f.l}</span>
+                </div>`).join('')}
+            </div>
+            <div style="font-size:12px;color:var(--txt3);text-align:center;margin-top:8px;font-style:italic">
+              "Montre-moi le visage qui montre combien tu as mal en ce moment."
+            </div>
+          </div>
+
+          <!-- Échelles détaillées -->
+          <div class="col8">
+            ${ECHELLES_DOULEUR.map(e=>`
+              <div class="echelle-card ${S.echelleOpen===e.id?'open':''}" style="border-left-color:${e.col}" onclick="toggleEchelle('${e.id}')">
+                <div class="echelle-title" style="color:${e.col}">${e.titre}</div>
+                <div style="font-size:11px;color:var(--txt3);font-family:'Fira Mono',monospace">${e.age}</div>
+                <div class="echelle-body">
+                  <p style="margin-bottom:8px"><strong>Critères :</strong> ${e.desc}</p>
+                  <p><strong>Usage clinique :</strong> ${e.usage}</p>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="info info-lav">
+          💡 <strong>Règle d'or :</strong> Toujours confronter l'auto-évaluation à l'évaluation comportementale. Un enfant qui sourit peut avoir mal — la peur du soin peut l'amener à minimiser. Inversement, un enfant agité peut être anxieux plutôt que douloureux. L'IDE intègre les deux.
+        </div>
+      </div>`;
+    }
+
+    // ── PROTECTION ───────────────────────────────────────────────
+    else if(S.onglet === 'maltraitance'){
+      h += `<div class="fadeup">
+        <div class="card" style="border-color:rgba(232,112,144,.2)">
+          <div class="card-title" style="color:var(--rose)">🛡️ Protection de l'enfant</div>
+          <div class="card-sub">L'IDE est souvent le premier professionnel à repérer des signes de maltraitance. Il a une obligation légale de signalement.</div>
+
+          <div class="grid2" style="margin-bottom:16px">
+            <div class="stat"><span class="stat-v" style="color:var(--rose)">1/5</span><span class="stat-l">Enfants victimes de maltraitance en Europe</span></div>
+            <div class="stat"><span class="stat-v" style="color:var(--peach)">50%</span><span class="stat-l">Des cas repérés d'abord par des soignants</span></div>
+          </div>
+
+          <!-- Signes d'alerte -->
+          <div style="font-size:14px;font-weight:700;color:var(--rose);margin-bottom:10px;font-family:'Josefin Sans',sans-serif;letter-spacing:.5px;text-transform:uppercase">Signes d'alerte</div>
+          <div class="col8" style="margin-bottom:16px">
+            ${[
+              {s:'Lésions cutanées', d:'Ecchymoses multiples à différents stades, localisations inhabituelles (dos, fesses, oreilles), formes évocatrices (ceinture, cigarette)', c:'var(--rose)'},
+              {s:'Discordance lésion / explication', d:'Mécanisme lésionnel impossible pour l\'âge (fracture du nourrisson avant la marche), histoire qui change', c:'var(--peach)'},
+              {s:'Comportement', d:'Régression, hypervigilance, peur des adultes, comportement hypersexualisé, fugues répétées, automutilation', c:'var(--lav)'},
+              {s:'Syndrome de Silverman', d:'Fractures multiples à différents stades d\'évolution — pathognomonique de maltraitance physique', c:'var(--rose)'},
+              {s:'Négligence', d:'Défaut de soins, malnutrition, absentéisme scolaire répété, enfant livré à lui-même', c:'var(--sun)'},
+            ].map(a=>`
+              <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:12px 14px;border-left:3px solid ${a.c}">
+                <div style="font-size:13px;font-weight:600;color:${a.c};margin-bottom:4px">${a.s}</div>
+                <div style="font-size:12px;color:var(--txt2);line-height:1.65">${a.d}</div>
+              </div>`).join('')}
+          </div>
+
+          <!-- Conduite à tenir -->
+          <div style="font-size:14px;font-weight:700;color:var(--em);margin-bottom:10px;font-family:'Josefin Sans',sans-serif;letter-spacing:.5px;text-transform:uppercase">Conduite à tenir IDE</div>
+          <div class="col8" style="margin-bottom:14px">
+            ${[
+              '👁️ Observer et documenter précisément (localisation, taille, couleur, stade des lésions)',
+              '🗣️ Créer un moment seul avec l\'enfant — écoute sans questions suggestives',
+              '🚫 Ne PAS confronter les parents à ce stade',
+              '👨‍⚕️ Informer immédiatement le médecin senior',
+              '📋 Tracer minutieusement dans le dossier — c\'est une pièce médico-légale',
+              '👥 Contacter l\'assistante sociale de l\'établissement',
+              '⚖️ Le médecin déclenche le signalement (IP ou signalement judiciaire)',
+            ].map(a=>`<div style="background:rgba(76,184,232,.05);border:1px solid rgba(76,184,232,.1);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--txt2)">${a}</div>`).join('')}
+          </div>
+
+          <div class="info info-rose">
+            ⚖️ <strong>Cadre légal :</strong> L'article 226-14 du Code pénal autorise la levée du secret médical pour protéger un mineur. Le médecin choisit entre l'information préoccupante (IP → CRIP) et le signalement judiciaire selon la gravité. L'IDE ne fait pas le signalement lui-même — il alerte le médecin.
+          </div>
+        </div>
+
+        <!-- Secret médical adolescent -->
+        <div class="card" style="border-color:rgba(160,128,216,.15)">
+          <div class="card-title" style="color:var(--lav)">🔐 Secret médical de l'adolescent</div>
+          <div class="card-sub">La loi du 4 mars 2002 reconnaît à l'adolescent un droit au secret pour certaines consultations.</div>
+          <div class="col8">
+            ${[
+              {s:'Contraception', d:'Consultation et prescription sans accord parental — prise en charge anonyme possible'},
+              {s:'IVG', d:'L\'adolescente peut demander à être accompagnée d\'une personne de son choix, sans les parents'},
+              {s:'Addictions', d:'Consultation d\'addictologie sans information parentale si l\'adolescent le demande'},
+              {s:'Santé mentale', d:'Dans certains cas, l\'ado peut refuser l\'information aux parents — à évaluer avec l\'équipe'},
+            ].map(a=>`
+              <div style="background:rgba(160,128,216,.05);border:1px solid rgba(160,128,216,.12);border-radius:8px;padding:12px 14px">
+                <div style="font-size:13px;font-weight:600;color:var(--lav);margin-bottom:4px">${a.s}</div>
+                <div style="font-size:12px;color:var(--txt2);line-height:1.65">${a.d}</div>
+              </div>`).join('')}
+          </div>
+          <div class="info info-lav" style="margin-top:14px">
+            ⚠️ Le secret de l'adolescent cède si sa vie ou celle d'autrui est en danger. L'IDE informe l'adolescent de cette limite dès le début de la relation de confiance.
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ── SITUATIONS ───────────────────────────────────────────────
+    else if(S.onglet === 'situations'){
+      if(S.situation === null){
+        h += `<div class="fadeup">
+          <div class="card" style="border-color:rgba(76,184,232,.15)">
+            <div class="card-title" style="color:var(--em)">🎭 Situations cliniques</div>
+            <div class="card-sub">3 situations en service de pédiatrie — analysez, réfléchissez, puis découvrez la correction.</div>
+            <div class="col8">
+              ${SITUATIONS.map((s,i)=>`
+                <div style="background:rgba(0,0,0,.2);border-radius:12px;padding:16px;cursor:pointer;border-left:3px solid var(--em);transition:all .2s" onclick="S.situation=${i};render()">
+                  <div style="font-family:'Josefin Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.5px;color:var(--em);margin-bottom:5px">${s.titre}</div>
+                  <p style="font-size:12px;color:var(--txt3)">${s.contexte.substring(0,80)}…</p>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      } else {
+        const sit = SITUATIONS[S.situation];
+        h += `<div class="fadeup">
+          <div class="card" style="border-color:rgba(76,184,232,.2)">
+            <div class="card-title" style="color:var(--em)">${sit.titre}</div>
+            <div style="background:rgba(0,0,0,.25);border-radius:10px;padding:16px;margin-bottom:16px">
+              <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Situation clinique</div>
+              <p style="font-size:14px;color:var(--txt2);line-height:1.8">${sit.contexte}</p>
+            </div>
+            <div style="background:rgba(76,184,232,.06);border:1px solid rgba(76,184,232,.15);border-radius:10px;padding:16px;margin-bottom:16px">
+              <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--em);margin-bottom:8px">Question</div>
+              <p style="font-size:15px;color:var(--txt);line-height:1.7;font-style:italic">${sit.question}</p>
+            </div>
+            <details style="cursor:pointer">
+              <summary style="font-size:14px;color:var(--em);font-weight:600;padding:12px;background:rgba(76,184,232,.07);border-radius:8px;list-style:none;user-select:none">▶ Voir la correction</summary>
+              <div style="margin-top:10px;background:rgba(0,0,0,.2);border-radius:10px;padding:16px">
+                <p style="font-size:14px;color:var(--txt2);line-height:1.8">${sit.reponse.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</p>
+              </div>
+            </details>
+          </div>
+          <div class="nav-row">
+            <button class="btn-g" onclick="S.situation=null;render()">← Toutes les situations</button>
+            ${S.situation < SITUATIONS.length-1 ? `<button class="btn-g" onclick="S.situation=${S.situation+1};render()">Situation suivante →</button>` : ''}
+          </div>
+        </div>`;
+      }
+    }
+
+    // ── QUIZ ─────────────────────────────────────────────────────
+    else if(S.onglet === 'quiz'){
+      const q = QUIZ[S.quizIdx % QUIZ.length];
+      const pct = Math.round(S.quizIdx / QUIZ.length * 100);
+      h += `<div class="fadeup">
+        <div style="display:flex;justify-content:space-between;font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:8px">
+          <span>Question ${S.quizIdx % QUIZ.length + 1} / ${QUIZ.length}</span>
+          <span style="color:var(--em)">${S.quizTotal>0 ? Math.round(S.quizScore/S.quizTotal*100)+'% correct' : '—'}</span>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:100px;height:6px;margin-bottom:16px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--em2),var(--em));border-radius:100px;transition:width .5s"></div>
+        </div>
+        <div class="card" style="border-color:rgba(76,184,232,.15)">
+          <div style="font-family:'Nunito',sans-serif;font-size:clamp(15px,2.5vw,19px);font-weight:600;line-height:1.5;margin-bottom:18px;color:var(--txt)">${esc(q.q)}</div>
+          ${q.opts.map((opt,i)=>{
+            let cls = '';
+            if(S.quizShown){ if(i===q.rep) cls='correct'; else if(i===S.quizSelected) cls='wrong'; }
+            return `<div class="quiz-opt ${cls}" onclick="${S.quizShown?'':'selectQuiz('+i+')'}">
+              <span style="font-family:'Fira Mono',monospace;font-size:11px;flex-shrink:0;color:inherit">${['A','B','C','D'][i]}</span>
+              <span>${esc(opt)}</span>
+            </div>`;
+          }).join('')}
+          ${S.quizShown ? `
+          <div class="quiz-expl">${q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</div>
+          <button class="btn-p btn-full" style="margin-top:14px" onclick="nextQuiz()">Question suivante →</button>` : ''}
+        </div>
+        <button class="btn-g btn-full" onclick="S.quizIdx=0;S.quizScore=0;S.quizTotal=0;S.quizSelected=null;S.quizShown=false;render()" style="margin-top:8px;color:var(--mint);border-color:rgba(96,200,160,.2)">↺ Recommencer</button>
+      </div>`;
+    }
+
+    // ── VIDÉOS ───────────────────────────────────────────────────
+    else if(S.onglet === 'videos'){
+      h += `<div class="fadeup">
+        <div class="card" style="border-color:rgba(76,184,232,.15)">
+          <div class="card-title" style="color:var(--em)">📺 Vidéos — Pédiatrie infirmière</div>
+          <div class="card-sub">Sélection de ressources vidéo pour la pratique infirmière en pédiatrie.</div>
+
+          <div class="video-label">👶 L'enfant à l'hôpital — Accompagnement et droits</div>
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/9y6oWrKGPkA"
+              title="L'enfant a l'hopital"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-source">Droits de l'enfant hospitalisé · Place des parents · Charte EACH</div>
+
+          <div class="video-label">🌡️ Évaluation de la douleur en pédiatrie — Échelles et pratique</div>
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/fXHDCOgXDEU"
+              title="Evaluation de la douleur chez l'enfant"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-source">Douleur pédiatrique · FLACC, visages, EVA · Pratique soignante</div>
+
+          <div class="video-label">🛡️ Repérage de la maltraitance — Formation soignants</div>
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/xQMPBJAigvw"
+              title="Reperage de la maltraitance chez l'enfant"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-source">Maltraitance enfant · Signes d'alerte · Conduite soignante · Formation</div>
+
+          <div class="video-label">💉 Soins techniques en pédiatrie — Adaptation du geste infirmier</div>
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/jZkAFPD0y-Y"
+              title="Soins infirmiers en pediatrie"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-source">Gestes techniques pédiatriques · Adaptation · Communication avec l'enfant</div>
+        </div>
+      </div>`;
+    }
+
+    // ── ANALYSE IA ───────────────────────────────────────────────
+    else if(S.onglet === 'analyse'){
+      h += `<div class="fadeup">
+        <div class="card" style="border-color:rgba(76,184,232,.15)">
+          <div class="card-title" style="color:var(--em)">🔬 Analyse IA — Pédiatrie infirmière</div>
+          <div class="card-sub">Posez une question sur les soins pédiatriques, les normes, la douleur ou la protection de l'enfant.</div>
+          <textarea id="question-ped"
+            style="width:100%;min-height:80px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:10px;color:var(--txt);padding:12px;font-size:14px;font-family:'Nunito',sans-serif;outline:none;resize:vertical;line-height:1.6;margin-bottom:10px"
+            placeholder="Ex : Comment expliquer une prise de sang à un enfant de 5 ans ? Quels sont les signes de détresse respiratoire chez le nourrisson ? Comment gérer la fièvre > 39°C chez un enfant de 3 ans ?"></textarea>
+          <button class="btn-p btn-full" onclick="runAnalyse()">👶 Obtenir une réponse pédagogique →</button>
+          ${S.loading ? `<div class="dots" style="margin-top:16px"><span></span><span></span><span></span><div class="dots-msg">Consultation des données en pédiatrie infirmière…</div></div>` : ''}
+          ${!S.loading && S.analyse ? `<div class="analysis fadeup" style="margin-top:16px">${renderMd(S.analyse)}</div>` : ''}
+          <hr class="div">
+          ${!S.apiKeySaved ? `<div class="apikey-box">
+            <p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+          </div>` : `<div style="color:var(--mint);font-family:'Fira Mono',monospace;font-size:11px">✓ Clé API configurée</div>`}
+        </div>
+
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:20px">
+            <div style="font-size:36px;margin-bottom:8px">🔒</div>
+            <div style="font-family:'Josefin Sans',sans-serif;font-size:18px;font-weight:700;color:var(--txt);margin-bottom:5px;letter-spacing:1px">ANALYSE IA — ACCÈS PREMIUM</div>
+            <div style="font-size:13px;color:var(--txt3)">Les 6 onglets de contenu sont entièrement gratuits</div>
+          </div>
+          <div class="grid3" style="margin-bottom:18px">
+            <div style="border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center">
+              <div style="font-size:10px;font-family:'Fira Mono',monospace;color:var(--txt3);margin-bottom:8px">Module seul</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">4,99€</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px">Accès à vie</div>
+            </div>
+            <div style="border:1px solid rgba(76,184,232,.3);border-radius:12px;padding:14px;text-align:center;background:rgba(76,184,232,.05)">
+              <div style="font-size:10px;font-family:'Fira Mono',monospace;color:var(--em);margin-bottom:8px">Suite complète</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">12,99€</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px">12 modules à vie</div>
+            </div>
+            <div style="border:1px solid rgba(96,200,160,.25);border-radius:12px;padding:14px;text-align:center;background:rgba(96,200,160,.04)">
+              <div style="font-size:10px;font-family:'Fira Mono',monospace;color:var(--mint);margin-bottom:8px">Institution</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt)">Sur devis</div>
+              <div style="font-size:11px;color:var(--txt3);margin-top:6px">IFSI · Syndicat</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:12px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:12px 28px;border-radius:20px;background:linear-gradient(135deg,var(--em2),var(--em));color:#fff;font-weight:700;font-size:14px;text-decoration:none;font-family:'Josefin Sans',sans-serif;letter-spacing:.5px">Obtenir l'accès →</a>
+          </div>
+          <div style="text-align:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace">🔑 Espace formateur</button>
+          </div>
+          ${S.showKey ? `<div class="apikey-box" style="margin-top:12px">
+            <p>Clé API Anthropic — formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved ? '<div class="apikey-saved">✓ Clé enregistrée</div>' : ''}
+          </div>` : ''}
+        </div>
+      </div>`;
+    }
+
+    h += `<div style="margin-top:12px"><button class="btn-g" onclick="go('welcome')" style="color:var(--em);border-color:rgba(76,184,232,.2)">← Accueil SimPédiatrie</button></div>`;
+  }
+
+  h += '</div>';
+  document.getElementById('app').innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){ S.view=v; S.situation=null; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setOnglet(o){ S.onglet=o; S.analyse=''; S.situation=null; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function toggleEchelle(id){ S.echelleOpen = S.echelleOpen===id ? null : id; render(); }
+function selectQuiz(i){
+  if(S.quizShown) return;
+  S.quizSelected=i; S.quizShown=true;
+  const q = QUIZ[S.quizIdx % QUIZ.length];
+  S.quizTotal++;
+  if(i===q.rep) S.quizScore++;
+  render();
+}
+function nextQuiz(){ S.quizIdx++; S.quizSelected=null; S.quizShown=false; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function saveKey(){ localStorage.setItem('simped_key', S.apiKey); S.apiKeySaved=true; render(); }
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const q = document.getElementById('question-ped')?.value || '';
+  if(!q.trim()) return;
+  S.loading=true; S.analyse=''; render();
+  try{
+    const headers = {'Content-Type':'application/json'};
+    if(S.apiKey){ headers['x-api-key']=S.apiKey; headers['anthropic-version']='2023-06-01'; }
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers,
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:900,
+        messages:[{role:'user', content:`Tu es un formateur IFSI expert en pédiatrie infirmière, spécialiste du domaine B.3 et D.2 du référentiel 2026. Un étudiant infirmier en stage de pédiatrie te pose une question.
+
+Question : ${q}
+
+Réponds de façon pédagogique en 3-4 paragraphes. Utilise des exemples concrets adaptés à l'âge (précise toujours l'âge concerné). Ancre ta réponse dans le rôle IDE. Rappelle les particularités pédiatriques. Tutoie l'étudiant. Utilise **gras** pour les termes clés.`}]
+      })
+    });
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse = data.content?.find(b=>b.type==='text')?.text || '';
+  } catch(e){
+    S.analyse = `**Erreur**\n\n${e.message}`;
+  }
+  S.loading=false; render();
+}
+
+render();
+</script>
+</body>
+</html>
