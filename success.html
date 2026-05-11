@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimCare · Bienvenue Premium !</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root { --bg:#f5f0e8; --ink:#0e0c0a; --gold:#c8922a; --gold2:#a07018; --fog:#8a8070; --ok:#2a7840; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+.confetti { font-size: 64px; margin-bottom: 20px; animation: bounce .6s ease infinite alternate; }
+@keyframes bounce { from { transform: scale(1); } to { transform: scale(1.1); } }
+.logo {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 24px;
+}
+.logo em { font-style: italic; color: var(--gold); }
+.card {
+  background: white;
+  border: 2px solid rgba(200,146,42,.3);
+  border-radius: 16px;
+  padding: 36px 32px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(14,12,10,.08);
+}
+.title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  line-height: 1.15;
+}
+.sub {
+  font-size: 15px;
+  color: var(--fog);
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+.feat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.feat-icon { font-size: 20px; }
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--gold2), var(--gold));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity .2s;
+  margin-bottom: 10px;
+}
+.btn:hover { opacity: .9; }
+.btn-secondary {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1.5px solid rgba(14,12,10,.15);
+  color: var(--ink);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .2s;
+}
+.btn-secondary:hover { background: var(--bg); }
+.guarantee {
+  margin-top: 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ok);
+}
+</style>
+</head>
+<body>
+<div class="confetti">⭐</div>
+<div class="logo">Sim<em>Care</em></div>
+
+<div class="card">
+  <div class="title">Bienvenue<br>en mode Premium !</div>
+  <div class="sub">Votre abonnement est actif. L'analyse IA est désormais disponible dans tous les modules SimCare.</div>
+
+  <div class="features">
+    ${[
+      {icon:'🔬', txt:'Analyse IA clinique dans 20 modules'},
+      {icon:'📱', txt:'Accès iPhone hors connexion maintenu'},
+      {icon:'🔄', txt:'Nouveaux modules inclus automatiquement'},
+      {icon:'📋', txt:'Espace personnel pour gérer votre abonnement'},
+    ].map(f => `
+      <div class="feat">
+        <span class="feat-icon">${f.icon}</span>
+        <span>${f.txt}</span>
+      </div>
+    `).join('')}
+  </div>
+
+  <a href="index.html" class="btn">Accéder aux modules →</a>
+  <a href="auth.html" class="btn-secondary">Mon espace personnel</a>
+
+  <div class="guarantee">✓ Un email de confirmation vous a été envoyé</div>
+</div>
+
+<script>
+// Rafraîchir le statut Premium dans localStorage
+const SUPABASE_URL  = 'VOTRE_PROJECT_URL';
+const SUPABASE_ANON = 'VOTRE_ANON_PUBLIC_KEY';
+
+(async () => {
+  try {
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user) {
+      // Attendre 2s que le webhook Stripe ait mis à jour Supabase
+      await new Promise(r => setTimeout(r, 2000));
+      const { data: sub } = await sb
+        .from('subscriptions')
+        .select('plan, status')
+        .eq('user_id', session.user.id)
+        .single();
+      if (sub?.status === 'active') {
+        localStorage.setItem('simcare_premium', '1');
+        localStorage.setItem('simcare_jwt', session.access_token);
+      }
+    }
+  } catch(e) { console.warn('Refresh statut:', e); }
+})();
+</script>
+</body>
+</html>

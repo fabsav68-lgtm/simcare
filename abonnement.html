@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimCare · S'abonner</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:    #faf8f4;
+  --ink:   #2c2a26;
+  --gold:  #c8922a;
+  --gold2: #a07018;
+  --fog:   #7a7468;
+  --warm:  #f0ece4;
+  --ok:    #2a7040;
+  --paper: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #faf8f4;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+/* texture supprimée pour lisibilité */
+
+/* ── HEADER ── */
+.top-bar {
+  padding: 16px 32px;
+  border-bottom: 1px solid rgba(14,12,10,.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  position: relative; z-index: 10;
+}
+.logo {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.logo em { font-style: italic; color: var(--gold); }
+.btn-back {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #555570;
+  text-decoration: none;
+  border: 1px solid rgba(14,12,10,.15);
+  padding: 6px 14px;
+  border-radius: 4px;
+  transition: all .2s;
+}
+.btn-back:hover { color: var(--ink); background: #f4f4fb; }
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 56px 24px 48px;
+  position: relative; z-index: 5;
+  background: linear-gradient(180deg, #f5f1eb 0%, #faf8f4 100%);
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 6vw, 56px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+}
+.hero-title em { font-style: italic; color: var(--gold); }
+.hero-sub {
+  font-size: 17px;
+  color: #555570;
+  line-height: 1.65;
+  max-width: 480px;
+  margin: 0 auto 8px;
+}
+.hero-guarantee {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ok);
+  margin-top: 10px;
+}
+
+/* ── TOGGLE MENSUEL/ANNUEL ── */
+.billing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+.toggle-label {
+  font-size: 14px;
+  color: #555570;
+  font-weight: 500;
+}
+.toggle-label.active { color: var(--ink); font-weight: 700; }
+.toggle-switch {
+  width: 48px;
+  height: 26px;
+  background: var(--gold);
+  border-radius: 13px;
+  cursor: pointer;
+  position: relative;
+  transition: background .3s;
+  border: none;
+}
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: white;
+  top: 3px;
+  transition: left .3s;
+}
+.toggle-switch.monthly::after { left: 3px; }
+.toggle-switch.annual::after  { left: 25px; }
+.promo-badge {
+  background: rgba(42,120,64,.12);
+  color: var(--ok);
+  border: 1px solid rgba(42,120,64,.25);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── GRILLE TARIFS ── */
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+  position: relative; z-index: 5;
+}
+
+.plan-card {
+  background: #ffffff;
+  border: 1.5px solid rgba(14,12,10,.12);
+  border-radius: 12px;
+  padding: 28px 24px;
+  position: relative;
+  transition: transform .2s, box-shadow .2s;
+}
+.plan-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(14,12,10,.1);
+}
+.plan-card.featured {
+  border-color: var(--gold);
+  border-width: 2px;
+  background: linear-gradient(180deg, rgba(200,146,42,.04) 0%, white 30%);
+}
+
+.plan-badge {
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: white;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.plan-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #555570;
+  margin-bottom: 16px;
+}
+
+.plan-price-wrap { margin-bottom: 8px; }
+.plan-price {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  color: var(--ink);
+}
+.plan-currency {
+  font-size: 20px;
+  vertical-align: super;
+  font-weight: 400;
+  margin-right: 2px;
+}
+.plan-period {
+  font-size: 14px;
+  color: #555570;
+  margin-left: 2px;
+}
+.plan-annual-equiv {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ok);
+  margin-bottom: 8px;
+  min-height: 18px;
+}
+.plan-desc {
+  font-size: 13px;
+  color: #555570;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  min-height: 48px;
+}
+
+/* Features */
+.plan-features { margin-bottom: 24px; }
+.plan-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.feat-check { color: var(--ok); flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+.feat-x     { color: #ccc;      flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+
+/* CTA */
+.plan-cta {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
+}
+.plan-cta.primary {
+  background: linear-gradient(135deg, var(--gold2), var(--gold));
+  color: white;
+}
+.plan-cta.primary:hover { opacity: .9; transform: translateY(-1px); }
+.plan-cta.secondary {
+  background: transparent;
+  border: 1.5px solid rgba(14,12,10,.2);
+  color: var(--ink);
+}
+.plan-cta.secondary:hover { background: #f4f4fb; }
+.plan-cta:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+/* ── GARANTIES ── */
+.guarantees {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding: 0 24px 40px;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative; z-index: 5;
+}
+.guarantee-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #555570;
+}
+.guarantee-icon { font-size: 18px; }
+
+/* ── FAQ ── */
+.faq {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+  position: relative; z-index: 5;
+}
+.faq-title {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.faq-item {
+  border-bottom: 1px solid rgba(14,12,10,.1);
+  padding: 14px 0;
+  cursor: pointer;
+}
+.faq-q {
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.faq-q::after { content: '+'; color: var(--gold); font-size: 20px; flex-shrink: 0; }
+.faq-item.open .faq-q::after { content: '−'; }
+.faq-a {
+  font-size: 13px;
+  color: #555570;
+  line-height: 1.7;
+  display: none;
+  margin-top: 10px;
+}
+.faq-item.open .faq-a { display: block; }
+
+/* ── MODAL CONFIRMATION ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(14,12,10,.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(14,12,10,.2);
+}
+.modal-icon { font-size: 48px; margin-bottom: 16px; }
+.modal-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.modal-sub { font-size: 14px; color: #555570; line-height: 1.65; margin-bottom: 20px; }
+.modal-btn {
+  display: block; width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--gold2), var(--gold));
+  color: white; border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  margin-bottom: 8px;
+}
+.modal-cancel {
+  font-size: 12px; color: #555570; cursor: pointer;
+  font-family: 'DM Mono', monospace; letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.fadeup { animation: fadeUp .4s ease; }
+@media (max-width: 700px) {
+  .plans-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .top-bar { padding: 12px 16px; }
+  .guarantees { gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-bar">
+  <a href="index.html" class="logo">Sim<em>Care</em></a>
+  <a href="index.html" class="btn-back">← Modules</a>
+</div>
+
+<!-- HERO -->
+<div class="hero fadeup">
+  <div class="hero-eyebrow">Abonnement SimCare</div>
+  <h1 class="hero-title">Accédez à l'<em>IA clinique</em><br>dans tous les modules</h1>
+  <p class="hero-sub">20 modules entièrement gratuits. L'analyse IA dans chaque module, réservée aux abonnés.</p>
+  <div class="hero-guarantee">✓ Résiliable à tout moment · Paiement sécurisé Stripe</div>
+</div>
+
+<!-- TOGGLE MENSUEL / ANNUEL -->
+<div class="billing-toggle">
+  <span class="toggle-label active" id="label-monthly">Mensuel</span>
+  <button class="toggle-switch monthly" id="billing-toggle" onclick="toggleBilling()"></button>
+  <span class="toggle-label" id="label-annual">Annuel <span class="promo-badge">-37%</span></span>
+</div>
+
+<!-- PLANS -->
+<div class="plans-grid" id="plans-grid">
+  <!-- Injecté par JS -->
+</div>
+
+<!-- GARANTIES -->
+<div class="guarantees">
+  <div class="guarantee-item"><span class="guarantee-icon">🔒</span>Paiement Stripe sécurisé</div>
+  <div class="guarantee-item"><span class="guarantee-icon">↩️</span>Résiliable à tout moment</div>
+  <div class="guarantee-item"><span class="guarantee-icon">📱</span>iPhone, hors connexion</div>
+  <div class="guarantee-item"><span class="guarantee-icon">🔄</span>Mises à jour incluses</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq">
+  <div class="faq-title">Questions fréquentes</div>
+  ${[
+    {q:"Les modules sont-ils vraiment gratuits ?", a:"Oui, les 20 modules SimCare sont 100% gratuits et hors connexion. Seule l'analyse IA dans chaque module (coaching clinique, lecture critique, situation de leadership...) est réservée aux abonnés Premium."},
+    {q:"Comment résilier ?", a:"Depuis votre espace personnel, en un clic. Votre accès Premium reste actif jusqu'à la fin de la période payée. Aucun frais de résiliation."},
+    {q:"L'abonnement couvre-t-il tous les modules ?", a:"Oui. Un seul abonnement déverrouille l'IA dans les 20 modules existants ET tous les nouveaux modules SimCare publiés pendant votre abonnement."},
+    {q:"Puis-je partager mon compte avec un autre étudiant ?", a:"Non — les comptes sont personnels et liés à un email. Pour les IFSI ou groupes d'étudiants, le forfait Institution est prévu à cet effet."},
+    {q:"Comment fonctionne l'abonnement Institution ?", a:"Le forfait Institution donne accès à la suite complète pour un nombre illimité d'utilisateurs au sein de l'établissement. Contactez-nous pour un devis personnalisé."},
+  ].map(f => `
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">${f.q}</div>
+      <div class="faq-a">${f.a}</div>
+    </div>
+  `).join('')}
+</div>
+
+<!-- MODAL CONNEXION REQUISE -->
+<div class="modal-overlay" id="modal-auth" style="display:none">
+  <div class="modal">
+    <div class="modal-icon">🔐</div>
+    <div class="modal-title">Connexion requise</div>
+    <div class="modal-sub">Créez votre compte SimCare gratuit avant de vous abonner. Cela ne prend que 30 secondes.</div>
+    <button class="modal-btn" onclick="window.location.href='auth.html?redirect=abonnement.html'">Créer mon compte →</button>
+    <div class="modal-cancel" onclick="closeModal()">Annuler</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  CONFIGURATION
+//  ⚠️ Remplacer par vos valeurs réelles
+// ═══════════════════════════════════════
+const SUPABASE_URL  = 'VOTRE_PROJECT_URL';
+const SUPABASE_ANON = 'VOTRE_ANON_PUBLIC_KEY';
+
+// Prix Stripe (créer dans le Dashboard Stripe → Products)
+// Remplacer par vos Price IDs réels
+const STRIPE_PRICES = {
+  student_monthly:  'price_STUDENT_MONTHLY_ID',   // 1,99€/mois
+  student_annual:   'price_STUDENT_ANNUAL_ID',    // 14,99€/an
+  formateur_monthly:'price_FORMA_MONTHLY_ID',     // 4,99€/mois
+  formateur_annual: 'price_FORMA_ANNUAL_ID',      // 39,99€/an
+};
+
+// Supabase Edge Function URL (à créer étape 2b)
+const CHECKOUT_FUNCTION = `${SUPABASE_URL}/functions/v1/create-checkout`;
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let billing = 'monthly'; // 'monthly' | 'annual'
+let currentUser = null;
+
+// Récupérer session
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  currentUser = session?.user || null;
+  renderPlans();
+})();
+
+// ═══════════════════════════════════════
+//  PLANS DATA
+// ═══════════════════════════════════════
+const PLANS = [
+  {
+    id: 'student',
+    name: 'Étudiant',
+    monthly: { price: '1,99', cents: 199, priceId: 'student_monthly' },
+    annual:  { price: '14,99', cents: 1499, priceId: 'student_annual', equiv: '1,25€/mois' },
+    desc: 'Accès à l\'analyse IA dans les 20 modules. Idéal pour tout le parcours IFSI.',
+    features: [
+      { ok: true,  txt: '20 modules SimCare gratuits' },
+      { ok: true,  txt: 'Analyse IA dans chaque module' },
+      { ok: true,  txt: 'Mises à jour incluses' },
+      { ok: true,  txt: 'PWA iPhone hors connexion' },
+      { ok: false, txt: 'Guide formateur' },
+      { ok: false, txt: 'Accès multi-utilisateurs' },
+    ],
+    cta: 'S\'abonner',
+    featured: false,
+  },
+  {
+    id: 'formateur',
+    name: 'Formateur',
+    monthly: { price: '4,99', cents: 499, priceId: 'formateur_monthly' },
+    annual:  { price: '39,99', cents: 3999, priceId: 'formateur_annual', equiv: '3,33€/mois' },
+    desc: 'Pour les formateurs IFSI. Accès complet + guide pédagogique des 18 fiches TD.',
+    features: [
+      { ok: true,  txt: '20 modules SimCare gratuits' },
+      { ok: true,  txt: 'Analyse IA dans chaque module' },
+      { ok: true,  txt: 'Guide formateur 18 fiches TD' },
+      { ok: true,  txt: 'Mises à jour incluses' },
+      { ok: true,  txt: 'Support prioritaire' },
+      { ok: false, txt: 'Accès multi-utilisateurs' },
+    ],
+    cta: 'S\'abonner',
+    featured: true,
+    badge: 'Recommandé',
+  },
+  {
+    id: 'institution',
+    name: 'Institution',
+    monthly: { price: 'Sur devis', cents: null, priceId: null },
+    annual:  { price: 'Sur devis', cents: null, priceId: null },
+    desc: 'Pour les IFSI et organismes de formation. Utilisateurs illimités.',
+    features: [
+      { ok: true, txt: 'Utilisateurs illimités' },
+      { ok: true, txt: 'Analyse IA pour tous' },
+      { ok: true, txt: 'Guide formateur complet' },
+      { ok: true, txt: 'Convention de partenariat' },
+      { ok: true, txt: 'Facturation institutionnelle' },
+      { ok: true, txt: 'Support dédié' },
+    ],
+    cta: 'Nous contacter',
+    featured: false,
+  },
+];
+
+// ═══════════════════════════════════════
+//  RENDU
+// ═══════════════════════════════════════
+function renderPlans() {
+  const grid = document.getElementById('plans-grid');
+  grid.innerHTML = PLANS.map(plan => {
+    const b = plan[billing];
+    const isDevis = !b.cents;
+    return `
+    <div class="plan-card ${plan.featured ? 'featured' : ''} fadeup">
+      ${plan.badge ? `<div class="plan-badge">${plan.badge}</div>` : ''}
+      <div class="plan-name">${plan.name}</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">
+          ${isDevis ? `<span style="font-size:28px;letter-spacing:-.5px">${b.price}</span>` : `<span class="plan-currency">€</span>${b.price}`}
+        </div>
+        ${!isDevis ? `<span class="plan-period">/ ${billing === 'monthly' ? 'mois' : 'an'}</span>` : ''}
+      </div>
+      <div class="plan-annual-equiv">
+        ${billing === 'annual' && b.equiv ? `≈ ${b.equiv}` : ''}
+      </div>
+      <div class="plan-desc">${plan.desc}</div>
+      <div class="plan-features">
+        ${plan.features.map(f => `
+          <div class="plan-feature">
+            <span class="${f.ok ? 'feat-check' : 'feat-x'}">${f.ok ? '✓' : '✗'}</span>
+            <span style="${f.ok ? '' : 'color:var(--fog)'}">${f.txt}</span>
+          </div>
+        `).join('')}
+      </div>
+      <button class="plan-cta ${plan.featured ? 'primary' : 'secondary'}"
+        onclick="${isDevis ? "window.location.href='mailto:contact@simcare.fr?subject=Demande%20Institution%20SimCare'" : `subscribe('${plan.id}')`}">
+        ${plan.cta}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  TOGGLE MENSUEL / ANNUEL
+// ═══════════════════════════════════════
+function toggleBilling() {
+  billing = billing === 'monthly' ? 'annual' : 'monthly';
+  const toggle = document.getElementById('billing-toggle');
+  toggle.className = `toggle-switch ${billing}`;
+  document.getElementById('label-monthly').className = `toggle-label ${billing === 'monthly' ? 'active' : ''}`;
+  document.getElementById('label-annual').className  = `toggle-label ${billing === 'annual'  ? 'active' : ''}`;
+  renderPlans();
+}
+
+// ═══════════════════════════════════════
+//  CHECKOUT STRIPE
+// ═══════════════════════════════════════
+async function subscribe(planId) {
+  // Vérifier connexion
+  if (!currentUser) {
+    document.getElementById('modal-auth').style.display = 'flex';
+    return;
+  }
+
+  const plan = PLANS.find(p => p.id === planId);
+  const b    = plan[billing];
+  if (!b.priceId) return;
+
+  // Afficher loading sur le bouton
+  const btn = event.target;
+  btn.textContent = '⏳ Redirection...';
+  btn.disabled = true;
+
+  try {
+    // Appeler la Supabase Edge Function qui crée la session Stripe
+    const { data: { session } } = await sb.auth.getSession();
+
+    const res = await fetch(CHECKOUT_FUNCTION, {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        priceId:    STRIPE_PRICES[`${planId}_${billing}`],
+        planId,
+        billing,
+        successUrl: window.location.origin + '/success.html',
+        cancelUrl:  window.location.href,
+      }),
+    });
+
+    const { url, error } = await res.json();
+    if (error) throw new Error(error);
+
+    // Rediriger vers Stripe Checkout
+    window.location.href = url;
+
+  } catch (err) {
+    btn.textContent = plan.cta;
+    btn.disabled = false;
+    alert('Erreur lors de la redirection vers le paiement. Réessayez ou contactez contact@simcare.fr');
+    console.error(err);
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal-auth').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
