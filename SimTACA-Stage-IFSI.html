@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimTACA · Stage · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:    #0d1117;
+  --bg2:   #161b22;
+  --card:  rgba(255,255,255,.03);
+  --bdr:   rgba(255,255,255,.08);
+  --txt:   #e6edf3;
+  --txt2:  #7d8590;
+  --txt3:  #21262d;
+  --s1: #58a6ff;
+  --s2: #3fb950;
+  --s3: #d29922;
+  --s4: #e07060;
+  --s5: #a371f7;
+  --s6: #f0c040;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'IBM Plex Sans',sans-serif;
+  background:var(--bg);
+  color:var(--txt);min-height:100vh;padding-bottom:80px;
+  overflow-x:hidden;position:relative;
+}
+/* Fond terrain — motif hexagonal subtil */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(63,185,80,.04) 0%,transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(88,166,255,.04) 0%,transparent 50%);
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(60deg, rgba(255,255,255,.015) 0px, rgba(255,255,255,.015) 1px, transparent 1px, transparent 30px),
+    repeating-linear-gradient(-60deg, rgba(255,255,255,.015) 0px, rgba(255,255,255,.015) 1px, transparent 1px, transparent 30px);
+}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.site-header{padding:40px 24px 28px;text-align:center;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.22);
+  color:var(--s2);padding:5px 16px;border-radius:4px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;
+}
+.site-header h1{
+  font-family:'Lora',serif;
+  font-size:clamp(26px,5vw,42px);font-weight:600;
+  font-style:italic;line-height:1.15;letter-spacing:-.5px;margin-bottom:8px;
+}
+.site-header h1 em{font-style:normal;color:var(--s2)}
+.site-header p{color:var(--txt2);font-size:13px;line-height:1.6}
+
+/* ── CRESCENDO ── */
+.crescendo{
+  display:flex;align-items:flex-end;justify-content:center;
+  gap:6px;padding:24px 0 8px;height:80px;
+}
+.cres-bar{
+  display:flex;flex-direction:column;align-items:center;
+  gap:6px;cursor:pointer;transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.cres-bar-inner{
+  width:38px;border-radius:4px 4px 0 0;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);opacity:.3;
+}
+.cres-bar.active .cres-bar-inner{opacity:1;box-shadow:0 0 16px currentColor}
+.cres-bar:hover .cres-bar-inner{opacity:.7}
+.cres-lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  color:var(--txt2);letter-spacing:1px;transition:color .2s;
+}
+.cres-bar.active .cres-lbl{font-weight:600}
+
+/* ── SEM INFO ── */
+.sem-info{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1.5px solid var(--bdr);
+  border-radius:12px;padding:16px 20px;margin-bottom:20px;
+  position:relative;z-index:1;transition:border-color .3s;
+}
+.sem-badge{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.sem-name{font-family:'Lora',serif;font-size:17px;font-weight:500;font-style:italic}
+.sem-posture{font-size:12px;color:var(--txt2);margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px}
+.sem-heures{margin-left:auto;text-align:right;font-family:'IBM Plex Mono',monospace}
+.sem-heures-v{font-size:26px;font-weight:500;display:block;line-height:1}
+.sem-heures-l{font-size:10px;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase}
+
+/* ── ONGLETS ── */
+.tabs{display:flex;gap:4px;padding:0 0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+.tab{
+  padding:8px 14px;border-radius:6px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:all .18s;font-family:'IBM Plex Sans',sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:14px;position:relative;z-index:1}
+.card-title{font-family:'Lora',serif;font-size:18px;font-weight:500;font-style:italic;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:13px;margin-bottom:18px;line-height:1.65}
+
+/* ── JOURNAL RÉFLEXIF ── */
+.gibbs-step{
+  border-radius:10px;padding:16px;margin-bottom:10px;
+  border-left:3px solid transparent;position:relative;
+}
+.gibbs-num{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;
+  opacity:.7;
+}
+.gibbs-titre{font-family:'Lora',serif;font-size:16px;font-weight:500;font-style:italic;margin-bottom:8px}
+.gibbs-question{font-size:12px;color:var(--txt2);font-style:italic;margin-bottom:8px;line-height:1.6}
+.gibbs-area{
+  width:100%;border-radius:8px;padding:10px 12px;
+  background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07);
+  color:var(--txt);font-size:13px;font-family:'IBM Plex Sans',sans-serif;
+  outline:none;resize:vertical;min-height:60px;line-height:1.65;
+  transition:border-color .2s;
+}
+.gibbs-area:focus{border-color:rgba(255,255,255,.2)}
+
+/* ── PROGRESS ── */
+.progress-bar-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:8px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .6s cubic-bezier(.34,1.2,.64,1)}
+
+/* ── SITUATIONS ── */
+.sit-card{
+  background:rgba(0,0,0,.2);border-radius:10px;padding:14px;
+  margin-bottom:8px;border-left:3px solid transparent;cursor:pointer;
+  transition:all .18s;
+}
+.sit-card:hover{background:rgba(0,0,0,.3)}
+.sit-titre{font-family:'Lora',serif;font-size:15px;font-weight:500;font-style:italic;margin-bottom:4px}
+.sit-body{font-size:12px;color:var(--txt2);line-height:1.65;display:none;margin-top:8px}
+.sit-card.open .sit-body{display:block}
+.sit-tag{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;
+  letter-spacing:1px;text-transform:uppercase;margin-top:6px;
+}
+
+/* ── ENTRETIEN ── */
+.entretien-section{margin-bottom:16px}
+.ent-titre{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:8px;
+}
+.ent-item{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:10px 12px;border-radius:8px;margin-bottom:6px;
+  background:rgba(255,255,255,.025);border:1px solid var(--bdr);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;
+}
+.ent-item:hover{background:rgba(255,255,255,.04)}
+.ent-check{
+  width:18px;height:18px;border-radius:3px;border:1.5px solid var(--bdr);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  margin-top:1px;transition:all .15s;font-size:11px;
+}
+.ent-item.done .ent-check{background:var(--em-c,var(--s2));border-color:transparent;color:#0d1117}
+.ent-txt{font-size:13px;color:var(--txt2);line-height:1.6}
+.ent-item.done .ent-txt{text-decoration:line-through;color:var(--txt3)}
+
+/* ── BOUTONS ── */
+.btn-p{border:none;border-radius:8px;color:#0d1117;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;padding:12px 24px;cursor:pointer;transition:opacity .2s,transform .1s}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;color:var(--txt2);font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:10px 18px;cursor:pointer;transition:all .18s}
+.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+.col8{display:flex;flex-direction:column;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── INFO ── */
+.info{border-radius:8px;padding:11px 14px;font-size:13px;line-height:1.75;margin-bottom:12px}
+.info-blue {background:rgba(88,166,255,.07); border-left:3px solid rgba(88,166,255,.5); color:var(--s1)}
+.info-green{background:rgba(63,185,80,.07);  border-left:3px solid rgba(63,185,80,.5);  color:var(--s2)}
+.info-gold {background:rgba(210,153,34,.07);  border-left:3px solid rgba(210,153,34,.5);  color:var(--s3)}
+.info-coral{background:rgba(224,112,96,.07);  border-left:3px solid rgba(224,112,96,.5);  color:var(--s4)}
+.info-lav  {background:rgba(163,113,247,.07); border-left:3px solid rgba(163,113,247,.5); color:var(--s5)}
+.info-sun  {background:rgba(240,192,64,.07);  border-left:3px solid rgba(240,192,64,.5);  color:var(--s6)}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:24px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{font-size:13px;margin-top:10px;font-style:italic;color:var(--txt2)}
+.analysis p{margin-bottom:14px;font-size:15px;line-height:1.85;color:#8090a0}
+.analysis strong{color:var(--txt)}
+
+/* ── PREMIUM ── */
+.premium-box{background:rgba(0,0,0,.3);border:1.5px solid rgba(63,185,80,.15);border-radius:12px;padding:24px;margin-bottom:14px}
+.apikey-box{background:rgba(63,185,80,.04);border:1px solid rgba(63,185,80,.12);border-radius:8px;padding:12px}
+.apikey-box p{font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--s2)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);font-family:'IBM Plex Mono',monospace;outline:none}
+.apikey-row input:focus{border-color:rgba(63,185,80,.3)}
+.apikey-row button{padding:9px 14px;border:none;border-radius:6px;color:#0d1117;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px}
+.apikey-saved{color:var(--s2);font-size:11px;margin-top:5px;font-family:'IBM Plex Mono',monospace}
+
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:16px 0}
+
+/* ── WELCOME ── */
+.pts{display:flex;flex-direction:column;gap:10px;margin:18px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:12px;text-align:center}
+.stat-v{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;display:block}
+.stat-l{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace;display:block;margin-top:4px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.grid2{grid-template-columns:1fr}.nav-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+// ═══════════════════════════════════════
+//  DONNÉES — CRESCENDO EN STAGE
+// ═══════════════════════════════════════
+const SEMESTRES = [
+  {
+    id:1, label:'S1', couleur:'#58a6ff', hauteur:20,
+    posture:'👁️ Observation guidée', titre:'Je regarde et je note',
+    hSemaine:5, nbSemaines:8,
+    question_reflexive:'Qu\'ai-je observé aujourd\'hui ?',
+    message:'En S1, tu observes. Tout est nouveau — les gestes, les relations, les espaces. Tes 5h/semaine de TACA en stage sont un espace protégé pour poser tes observations, pas encore pour juger.',
+    infoClass:'info-blue',
+    gibbs_focus:[0,1], // Description + Sentiments uniquement
+    situations:[
+      {titre:'Ma première prise en charge', q:'Décris le premier soin auquel tu as assisté. Qu\'as-tu ressenti ? Qu\'as-tu observé du rôle IDE ?', niveaux:['Je décris ce que j\'ai vu','Je note mes émotions','Je pose des questions à mon tuteur']},
+      {titre:'La relation soignant-soigné', q:'Observe une interaction entre un IDE et un patient. Qu\'est-ce qui t\'a frappé dans la communication ? Le verbal, le non-verbal ?', niveaux:['J\'observe sans intervenir','Je note les attitudes soignantes','Je repère ce que je veux reproduire']},
+      {titre:'L\'organisation du service', q:'Comment s\'organise une journée de travail IDE dans ce service ? Quelles sont les priorités ?', niveaux:['Je cartographie l\'organisation','Je comprends les transmissions','Je repère les moments clés']},
+    ],
+    entretien:{
+      mi_stage:[
+        'Présenter mes premières observations sur le service',
+        'Identifier 2 situations qui m\'ont marqué(e)',
+        'Exprimer mes difficultés sans honte',
+        'Demander des précisions sur ce que je n\'ai pas compris',
+        'Fixer un objectif concret pour la 2ème moitié de stage',
+      ],
+      fin_stage:[
+        'Présenter mon bilan d\'observations du semestre',
+        'Identifier mes apprentissages principaux',
+        'Reconnaître mes zones d\'inconfort — et c\'est normal en S1',
+        'Remercier l\'équipe et le tuteur pour l\'accueil',
+        'Identifier ce que je veux approfondir en TACA Théorie',
+      ],
+    },
+  },
+  {
+    id:2, label:'S2', couleur:'#3fb950', hauteur:32,
+    posture:'🤲 Participation assistée', titre:'Je commence à faire',
+    hSemaine:5, nbSemaines:8,
+    question_reflexive:'Qu\'ai-je fait, et avec quelle aide ?',
+    message:'En S2, tu passes de l\'observation à l\'action — avec un filet de sécurité. Chaque geste réalisé devient matière à réflexion. Tu commences à comprendre pourquoi on fait les choses, pas seulement comment.',
+    infoClass:'info-green',
+    gibbs_focus:[0,1,2],
+    situations:[
+      {titre:'Mon premier soin technique réalisé', q:'Quel soin as-tu réalisé pour la première fois ? Comment te préparais-tu ? Comment tu t\'es senti(e) après ?', niveaux:['Je décris le soin étape par étape','J\'identifie ce qui a bien marché','Je note ce que j\'aurais fait différemment']},
+      {titre:'Un moment d\'incertitude', q:'Décris un moment où tu n\'as pas su quoi faire. Comment l\'as-tu géré ? Qu\'as-tu appris de cette incertitude ?', niveaux:['Je décris la situation sans me juger','J\'identifie ce qui m\'a manqué','Je cherche les ressources pour combler ce manque']},
+      {titre:'La relation avec mon tuteur', q:'Comment se passe ta relation avec ton tuteur de stage ? Qu\'apprends-tu de lui/elle en dehors des soins techniques ?', niveaux:['Je décris notre collaboration','Je repère son style d\'encadrement','Je tire parti de ses retours, positifs et négatifs']},
+    ],
+    entretien:{
+      mi_stage:[
+        'Présenter les soins réalisés et le niveau d\'autonomie atteint',
+        'Identifier 1 situation difficile et comment je l\'ai gérée',
+        'Demander un feedback précis sur ma posture professionnelle',
+        'Exprimer ce dont j\'ai besoin pour progresser',
+        'Fixer 2 objectifs de soins pour la 2ème moitié',
+      ],
+      fin_stage:[
+        'Évaluer ma progression entre le début et la fin de stage',
+        'Identifier les compétences acquises et celles en cours',
+        'Présenter une situation clinique analysée avec le cycle de Gibbs',
+        'Nommer les valeurs soignantes que j\'ai observées chez les professionnels',
+        'Définir mon prochain objectif de stage',
+      ],
+    },
+  },
+  {
+    id:3, label:'S3', couleur:'#d29922', hauteur:44,
+    posture:'🎯 Participation active', titre:'Je fais et je comprends pourquoi',
+    hSemaine:5, nbSemaines:10,
+    question_reflexive:'Pourquoi ai-je fait ça ? Qu\'aurais-je pu faire autrement ?',
+    message:'En S3, tu n\'exécutes plus — tu raisonnes. Chaque acte est précédé d\'un "pourquoi" et suivi d\'un "qu\'est-ce que ça m\'apprend". Le cycle de Gibbs devient ton outil quotidien.',
+    infoClass:'info-gold',
+    gibbs_focus:[0,1,2,3],
+    situations:[
+      {titre:'Une situation complexe gérée seul(e)', q:'Décris une situation où tu as dû prendre une initiative. Qu\'as-tu évalué ? Qu\'as-tu décidé ? Avec quel résultat ?', niveaux:['Je décris mon raisonnement clinique','J\'évalue la qualité de ma décision','Je consulte avec le tuteur sur ma démarche']},
+      {titre:'Un patient difficile à aborder', q:'As-tu rencontré un patient en colère, en refus, ou dans une grande détresse ? Comment as-tu adapté ta communication ?', niveaux:['Je décris la situation relationnelle','J\'analyse mes réactions émotionnelles','Je réfléchis à une meilleure approche']},
+      {titre:'Collaboration interprofessionnelle', q:'Décris un moment où tu as travaillé avec d\'autres professionnels (médecin, kiné, AS...). Quelle était ta place dans cette équipe ?', niveaux:['Je décris les rôles de chacun','J\'analyse la communication inter-équipe','Je positionne mon rôle IDE dans ce collectif']},
+    ],
+    entretien:{
+      mi_stage:[
+        'Présenter une analyse Gibbs d\'une situation vécue',
+        'Identifier mon niveau de raisonnement clinique actuel',
+        'Discuter d\'une décision que j\'ai prise seul(e)',
+        'Nommer mes axes de progression prioritaires',
+        'Proposer un objectif de stage autonome',
+      ],
+      fin_stage:[
+        'Présenter le portfolio de 3 situations analysées avec Gibbs',
+        'Évaluer mon autonomie dans les soins du service',
+        'Identifier les spécificités du service et leur lien avec les UE',
+        'Formaliser mon projet professionnel provisoire',
+        'Rédiger une synthèse écrite de stage',
+      ],
+    },
+  },
+  {
+    id:4, label:'S4', couleur:'#e07060', hauteur:56,
+    posture:'🧭 Semi-autonome', titre:'Je gère et je transmets',
+    hSemaine:5, nbSemaines:10,
+    question_reflexive:'Qu\'ai-je appris sur moi en tant que soignant(e) ?',
+    message:'En S4, tu prends en charge et tu transmets. Tu es capable d\'assurer une continuité de soins. Ta réflexivité porte sur ton identité professionnelle — pas seulement tes actes.',
+    infoClass:'info-coral',
+    gibbs_focus:[0,1,2,3,4],
+    situations:[
+      {titre:'Gestion d\'une situation urgente', q:'Décris une situation d\'urgence ou de dégradation clinique. Qu\'as-tu évalué en premier ? Comment as-tu alerté ? Comment l\'équipe a-t-elle répondu ?', niveaux:['Je décris mon évaluation clinique initiale','J\'analyse ma gestion de la priorité','Je mesure l\'efficacité de ma communication d\'urgence']},
+      {titre:'Transmission et passation', q:'Comment prépares-tu tes transmissions ? Qu\'est-ce qu\'une bonne transmission ? Comment t\'es-tu amélioré(e) dans cet exercice ?', niveaux:['Je décris la structure de mes transmissions','J\'identifie les informations essentielles vs secondaires','Je travaille la concision et la précision']},
+      {titre:'Accompagnement d\'un étudiant S1 ou S2', q:'As-tu été amené(e) à expliquer un soin ou à accompagner un étudiant junior ? Comment as-tu transmis tes connaissances ?', niveaux:['Je décris ma façon d\'expliquer','J\'analyse ma pédagogie spontanée','Je réfléchis à ce que transmettre signifie pour moi']},
+    ],
+    entretien:{
+      mi_stage:[
+        'Présenter une prise en charge complète d\'un patient',
+        'Analyser une erreur ou un presque-accident avec Gibbs',
+        'Discuter de mes transmissions — points forts et axes de travail',
+        'Identifier comment je contribue à l\'équipe',
+        'Définir mon projet professionnel de manière plus précise',
+      ],
+      fin_stage:[
+        'Évaluer mon autonomie dans la gestion de plusieurs patients',
+        'Présenter une analyse de la culture soignante du service',
+        'Identifier les spécialités qui m\'attirent et pourquoi',
+        'Documenter 5 compétences consolidées dans mon portfolio',
+        'Rédiger une lettre à mon futur moi IDE',
+      ],
+    },
+  },
+  {
+    id:5, label:'S5', couleur:'#a371f7', hauteur:68,
+    posture:'🔍 Autonome réflexif', titre:'Je questionne ma pratique',
+    hSemaine:5, nbSemaines:10,
+    question_reflexive:'Comment ma pratique reflète-t-elle mes valeurs professionnelles ?',
+    message:'En S5, tu es autonome. Tes 5h/semaine ne sont plus de l\'apprentissage — c\'est de la recherche sur ta propre pratique. Tu lies ce que tu fais à ce que tu penses, à ce que tu lis, à ce que tu veux devenir.',
+    infoClass:'info-lav',
+    gibbs_focus:[0,1,2,3,4,5],
+    situations:[
+      {titre:'Un dilemme éthique vécu', q:'As-tu vécu une situation où tu as ressenti un conflit entre ce qui était fait et ce qui te semblait juste ? Comment l\'as-tu traversé ?', niveaux:['Je décris le dilemme sans le minimiser','J\'analyse les valeurs en tension','Je formule une position éthique personnelle argumentée']},
+      {titre:'Lien recherche–pratique', q:'As-tu pu appliquer en stage quelque chose que tu as lu dans un article ou un cours ? Comment s\'est fait ce lien ?', niveaux:['Je décris le lien théorie-pratique','J\'évalue l\'efficacité de l\'application','Je formule une question de recherche']},
+      {titre:'Ma pratique dans 10 ans', q:'En observant les IDE seniors de ce service, que vois-tu de l\'infirmier(ère) que tu veux être — ou ne pas être — dans 10 ans ?', niveaux:['Je décris les modèles positifs et négatifs','J\'identifie mes valeurs non-négociables','Je projette mon développement professionnel']},
+    ],
+    entretien:{
+      mi_stage:[
+        'Présenter une situation analysée avec un cadre conceptuel (éthique, soin, qualité)',
+        'Montrer comment j\'articule autonomie et sécurité des soins',
+        'Identifier une question de recherche issue de ma pratique',
+        'Discuter de mon projet professionnel et de ma spécialisation envisagée',
+        'Évaluer ma contribution à la qualité des soins du service',
+      ],
+      fin_stage:[
+        'Présenter un écrit réflexif long (3-5 pages) sur une situation marquante',
+        'Évaluer mon niveau de compétence selon le référentiel 2026',
+        'Identifier les formations complémentaires qui m\'intéressent',
+        'Recueillir des témoignages de l\'équipe sur ma pratique',
+        'Finaliser mon portfolio de compétences',
+      ],
+    },
+  },
+  {
+    id:6, label:'S6', couleur:'#f0c040', hauteur:80,
+    posture:'🎓 Expert en devenir', titre:'Je me projette au-delà du diplôme',
+    hSemaine:5, nbSemaines:10,
+    question_reflexive:'Quel IDE est-ce que je veux être ? Comment je continue à grandir ?',
+    message:'En S6, le stage est aussi une projection. Tu travailles comme un IDE — et tu t\'interroges sur la continuité. TACA·Stage devient un espace de préparation à l\'exercice professionnel et au DPC.',
+    infoClass:'info-sun',
+    gibbs_focus:[0,1,2,3,4,5],
+    situations:[
+      {titre:'Ma contribution à l\'équipe', q:'En quoi ta présence a-t-elle apporté quelque chose à l\'équipe ? Comment as-tu contribué à la qualité des soins, à l\'ambiance, à la transmission ?', niveaux:['Je décris mes contributions concrètes','J\'évalue mon impact sur les patients','Je réfléchis à ce que signifie être un professionnel']},
+      {titre:'Mon modèle de pratique', q:'Peux-tu décrire la façon dont tu soignes — ton "style" infirmier ? Quelles valeurs le fondent ? Comment s\'est-il construit au fil des stages ?', niveaux:['Je décris ma pratique avec recul','J\'identifie les influences qui m\'ont formé','Je formule une charte personnelle de soin']},
+      {titre:'Préparer la suite', q:'Après le diplôme : où ? Pourquoi ? Avec quelle formation continue ? Quelles sont tes premières étapes de DPC ?', niveaux:['Je décris mon projet professionnel concret','J\'identifie les étapes de mes 2 premières années','Je planifie ma première formation DPC']},
+    ],
+    entretien:{
+      mi_stage:[
+        'Présenter mon projet professionnel post-diplôme',
+        'Identifier les compétences que je veux encore consolider avant le diplôme',
+        'Discuter de l\'exercice professionnel avec les IDE du service',
+        'Demander un regard sur mes forces et mes fragilités actuelles',
+        'Évaluer ma capacité à travailler de nuit, le week-end, en urgence',
+      ],
+      fin_stage:[
+        'Réaliser un bilan complet des 3 années de formation clinique',
+        'Présenter mon portfolio finalisé',
+        'Rédiger une lettre de remerciements à l\'équipe',
+        'Identifier 3 IDE qui ont marqué ma formation et pourquoi',
+        'Me projeter : que ferai-je dans 1 an ? Dans 5 ans ?',
+      ],
+    },
+  },
+];
+
+// Cycle de Gibbs — 6 étapes
+const GIBBS = [
+  {num:'01', titre:'Description', couleur:'#58a6ff', q:'Que s\'est-il passé exactement ? Décris les faits, objectivement, sans interprétation.', bg:'rgba(88,166,255,.07)', bdr:'rgba(88,166,255,.25)'},
+  {num:'02', titre:'Sentiments', couleur:'#3fb950', q:'Que ressentais-tu pendant et après la situation ? Tes émotions sont des données cliniques.', bg:'rgba(63,185,80,.07)', bdr:'rgba(63,185,80,.25)'},
+  {num:'03', titre:'Évaluation', couleur:'#d29922', q:'Qu\'est-ce qui a bien fonctionné ? Qu\'est-ce qui n\'a pas bien fonctionné ?', bg:'rgba(210,153,34,.07)', bdr:'rgba(210,153,34,.25)'},
+  {num:'04', titre:'Analyse', couleur:'#e07060', q:'Pourquoi les choses se sont-elles passées ainsi ? Quels savoirs éclairent cette situation ?', bg:'rgba(224,112,96,.07)', bdr:'rgba(224,112,96,.25)'},
+  {num:'05', titre:'Conclusion', couleur:'#a371f7', q:'Que retiens-tu ? Qu\'aurais-tu pu faire différemment ?', bg:'rgba(163,113,247,.07)', bdr:'rgba(163,113,247,.25)'},
+  {num:'06', titre:'Plan d\'action', couleur:'#f0c040', q:'Comment agiras-tu différemment dans une situation similaire ? Quoi apprendre, pratiquer, chercher ?', bg:'rgba(240,192,64,.07)', bdr:'rgba(240,192,64,.25)'},
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT — localStorage
+// ═══════════════════════════════════════
+const STORE_KEY = 'simtaca_stage';
+function loadStore(){ try{return JSON.parse(localStorage.getItem(STORE_KEY))||{};}catch(e){return {};} }
+function saveStore(d){ try{localStorage.setItem(STORE_KEY,JSON.stringify(d));}catch(e){} }
+let STORE = loadStore();
+
+function getJournal(sem, etape){ return STORE[`j_${sem}_${etape}`]||''; }
+function setJournal(sem, etape, v){ STORE[`j_${sem}_${etape}`]=v; saveStore(STORE); }
+function getEntDone(sem, type, i){ return (STORE[`ent_${sem}_${type}`]||[]).includes(i); }
+function toggleEnt(sem, type, i){
+  const arr = STORE[`ent_${sem}_${type}`]||[];
+  const idx = arr.indexOf(i);
+  if(idx>=0) arr.splice(idx,1); else arr.push(i);
+  STORE[`ent_${sem}_${type}`]=arr; saveStore(STORE);
+}
+function getSitOpen(){ return STORE['sit_open']||null; }
+function setSitOpen(v){ STORE['sit_open']=v; saveStore(STORE); }
+
+let S = {
+  view:'welcome', sem:1, onglet:'journal',
+  entType:'mi_stage',
+  analyse:'', loading:false, showKey:false,
+  apiKey: localStorage.getItem('simtaca_stage_key')||'',
+  apiKeySaved: !!localStorage.getItem('simtaca_stage_key'),
+};
+
+function semObj(){ return SEMESTRES[S.sem-1]; }
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+function journalPct(sem){
+  const sem_obj = SEMESTRES[sem-1];
+  const n = sem_obj.gibbs_focus.length;
+  let filled = 0;
+  sem_obj.gibbs_focus.forEach(i=>{ if(getJournal(sem,i).trim().length>10) filled++; });
+  return n>0 ? Math.round(filled/n*100) : 0;
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  const sem = semObj();
+  const couleur = sem.couleur;
+  const jPct = journalPct(S.sem);
+
+  let h = '';
+
+  if(S.view!=='welcome'){
+    h+=`
+    <div class="site-header">
+      <div class="badge">🏥 TACA · Stage · 5h / semaine</div>
+      <h1>Sim<em>TACA</em> · Stage</h1>
+      <p>Temps d'Appropriation des Connaissances Acquises · En stage · Référentiel 2026</p>
+    </div>
+
+    <!-- Crescendo -->
+    <div style="position:relative;z-index:1;padding:0 20px 0">
+      <div class="crescendo">
+        ${SEMESTRES.map(sm=>`
+          <div class="cres-bar ${S.sem===sm.id?'active':''}" onclick="setSem(${sm.id})" style="color:${sm.couleur}">
+            <div class="cres-bar-inner" style="height:${sm.hauteur}px;background:${sm.couleur}"></div>
+            <div class="cres-lbl" style="${S.sem===sm.id?'color:'+sm.couleur:''}">${sm.label}</div>
+          </div>`).join('')}
+      </div>
+      <div style="text-align:center;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--txt3);letter-spacing:1px;padding-bottom:16px">↑ CRESCENDO — Observer → Participer → Comprendre → Questionner</div>
+    </div>
+
+    <div class="wrap">
+    <!-- Info semestre -->
+    <div class="sem-info fadeup" style="border-color:${couleur}30">
+      <div class="sem-badge" style="background:${couleur}18">${sem.posture.split(' ')[0]}</div>
+      <div>
+        <div class="sem-name" style="color:${couleur}">${sem.posture} — ${sem.titre}</div>
+        <div class="sem-posture">${sem.hSemaine}h/semaine · ~${sem.nbSemaines} semaines · Semestre ${sem.id}</div>
+      </div>
+      <div class="sem-heures">
+        <span class="sem-heures-v" style="color:${couleur}">${jPct}<span style="font-size:16px;opacity:.5">%</span></span>
+        <span class="sem-heures-l">journal rempli</span>
+      </div>
+    </div>
+
+    <!-- Onglets -->
+    <div class="tabs">
+      ${[
+        {id:'journal',    label:'✍️ Journal réflexif'},
+        {id:'situations', label:'🎭 Situations'},
+        {id:'entretien',  label:'🤝 Entretien'},
+        {id:'bilan',      label:'📊 Bilan'},
+        {id:'analyse',    label:'🔬 Analyse IA'},
+      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')" style="${S.onglet===t.id?'background:'+couleur+'18;border-color:'+couleur+'50;color:'+couleur:''}">${t.label}</button>`).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+      <div class="badge">🏥 TACA · Stage · Référentiel 2026</div>
+      <h1>Sim<em>TACA</em> · Stage</h1>
+    </div><div class="wrap">`;
+  }
+
+  // ─── WELCOME ─────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(63,185,80,.15)">
+      <div style="text-align:center;padding:8px 0 20px">
+        <div style="font-size:52px;margin-bottom:16px">🏥</div>
+        <p style="color:var(--txt2);font-size:15px;line-height:1.85;max-width:480px;margin:0 auto;text-align:center">
+          <strong style="color:var(--txt)">5 heures par semaine</strong> de réflexivité en stage.<br>
+          Pas du travail supplémentaire — un <strong style="color:var(--txt)">espace de sens</strong><br>pour transformer l'expérience en compétence.
+        </p>
+        <div style="margin:24px auto;max-width:320px">
+          <div class="crescendo" style="height:60px">
+            ${SEMESTRES.map(sm=>`
+              <div class="cres-bar" style="color:${sm.couleur}">
+                <div class="cres-bar-inner" style="height:${sm.hauteur*0.7}px;background:${sm.couleur};opacity:.55"></div>
+                <div class="cres-lbl">${sm.label}</div>
+              </div>`).join('')}
+          </div>
+          <div style="text-align:center;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--txt3);letter-spacing:1px;margin-top:4px">Observer → Participer → Questionner → Expert</div>
+        </div>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">✍️</span><span class="pt-t"><strong>Journal réflexif Gibbs</strong> — 6 étapes adaptées à ta posture du semestre</span></div>
+          <div class="pt"><span class="pt-i">🎭</span><span class="pt-t"><strong>Situations cliniques guidées</strong> — 3 situations emblématiques par semestre</span></div>
+          <div class="pt"><span class="pt-i">🤝</span><span class="pt-t"><strong>Préparation aux entretiens</strong> — mi-stage et fin de stage, checklist interactive</span></div>
+          <div class="pt"><span class="pt-i">📊</span><span class="pt-t"><strong>Bilan global</strong> — progression sur les 6 semestres de stage</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analyse IA</strong> — questionnement socratique sur tes situations vécues (Premium)</span></div>
+        </div>
+        <button class="btn-p btn-full" style="background:var(--s2)" onclick="go('main')">Commencer mon journal de stage →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── MAIN ────────────────────────────────────────────────────
+  else {
+
+    // ── JOURNAL RÉFLEXIF ─────────────────────────────────────
+    if(S.onglet==='journal'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Journal réflexif — Semestre ${sem.id}</div>
+          <div class="card-sub">${sem.message}</div>
+
+          <!-- Question centrale du semestre -->
+          <div style="background:${couleur}10;border:1px solid ${couleur}30;border-radius:8px;padding:14px;margin-bottom:18px;text-align:center">
+            <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:${couleur};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Question réflexive du semestre</div>
+            <div style="font-family:'Lora',serif;font-size:17px;font-style:italic;color:var(--txt);line-height:1.5">"${esc(sem.question_reflexive)}"</div>
+          </div>
+
+          <!-- Étapes de Gibbs disponibles -->
+          <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">
+            Cycle de Gibbs — ${sem.gibbs_focus.length} étape${sem.gibbs_focus.length>1?'s':''} activée${sem.gibbs_focus.length>1?'s':''} en S${sem.id}
+          </div>
+
+          ${GIBBS.map((g,i)=>{
+            const active = sem.gibbs_focus.includes(i);
+            const val = getJournal(S.sem, i);
+            if(!active) return `
+              <div style="opacity:.25;background:rgba(255,255,255,.02);border-radius:8px;padding:12px;margin-bottom:8px;border:1px dashed rgba(255,255,255,.08)">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txt3);letter-spacing:2px">ÉTAPE ${g.num} — ${g.titre.toUpperCase()} · Disponible à partir de S${i<2?1:i<3?2:i<4?3:i<5?4:i<6?5:6}</div>
+              </div>`;
+            return `
+              <div class="gibbs-step" style="background:${g.bg};border-left-color:${g.couleur};margin-bottom:10px">
+                <div class="gibbs-num" style="color:${g.couleur}">Étape ${g.num}</div>
+                <div class="gibbs-titre" style="color:${g.couleur}">${g.titre}</div>
+                <div class="gibbs-question">${esc(g.q)}</div>
+                <textarea class="gibbs-area"
+                  placeholder="Écris ici ta réflexion…"
+                  oninput="setJournalAction(${i},this.value)"
+                  style="border-color:${val.length>10?g.couleur+'40':'rgba(255,255,255,.07)'}"
+                >${esc(val)}</textarea>
+                ${val.length>10?`<div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:${g.couleur};margin-top:4px">✓ ${val.length} caractères mémorisés</div>`:''}
+              </div>`;
+          }).join('')}
+        </div>
+        <div class="info ${sem.infoClass}">
+          💡 <strong>Cycle de Gibbs :</strong> ${sem.id<=2?'En S'+sem.id+', tu travailles les '+sem.gibbs_focus.length+' premières étapes. Le crescendo pédagogique débloque les étapes suivantes au fil des semestres.':'Les '+sem.gibbs_focus.length+' étapes du cycle sont actives en S'+sem.id+'. La dernière — le plan d\'action — transforme la réflexion en engagement concret.'}
+        </div>
+      </div>`;
+    }
+
+    // ── SITUATIONS ────────────────────────────────────────────
+    else if(S.onglet==='situations'){
+      const sitOpen = getSitOpen();
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Situations de stage — Semestre ${sem.id}</div>
+          <div class="card-sub">3 situations emblématiques à analyser avec le cycle de Gibbs. Cliquez pour développer.</div>
+          <div class="col8">
+            ${sem.situations.map((sit,i)=>`
+              <div class="sit-card ${sitOpen===`${S.sem}_${i}`?'open':''}" style="border-left-color:${couleur}" onclick="toggleSit(${i})">
+                <div class="sit-titre" style="color:${couleur}">${sit.titre}</div>
+                <div class="sit-body">
+                  <div style="background:${couleur}10;border-radius:6px;padding:10px 12px;margin-bottom:10px">
+                    <div style="font-size:12px;font-style:italic;color:var(--txt);line-height:1.65">${esc(sit.q)}</div>
+                  </div>
+                  <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--txt3);letter-spacing:1px;margin-bottom:6px">NIVEAUX DE RÉFLEXIVITÉ — S${sem.id}</div>
+                  ${sit.niveaux.map((n,ni)=>`
+                    <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:5px">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:${couleur};flex-shrink:0;margin-top:2px">${ni+1}.</span>
+                      <span style="font-size:12px;color:var(--txt2);line-height:1.55">${esc(n)}</span>
+                    </div>`).join('')}
+                  <button onclick="goJournalAvec(${i})" style="margin-top:10px;padding:8px 16px;border-radius:6px;border:1.5px solid ${couleur}40;background:${couleur}10;color:${couleur};font-size:12px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;font-weight:500">
+                    ✍️ Analyser avec Gibbs →
+                  </button>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ── ENTRETIEN ─────────────────────────────────────────────
+    else if(S.onglet==='entretien'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Préparation aux entretiens — Semestre ${sem.id}</div>
+          <div class="card-sub">Cochez les points préparés avant chaque entretien avec votre tuteur ou formateur IFSI.</div>
+
+          <!-- Sélecteur -->
+          <div style="display:flex;gap:8px;margin-bottom:18px">
+            ${['mi_stage','fin_stage'].map(t=>`
+              <button onclick="S.entType='${t}';render()" style="padding:8px 16px;border-radius:6px;border:1.5px solid ${S.entType===t?couleur+'50':'var(--bdr)'};background:${S.entType===t?couleur+'15':'rgba(255,255,255,.02)'};color:${S.entType===t?couleur:'var(--txt2)'};font-size:13px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;font-weight:${S.entType===t?600:400}">
+                ${t==='mi_stage'?'🔄 Mi-stage':'🎓 Fin de stage'}
+              </button>`).join('')}
+          </div>
+
+          <div class="ent-titre" style="--em-c:${couleur}">
+            ${S.entType==='mi_stage'?'Points à préparer pour l\'entretien de mi-stage':'Points à préparer pour l\'entretien de fin de stage'}
+          </div>
+          <div class="col8" style="--em-c:${couleur}">
+            ${sem.entretien[S.entType].map((item,i)=>`
+              <div class="ent-item ${getEntDone(S.sem,S.entType,i)?'done':''}" onclick="toggleEntAction('${S.entType}',${i})">
+                <div class="ent-check">${getEntDone(S.sem,S.entType,i)?'✓':''}</div>
+                <div class="ent-txt">${esc(item)}</div>
+              </div>`).join('')}
+          </div>
+
+          <!-- Progression -->
+          <div style="margin-top:14px">
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txt2);margin-bottom:5px">
+              <span>Préparation</span>
+              <span style="color:${couleur}">${(STORE[`ent_${S.sem}_${S.entType}`]||[]).length}/${sem.entretien[S.entType].length} points</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar" style="width:${Math.round((STORE[`ent_${S.sem}_${S.entType}`]||[]).length/sem.entretien[S.entType].length*100)}%;background:linear-gradient(90deg,${couleur}aa,${couleur})"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info ${sem.infoClass}">
+          🤝 <strong>L'entretien n'est pas une évaluation unilatérale.</strong> C'est un espace de co-construction entre toi, ton tuteur et ton formateur IFSI. Viens avec tes questions, tes doutes, tes fiertés. Un étudiant qui prépare son entretien montre déjà une compétence professionnelle.
+        </div>
+      </div>`;
+    }
+
+    // ── BILAN ─────────────────────────────────────────────────
+    else if(S.onglet==='bilan'){
+      const totalH = SEMESTRES.reduce((acc,sm)=>acc+(sm.hSemaine*sm.nbSemaines),0);
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:var(--bdr)">
+          <div class="card-title">Bilan — 6 semestres de stage</div>
+          <div class="card-sub">Progression du journal réflexif et des entretiens sur l'ensemble de la formation.</div>
+          <div class="grid2" style="margin-bottom:18px">
+            <div class="stat"><span class="stat-v" style="color:var(--s6)">${totalH}h</span><span class="stat-l">TACA Stage total</span></div>
+            <div class="stat"><span class="stat-v" style="color:var(--s2)">${Math.round(SEMESTRES.reduce((acc,sm)=>acc+journalPct(sm.id),0)/6)}%</span><span class="stat-l">Journal moyen</span></div>
+          </div>
+          ${SEMESTRES.map(sm=>{
+            const jp = journalPct(sm.id);
+            const miDone = (STORE[`ent_${sm.id}_mi_stage`]||[]).length;
+            const finDone = (STORE[`ent_${sm.id}_fin_stage`]||[]).length;
+            const miTotal = sm.entretien.mi_stage.length;
+            const finTotal = sm.entretien.fin_stage.length;
+            return `<div style="margin-bottom:14px;padding:12px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05)">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                <span style="color:${sm.couleur};font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500">${sm.label} — ${sm.posture}</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txt2)">${sm.hSemaine}h/sem · ${sm.nbSemaines} sem</span>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:6px">
+                <span style="font-size:11px;color:var(--txt2)">Journal Gibbs</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:${sm.couleur};margin-left:auto">${jp}%</span>
+              </div>
+              <div class="progress-bar-wrap" style="height:5px;margin-bottom:8px">
+                <div class="progress-bar" style="width:${jp}%;background:${sm.couleur}"></div>
+              </div>
+              <div style="display:flex;gap:12px;font-size:11px;color:var(--txt2);font-family:'IBM Plex Mono',monospace">
+                <span>Mi-stage : ${miDone}/${miTotal}</span>
+                <span>Fin stage : ${finDone}/${finTotal}</span>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }
+
+    // ── ANALYSE IA ────────────────────────────────────────────
+    else if(S.onglet==='analyse'){
+      const journalRempli = GIBBS.filter((g,i)=>sem.gibbs_focus.includes(i)&&getJournal(S.sem,i).trim().length>20);
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Analyse IA — Journal de stage S${sem.id}</div>
+          <div class="card-sub">Questionnement socratique sur votre journal réflexif. L'IA pose des questions — elle ne donne pas les réponses.</div>
+          <textarea id="question-stage"
+            style="width:100%;min-height:80px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:8px;color:var(--txt);padding:12px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;outline:none;resize:vertical;line-height:1.6;margin-bottom:10px"
+            placeholder="Ex : Je n'arrive pas à analyser cette situation — peux-tu m'aider à creuser ? Mon tuteur m'a dit que je manquais d'initiative, mais je ne comprends pas pourquoi. Comment approfondir l'étape Analyse de Gibbs ?"></textarea>
+          <button class="btn-p btn-full" style="background:${couleur}" onclick="runAnalyse()">🏥 Analyser ma réflexivité →</button>
+          ${S.loading?`<div class="dots" style="margin-top:16px"><span style="background:${couleur}"></span><span style="background:${couleur}"></span><span style="background:${couleur}"></span><div class="dots-msg">Lecture de ton journal de stage...</div></div>`:''}
+          ${!S.loading&&S.analyse?`<div class="analysis fadeup" style="margin-top:16px">${renderMd(S.analyse)}</div>`:''}
+          <hr class="div">
+          ${!S.apiKeySaved?`<div class="apikey-box">
+            <p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button style="background:${couleur};color:#0d1117" onclick="saveKey()">Sauver</button>
+            </div>
+          </div>`:`<div style="color:var(--s2);font-family:'IBM Plex Mono',monospace;font-size:11px">✓ Clé API configurée</div>`}
+        </div>
+
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:18px">
+            <div style="font-size:32px;margin-bottom:8px">🔒</div>
+            <div style="font-family:'Lora',serif;font-size:18px;font-style:italic;color:var(--txt);margin-bottom:5px">Questionnement socratique — Accès Premium</div>
+            <div style="font-size:13px;color:var(--txt2)">Journal, situations, entretien et bilan sont entièrement gratuits</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+            ${[
+              {who:'Module seul', price:'4,99€', desc:'SimTACA·Stage à vie'},
+              {who:'Suite TACA', price:'7,99€', desc:'Théorie + Stage à vie', em:true},
+              {who:'Institution', price:'Devis', desc:'IFSI · Syndicat'},
+            ].map(t=>`<div style="border:1.5px solid ${t.em?couleur+'50':'var(--bdr)'};border-radius:10px;padding:14px;text-align:center;background:${t.em?couleur+'08':'rgba(255,255,255,.02)'}">
+              <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:${t.em?couleur:'var(--txt2)'};margin-bottom:8px;letter-spacing:1px">${t.who}</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt);font-family:'Lora',serif">${t.price}</div>
+              <div style="font-size:11px;color:var(--txt2);margin-top:5px">${t.desc}</div>
+            </div>`).join('')}
+          </div>
+          <div style="text-align:center;margin-bottom:10px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:11px 26px;border-radius:8px;background:${couleur};color:#0d1117;font-weight:700;font-size:14px;text-decoration:none">Obtenir l'accès →</a>
+          </div>
+          <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt2);font-size:11px;cursor:pointer;font-family:'IBM Plex Mono',monospace">🔑 Espace formateur</button>
+          </div>
+          ${S.showKey?`<div class="apikey-box" style="margin-top:12px">
+            <p>Clé API Anthropic — formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button style="background:${couleur};color:#0d1117" onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div>':''}
+          </div>`:''}
+        </div>
+      </div>`;
+    }
+
+    h+=`<div style="margin-top:12px"><button class="btn-g" onclick="go('welcome')" style="color:${couleur};border-color:${couleur}30">← Accueil SimTACA·Stage</button></div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){ S.view=v; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setSem(n){ S.sem=n; S.analyse=''; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setOnglet(o){ S.onglet=o; S.analyse=''; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setJournalAction(etape, val){ setJournal(S.sem, etape, val); }
+function toggleSit(i){
+  const key = `${S.sem}_${i}`;
+  setSitOpen(getSitOpen()===key ? null : key);
+  render();
+}
+function goJournalAvec(i){ S.onglet='journal'; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function toggleEntAction(type, i){ toggleEnt(S.sem, type, i); render(); }
+function saveKey(){ localStorage.setItem('simtaca_stage_key', S.apiKey); S.apiKeySaved=true; render(); }
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const q = document.getElementById('question-stage')?.value || '';
+  if(!q.trim()) return;
+  const sem = semObj();
+
+  // Contexte du journal
+  const journalContext = GIBBS
+    .filter((g,i)=>sem.gibbs_focus.includes(i)&&getJournal(S.sem,i).trim().length>10)
+    .map(g=>`${g.titre}: ${getJournal(S.sem,GIBBS.indexOf(g)).substring(0,200)}`)
+    .join('\n');
+
+  S.loading=true; S.analyse=''; render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers,
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:900,
+        messages:[{role:'user', content:`Tu es un formateur IFSI expert en pédagogie réflexive et en accompagnement des étudiants infirmiers en stage. Tu utilises le questionnement socratique — tu poses des questions qui approfondissent la réflexion plutôt que de donner des réponses.
+
+Contexte étudiant :
+- Semestre : S${S.sem} — posture "${sem.posture} · ${sem.titre}"
+- Question réflexive du semestre : "${sem.question_reflexive}"
+- Étapes Gibbs disponibles : ${sem.gibbs_focus.length} sur 6
+${journalContext ? '- Extraits du journal :\n' + journalContext : '- Journal non encore rempli'}
+
+Question ou difficulté de l'étudiant : ${q}
+
+Utilise le questionnement socratique : pose 2-3 questions qui approfondissent la réflexion plutôt que de donner des réponses. Adapte ton approche à la posture "${sem.posture}" — un S1 a besoin de guidance, un S5-S6 de questionnement plus exigeant. Tutoie l'étudiant. Si pertinent, cite une étape du cycle de Gibbs qu'il pourrait approfondir. Sois bienveillant mais exigeant. Utilise **gras** pour les termes clés.`}]
+      })
+    });
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse = data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){
+    S.analyse=`**Erreur**\n\n${e.message}`;
+  }
+  S.loading=false; render();
+}
+
+render();
+</script>
+</body>
+</html>
