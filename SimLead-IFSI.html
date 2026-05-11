@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimLead · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:    #0a0c10;
+  --bg2:   #111318;
+  --card:  rgba(255,255,255,.03);
+  --bdr:   rgba(255,255,255,.07);
+  --txt:   #e8ecf4;
+  --txt2:  #6878a0;
+  --txt3:  #1c2440;
+  --em:    #f0a030;
+  --em2:   #c07818;
+  --steel: #4080c0;
+  --mint:  #40c090;
+  --rose:  #d06080;
+  --lav:   #9070d0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Mulish',sans-serif;
+  background:var(--bg);color:var(--txt);
+  min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative;
+}
+
+/* Fond réseau — connexions interpro */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(240,160,48,.06) 0%,transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(64,128,192,.05) 0%,transparent 40%),
+    radial-gradient(circle at 50% 10%, rgba(64,192,144,.03) 0%,transparent 35%);
+}
+/* Lignes diagonales leadership */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:repeating-linear-gradient(
+    -45deg,
+    rgba(240,160,48,.015) 0px, rgba(240,160,48,.015) 1px,
+    transparent 1px, transparent 60px
+  );
+}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.site-header{padding:44px 24px 28px;text-align:center;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(240,160,48,.08);border:1px solid rgba(240,160,48,.25);
+  color:var(--em);padding:5px 18px;border-radius:2px;
+  font-family:'Fira Mono',monospace;font-size:11px;
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;
+}
+.site-header h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(52px,10vw,96px);letter-spacing:4px;
+  line-height:.95;color:var(--txt);margin-bottom:10px;
+}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:13px;letter-spacing:.5px}
+
+/* ── ONGLETS ── */
+.tabs{display:flex;gap:4px;padding:0 0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{
+  padding:8px 16px;border-radius:2px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:13px;font-weight:600;cursor:pointer;
+  white-space:nowrap;transition:all .18s;font-family:'Mulish',sans-serif;
+  letter-spacing:.5px;-webkit-tap-highlight-color:transparent;
+}
+.tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+.tab.active{background:rgba(240,160,48,.1);border-color:rgba(240,160,48,.4);color:var(--em)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:4px;padding:24px;margin-bottom:14px;position:relative;z-index:1}
+.card.gold{border-top:2px solid var(--em)}
+.card.steel{border-top:2px solid var(--steel)}
+.card.mint{border-top:2px solid var(--mint)}
+.card.rose{border-top:2px solid var(--rose)}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:5px;line-height:1}
+.card-sub{color:var(--txt2);font-size:13px;margin-bottom:20px;line-height:1.65}
+
+/* ── SBAR ── */
+.sbar-block{
+  border-radius:4px;padding:16px;margin-bottom:8px;
+  position:relative;overflow:hidden;
+}
+.sbar-block::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+}
+.sbar-letter{
+  font-family:'Bebas Neue',sans-serif;font-size:48px;
+  line-height:1;opacity:.15;position:absolute;right:16px;top:50%;
+  transform:translateY(-50%);
+}
+.sbar-titre{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:6px}
+.sbar-q{font-size:12px;color:var(--txt2);font-style:italic;margin-bottom:8px;line-height:1.6}
+.sbar-area{
+  width:100%;border-radius:3px;padding:10px 12px;
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);
+  color:var(--txt);font-size:13px;font-family:'Mulish',sans-serif;
+  outline:none;resize:vertical;min-height:55px;line-height:1.65;
+  transition:border-color .2s;
+}
+.sbar-area:focus{border-color:rgba(240,160,48,.3)}
+
+/* ── RÔLES INTER-PRO ── */
+.pro-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.pro-card{
+  background:rgba(0,0,0,.2);border:1.5px solid var(--bdr);
+  border-radius:4px;padding:16px;cursor:pointer;transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.pro-card:hover{background:rgba(0,0,0,.35);transform:translateY(-2px)}
+.pro-card.active{border-color:var(--em);background:rgba(240,160,48,.07)}
+.pro-icon{font-size:28px;margin-bottom:8px;display:block}
+.pro-titre{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;margin-bottom:4px}
+.pro-role{font-size:12px;color:var(--txt2);line-height:1.6}
+.pro-detail{
+  font-size:12px;color:var(--txt2);line-height:1.7;
+  display:none;margin-top:10px;padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.pro-card.active .pro-detail{display:block}
+
+/* ── SCENARIOS ── */
+.scenario-card{
+  background:rgba(0,0,0,.25);border-radius:4px;padding:18px;
+  margin-bottom:10px;border-left:3px solid var(--em);
+  cursor:pointer;transition:all .2s;
+}
+.scenario-card:hover{background:rgba(0,0,0,.35)}
+.scenario-titre{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;margin-bottom:5px}
+.scenario-body{font-size:13px;color:var(--txt2);line-height:1.7;display:none;margin-top:10px}
+.scenario-card.open .scenario-body{display:block}
+.scenario-tag{
+  display:inline-block;padding:2px 10px;border-radius:2px;
+  font-family:'Fira Mono',monospace;font-size:9px;
+  letter-spacing:2px;text-transform:uppercase;margin-top:8px;
+}
+
+/* ── QUIZ ── */
+.quiz-opt{
+  padding:12px 16px;border-radius:4px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);
+  cursor:pointer;font-size:14px;margin-bottom:8px;
+  transition:all .18s;display:flex;align-items:center;gap:12px;
+  -webkit-tap-highlight-color:transparent;
+}
+.quiz-opt:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+.quiz-opt.correct{background:rgba(64,192,144,.1);border-color:rgba(64,192,144,.4);color:var(--mint)}
+.quiz-opt.wrong  {background:rgba(208,96,128,.1); border-color:rgba(208,96,128,.4); color:var(--rose)}
+.quiz-expl{
+  background:rgba(240,160,48,.05);border:1px solid rgba(240,160,48,.15);
+  border-radius:4px;padding:12px 14px;margin-top:10px;
+  font-size:13px;color:var(--txt2);line-height:1.7;
+}
+.quiz-expl strong{color:var(--txt)}
+
+/* ── INFO ── */
+.info{border-radius:3px;padding:12px 15px;font-size:13px;line-height:1.75;margin-bottom:12px}
+.info-em   {background:rgba(240,160,48,.07); border-left:3px solid rgba(240,160,48,.6);  color:var(--em)}
+.info-steel{background:rgba(64,128,192,.07); border-left:3px solid rgba(64,128,192,.6);  color:var(--steel)}
+.info-mint {background:rgba(64,192,144,.07); border-left:3px solid rgba(64,192,144,.6);  color:var(--mint)}
+.info-rose {background:rgba(208,96,128,.07); border-left:3px solid rgba(208,96,128,.6);  color:var(--rose)}
+
+/* ── BOUTONS ── */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  border:none;border-radius:3px;color:#0a0c10;
+  font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;
+  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
+  border-radius:3px;color:var(--txt2);
+  font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;
+  padding:10px 18px;cursor:pointer;transition:all .18s;
+}
+.btn-g:hover{background:rgba(255,255,255,.06);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+.col8{display:flex;flex-direction:column;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);border-radius:3px;padding:14px;text-align:center}
+.stat-v{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--em);display:block;letter-spacing:2px;line-height:1}
+.stat-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:2px;font-family:'Fira Mono',monospace;display:block;margin-top:4px}
+
+/* ── PROGRESS ── */
+.progress-bar-wrap{background:rgba(255,255,255,.06);border-radius:2px;height:8px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:2px;transition:width .6s ease}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:24px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:13px;margin-top:10px;font-style:italic}
+.analysis p{margin-bottom:14px;color:#8090b0;font-size:15px;line-height:1.85}
+.analysis strong{color:var(--txt)}
+
+/* ── PREMIUM ── */
+.premium-box{background:rgba(0,0,0,.3);border:1.5px solid rgba(240,160,48,.15);border-radius:4px;padding:24px;margin-bottom:14px}
+.apikey-box{background:rgba(240,160,48,.04);border:1px solid rgba(240,160,48,.12);border-radius:3px;padding:12px}
+.apikey-box p{font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:3px;color:var(--txt);font-family:'Fira Mono',monospace;outline:none}
+.apikey-row input:focus{border-color:rgba(240,160,48,.3)}
+.apikey-row button{padding:9px 14px;border:none;border-radius:3px;background:var(--em2);color:#0a0c10;font-weight:700;cursor:pointer;font-family:'Mulish',sans-serif;font-size:12px}
+.apikey-saved{color:var(--mint);font-size:11px;margin-top:5px;font-family:'Fira Mono',monospace}
+
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:16px 0}
+
+/* ── WELCOME ── */
+.pts{display:flex;flex-direction:column;gap:12px;margin:20px 0;text-align:left}
+.pt{display:flex;gap:14px;align-items:flex-start}
+.pt-i{font-size:22px;flex-shrink:0;margin-top:1px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+/* ── RÉSEAU INTER-PRO SVG ── */
+.reseau-svg{display:block;margin:0 auto;max-width:340px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.grid2,.pro-grid{grid-template-columns:1fr}.nav-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+
+const PROS = [
+  { id:'medecin', icon:'👨‍⚕️', titre:'MÉDECIN', couleur:'#4080c0',
+    role:'Prescrit, diagnostique, oriente. L\'IDE est son relais clinique au quotidien.',
+    collab:'Communication SBAR en cas de dégradation. Appel structuré : "Dr X, c\'est l\'IDE Dupont, j\'appelle pour M. Martin, 68 ans, dont la PA est tombée à 80/50." Traçabilité systématique des échanges.',
+    outil:'SBAR · Transmissions SAED · Appel de nuit structuré'},
+  { id:'as', icon:'🧹', titre:'AIDE-SOIGNANT(E)', couleur:'#f0a030',
+    role:'Partenaire de soins directs. L\'IDE délègue, supervise, évalue — jamais n\'abandonne.',
+    collab:'Délégation claire et encadrée. "Je te délègue la toilette de M. Dupont — surveille son œdème au mollet droit et reviens me voir après." Vérification du résultat. Valorisation du travail.',
+    outil:'Délégation QQOCCP · Transmissions ciblées · Débrief'},
+  { id:'kine', icon:'🏃', titre:'KINÉSITHÉRAPEUTE', couleur:'#40c090',
+    role:'Partenaire de la réhabilitation. L\'IDE coordonne les soins autour des séances de kiné.',
+    collab:'Planifier les soins douloureux AVANT la kiné (antalgiques). Partager les évaluations de douleur et de mobilité. Communiquer les contre-indications ou précautions (fracture, plaie, constantes).',
+    outil:'Plan de soins coordonné · EVA partagée · Dossier patient commun'},
+  { id:'pharma', icon:'💊', titre:'PHARMACIEN', couleur:'#9070d0',
+    role:'Expert du médicament. L\'IDE l\'associe pour tout doute sur un traitement ou une interaction.',
+    collab:'Signaler toute suspicion d\'interaction médicamenteuse. Valider les dilutions de médicaments injectables. Déclarer les événements indésirables médicamenteux. Ne jamais hésiter à appeler.',
+    outil:'Circuit du médicament · REMED · Déclaration ANSM'},
+  { id:'ss', icon:'👥', titre:'ASSISTANTE SOCIALE', couleur:'#d06080',
+    role:'Partenaire du retour à domicile et de la coordination du parcours social.',
+    collab:'Signalement précoce des situations de vulnérabilité (isolement, précarité, maltraitance). Participation aux réunions de synthèse. Anticipation des besoins post-hospitalisation.',
+    outil:'Évaluation sociale · HAD · Réunion pluridisciplinaire'},
+  { id:'psy', icon:'🧠', titre:'PSYCHOLOGUE / PSYCHIATRE', couleur:'#a371f7',
+    role:'Partenaire de la santé mentale. L\'IDE est souvent le premier à repérer une détresse.',
+    collab:'Transmission précise des observations comportementales. Utiliser un vocabulaire factuel et non interprétatif. "Le patient a pleuré pendant 20 min, a refusé de manger, et m\'a dit qu\'il ne voyait plus l\'intérêt de se battre."',
+    outil:'Observation clinique · Grille RUD si risque suicidaire · Liaison psy'},
+];
+
+const SBAR_SESSIONS = [
+  'simcase_sbar_s1', 'simcase_sbar_s2', 'simcase_sbar_s3',
+];
+
+const SCENARIOS = [
+  {
+    id:'urgence', couleur:'var(--rose)',
+    titre:'Appel nocturne — M. Leroy dégrade',
+    context:'Il est 3h du matin. M. Leroy, 72 ans, hospitalisé pour insuffisance cardiaque, présente une SpO₂ à 88%, une FR à 28/min, une orthopnée. Il n\'a pas uriné depuis 8h. Vous devez appeler le médecin de garde.',
+    question:'Rédigez votre appel SBAR au médecin de garde.',
+    sbar:{
+      S:'Situation — Qui êtes-vous ? Qui est le patient ? Quel est le problème urgent ?',
+      B:'Background — Quel est le contexte clinique pertinent ?',
+      A:'Assessment — Quelle est votre évaluation infirmière ?',
+      R:'Recommendation — Que demandez-vous concrètement ?',
+    },
+    exemple:{
+      S:'"Bonsoir Dr Martin, je suis Dupont, IDE de nuit en cardiologie. M. Leroy, 72 ans, chambre 14, insuffisant cardiaque connu, présente une détresse respiratoire aiguë."',
+      B:'"Il est hospitalisé depuis 3 jours pour poussée d\'OAP. Sous furosémide IV. Ce soir : SpO₂ 88% sous 2L O₂, FR 28/min, orthopnée. Anurie depuis 8h."',
+      A:'"Je pense à une nouvelle poussée d\'OAP — signes de surcharge. Son état se dégrade rapidement."',
+      R:'"Je vous demande de venir l\'évaluer maintenant. En attendant, j\'ai mis le patient en position assise haute et augmenté l\'O₂ à 4L."',
+    },
+    tag:'SBAR · Urgence',
+  },
+  {
+    id:'delegation', couleur:'var(--em)',
+    titre:'Délégation à l\'aide-soignant(e)',
+    context:'Vous avez 8 patients en charge cette matinée. Vous travaillez avec Julie, AS expérimentée. Vous devez organiser les soins d\'hygiène et de confort en délégant de façon claire et sécurisée.',
+    question:'Comment organisez-vous et communiquez-vous la délégation à Julie ?',
+    sbar:{
+      S:'Quoi — Quelle tâche exactement délégues-tu ?',
+      B:'Qui et pourquoi — Pour quel patient ? Quelles précautions spécifiques ?',
+      A:'Comment — Y a-t-il des observations particulières à faire ?',
+      R:'Retour — Quand et comment Julie doit-elle te rendre compte ?',
+    },
+    exemple:{
+      S:'"Julie, je te délègue la toilette complète de M. Bernard (ch. 8) et Mme Petit (ch. 12)."',
+      B:'"M. Bernard a une plaie opératoire au genou droit — ne pas mouiller le pansement. Mme Petit est algique — propose-lui l\'antalgique avant de commencer."',
+      A:'"Pour M. Bernard, surveille la coloration de son pied droit — il a une artériopathie. Note aussi s\'il est plus confus qu\'hier."',
+      R:'"Reviens me voir après Mme Petit — je passerai évaluer M. Bernard avec toi vers 10h."',
+    },
+    tag:'Délégation · AS',
+  },
+  {
+    id:'pluridis', couleur:'var(--steel)',
+    titre:'Réunion de synthèse pluridisciplinaire',
+    context:'Réunion hebdomadaire de l\'équipe. Vous présentez Mme Chen, 84 ans, hospitalisée depuis 10 jours pour fracture du col du fémur opérée. Retour à domicile prévu la semaine prochaine. Vous avez 3 minutes.',
+    question:'Structurez votre présentation pour que chaque professionnel puisse agir.',
+    sbar:{
+      S:'Situation actuelle — Où en est Mme Chen aujourd\'hui ?',
+      B:'Contexte social et clinique — Ce que l\'équipe doit savoir',
+      A:'Évaluation infirmière — Vos observations et préoccupations',
+      R:'Coordination — Ce que vous attendez de chaque professionnel',
+    },
+    exemple:{
+      S:'"Mme Chen, 84 ans, J10 post-PTH droite. Mobilisation avec déambulateur, douleur contrôlée à 3/10. Plaie propre."',
+      B:'"Vit seule, 3ème étage sans ascenseur. Fils à Paris. Légère confusion nocturne persistante. Sous AVK — INR à surveiller."',
+      A:'"Je suis préoccupée par le retour à domicile : autonomie insuffisante pour les escaliers. Risque de chute. Observance AVK incertaine."',
+      R:'"Kiné : évaluation réelle des capacités à monter 3 étages. AS sociale : HAD ou SSR ? Médecin : relais AVK en ville. IDE : éducation au traitement anticoagulant."',
+    },
+    tag:'Pluridisciplinaire · Coordination',
+  },
+];
+
+const QUIZ = [
+  { q:'Que signifie l\'acronyme SBAR ?', opts:['Situation, Bilan, Analyse, Résolution','Situation, Background, Assessment, Recommendation','Symptômes, Bilan, Antécédents, Résultat','Soins, Bilan, Action, Rapport'], rep:1,
+    expl:'**SBAR** (Situation, Background, Assessment, Recommendation) est l\'outil de communication structurée de référence en santé. Il permet de transmettre une information critique de façon claire et complète, quel que soit l\'interlocuteur — médecin, pharmacien, collègue IDE.' },
+  { q:'Lors d\'une délégation à l\'aide-soignant(e), l\'IDE doit :', opts:['Déléguer et ne pas intervenir pour ne pas dévaloriser le travail de l\'AS','Déléguer, préciser les précautions, et vérifier le résultat','Uniquement déléguer les tâches non techniques','Déléguer uniquement si l\'AS a demandé explicitement la tâche'], rep:1,
+    expl:'La **délégation infirmière** est un acte professionnel complet : on délègue clairement (quoi, à qui, avec quelles précautions), puis on vérifie le résultat. L\'IDE reste responsable de la qualité du soin délégué — déléguer n\'est pas abandonner.' },
+  { q:'Le leadership infirmier, selon le référentiel 2026, consiste à :', opts:['Diriger les médecins en cas d\'urgence','Prendre des décisions médicales en autonomie','Accompagner les personnes et les équipes vers des objectifs de santé','Remplacer les cadres de santé dans l\'organisation du service'], rep:2,
+    expl:'Le **leadership infirmier** (Domaine D, référentiel 2026) n\'est pas un leadership hiérarchique — c\'est un leadership **de compétence et d\'influence**. L\'IDE guide, coordonne, fédère autour d\'un objectif de soin. Il peut être leader dans une situation clinique même face à des professionnels plus seniors.' },
+  { q:'Lors d\'un appel au médecin de nuit, que doit contenir en PREMIER le message de l\'IDE ?', opts:['Les constantes vitales du patient','L\'identification de l\'IDE et du patient, et l\'objet de l\'appel','L\'historique complet du patient','La recommandation de traitement'], rep:1,
+    expl:'Le **S de SBAR** — Situation — vient en premier. "Bonsoir docteur, c\'est Dupont IDE de nuit en cardiologie, j\'appelle pour M. Martin, 68 ans chambre 12, qui présente une douleur thoracique aiguë." Un message immédiatement identifiable évite la confusion et gagne du temps.' },
+  { q:'La coordination interprofessionnelle en soins infirmiers implique de :', opts:['Attendre les instructions de chaque professionnel avant d\'agir','Centraliser les informations et assurer la continuité entre les professionnels','Informer uniquement le médecin des observations cliniques','Ne travailler qu\'avec les professionnels paramédicaux'], rep:1,
+    expl:'L\'IDE est souvent le **pivot de la coordination interprofessionnelle** — présent 24h/24, il centralise les informations, assure la continuité entre médecin, kiné, AS, pharmacien, assistante sociale. C\'est une compétence clé du Domaine D du référentiel 2026.' },
+  { q:'Lors d\'une réunion pluridisciplinaire, la présentation infirmière doit :', opts:['Durer le moins longtemps possible et se limiter aux chiffres','Couvrir tous les soins réalisés depuis l\'admission','Être structurée pour que chaque professionnel sache ce qu\'on attend de lui','Commencer par les antécédents médicaux complets du patient'], rep:2,
+    expl:'Une présentation en réunion pluridisciplinaire efficace est **orientée vers l\'action** — elle structure l\'information pour que chaque professionnel comprenne sa contribution attendue. La méthode SBAR s\'applique naturellement : situation actuelle → contexte → évaluation IDE → ce qu\'on attend de chacun.' },
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+const STORE_KEY = 'simlead';
+function loadStore(){ try{return JSON.parse(localStorage.getItem(STORE_KEY))||{};}catch(e){return {};} }
+function saveStore(d){ try{localStorage.setItem(STORE_KEY,JSON.stringify(d));}catch(e){} }
+let STORE = loadStore();
+
+function getSBAR(scenId, partie){ return STORE[`sbar_${scenId}_${partie}`]||''; }
+function setSBAR(scenId, partie, v){ STORE[`sbar_${scenId}_${partie}`]=v; saveStore(STORE); }
+
+let S = {
+  view:'welcome', onglet:'interpro',
+  proActive:null, scenOpen:null, scenExemple:null,
+  quizIdx:0, quizSelected:null, quizShown:false, quizScore:0, quizTotal:0,
+  analyse:'', loading:false, showKey:false,
+  apiKey: localStorage.getItem('simlead_key')||'',
+  apiKeySaved: !!localStorage.getItem('simlead_key'),
+};
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  let h = '';
+
+  if(S.view !== 'welcome'){
+    h+=`
+    <div class="site-header">
+      <div class="badge">⚡ D — Leadership · Référentiel 2026</div>
+      <h1><span>SIM</span>LEAD</h1>
+      <p>Communication interprofessionnelle · Leadership infirmier · Coordination de soins</p>
+    </div>
+    <div class="tabs">
+      ${[
+        {id:'interpro',  label:'👥 Inter-pro'},
+        {id:'sbar',      label:'📡 SBAR'},
+        {id:'scenarios', label:'⚡ Scénarios'},
+        {id:'quiz',      label:'🎯 Quiz'},
+        {id:'analyse',   label:'🔬 Analyse IA'},
+      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+      <div class="badge">⚡ D — Leadership · Référentiel 2026</div>
+      <h1><span>SIM</span>LEAD</h1>
+    </div>`;
+  }
+
+  h += '<div class="wrap">';
+
+  // ─── WELCOME ─────────────────────────────────────────────────
+  if(S.view === 'welcome'){
+    h+=`
+    <div class="card gold fadeup">
+      <div style="text-align:center;padding:8px 0 20px">
+        <!-- Réseau inter-pro SVG -->
+        <svg class="reseau-svg" viewBox="0 0 340 200" style="max-width:300px;margin-bottom:20px">
+          <defs>
+            <radialGradient id="ng" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#f0a030" stop-opacity=".15"/>
+              <stop offset="100%" stop-color="#f0a030" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Connexions -->
+          <line x1="170" y1="100" x2="60"  y2="40"  stroke="rgba(240,160,48,.25)" stroke-width="1.5"/>
+          <line x1="170" y1="100" x2="280" y2="40"  stroke="rgba(64,128,192,.2)"  stroke-width="1.5"/>
+          <line x1="170" y1="100" x2="290" y2="130" stroke="rgba(64,192,144,.2)"  stroke-width="1.5"/>
+          <line x1="170" y1="100" x2="60"  y2="160" stroke="rgba(208,96,128,.2)"  stroke-width="1.5"/>
+          <line x1="170" y1="100" x2="170" y2="185" stroke="rgba(144,112,208,.2)" stroke-width="1.5"/>
+          <line x1="170" y1="100" x2="50"  y2="110" stroke="rgba(240,160,48,.15)" stroke-width="1.5"/>
+          <!-- Nœuds pro -->
+          <circle cx="60"  cy="40"  r="20" fill="rgba(64,128,192,.15)"  stroke="rgba(64,128,192,.4)"  stroke-width="1.5"/>
+          <text x="60"  y="44"  text-anchor="middle" font-size="14">👨‍⚕️</text>
+          <circle cx="280" cy="40"  r="20" fill="rgba(240,160,48,.15)"  stroke="rgba(240,160,48,.4)"  stroke-width="1.5"/>
+          <text x="280" y="44"  text-anchor="middle" font-size="14">🧹</text>
+          <circle cx="290" cy="130" r="20" fill="rgba(64,192,144,.15)"  stroke="rgba(64,192,144,.4)"  stroke-width="1.5"/>
+          <text x="290" y="134" text-anchor="middle" font-size="14">🏃</text>
+          <circle cx="60"  cy="160" r="20" fill="rgba(208,96,128,.15)"  stroke="rgba(208,96,128,.4)"  stroke-width="1.5"/>
+          <text x="60"  y="164" text-anchor="middle" font-size="14">👥</text>
+          <circle cx="170" cy="185" r="20" fill="rgba(144,112,208,.15)"  stroke="rgba(144,112,208,.4)"  stroke-width="1.5"/>
+          <text x="170" y="189" text-anchor="middle" font-size="14">🧠</text>
+          <circle cx="50"  cy="110" r="20" fill="rgba(144,112,208,.15)"  stroke="rgba(144,112,208,.3)"  stroke-width="1.5"/>
+          <text x="50"  y="114" text-anchor="middle" font-size="14">💊</text>
+          <!-- IDE au centre -->
+          <circle cx="170" cy="100" r="32" fill="url(#ng)" stroke="rgba(240,160,48,.6)" stroke-width="2"/>
+          <text x="170" y="95" text-anchor="middle" font-size="11" fill="#f0a030" font-weight="bold" font-family="monospace">IDE</text>
+          <text x="170" y="110" text-anchor="middle" font-size="10" fill="rgba(240,160,48,.7)" font-family="monospace">PIVOT</text>
+          <!-- Animations pulse -->
+          <circle cx="170" cy="100" r="32" fill="none" stroke="rgba(240,160,48,.3)" stroke-width="1">
+            <animate attributeName="r" values="32;48;32" dur="3s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="1;0;1" dur="3s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+
+        <p style="color:var(--txt2);font-size:15px;line-height:1.85;max-width:480px;margin:0 auto">
+          L'IDE n'est pas seul·e. Il est le <strong style="color:var(--em)">pivot de l'équipe interprofessionnelle</strong> — coordinateur, communicant, leader de situation. Le Domaine D du référentiel 2026 formalise cette compétence.
+        </p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">👥</span><span class="pt-t"><strong>6 professions, 6 collaborations</strong> — comprendre le rôle de chacun et comment travailler avec lui</span></div>
+          <div class="pt"><span class="pt-i">📡</span><span class="pt-t"><strong>Méthode SBAR</strong> — communication structurée pour les situations critiques</span></div>
+          <div class="pt"><span class="pt-i">⚡</span><span class="pt-t"><strong>3 scénarios cliniques</strong> — appel de nuit, délégation, réunion pluridisciplinaire</span></div>
+          <div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>Quiz Domaine D</strong> — 6 questions sur le leadership et la coordination</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analyse IA</strong> — coaching sur vos situations de leadership (Premium)</span></div>
+        </div>
+        <button class="btn-p" onclick="go('main')">ENTRER DANS SIMLEAD →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── MAIN ────────────────────────────────────────────────────
+  else {
+
+    // ── INTER-PRO ─────────────────────────────────────────────
+    if(S.onglet === 'interpro'){
+      h+=`<div class="fadeup">
+        <div class="card gold">
+          <div class="card-title" style="color:var(--em)">RÉSEAU INTERPROFESSIONNEL</div>
+          <div class="card-sub">L'IDE est le pivot de l'équipe — présent 24h/24, il assure la continuité entre tous les professionnels. Cliquez sur chaque professionnel pour comprendre la collaboration.</div>
+
+          <div class="grid2" style="margin-bottom:14px">
+            <div class="stat"><span class="stat-v">6</span><span class="stat-l">Professions clés</span></div>
+            <div class="stat"><span class="stat-v">24h</span><span class="stat-l">Présence IDE — pivot</span></div>
+          </div>
+
+          <div class="pro-grid">
+            ${PROS.map(p=>`
+              <div class="pro-card ${S.proActive===p.id?'active':''}" onclick="togglePro('${p.id}')">
+                <span class="pro-icon">${p.icon}</span>
+                <div class="pro-titre" style="color:${S.proActive===p.id?p.couleur:'var(--txt)'}">${p.titre}</div>
+                <div class="pro-role">${p.role}</div>
+                <div class="pro-detail">
+                  <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--em);margin-bottom:6px">Collaboration IDE</div>
+                  <p style="font-size:12px;line-height:1.7;color:var(--txt2);margin-bottom:8px">${p.collab}</p>
+                  <div style="font-size:11px;font-family:'Fira Mono',monospace;color:${p.couleur};background:${p.couleur}15;padding:4px 10px;border-radius:2px;display:inline-block">${p.outil}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="info info-em">
+          ⚡ <strong>Leadership de situation :</strong> Le leadership infirmier n'est pas hiérarchique — il est situationnel. Face à une urgence, l'IDE qui a évalué la situation est le leader, même face à un professionnel plus senior. Coordonner, communiquer, décider : c'est le cœur du Domaine D.
+        </div>
+      </div>`;
+    }
+
+    // ── SBAR ──────────────────────────────────────────────────
+    else if(S.onglet === 'sbar'){
+      h+=`<div class="fadeup">
+        <div class="card gold">
+          <div class="card-title" style="color:var(--em)">MÉTHODE SBAR</div>
+          <div class="card-sub">L'outil de communication structurée de référence en santé. En 4 blocs, on transmet l'essentiel en 90 secondes.</div>
+
+          <!-- Les 4 blocs SBAR -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">
+            ${[
+              {l:'S', t:'Situation', d:'QUI je suis, QUI est le patient, QUEL est le problème maintenant', c:'#d06080'},
+              {l:'B', t:'Background', d:'Contexte clinique pertinent — antécédents, traitements, évolution récente', c:'#f0a030'},
+              {l:'A', t:'Assessment', d:'Mon évaluation infirmière — ce que je pense qu\'il se passe', c:'#4080c0'},
+              {l:'R', t:'Recommendation', d:'Ce que je demande concrètement — acte, venue, prescription', c:'#40c090'},
+            ].map(b=>`
+              <div style="background:${b.c}12;border:1.5px solid ${b.c}35;border-radius:4px;padding:14px;position:relative;overflow:hidden">
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:56px;color:${b.c};opacity:.12;line-height:1">${b.l}</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${b.c};letter-spacing:2px;margin-bottom:4px">${b.l} — ${b.t}</div>
+                <div style="font-size:12px;color:var(--txt2);line-height:1.6;position:relative;z-index:1">${b.d}</div>
+              </div>`).join('')}
+          </div>
+
+          <!-- Zone de pratique SBAR libre -->
+          <div style="font-family:'Fira Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:12px">Entraînement libre — Construisez votre SBAR</div>
+          ${[
+            {k:'S', t:'SITUATION', c:'#d06080', q:'Qui êtes-vous ? Qui est le patient ? Quel est le problème urgent ?'},
+            {k:'B', t:'BACKGROUND', c:'#f0a030', q:'Quel est le contexte clinique pertinent ?'},
+            {k:'A', t:'ASSESSMENT', c:'#4080c0', q:'Quelle est votre évaluation infirmière ?'},
+            {k:'R', t:'RECOMMENDATION', c:'#40c090', q:'Que demandez-vous concrètement ?'},
+          ].map(b=>`
+            <div class="sbar-block" style="background:${b.c}08;border-left-color:${b.c}">
+              <div class="sbar-letter" style="color:${b.c}">${b.k}</div>
+              <div class="sbar-titre" style="color:${b.c}">${b.t}</div>
+              <div class="sbar-q">${b.q}</div>
+              <textarea class="sbar-area" placeholder="Rédigez ici…"
+                oninput="setSBARAction('libre','${b.k}',this.value)"
+              >${esc(getSBAR('libre',b.k))}</textarea>
+            </div>`).join('')}
+        </div>
+
+        <div class="info info-steel">
+          📡 <strong>Pourquoi SBAR :</strong> 70% des événements indésirables graves en santé ont une composante de communication défaillante. Le SBAR réduit ce risque en imposant une structure qui force à clarifier sa pensée AVANT d'appeler. L'IDE qui utilise SBAR gagne en crédibilité et en efficacité.
+        </div>
+      </div>`;
+    }
+
+    // ── SCÉNARIOS ─────────────────────────────────────────────
+    else if(S.onglet === 'scenarios'){
+      h+=`<div class="fadeup">
+        <div class="card gold">
+          <div class="card-title" style="color:var(--em)">SCÉNARIOS DE LEADERSHIP</div>
+          <div class="card-sub">3 situations réelles — rédigez votre SBAR, puis découvrez l'exemple de référence.</div>
+          <div class="col8">
+            ${SCENARIOS.map(sc=>`
+              <div class="scenario-card ${S.scenOpen===sc.id?'open':''}" style="border-left-color:${sc.couleur}" onclick="toggleScen('${sc.id}')">
+                <div class="scenario-titre" style="color:${sc.couleur}">${sc.titre}</div>
+                <span class="scenario-tag" style="background:${sc.couleur}15;color:${sc.couleur}">${sc.tag}</span>
+                <div class="scenario-body">
+                  <!-- Contexte -->
+                  <div style="background:rgba(0,0,0,.3);border-radius:4px;padding:14px;margin-bottom:14px">
+                    <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:${sc.couleur};margin-bottom:6px">Situation</div>
+                    <p style="font-size:13px;color:var(--txt2);line-height:1.7">${esc(sc.context)}</p>
+                  </div>
+                  <div style="font-size:13px;color:var(--txt);font-weight:600;margin-bottom:12px;font-style:italic">${esc(sc.question)}</div>
+
+                  <!-- Zones SBAR -->
+                  ${Object.entries(sc.sbar).map(([k,q])=>`
+                    <div class="sbar-block" style="background:rgba(240,160,48,.05);border-left-color:var(--em);margin-bottom:8px">
+                      <div class="sbar-titre" style="color:var(--em);font-size:14px">${k} — ${q}</div>
+                      <textarea class="sbar-area" placeholder="Rédigez votre ${k}…"
+                        oninput="setSBARAction('${sc.id}','${k}',this.value)"
+                        onclick="event.stopPropagation()"
+                      >${esc(getSBAR(sc.id,k))}</textarea>
+                    </div>`).join('')}
+
+                  <!-- Voir l'exemple -->
+                  <button onclick="event.stopPropagation();S.scenExemple=S.scenExemple===sc.id?null:sc.id;render()" 
+                    style="margin-top:4px;padding:9px 18px;border-radius:3px;border:1.5px solid ${sc.couleur}40;background:${sc.couleur}10;color:${sc.couleur};font-size:13px;font-family:'Mulish',sans-serif;cursor:pointer;font-weight:600;width:100%">
+                    ${S.scenExemple===sc.id?'▲ Masquer l\'exemple':'▼ Voir un exemple de référence'}
+                  </button>
+
+                  ${S.scenExemple===sc.id?`
+                  <div style="margin-top:10px;background:rgba(0,0,0,.3);border-radius:4px;padding:14px;border:1px solid ${sc.couleur}25">
+                    <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:${sc.couleur};margin-bottom:10px">Exemple de référence</div>
+                    ${Object.entries(sc.exemple).map(([k,v])=>`
+                      <div style="margin-bottom:10px">
+                        <div style="font-size:11px;font-family:'Fira Mono',monospace;color:${sc.couleur};margin-bottom:4px">${k}</div>
+                        <div style="font-size:13px;color:var(--txt2);line-height:1.7;background:rgba(255,255,255,.03);border-radius:3px;padding:10px 12px;font-style:italic">${esc(v)}</div>
+                      </div>`).join('')}
+                  </div>`:``}
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ── QUIZ ──────────────────────────────────────────────────
+    else if(S.onglet === 'quiz'){
+      const q = QUIZ[S.quizIdx % QUIZ.length];
+      const pct = Math.round(S.quizIdx/QUIZ.length*100);
+      h+=`<div class="fadeup">
+        <div style="display:flex;justify-content:space-between;font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt2);margin-bottom:8px">
+          <span>Question ${S.quizIdx%QUIZ.length+1} / ${QUIZ.length}</span>
+          <span style="color:var(--em)">${S.quizTotal>0?Math.round(S.quizScore/S.quizTotal*100)+'% correct':'—'}</span>
+        </div>
+        <div class="progress-bar-wrap" style="margin-bottom:16px">
+          <div class="progress-bar" style="width:${pct}%;background:linear-gradient(90deg,var(--em2),var(--em))"></div>
+        </div>
+        <div class="card gold">
+          <div style="font-family:'Mulish',sans-serif;font-size:clamp(15px,2.5vw,18px);font-weight:600;line-height:1.5;margin-bottom:18px;color:var(--txt)">${esc(q.q)}</div>
+          ${q.opts.map((opt,i)=>{
+            let cls='';
+            if(S.quizShown){if(i===q.rep)cls='correct';else if(i===S.quizSelected)cls='wrong';}
+            return `<div class="quiz-opt ${cls}" onclick="${S.quizShown?'':'selectQuiz('+i+')'}">
+              <span style="font-family:'Fira Mono',monospace;font-size:11px;flex-shrink:0">${['A','B','C','D'][i]}</span>
+              <span>${esc(opt)}</span>
+            </div>`;
+          }).join('')}
+          ${S.quizShown?`
+          <div class="quiz-expl">${q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</div>
+          <button class="btn-p btn-full" style="margin-top:14px" onclick="nextQuiz()">QUESTION SUIVANTE →</button>`:``}
+        </div>
+        <button class="btn-g btn-full" onclick="S.quizIdx=0;S.quizScore=0;S.quizTotal=0;S.quizSelected=null;S.quizShown=false;render()" style="margin-top:8px;color:var(--mint);border-color:rgba(64,192,144,.2)">↺ RECOMMENCER</button>
+      </div>`;
+    }
+
+    // ── ANALYSE IA ────────────────────────────────────────────
+    else if(S.onglet === 'analyse'){
+      h+=`<div class="fadeup">
+        <div class="card gold">
+          <div class="card-title" style="color:var(--em)">COACHING IA — LEADERSHIP</div>
+          <div class="card-sub">Décrivez une situation de leadership ou de communication interprofessionnelle difficile — l'IA vous aide à l'analyser et à progresser.</div>
+          <textarea id="question-lead"
+            style="width:100%;min-height:80px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:4px;color:var(--txt);padding:12px;font-size:14px;font-family:'Mulish',sans-serif;outline:none;resize:vertical;line-height:1.6;margin-bottom:10px"
+            placeholder="Ex : J'ai du mal à appeler le médecin la nuit — j'ai peur de déranger. Comment travailler cette appréhension ? Comment déléguer à un(e) AS expérimenté(e) sans paraître donneur d'ordres ? J'ai eu une situation de conflit en réunion pluridisciplinaire..."></textarea>
+          <button class="btn-p btn-full" onclick="runAnalyse()">⚡ ANALYSER MA SITUATION →</button>
+          ${S.loading?`<div class="dots" style="margin-top:16px"><span></span><span></span><span></span><div class="dots-msg">Analyse de votre situation de leadership…</div></div>`:''}
+          ${!S.loading&&S.analyse?`<div class="analysis fadeup" style="margin-top:16px">${renderMd(S.analyse)}</div>`:''}
+          <hr class="div">
+          ${!S.apiKeySaved?`<div class="apikey-box">
+            <p>Clé API Anthropic pour activer le coaching IA. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+          </div>`:`<div style="color:var(--mint);font-family:'Fira Mono',monospace;font-size:11px">✓ Clé API configurée</div>`}
+        </div>
+
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:18px">
+            <div style="font-size:32px;margin-bottom:8px">🔒</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--txt);margin-bottom:5px">COACHING IA — ACCÈS PREMIUM</div>
+            <div style="font-size:13px;color:var(--txt2)">Inter-pro, SBAR, scénarios et quiz sont entièrement gratuits</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+            ${[
+              {who:'Module seul', price:'4,99€', desc:'SimLead à vie'},
+              {who:'Suite complète', price:'12,99€', desc:'15 modules à vie', em:true},
+              {who:'Institution', price:'Devis', desc:'IFSI · Syndicat'},
+            ].map(t=>`<div style="border:1.5px solid ${t.em?'rgba(240,160,48,.4)':'var(--bdr)'};border-radius:4px;padding:14px;text-align:center;background:${t.em?'rgba(240,160,48,.07)':'rgba(255,255,255,.02)'}">
+              <div style="font-family:'Fira Mono',monospace;font-size:10px;color:${t.em?'var(--em)':'var(--txt2)'};margin-bottom:8px;letter-spacing:1px">${t.who}</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--txt)">${t.price}</div>
+              <div style="font-size:11px;color:var(--txt2);margin-top:5px">${t.desc}</div>
+            </div>`).join('')}
+          </div>
+          <div style="text-align:center;margin-bottom:10px">
+            <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:12px 28px;border-radius:3px;background:linear-gradient(135deg,var(--em2),var(--em));color:#0a0c10;font-weight:700;font-size:14px;text-decoration:none;font-family:'Bebas Neue',sans-serif;letter-spacing:2px">OBTENIR L'ACCÈS →</a>
+          </div>
+          <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt2);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace">🔑 Espace formateur</button>
+          </div>
+          ${S.showKey?`<div class="apikey-box" style="margin-top:12px">
+            <p>Clé API Anthropic — formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div>':''}
+          </div>`:''}
+        </div>
+      </div>`;
+    }
+
+    h+=`<div style="margin-top:12px"><button class="btn-g" onclick="go('welcome')" style="color:var(--em);border-color:rgba(240,160,48,.2)">← Accueil SimLead</button></div>`;
+  }
+
+  h += '</div>';
+  document.getElementById('app').innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){ S.view=v; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setOnglet(o){ S.onglet=o; S.analyse=''; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function togglePro(id){ S.proActive=S.proActive===id?null:id; render(); }
+function toggleScen(id){
+  if(S.scenOpen===id){ S.scenOpen=null; S.scenExemple=null; }
+  else { S.scenOpen=id; S.scenExemple=null; }
+  render();
+}
+function setSBARAction(scenId, partie, v){ setSBAR(scenId, partie, v); }
+function selectQuiz(i){
+  if(S.quizShown) return;
+  S.quizSelected=i; S.quizShown=true;
+  S.quizTotal++;
+  if(i===QUIZ[S.quizIdx%QUIZ.length].rep) S.quizScore++;
+  render();
+}
+function nextQuiz(){ S.quizIdx++; S.quizSelected=null; S.quizShown=false; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function saveKey(){ localStorage.setItem('simlead_key',S.apiKey); S.apiKeySaved=true; render(); }
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const q = document.getElementById('question-lead')?.value||'';
+  if(!q.trim()) return;
+  S.loading=true; S.analyse=''; render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:`Tu es un formateur IFSI expert en leadership infirmier et communication interprofessionnelle, spécialiste du Domaine D du référentiel 2026. Un étudiant infirmier te soumet une situation de leadership ou de communication interprofessionnelle.
+
+Situation soumise : ${q}
+
+Réponds en 3-4 paragraphes. Structure ta réponse :
+1. Analyse de la situation — ce qui se passe réellement
+2. Outils concrets — SBAR, délégation, techniques de communication
+3. Ce que tu recommandes concrètement pour progresser
+
+Tutoie l'étudiant. Sois direct et pratique — le leadership s'apprend par l'expérience, pas la théorie. Si pertinent, propose une formulation concrète à utiliser. Utilise **gras** pour les points clés.`}]
+      })
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){S.analyse=`**Erreur**\n\n${e.message}`;}
+  S.loading=false; render();
+}
+
+render();
+</script>
+</body>
+</html>
