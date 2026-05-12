@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Fond dégradé sombre -->
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#0d1520"/>
+      <stop offset="100%" stop-color="#06080f"/>
+    </linearGradient>
+
+    <!-- Halo central -->
+    <radialGradient id="halo" cx="256" cy="240" r="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#1a2e4a" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#06080f" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Dégradé O2 bleu -->
+    <linearGradient id="go2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+
+    <!-- Dégradé Perf doré -->
+    <linearGradient id="gperf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#f0c96a"/>
+      <stop offset="100%" stop-color="#c49030"/>
+    </linearGradient>
+
+    <!-- Dégradé Gluco vert -->
+    <linearGradient id="ggluco" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#5ecb7a"/>
+      <stop offset="100%" stop-color="#3dab5a"/>
+    </linearGradient>
+
+    <!-- Dégradé Contention violet -->
+    <linearGradient id="gcont" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#c4a8f0"/>
+      <stop offset="100%" stop-color="#9b7fc4"/>
+    </linearGradient>
+
+    <!-- Dégradé ligne ECG -->
+    <linearGradient id="gecg" x1="0" y1="0" x2="512" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="25%"  stop-color="#38bdf8" stop-opacity="0.9"/>
+      <stop offset="50%"  stop-color="#d4a853" stop-opacity="0.9"/>
+      <stop offset="75%"  stop-color="#5ecb7a" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#b8a0e8" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Filtre glow -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12"/>
+    </filter>
+
+    <!-- Clip arrondi iOS -->
+    <clipPath id="roundClip">
+      <rect width="512" height="512" rx="112" ry="112"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── FOND ── -->
+  <g clip-path="url(#roundClip)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+    <rect width="512" height="512" fill="url(#halo)"/>
+
+    <!-- Texture subtile points -->
+    <circle cx="100" cy="80"  r="1.5" fill="white" opacity="0.06"/>
+    <circle cx="200" cy="50"  r="1"   fill="white" opacity="0.05"/>
+    <circle cx="380" cy="90"  r="1.5" fill="white" opacity="0.06"/>
+    <circle cx="420" cy="160" r="1"   fill="white" opacity="0.04"/>
+    <circle cx="60"  cy="300" r="1"   fill="white" opacity="0.05"/>
+    <circle cx="460" cy="380" r="1.5" fill="white" opacity="0.06"/>
+    <circle cx="130" cy="440" r="1"   fill="white" opacity="0.04"/>
+
+    <!-- ── LIGNE ECG TRAVERSANTE ── -->
+    <!-- Glow derrière -->
+    <path d="M 0,290 L 80,290 L 100,290 L 115,230 L 130,350 L 145,200 L 162,380 L 178,290 L 220,290 L 240,290 L 255,250 L 270,330 L 285,270 L 300,290 L 380,290 L 512,290"
+      stroke="url(#gecg)" stroke-width="18" fill="none" opacity="0.15" filter="url(#glow2)"/>
+    <!-- Ligne principale -->
+    <path d="M 0,290 L 80,290 L 100,290 L 115,230 L 130,350 L 145,200 L 162,380 L 178,290 L 220,290 L 240,290 L 255,250 L 270,330 L 285,270 L 300,290 L 380,290 L 512,290"
+      stroke="url(#gecg)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+
+    <!-- ── 4 ICÔNES MODULES en arc ── -->
+
+    <!-- Halo glow de chaque icône (fond flou coloré) -->
+    <circle cx="160" cy="185" r="38" fill="#38bdf8" opacity="0.12" filter="url(#glow2)"/>
+    <circle cx="352" cy="185" r="38" fill="#d4a853" opacity="0.12" filter="url(#glow2)"/>
+    <circle cx="160" cy="345" r="38" fill="#5ecb7a" opacity="0.12" filter="url(#glow2)"/>
+    <circle cx="352" cy="345" r="38" fill="#b8a0e8" opacity="0.12" filter="url(#glow2)"/>
+
+    <!-- Cercles fond icônes -->
+    <circle cx="160" cy="185" r="34" fill="rgba(56,189,248,.12)" stroke="rgba(56,189,248,.35)" stroke-width="1.5"/>
+    <circle cx="352" cy="185" r="34" fill="rgba(212,168,83,.12)"  stroke="rgba(212,168,83,.35)"  stroke-width="1.5"/>
+    <circle cx="160" cy="345" r="34" fill="rgba(94,203,122,.12)"  stroke="rgba(94,203,122,.35)"  stroke-width="1.5"/>
+    <circle cx="352" cy="345" r="34" fill="rgba(184,160,232,.12)" stroke="rgba(184,160,232,.35)" stroke-width="1.5"/>
+
+    <!-- SimO2 — Poumon stylisé -->
+    <g transform="translate(136,162)" filter="url(#glow)">
+      <path d="M12,5 C10,5 7,7 7,12 L6,28 C5,32 7,36 10,37 C12,38 15,38 17,37 C21,36 24,33 25,30 C26,27 25,24 23,22 L21,19 L21,12 C21,7 18,5 16,5 Z" fill="url(#go2)" opacity="0.9"/>
+      <path d="M12,14 C12,14 11,18 12,22 C13,26 16,28 16,28 C16,28 19,26 20,22 C21,18 20,14 20,14" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" stroke-linecap="round"/>
+    </g>
+
+    <!-- SimPerf — Goutte IV stylisée -->
+    <g transform="translate(328,158)" filter="url(#glow)">
+      <!-- Poche -->
+      <rect x="8" y="2" width="20" height="14" rx="4" fill="url(#gperf)" opacity="0.85"/>
+      <!-- Tube -->
+      <line x1="18" y1="16" x2="18" y2="24" stroke="url(#gperf)" stroke-width="2.5" opacity="0.7"/>
+      <!-- Chambre compte-gouttes -->
+      <rect x="12" y="24" width="12" height="10" rx="2" fill="none" stroke="url(#gperf)" stroke-width="1.5" opacity="0.8"/>
+      <!-- Goutte -->
+      <ellipse cx="18" cy="29" rx="2" ry="3" fill="url(#gperf)" opacity="0.9"/>
+      <!-- Tube bas -->
+      <line x1="18" y1="34" x2="18" y2="42" stroke="url(#gperf)" stroke-width="2" opacity="0.6"/>
+    </g>
+
+    <!-- SimGluco — Goutte de sang + courbe -->
+    <g transform="translate(136,320)" filter="url(#glow)">
+      <!-- Goutte -->
+      <path d="M12,6 C12,6 4,16 4,22 C4,28 7.5,32 12,32 C16.5,32 20,28 20,22 C20,16 12,6 12,6 Z" fill="url(#ggluco)" opacity="0.85"/>
+      <!-- Reflet -->
+      <path d="M9,14 C8,16 7.5,19 8,21" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+      <!-- Barre glycémie -->
+      <rect x="3" y="35" width="18" height="3" rx="1.5" fill="rgba(94,203,122,.3)"/>
+      <rect x="3" y="35" width="10" height="3" rx="1.5" fill="url(#ggluco)" opacity="0.8"/>
+    </g>
+
+    <!-- SimContention — Bas de contention stylisé -->
+    <g transform="translate(328,318)" filter="url(#glow)">
+      <!-- Corps du bas -->
+      <path d="M10,4 C9,4 7,5 7,9 L6,30 C5,34 7,38 10,40 C12,41 15,41 17,40 C21,39 23,36 24,34 C25,32 24,29 22,27 L20,24 L20,9 C20,5 18,4 17,4 Z" fill="url(#gcont)" opacity="0.85"/>
+      <!-- Élastique haut -->
+      <rect x="7" y="2" width="13" height="4" rx="2" fill="#c4a8f0" opacity="0.9"/>
+      <!-- Lignes compression -->
+      <line x1="8"  y1="12" x2="19" y2="12" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+      <line x1="7"  y1="17" x2="19" y2="17" stroke="rgba(255,255,255,.22)" stroke-width="1"/>
+      <line x1="7"  y1="22" x2="19" y2="22" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+    </g>
+
+    <!-- ── TEXTE SIMCARE ── -->
+    <!-- Ombre -->
+    <text x="258" y="488" font-family="Georgia, serif" font-size="52" font-weight="700"
+      fill="#000" opacity="0.4" text-anchor="middle" letter-spacing="-1">SimCare</text>
+    <!-- Texte principal -->
+    <text x="256" y="486" font-family="Georgia, serif" font-size="52" font-weight="700"
+      fill="white" opacity="0.92" text-anchor="middle" letter-spacing="-1">SimCare</text>
+
+    <!-- Reflet iOS (brillance en haut) -->
+    <rect width="512" height="180" rx="112" fill="white" opacity="0.04"/>
+
+    <!-- Bordure subtile -->
+    <rect width="512" height="512" rx="112" ry="112" fill="none" stroke="white" stroke-width="1" opacity="0.08"/>
+  </g>
+</svg>

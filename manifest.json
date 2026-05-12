@@ -1,0 +1,49 @@
+{
+  "name": "SimCare · Suite pédagogique IFSI",
+  "short_name": "SimCare",
+  "description": "Suite pédagogique IFSI 2026 — 20 modules cliniques",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0c10",
+  "theme_color": "#0a0c10",
+  "orientation": "portrait",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "SimCare-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "SimO₂",
+      "short_name": "SimO₂",
+      "description": "Oxygénothérapie · UE B.3",
+      "url": "./SimO2-IFSI.html",
+      "icons": [{ "src": "SimCare-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "SimUrgences",
+      "short_name": "Urgences",
+      "description": "ABCDE · IDE seul · SFMU",
+      "url": "./SimUrgences-IFSI.html",
+      "icons": [{ "src": "SimCare-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "SimConstantes",
+      "short_name": "Constantes",
+      "description": "Constantes vitales · Bilan bio · NEWS2",
+      "url": "./SimConstantes-IFSI.html",
+      "icons": [{ "src": "SimCare-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "SimPrévention",
+      "short_name": "Prévention",
+      "description": "Infirmier référent · ALD · ETP",
+      "url": "./SimPrevention-IFSI.html",
+      "icons": [{ "src": "SimCare-icon.svg", "sizes": "any" }]
+    }
+  ]
+}
