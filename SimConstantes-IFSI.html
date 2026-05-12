@@ -4,1002 +4,596 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SimConstantes · Outil pédagogique IFSI</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Newsreader:ital,wght@0,300;0,600;0,700;1,300;1,600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@300;400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:    #080c12;
-  --bg2:   #0d1420;
-  --card:  rgba(255,255,255,.032);
-  --bdr:   rgba(255,255,255,.08);
-  --txt:   #e8f0f8;
-  --txt2:  #6080a0;
-  --txt3:  #283848;
-  --em:    #40b0f8;
-  --em2:   #2890d8;
-  --green: #40d880;
-  --amber: #f8c040;
-  --red:   #f85050;
-  --violet:#b060f8;
-  --teal:  #40d8c0;
-  /* Zones valeurs */
-  --z-ok:   #40d880;
-  --z-warn: #f8c040;
-  --z-crit: #f85050;
+:root{
+  --bg:#0c1018;--bg2:#121820;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#d8e4f0;--txt2:#4a6080;--em:#40c8e0;--em2:#2090a8;
+  --ok:#30d880;--warn:#f0b030;--crit:#f04040;
+  --mono:'Azeret Mono',monospace;--sans:'Instrument Sans',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:'Space Grotesk',sans-serif;
-  background:var(--bg);
-  background-image:
-    radial-gradient(ellipse 80% 50% at 15% 5%,  rgba(64,176,248,.06) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 40% at 85% 95%, rgba(64,216,192,.04) 0%,transparent 50%);
-  color:var(--txt); min-height:100vh; padding-bottom:80px;
-}
-.wrap{max-width:720px;margin:0 auto;padding:0 20px}
-
-/* ── HEADER ── */
-.site-header{text-align:center;padding:42px 24px 22px}
-.badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(64,176,248,.08);border:1px solid rgba(64,176,248,.22);
-  color:var(--em);padding:5px 16px;border-radius:20px;
-  font-family:'Fira Mono',monospace;font-size:11px;
-  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
-}
-.site-header h1{
-  font-family:'Newsreader',serif;
-  font-size:clamp(26px,6vw,44px);font-weight:700;letter-spacing:-.5px;line-height:1.1;
-}
-.site-header h1 em{font-style:italic;color:var(--em)}
-.site-header p{color:var(--txt3);font-size:14px;margin-top:8px;font-style:italic}
-
-/* ── ONGLETS ── */
-.tabs{
-  display:flex;gap:4px;padding:0 0 20px;
-  overflow-x:auto;-webkit-overflow-scrolling:touch;
-  flex-wrap:nowrap;
-}
-.tab{
-  padding:9px 18px;border-radius:10px;
-  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
-  color:var(--txt2);font-size:13px;font-weight:500;cursor:pointer;
-  white-space:nowrap;transition:all .18s;
-  -webkit-tap-highlight-color:transparent;
-  font-family:'Space Grotesk',sans-serif;
-}
-.tab:hover{color:var(--txt);background:rgba(255,255,255,.05)}
-.tab.active{background:rgba(64,176,248,.12);border-color:rgba(64,176,248,.4);color:var(--em)}
-
-/* ── CARD ── */
-.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:18px;padding:24px;margin-bottom:14px}
-.card-title{font-family:'Newsreader',serif;font-size:20px;font-weight:700;margin-bottom:4px}
-.card-sub{color:var(--txt3);font-size:13px;margin-bottom:18px;line-height:1.6}
-
-/* ── FORM ── */
-.lbl{display:block;font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px}
-.lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-.lbl-val{font-family:'Fira Mono',monospace;color:var(--em);font-size:14px;font-weight:500}
-
-input[type=text],input[type=number]{
-  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
-  border-radius:10px;color:var(--txt);padding:10px 14px;
-  font-size:15px;font-family:'Fira Mono',monospace;
-  outline:none;width:100%;transition:border-color .2s;
-}
-input[type=text]:focus,input[type=number]:focus{border-color:rgba(64,176,248,.4)}
-
-input[type=range]{
-  -webkit-appearance:none;width:100%;height:10px;
-  border-radius:5px;background:rgba(255,255,255,.08);outline:none;cursor:pointer;margin-top:4px;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:32px;height:32px;
-  border-radius:50%;background:var(--em);cursor:pointer;
-  box-shadow:0 0 10px rgba(64,176,248,.5);
-  border:3px solid rgba(255,255,255,.18);transition:transform .15s;
-}
-input[type=range]:active::-webkit-slider-thumb{transform:scale(1.18)}
-
-.sl-wrap{display:flex;align-items:center;gap:10px;width:100%}
-.sl-wrap input[type=range]{flex:1}
-.sl-btn{
-  flex-shrink:0;width:38px;height:38px;border-radius:50%;
-  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
-  color:rgba(255,255,255,.55);font-size:20px;line-height:1;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:background .15s,color .15s,transform .1s;
-  user-select:none;-webkit-user-select:none;
-}
-.sl-btn:hover{background:rgba(255,255,255,.12);color:#fff}
-.sl-btn:active{transform:scale(.9)}
-
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.col  {display:flex;flex-direction:column;gap:16px}
-.col8 {display:flex;flex-direction:column;gap:8px}
-
-/* ── SEL ── */
-.sel{
-  cursor:pointer;border:1.5px solid var(--bdr);border-radius:10px;
-  padding:11px 14px;background:rgba(255,255,255,.02);
-  color:var(--txt2);font-size:14px;transition:all .18s;
-  display:flex;align-items:center;gap:10px;user-select:none;
-}
-.sel:hover{background:rgba(255,255,255,.05);color:var(--txt);border-color:rgba(255,255,255,.14)}
-.sel.on{background:rgba(64,176,248,.08);color:var(--txt);border-color:rgba(64,176,248,.4)}
-.sel .si{font-size:20px;flex-shrink:0}
-.sel .sd{font-size:11px;color:var(--txt3);margin-top:2px}
-.sel.center{justify-content:center;flex-direction:column;text-align:center;padding:14px 8px}
-
-/* ── BOUTONS ── */
-.btn-p{
-  background:linear-gradient(135deg,var(--em2),var(--em));
-  border:none;border-radius:12px;color:#080c12;
-  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;
-  padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;
-}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);
+  min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(64,200,224,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 20% 90%,rgba(48,216,128,.04) 0%,transparent 45%);
+  background-image:linear-gradient(rgba(64,200,224,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(64,200,224,.025) 1px,transparent 1px);
+  background-size:48px 48px}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+.site-header{padding:40px 22px 24px;text-align:center;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(64,200,224,.08);
+  border:1px solid rgba(64,200,224,.2);color:var(--em);padding:4px 16px;border-radius:3px;
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-family:var(--mono);font-size:clamp(28px,5vw,52px);font-weight:700;
+  letter-spacing:-2px;line-height:1;margin-bottom:8px}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:12px;font-family:var(--mono);letter-spacing:1px}
+.tabs{display:flex;gap:3px;padding:0 0 18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:7px 14px;border-radius:3px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;
+  font-family:var(--mono);letter-spacing:1px;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt);background:rgba(64,200,224,.05)}
+.tab.active{background:rgba(64,200,224,.1);border-color:rgba(64,200,224,.35);color:var(--em)}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:8px;padding:22px;
+  margin-bottom:12px;position:relative;z-index:1}
+.card.em{border-top:2px solid var(--em)}
+.card-title{font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:1px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px;line-height:1.65;font-family:var(--mono)}
+.profil-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+.profil-btn{padding:10px 8px;border-radius:4px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);cursor:pointer;text-align:center;transition:all .2s;
+  -webkit-tap-highlight-color:transparent}
+.profil-btn:hover{background:rgba(64,200,224,.06)}
+.profil-btn.active{background:rgba(64,200,224,.12);border-color:rgba(64,200,224,.4)}
+.profil-icon{font-size:22px;display:block;margin-bottom:5px}
+.profil-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--txt2)}
+.profil-btn.active .profil-label{color:var(--em)}
+.cst-card{background:rgba(0,0,0,.25);border:1.5px solid var(--bdr);border-radius:6px;
+  padding:16px;margin-bottom:8px;display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;gap:14px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.cst-card:hover{background:rgba(0,0,0,.35)}
+.cst-card.open{border-color:rgba(64,200,224,.3)}
+.cst-icon{font-size:26px;flex-shrink:0}
+.cst-nom{font-family:var(--mono);font-size:14px;font-weight:600;margin-bottom:3px}
+.cst-abbr{font-family:var(--mono);font-size:10px;color:var(--txt2);letter-spacing:2px}
+.cst-zone{text-align:right;font-family:var(--mono);font-size:11px;padding:4px 10px;
+  border-radius:20px;font-weight:600}
+.zone-ok{background:rgba(48,216,128,.12);color:var(--ok);border:1px solid rgba(48,216,128,.25)}
+.cst-detail{grid-column:1/-1;font-size:12px;color:var(--txt2);line-height:1.7;display:none;
+  margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+.cst-card.open .cst-detail{display:block}
+.zones-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.zone-item{background:rgba(0,0,0,.3);border-radius:4px;padding:8px;text-align:center}
+.zone-val{font-family:var(--mono);font-size:12px;font-weight:700;margin-bottom:2px}
+.zone-lbl{font-family:var(--mono);font-size:9px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase}
+.bio-section{margin-bottom:16px}
+.bio-title{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--em);margin-bottom:8px}
+.bio-row{display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:10px;
+  padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.bio-row:last-child{border-bottom:none}
+.bio-row:hover{background:rgba(255,255,255,.02);border-radius:4px}
+.bio-norm{font-family:var(--mono);font-size:11px;color:var(--txt2)}
+.news-param{background:rgba(0,0,0,.2);border-radius:4px;padding:12px;margin-bottom:8px}
+.news-lbl{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--txt2);margin-bottom:8px}
+.news-opts{display:flex;gap:4px;flex-wrap:wrap}
+.news-opt{padding:5px 11px;border-radius:3px;font-family:var(--mono);font-size:11px;
+  border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+  color:var(--txt2);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.news-opt:hover{border-color:rgba(64,200,224,.3);color:var(--txt)}
+.sel0{border-color:var(--ok)!important;color:var(--ok)!important;background:rgba(48,216,128,.1)!important}
+.sel1,.sel2{border-color:var(--warn)!important;color:var(--warn)!important;background:rgba(240,176,48,.1)!important}
+.sel3{border-color:var(--crit)!important;color:var(--crit)!important;background:rgba(240,64,64,.12)!important}
+.score-box{border-radius:6px;padding:18px;text-align:center;border:2px solid var(--bdr);transition:border-color .4s}
+.score-num{font-family:var(--mono);font-size:64px;font-weight:700;line-height:1;margin-bottom:6px}
+.score-lbl{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:1px;margin-bottom:6px}
+.score-act{font-size:12px;color:var(--txt2);line-height:1.65}
+.quiz-opt{padding:11px 14px;border-radius:4px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;font-size:13px;
+  margin-bottom:7px;transition:all .15s;display:flex;align-items:center;gap:10px;
+  -webkit-tap-highlight-color:transparent}
+.quiz-opt:hover{background:rgba(64,200,224,.05);color:var(--txt)}
+.quiz-opt.correct{background:rgba(48,216,128,.1);border-color:rgba(48,216,128,.4);color:var(--ok)}
+.quiz-opt.wrong{background:rgba(240,64,64,.1);border-color:rgba(240,64,64,.4);color:var(--crit)}
+.quiz-expl{background:rgba(64,200,224,.05);border:1px solid rgba(64,200,224,.15);border-radius:4px;
+  padding:11px 13px;margin-top:10px;font-size:12px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+.info{border-radius:4px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em{background:rgba(64,200,224,.06);border-left:3px solid rgba(64,200,224,.5);color:var(--em)}
+.info-ok{background:rgba(48,216,128,.06);border-left:3px solid rgba(48,216,128,.5);color:var(--ok)}
+.info-warn{background:rgba(240,176,48,.06);border-left:3px solid rgba(240,176,48,.5);color:var(--warn)}
+.info-crit{background:rgba(240,64,64,.06);border-left:3px solid rgba(240,64,64,.5);color:var(--crit)}
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:4px;
+  color:#0c1018;font-family:var(--mono);font-size:13px;font-weight:700;padding:11px 24px;
+  cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:1px}
 .btn-p:hover{opacity:.9;transform:translateY(-1px)}
-.btn-g{
-  background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);
-  border-radius:12px;color:var(--txt2);
-  font-family:'Space Grotesk',sans-serif;font-size:14px;
-  padding:11px 20px;cursor:pointer;transition:all .18s;
-}
-.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-g{background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);border-radius:4px;
+  color:var(--txt2);font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:9px 16px;cursor:pointer;transition:all .15s}
+.btn-g:hover{background:rgba(64,200,224,.05);color:var(--txt)}
 .btn-full{width:100%}
-.nav-row{display:flex;gap:10px}
-.nav-row>*{flex:1}
-.nav-col{display:flex;flex-direction:column;gap:10px}
-
-/* ── CONSTANTE CARD ── */
-.cst-card{
-  background:rgba(0,0,0,.25);border:1.5px solid var(--bdr);
-  border-radius:14px;padding:16px;margin-bottom:10px;
-  display:flex;flex-direction:column;gap:10px;
-}
-.cst-header{display:flex;align-items:center;gap:10px}
-.cst-icon{font-size:24px}
-.cst-name{font-weight:600;font-size:15px}
-.cst-abbr{font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);margin-top:2px}
-.cst-input-row{display:flex;align-items:center;gap:10px}
-.cst-input{
-  background:rgba(255,255,255,.05);border:2px solid var(--bdr);
-  border-radius:10px;color:var(--txt);padding:10px 14px;
-  font-size:20px;font-family:'Fira Mono',monospace;font-weight:500;
-  outline:none;width:120px;text-align:center;transition:border-color .2s;
-}
-.cst-input:focus{border-color:rgba(64,176,248,.4)}
-.cst-unit{font-family:'Fira Mono',monospace;font-size:13px;color:var(--txt3)}
-.cst-norme{font-size:12px;color:var(--txt3);font-style:italic}
-
-/* Zone indicator */
-.zone-pill{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:5px 12px;border-radius:20px;
-  font-family:'Fira Mono',monospace;font-size:12px;font-weight:500;
-  transition:all .3s;
-}
-.zone-ok   {background:rgba(64,216,128,.12); border:1px solid rgba(64,216,128,.3); color:var(--z-ok)}
-.zone-warn {background:rgba(248,192,64,.12);  border:1px solid rgba(248,192,64,.3);  color:var(--z-warn)}
-.zone-crit {background:rgba(248,80,80,.12);   border:1px solid rgba(248,80,80,.3);   color:var(--z-crit)}
-.zone-nc   {background:rgba(255,255,255,.04); border:1px solid var(--bdr);           color:var(--txt3)}
-
-/* Barre de zone */
-.zone-bar-wrap{position:relative;height:10px;border-radius:5px;overflow:visible;background:rgba(255,255,255,.06);margin:6px 0}
-.zone-bar-ok  {position:absolute;height:100%;background:var(--z-ok);  border-radius:5px;opacity:.25}
-.zone-bar-warn{position:absolute;height:100%;background:var(--z-warn);border-radius:5px;opacity:.25}
-.zone-bar-crit{position:absolute;height:100%;background:var(--z-crit);border-radius:5px;opacity:.25}
-.zone-cursor  {position:absolute;top:-3px;bottom:-3px;width:4px;border-radius:2px;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.7);transition:left .4s cubic-bezier(.34,1.56,.64,1);transform:translateX(-50%)}
-
-/* ── TABLEAU BIO ── */
-.bio-section-title{
-  font-family:'Newsreader',serif;font-size:16px;font-weight:700;
-  color:var(--em);margin:18px 0 10px;padding-bottom:6px;
-  border-bottom:1px solid rgba(64,176,248,.2);
-}
-.bio-row{
-  display:grid;grid-template-columns:1fr 100px 120px 80px;gap:8px;
-  align-items:center;padding:9px 12px;border-radius:8px;
-  background:rgba(255,255,255,.02);margin-bottom:4px;font-size:13px;
-}
-.bio-row:hover{background:rgba(255,255,255,.04)}
-.bio-name{color:var(--txt);font-weight:500}
-.bio-val{font-family:'Fira Mono',monospace;font-weight:500;text-align:center}
-.bio-norme{font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);text-align:center}
-.bio-header{
-  display:grid;grid-template-columns:1fr 100px 120px 80px;gap:8px;
-  padding:6px 12px;margin-bottom:6px;
-  font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:1.5px;
-  text-transform:uppercase;color:var(--txt3);
-}
-
-/* ── SURVEILLANCE ── */
-.surv-timeline{
-  position:relative;padding-left:28px;
-}
-.surv-line{position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(64,176,248,.2)}
-.surv-item{position:relative;margin-bottom:16px}
-.surv-dot{
-  position:absolute;left:-24px;top:2px;width:14px;height:14px;
-  border-radius:50%;border:2px solid var(--em);background:var(--bg);
-}
-.surv-dot.alert{border-color:var(--z-warn);animation:pulse-dot 2s ease-in-out infinite}
-.surv-dot.crit {border-color:var(--z-crit);animation:pulse-dot 1s ease-in-out infinite}
-.surv-time{font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:3px}
-.surv-content{background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:10px;padding:12px 14px}
-.surv-title{font-weight:600;font-size:14px;margin-bottom:4px}
-.surv-vals{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-.surv-val-chip{
-  font-family:'Fira Mono',monospace;font-size:12px;
-  padding:3px 10px;border-radius:20px;
-}
-
-/* ── INFO BOXES ── */
-.info{border-radius:11px;padding:12px 15px;font-size:13px;line-height:1.7}
-.info-em  {background:rgba(64,176,248,.07); border:1px solid rgba(64,176,248,.2); color:var(--em)}
-.info-grn {background:rgba(64,216,128,.07); border:1px solid rgba(64,216,128,.2); color:var(--green)}
-.info-amb {background:rgba(248,192,64,.07); border:1px solid rgba(248,192,64,.2); color:var(--amber)}
-.info-red {background:rgba(248,80,80,.07);  border:1px solid rgba(248,80,80,.2);  color:var(--red)}
-.info-vio {background:rgba(176,96,248,.07); border:1px solid rgba(176,96,248,.2); color:var(--violet)}
-
-/* ── ANALYSIS / PREMIUM ── */
-.analysis p{margin-bottom:16px;color:#a0b8d0;font-size:15px;line-height:1.85}
-.analysis strong{color:var(--txt);font-size:16px}
-.premium-box{background:rgba(0,0,0,.32);border:1.5px solid rgba(64,176,248,.18);border-radius:18px;padding:28px;margin-bottom:16px}
-.apikey-box{background:rgba(64,176,248,.04);border:1px solid rgba(64,176,248,.15);border-radius:12px;padding:14px 16px}
-.apikey-box p{font-size:13px;color:var(--txt3);margin-bottom:10px;line-height:1.6}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.col8{display:flex;flex-direction:column;gap:8px}
+.progress-wrap{background:rgba(255,255,255,.06);border-radius:2px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:2px;transition:width .5s ease}
+.dots{text-align:center;padding:22px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--em);
+  margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:12px;margin-top:10px;font-family:var(--mono)}
+.analysis p{margin-bottom:13px;font-size:14px;line-height:1.85;color:#5878a0}
+.analysis strong{color:var(--txt)}
+.apikey-box{background:rgba(64,200,224,.04);border:1px solid rgba(64,200,224,.12);
+  border-radius:4px;padding:11px}
+.apikey-box p{font-size:12px;color:var(--txt2);margin-bottom:9px;line-height:1.6}
 .apikey-box a{color:var(--em)}
-.apikey-row{display:flex;gap:8px}
-.apikey-row input{flex:1;padding:9px 12px;font-size:13px}
-.apikey-row button{padding:9px 16px;border:none;border-radius:9px;background:var(--em2);color:#080c12;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px}
-.apikey-saved{color:var(--green);font-size:11px;margin-top:6px;font-family:'Fira Mono',monospace}
-
-/* ── WELCOME ── */
-.welcome{text-align:center;padding:4px 0 28px}
-.welcome-icon{font-size:60px;display:block;margin-bottom:18px}
-.welcome p{color:var(--txt2);font-size:15px;line-height:1.8;max-width:480px;margin:0 auto}
-.pts{display:flex;flex-direction:column;gap:14px;margin:24px 0;text-align:left}
+.apikey-row{display:flex;gap:6px}
+.apikey-row input{flex:1;padding:8px 10px;font-size:11px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.08);border-radius:4px;color:var(--txt);
+  font-family:var(--mono);outline:none}
+.apikey-row input:focus{border-color:rgba(64,200,224,.3)}
+.apikey-row button{padding:8px 12px;border:none;border-radius:4px;background:var(--em2);
+  color:#0c1018;font-weight:700;cursor:pointer;font-size:11px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
+.pts{display:flex;flex-direction:column;gap:10px;margin:16px 0;text-align:left}
 .pt{display:flex;gap:12px;align-items:flex-start}
-.pt-i{font-size:20px;flex-shrink:0;margin-top:2px}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
 .pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
 .pt-t strong{color:var(--txt)}
-
-/* ── LOADING ── */
-.dots{text-align:center;padding:28px 0}
-.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
-.dots span:nth-child(2){animation-delay:.16s}
-.dots span:nth-child(3){animation-delay:.32s}
-.dots-msg{color:var(--txt3);font-size:13px;margin-top:10px;font-style:italic}
-
-hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:18px 0}
-
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes dotB  {0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
-@keyframes pulse-dot{0%,100%{opacity:.5}50%{opacity:1;box-shadow:0 0 8px currentColor}}
-.fadeup{animation:fadeUp .35s ease forwards}
-
-@media(max-width:480px){
-  .grid2,.grid3{grid-template-columns:1fr}
-  .bio-row,.bio-header{grid-template-columns:1fr 80px 100px 60px}
-  .nav-row{flex-direction:column}
-  .tabs{padding-bottom:16px}
-}
-
-.video-wrap{position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000;margin:10px 0}
-.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
-.video-label{font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;margin-top:14px}
-.video-source{font-size:11px;color:var(--txt3);font-style:italic;margin-top:5px}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .3s ease forwards}
+@media(max-width:480px){.profil-grid{grid-template-columns:repeat(2,1fr)}.zones-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-// ═══════════════════════════════════════
-//  DONNÉES PATIENT
-// ═══════════════════════════════════════
-const PATHOLOGIES = [
-  { id:'sain',    label:'Aucune pathologie',           icon:'💚' },
-  { id:'hta',     label:'HTA',                         icon:'🩺' },
-  { id:'card',    label:'Insuffisance cardiaque',      icon:'❤️' },
-  { id:'bpco',    label:'BPCO',                        icon:'🫁' },
-  { id:'diabete', label:'Diabète',                     icon:'🩸' },
-  { id:'renal',   label:'Insuffisance rénale',         icon:'🫘' },
-  { id:'hepato',  label:'Insuffisance hépatique',      icon:'🟤' },
-  { id:'sepsis',  label:'Sepsis / Infection sévère',   icon:'🦠' },
-  { id:'postop',  label:'Post-opératoire',             icon:'🏥' },
+// Données profils
+var PROFILS = [
+  {id:'adulte',icon:'🧑',label:'Adulte',age:'18-64 ans'},
+  {id:'senior',icon:'👴',label:'65 ans+',age:'Senior'},
+  {id:'enfant',icon:'🧒',label:'Enfant',age:'6-12 ans'},
+  {id:'neonat',icon:'👶',label:'Nourrisson',age:'0-28 jours'},
 ];
 
-// ═══════════════════════════════════════
-//  NORMES PAR ÂGE ET PATHOLOGIE
-// ═══════════════════════════════════════
-function getNormes(age, pathologie){
-  // FC
-  const fc_norm = age<1?[100,160]:age<3?[90,150]:age<6?[80,140]:age<12?[70,120]:age<18?[60,100]:[60,100];
-  // FR
-  const fr_norm = age<1?[30,60]:age<3?[24,40]:age<6?[22,34]:age<12?[18,30]:age<18?[12,20]:[12,20];
-  if(pathologie==='bpco') fr_norm[1]=24;
-  // PA Systolique
-  let pas_norm = age<1?[70,100]:age<3?[80,110]:age<12?[90,120]:age<18?[100,130]:[90,140];
-  if(pathologie==='hta') pas_norm=[130,180];
-  // SpO2
-  let spo2_norm = [95,100];
-  if(pathologie==='bpco') spo2_norm=[88,92];
-  // Température
-  const temp_norm = [36.1,37.8];
-  // Glasgow
-  const gcs_norm = [15,15];
+// Constantes vitales
+var CONSTANTES = [
+  {
+    id:'pa',icon:'❤️',nom:'Pression Artérielle',abbr:'PA',unite:'mmHg',
+    normes:{
+      adulte:{ok:'120/80 mmHg',alerte:'> 140/90 ou < 90/60',critique:'> 180/110 ou < 80/50',
+        info:'Mesurer en position assise après 5 min de repos. Brassard au niveau du coeur. Toujours noter les deux chiffres (systolique/diastolique). Comparer les deux bras lors du premier examen.',
+        zones:[{v:'< 80/50',l:'Choc',c:'crit'},{v:'90-120',l:'Normal',c:'ok'},{v:'> 140/90',l:'HTA',c:'warn'},{v:'> 180',l:'Urgence HTA',c:'crit'}]},
+      senior:{ok:'130-150/70-90 mmHg',alerte:'> 160/90 ou < 100/60',critique:'> 180/110 ou < 80/50',
+        info:'Chez la personne âgée, une PAS entre 130 et 150 mmHg est souvent acceptable. Attention aux hypotensions orthostatiques. Mesurer couché ET debout (delta > 20 mmHg = hypotension orthostatique).',
+        zones:[]},
+      enfant:{ok:'100-120/60-80 mmHg',alerte:'< 80/50 ou > 130/80',critique:'< 60/40',
+        info:'La PA normale chez l\'enfant : PAS = 80 + (2 x âge en années). Utiliser un brassard adapté (largeur = 2/3 de la longueur du bras).',
+        zones:[]},
+      neonat:{ok:'60-90/30-60 mmHg',alerte:'< 40/20 ou > 90/60',critique:'< 30/20',
+        info:'PA mesurée au membre inférieur ou supérieur. PAS normale environ 60-80 mmHg. Monitorage continu en néonatalogie.',
+        zones:[]},
+    }
+  },
+  {
+    id:'fc',icon:'💓',nom:'Fréquence Cardiaque',abbr:'FC',unite:'bpm',
+    normes:{
+      adulte:{ok:'60-100 bpm',alerte:'< 50 ou > 100',critique:'< 40 ou > 130',
+        info:'Mesurer au pouls radial pendant 60 secondes. Noter le rythme (régulier/irrégulier) et la force du pouls. Tachycardie > 100 bpm. Bradycardie < 60 bpm.',
+        zones:[{v:'< 40',l:'Bradycardie sévère',c:'crit'},{v:'40-60',l:'Bradycardie',c:'warn'},{v:'60-100',l:'Normal',c:'ok'},{v:'100-130',l:'Tachycardie',c:'warn'},{v:'> 130',l:'Tachycardie sévère',c:'crit'}]},
+      senior:{ok:'55-90 bpm',alerte:'< 50 ou > 100',critique:'< 40 ou > 120',
+        info:'Une bradycardie modérée peut être liée aux beta-bloquants. Toujours corréler avec la clinique et les traitements.',
+        zones:[]},
+      enfant:{ok:'70-120 bpm',alerte:'< 60 ou > 130',critique:'< 50 ou > 180',
+        info:'La FC diminue avec l\'âge. Nourrisson 120-160 bpm. Enfant 6 ans 75-115 bpm. La fièvre augmente la FC de 10-15 bpm par degré.',
+        zones:[]},
+      neonat:{ok:'120-160 bpm',alerte:'< 100 ou > 160',critique:'< 80 ou > 180',
+        info:'FC normale du nouveau-né 120-160 bpm. En dessous de 100 bpm : bradycardie à signaler immédiatement.',
+        zones:[]},
+    }
+  },
+  {
+    id:'fr',icon:'🌬️',nom:'Fréquence Respiratoire',abbr:'FR',unite:'/min',
+    normes:{
+      adulte:{ok:'12-20 /min',alerte:'< 10 ou > 24',critique:'< 8 ou > 30',
+        info:'La FR est le paramètre vital le plus prédictif d\'une dégradation — et le plus souvent omis. Compter pendant 60 secondes complètes. Ne pas prévenir le patient pour éviter le biais conscient.',
+        zones:[{v:'< 8',l:'Apnée',c:'crit'},{v:'8-12',l:'Bradypnée',c:'warn'},{v:'12-20',l:'Normal',c:'ok'},{v:'20-25',l:'Polypnée',c:'warn'},{v:'> 25',l:'Détresse',c:'crit'}]},
+      senior:{ok:'14-22 /min',alerte:'< 10 ou > 25',critique:'< 8 ou > 30',
+        info:'Une FR à 20/min chez la personne âgée peut signer une pneumopathie. Les réserves respiratoires sont diminuées. FR > 25/min = signe d\'alarme sérieux.',
+        zones:[]},
+      enfant:{ok:'20-30 /min',alerte:'< 15 ou > 40',critique:'< 10 ou > 50',
+        info:'La FR normale est plus élevée chez l\'enfant. Nourrisson 40-60/min. La polypnée est le premier signe de détresse respiratoire pédiatrique.',
+        zones:[]},
+      neonat:{ok:'40-60 /min',alerte:'< 30 ou > 60',critique:'< 20 ou > 80',
+        info:'Des pauses de 5-10 secondes sont normales. L\'apnée (> 20 secondes) est pathologique. Le geignement (grunting) = détresse respiratoire.',
+        zones:[]},
+    }
+  },
+  {
+    id:'spo2',icon:'🩺',nom:'Saturation en O₂',abbr:'SpO₂',unite:'%',
+    normes:{
+      adulte:{ok:'95-100%',alerte:'92-94%',critique:'< 92%',
+        info:'Mesure au bout du doigt, sans vernis. La SpO₂ ne mesure pas la ventilation — un patient en hypercapnie peut avoir une SpO₂ normale sous O₂. Chez le BPCO : cible 88-92%, jamais 100%.',
+        zones:[{v:'< 88%',l:'Hypoxémie sévère',c:'crit'},{v:'88-92%',l:'BPCO cible',c:'warn'},{v:'92-94%',l:'Alerte',c:'warn'},{v:'95-100%',l:'Normal',c:'ok'}]},
+      senior:{ok:'94-100%',alerte:'90-93%',critique:'< 90%',
+        info:'Les personnes âgées BPCO : cible 88-92%. Ne pas chercher la saturation à 100%.',
+        zones:[]},
+      enfant:{ok:'97-100%',alerte:'94-96%',critique:'< 94%',
+        info:'SpO₂ < 94% chez un enfant = signe d\'alerte. Toujours corréler avec la fréquence respiratoire.',
+        zones:[]},
+      neonat:{ok:'95-100%',alerte:'90-94%',critique:'< 90%',
+        info:'Se normalise en 10-15 min après la naissance. Mesure au poignet droit (SpO₂ pré-ductale).',
+        zones:[]},
+    }
+  },
+  {
+    id:'temp',icon:'🌡️',nom:'Température',abbr:'T°',unite:'°C',
+    normes:{
+      adulte:{ok:'36,5 - 37,5°C',alerte:'38-38,5°C ou 35-36,4°C',critique:'> 39°C ou < 35°C',
+        info:'Varie selon le site : axillaire -0,5°C, rectale +0,5°C. Fièvre = T > 38°C. L\'hypothermie (< 36°C) est sous-diagnostiquée, notamment dans les sepsis et chez les personnes âgées.',
+        zones:[{v:'< 35°C',l:'Hypothermie',c:'crit'},{v:'35-36,4°C',l:'Subfébrile',c:'warn'},{v:'36,5-37,5°C',l:'Normal',c:'ok'},{v:'38-39°C',l:'Fièvre',c:'warn'},{v:'> 39°C',l:'Hyperthermie',c:'crit'}]},
+      senior:{ok:'36 - 37,4°C',alerte:'> 37,5°C ou < 35,5°C',critique:'> 39°C ou < 35°C',
+        info:'La réponse thermique est atténuée chez la personne âgée. Un sepsis peut se manifester sans fièvre. T° > 37,5°C = signe à ne pas négliger.',
+        zones:[]},
+      enfant:{ok:'36,5 - 37,5°C',alerte:'38-40°C ou < 36°C',critique:'> 40°C ou < 35°C',
+        info:'Convulsions fébriles liées à la rapidité de montée. Mesure rectale de référence avant 2 ans.',
+        zones:[]},
+      neonat:{ok:'36,5 - 37,5°C',alerte:'< 36,5°C ou > 37,8°C',critique:'< 35,5°C ou > 38,5°C',
+        info:'L\'hypothermie est la principale cause de mortalité néonatale évitable. Contact peau à peau et bonnet dès la naissance.',
+        zones:[]},
+    }
+  },
+  {
+    id:'glyc',icon:'🩸',nom:'Glycémie capillaire',abbr:'HGT',unite:'g/L',
+    normes:{
+      adulte:{ok:'0,7 - 1,4 g/L (à jeun)',alerte:'0,5-0,69 ou > 1,8',critique:'< 0,5 ou > 3,0',
+        info:'Nettoyer le doigt à l\'eau (pas à l\'alcool). Essuyer la première goutte, utiliser la deuxième. Vérifier la date de péremption des bandelettes.',
+        zones:[{v:'< 0,5',l:'Hypo sévère',c:'crit'},{v:'0,5-0,7',l:'Hypoglycémie',c:'warn'},{v:'0,7-1,4',l:'Normal',c:'ok'},{v:'1,4-2,0',l:'Post-prandial',c:'warn'},{v:'> 2,0',l:'Hyperglycémie',c:'crit'}]},
+      senior:{ok:'0,7 - 1,6 g/L',alerte:'< 0,6 ou > 2,0',critique:'< 0,5 ou > 3,0',
+        info:'Chez la personne âgée diabétique, les signes d\'hypoglycémie peuvent être atypiques : confusion, chute, malaise sans sueurs.',
+        zones:[]},
+      enfant:{ok:'0,7 - 1,2 g/L',alerte:'< 0,6 ou > 1,5',critique:'< 0,4 ou > 2,5',
+        info:'Seuil d\'alerte : < 0,6 g/L. Resucrage immédiat si conscient.',
+        zones:[]},
+      neonat:{ok:'0,4 - 0,7 g/L',alerte:'< 0,4 ou > 0,8',critique:'< 0,25',
+        info:'Hypoglycémie néonatale définie par < 0,4 g/L dans les 48 premières heures. Allaitement précoce et fréquent.',
+        zones:[]},
+    }
+  },
+  {
+    id:'gcs',icon:'🧠',nom:'Conscience — GCS',abbr:'GCS',unite:'/15',
+    normes:{
+      adulte:{ok:'15/15',alerte:'13-14/15',critique:'< 13/15',
+        info:'3 composantes : Yeux (1-4) + Verbal (1-5) + Moteur (1-6). GCS 15 = conscient. GCS < 8 = coma, risque d\'obstruction des voies aériennes → PLS si ventilation présente.',
+        zones:[{v:'3-8',l:'Coma',c:'crit'},{v:'9-12',l:'Obnubilé',c:'warn'},{v:'13-14',l:'Confusion',c:'warn'},{v:'15',l:'Normal',c:'ok'}]},
+      senior:{ok:'15/15',alerte:'13-14/15',critique:'< 13/15',
+        info:'Une confusion aiguë chez la personne âgée est toujours pathologique. Évaluer aussi la CAM (Confusion Assessment Method).',
+        zones:[]},
+      enfant:{ok:'15/15',alerte:'13-14/15',critique:'< 13/15',
+        info:'GCS pédiatrique adapte la réponse verbale selon l\'âge. GCS < 10 chez un enfant = urgence pédiatrique.',
+        zones:[]},
+      neonat:{ok:'Score Apgar 8-10',alerte:'Apgar 4-7',critique:'Apgar < 4',
+        info:'Score d\'Apgar à 1 et 5 minutes : FC, Respiration, Tonus, Réflexes, Couleur. Score < 4 = réanimation immédiate.',
+        zones:[]},
+    }
+  },
+];
 
-  return { fc:fc_norm, fr:fr_norm, pas:pas_norm, spo2:spo2_norm, temp:temp_norm, gcs:gcs_norm };
+// Bilan biologique
+var BIO = [
+  {titre:'HÉMOGRAMME (NFS)',rows:[
+    {nom:'Hémoglobine (Hb)',norm:'H : 13-17 g/dL · F : 12-16 g/dL'},
+    {nom:'Hématocrite',norm:'H : 40-52% · F : 37-47%'},
+    {nom:'Globules blancs',norm:'4 000-10 000 /mm³'},
+    {nom:'Plaquettes',norm:'150 000-400 000 /mm³'},
+  ]},
+  {titre:'IONOGRAMME SANGUIN',rows:[
+    {nom:'Sodium (Na+)',norm:'135-145 mmol/L'},
+    {nom:'Potassium (K+)',norm:'3,5-5,0 mmol/L'},
+    {nom:'Chlore (Cl-)',norm:'95-105 mmol/L'},
+    {nom:'Bicarbonates',norm:'22-28 mmol/L'},
+  ]},
+  {titre:'FONCTION RÉNALE',rows:[
+    {nom:'Créatinine',norm:'H : 70-106 µmol/L · F : 44-80 µmol/L'},
+    {nom:'Urée',norm:'2,5-7,5 mmol/L'},
+    {nom:'DFG (CKD-EPI)',norm:'> 60 mL/min/1,73m²'},
+  ]},
+  {titre:'MARQUEURS INFLAMMATOIRES',rows:[
+    {nom:'CRP',norm:'< 5 mg/L'},
+    {nom:'Procalcitonine',norm:'< 0,5 ng/mL'},
+    {nom:'Fibrinogène',norm:'2-4 g/L'},
+  ]},
+  {titre:'COAGULATION',rows:[
+    {nom:'TP (%)',norm:'70-100%'},
+    {nom:'INR',norm:'0,8-1,2 (cible AVK : 2-3)'},
+    {nom:'TCA',norm:'25-35 secondes'},
+  ]},
+];
+
+// NEWS2
+var NEWS2 = [
+  {key:'fr',  lbl:'Fréquence respiratoire', opts:[{t:'≤ 8',s:3},{t:'9-11',s:1},{t:'12-20',s:0},{t:'21-24',s:2},{t:'≥ 25',s:3}]},
+  {key:'spo2',lbl:'SpO₂ (sans O₂)',        opts:[{t:'≤ 91%',s:3},{t:'92-93%',s:2},{t:'94-95%',s:1},{t:'≥ 96%',s:0}]},
+  {key:'o2',  lbl:'Oxygène supplémentaire', opts:[{t:'Non',s:0},{t:'Oui',s:2}]},
+  {key:'temp',lbl:'Température',            opts:[{t:'≤ 35°C',s:3},{t:'35-36°C',s:1},{t:'36-38°C',s:0},{t:'38-39°C',s:1},{t:'≥ 39°C',s:2}]},
+  {key:'pas', lbl:'PA systolique',          opts:[{t:'≤ 90',s:3},{t:'91-100',s:2},{t:'101-110',s:1},{t:'111-219',s:0},{t:'≥ 220',s:3}]},
+  {key:'fc',  lbl:'Fréquence cardiaque',    opts:[{t:'≤ 40',s:3},{t:'41-50',s:1},{t:'51-90',s:0},{t:'91-110',s:1},{t:'111-130',s:2},{t:'≥ 131',s:3}]},
+  {key:'avpu',lbl:'Conscience (AVPU)',       opts:[{t:'Alerte',s:0},{t:'Voix',s:3},{t:'Douleur',s:3},{t:'Aucune',s:3}]},
+];
+
+// Quiz
+var QUIZ = [
+  {q:'La fréquence respiratoire normale chez un adulte au repos est de :',
+   opts:['8-12 /min','12-20 /min','20-30 /min','30-40 /min'],rep:1,
+   expl:'**12-20 /min** est la norme adulte. La FR est le paramètre le plus prédictif d\'une dégradation et le plus souvent omis. Compter pendant **60 secondes complètes** sans prévenir le patient.'},
+  {q:'Une SpO₂ à 90% chez un patient BPCO connu sous 2L/min d\'O₂ :',
+   opts:['Est normale — la cible BPCO est 88-92%','Nécessite d\'augmenter l\'O₂ à 15L/min','Impose un arrêt immédiat de l\'O₂','Est une urgence vitale absolue'],rep:0,
+   expl:'Chez le **BPCO**, la cible SpO₂ est **88-92%**. Une hyperoxie peut supprimer le drive respiratoire et provoquer une hypercapnie. SpO₂ 90% sous 2L/min = dans la cible.'},
+  {q:'Un score de Glasgow à 8/15 signifie :',
+   opts:['Légère confusion, surveillance standard','Risque obstruction voies aériennes — PLS','Patient conscient et orienté','Coma dépassé'],rep:1,
+   expl:'**GCS < 8 = coma**. Risque majeur d\'obstruction des voies aériennes par chute de la langue. Si ventilation présente : **position latérale de sécurité**. Alerte médicale immédiate.'},
+  {q:'Le score NEWS2 intègre combien de paramètres ?',
+   opts:['4','5','6','7'],rep:3,
+   expl:'Le **NEWS2** intègre **7 paramètres** : FR, SpO₂, O₂ supplémentaire, Température, PA systolique, FC, Conscience (AVPU). Score ≥ 5 = alerte. Score ≥ 7 = urgence majeure.'},
+  {q:'Une hypokaliémie (K+ < 3,5 mmol/L) peut provoquer :',
+   opts:['Une hypertension artérielle','Des crampes et troubles du rythme cardiaque','Une acidose métabolique','Une hypoglycémie réactionnelle'],rep:1,
+   expl:'**L\'hypokaliémie** provoque crampes, faiblesse musculaire et surtout des **troubles du rythme cardiaque**. Particulièrement dangereux sous digitaliques. Surveillance ECG si K+ < 3,0.'},
+  {q:'La glycémie capillaire doit être mesurée avec :',
+   opts:['La première goutte de sang','La deuxième goutte après avoir essuyé la première','Après nettoyage à l\'alcool','La troisième goutte uniquement'],rep:1,
+   expl:'La **première goutte** contient des résidus tissulaires qui faussent la mesure. On l\'essuie et on utilise la **deuxième goutte**. Nettoyage à l\'eau — pas à l\'alcool qui dénature les glucides.'},
+];
+
+// État
+var SK = 'simcst';
+function load(){try{return JSON.parse(localStorage.getItem(SK))||{};}catch(e){return {};}}
+function save(d){try{localStorage.setItem(SK,JSON.stringify(d));}catch(e){}}
+var ST = load();
+function nGet(k){return ST['n_'+k];}
+function nSet(k,s){ST['n_'+k]=s;save(ST);}
+function nTotal(){
+  var t=0;
+  NEWS2.forEach(function(p){if(nGet(p.key)!==undefined)t+=nGet(p.key);});
+  return t;
+}
+function nFilled(){
+  var c=0;
+  NEWS2.forEach(function(p){if(nGet(p.key)!==undefined)c++;});
+  return c;
 }
 
-function getBioNormes(sexe, age, pathologie){
-  return {
-    // NFS
-    hb:     sexe==='H'?[13.5,17.5]:[12,16],
-    ht:     sexe==='H'?[40,52]:[37,47],
-    plq:    [150,400],
-    gb:     [4,10],
-    // Ionogramme
-    na:     [136,145],
-    k:      [3.5,5],
-    cl:     [98,107],
-    co2:    [22,29],
-    // Rein
-    creat:  sexe==='H'?[62,115]:[53,97],
-    uree:   [2.5,7.5],
-    dfu:    pathologie==='renal'?[0,30]:[60,120],
-    // Foie
-    ast:    [10,40],
-    alt:    [10,40],
-    bili:   [3,17],
-    // Autres
-    crp:    [0,5],
-    glyc:   [3.9,6.1],
-    alb:    [35,50],
-  };
-}
-
-function zoneVitale(val, norm){
-  if(val===''||val===null||isNaN(+val)) return 'nc';
-  const v=+val, lo=norm[0], hi=norm[1];
-  const range=hi-lo;
-  if(v>=lo&&v<=hi) return 'ok';
-  if(v<lo-range*.3||v>hi+range*.3) return 'crit';
-  return 'warn';
-}
-
-function zoneBio(val, norm){
-  if(val===''||val===null||isNaN(+val)) return 'nc';
-  const v=+val, lo=norm[0], hi=norm[1];
-  if(v>=lo&&v<=hi) return 'ok';
-  const range=hi-lo;
-  if(v<lo-range*.5||v>hi+range*.5) return 'crit';
-  return 'warn';
-}
-
-function zoneLabel(z){
-  return z==='ok'?'✓ Normal':z==='warn'?'⚠ Limite':z==='crit'?'🔴 Critique':'— Non saisi';
-}
-function zoneClass(z){ return `zone-${z}` }
-
-function cursorPct(val, norm, extend=0.4){
-  if(val===''||isNaN(+val)) return 50;
-  const v=+val, lo=norm[0], hi=norm[1], range=hi-lo;
-  const vizLo=lo-range*extend, vizHi=hi+range*extend;
-  return Math.min(98,Math.max(2, Math.round((v-vizLo)/(vizHi-vizLo)*100)));
-}
-
-function ageLabel(a){if(a<1)return 'Nourrisson';if(a<3)return 'Bambin';if(a<12)return 'Enfant';if(a<18)return 'Adolescent';if(a<65)return 'Adulte';return 'Personne âgée'}
-
-// ═══════════════════════════════════════
-//  ÉTAT
-// ═══════════════════════════════════════
-let S = {
-  view:'welcome',
-  onglet:'vitales',
-  patient:{ prenom:'Henri', sexe:'H', age:72, poids:78, taille:175, pathologie:'bpco' },
-  vitales:{ fc:'', fr:'', pas:'', pad:'', spo2:'', temp:'', gcs:'' },
-  bio:{ hb:'',ht:'',plq:'',gb:'', na:'',k:'',cl:'',co2:'', creat:'',uree:'',dfu:'', ast:'',alt:'',bili:'', crp:'',glyc:'',alb:'' },
-  surv_interval: 60,
-  analyse:'', loading:false, showKey:false,
+var S={
+  view:'welcome',onglet:'constantes',profil:'adulte',cstOpen:null,
+  qIdx:0,qSel:null,qShown:false,qScore:0,qTotal:0,
+  analyse:'',loading:false,showKey:false,
   apiKey:localStorage.getItem('simcst_key')||'',
   apiKeySaved:!!localStorage.getItem('simcst_key'),
 };
 
-function pathoObj(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0] }
-function normes(){ return getNormes(S.patient.age, S.patient.pathologie) }
-function bioNormes(){ return getBioNormes(S.patient.sexe, S.patient.age, S.patient.pathologie) }
-
-// ═══════════════════════════════════════
-//  UTILS
-// ═══════════════════════════════════════
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function renderMd(text){
-  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
-    const parts=para.split(/\*\*([^*]+)\*\*/g);
-    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
-    return `<p>${inner}</p>`;
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function md(t){
+  return t.split('\n\n').filter(function(p){return p.trim();}).map(function(para){
+    var parts=para.split(/\*\*([^*]+)\*\*/g);
+    var inner=parts.map(function(p,i){return i%2===1?'<strong>'+esc(p)+'</strong>':esc(p);}).join('');
+    return '<p>'+inner+'</p>';
   }).join('');
 }
-
-function bioZones(){
-  const bn=bioNormes();
-  const res={};
-  Object.entries(S.bio).forEach(([k,v])=>{
-    if(bn[k]) res[k]=zoneBio(v,bn[k]);
-  });
-  return res;
+function nc(s){
+  if(s<=1)return 'var(--ok)';
+  if(s<=4)return 'var(--ok)';
+  if(s<=6)return 'var(--warn)';
+  return 'var(--crit)';
 }
-
-function countAnomalies(){
-  const n=normes(), bn=bioNormes();
-  let c=0;
-  const vit=[['fc',n.fc],['fr',n.fr],['pas',n.pas],['spo2',n.spo2],['temp',n.temp],['gcs',n.gcs]];
-  vit.forEach(([k,norm])=>{ const z=zoneVitale(S.vitales[k],norm); if(z==='warn'||z==='crit') c++; });
-  Object.entries(S.bio).forEach(([k,v])=>{ if(bn[k]){ const z=zoneBio(v,bn[k]); if(z==='warn'||z==='crit') c++; } });
-  return c;
+function nl(s){
+  if(s<=1)return 'Faible risque';
+  if(s<=4)return 'Risque modéré';
+  if(s<=6)return 'Risque élevé';
+  if(s<=8)return 'RISQUE MAJEUR';
+  return 'URGENCE VITALE';
 }
+function na(s){
+  if(s<=1)return 'Surveillance standard. Mesures toutes les 6-12h.';
+  if(s<=4)return 'Alerte équipe soignante. Réévaluation toutes les 4-6h.';
+  if(s<=6)return 'Appel médecin urgent. Réévaluation toutes les 30 min.';
+  if(s<=8)return 'Urgence — appel médecin IMMÉDIAT. Monitoring continu.';
+  return 'URGENCE VITALE — activation équipe réanimation. Ne pas laisser seul.';
+}
+function zc(c){return c==='ok'?'var(--ok)':c==='warn'?'var(--warn)':'var(--crit)';}
 
-// ═══════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════
 function render(){
-  const pr  = S.patient.prenom;
-  const pa  = pathoObj();
-  const n   = normes();
-  const bn  = bioNormes();
-  const bz  = bioZones();
-  const anom= countAnomalies();
-
-  let h='';
+  var h='';
+  var q=QUIZ[S.qIdx%QUIZ.length];
 
   if(S.view!=='welcome'){
-    h+=`
-    <div class="site-header">
-      <div class="badge">📊 Module 7 · SimCare IFSI</div>
-      <h1>Sim<em>Constantes</em></h1>
-      <p>Mesurer, interpréter, surveiller — pour ce patient précis</p>
-    </div>`;
+    h+='<div class="site-header"><div class="badge">📊 UE B.1 · Constantes · 2026</div>';
+    h+='<h1>Sim<span>Constantes</span></h1><p>// Constantes vitales · Bilan biologique · NEWS2</p></div>';
+    h+='<div class="tabs">';
+    [{id:'constantes',l:'📊 Constantes'},{id:'biologie',l:'🔬 Bilan bio'},{id:'news2',l:'📈 NEWS2'},{id:'quiz',l:'🎯 Quiz'},{id:'analyse',l:'🤖 IA'}].forEach(function(t){
+      h+='<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+ t.l+'</button>';
+    });
+    h+='</div>';
   } else {
-    h+=`<div class="site-header" style="padding-top:44px">
-          <div class="badge">📊 Module 7 · SimCare IFSI</div>
-          <h1>Sim<em>Constantes</em></h1>
-        </div>`;
+    h+='<div class="site-header" style="padding-top:44px"><div class="badge">📊 UE B.1 · Constantes · 2026</div>';
+    h+='<h1>Sim<span>Constantes</span></h1></div>';
   }
-
   h+='<div class="wrap">';
 
-  // ─── WELCOME ──────────────────────────────────────────────────
   if(S.view==='welcome'){
-    h+=`
-    <div class="card fadeup" style="border-color:rgba(64,176,248,.16)">
-      <div class="welcome">
-        <span class="welcome-icon">📊</span>
-        <p>Une FC à 110 bpm est-elle normale pour ce patient précis, à cet âge, avec cette pathologie ? SimConstantes transforme chaque chiffre en signification clinique.</p>
-        <div class="pts">
-          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez le patient</strong> — les normes s'adaptent automatiquement à l'âge, au sexe et à la pathologie</span></div>
-          <div class="pt"><span class="pt-i">🌡️</span><span class="pt-t"><strong>Saisissez les constantes vitales</strong> — FC, FR, PA, SpO₂, température, Glasgow — et visualisez leur zone immédiatement</span></div>
-          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Interprétez les valeurs biologiques</strong> — NFS, ionogramme, bilan rénal et hépatique avec les normes adaptées</span></div>
-          <div class="pt"><span class="pt-i">⏱️</span><span class="pt-t"><strong>Simulez la surveillance</strong> — fréquence, traçabilité, alertes — et comprenez pourquoi cette anomalie pour CE patient</span></div>
-        </div>
-        <button class="btn-p" onclick="go('main')">Construire un patient →</button>
-      </div>
-    </div>`;
-  }
+    h+='<div class="card em fadeup"><div style="text-align:center;padding:8px 0 18px">';
+    h+='<div style="font-size:48px;margin-bottom:14px">📊</div>';
+    h+='<p style="color:var(--txt2);font-size:14px;line-height:1.85;max-width:460px;margin:0 auto">Les constantes ne varient pas — mais leur <strong style="color:var(--txt)">interprétation change selon le profil patient</strong>. SimConstantes adapte les normes à chaque âge.</p>';
+    h+='<div class="pts"><div class="pt"><span class="pt-i">📊</span><span class="pt-t"><strong>7 constantes vitales</strong> — normes adaptées : adulte, senior, enfant, nourrisson</span></div>';
+    h+='<div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Bilan biologique</strong> — ionogramme, NFS, coagulation, marqueurs inflammatoires</span></div>';
+    h+='<div class="pt"><span class="pt-i">📈</span><span class="pt-t"><strong>Score NEWS2</strong> — calculateur interactif, détection précoce de dégradation</span></div>';
+    h+='<div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>Quiz</strong> — 6 questions sur les valeurs seuils et leur signification clinique</span></div>';
+    h+='</div><button class="btn-p btn-full" onclick="go(\'main\')">Entrer dans SimConstantes →</button>';
+    h+='</div></div>';
 
-  // ─── VUE PRINCIPALE ─────────────────────────────────────────
-  else if(S.view==='main'){
-
-    // Patient selector en haut
-    h+=`
-    <div class="card fadeup" style="border-color:rgba(64,176,248,.12);margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-        <div style="font-size:28px">${pa.icon}</div>
-        <div style="flex:1">
-          <div style="font-weight:600;font-size:16px">${esc(pr)||'Patient'} — ${S.patient.age} ans · ${S.patient.sexe==='H'?'♂':'♀'} · ${S.patient.poids} kg</div>
-          <div style="font-size:13px;color:var(--txt3);">${pa.label} · ${ageLabel(S.patient.age)}</div>
-        </div>
-        ${anom>0?`<span class="zone-pill ${anom>=3?'zone-crit':'zone-warn'}">${anom} anomalie${anom>1?'s':''}</span>`:'<span class="zone-pill zone-ok">Tout normal</span>'}
-        <button class="btn-g" onclick="go('patient')" style="padding:8px 16px;font-size:13px">✎ Modifier</button>
-      </div>
-    </div>
-
-    <!-- ONGLETS -->
-    <div class="tabs">
-      ${[
-        {id:'vitales',  label:'🌡️ Constantes vitales'},
-        {id:'bio',      label:'🔬 Bilan biologique'},
-        {id:'surv',     label:'⏱️ Surveillance'},
-        {id:'analyse',  label:'📋 Analyse'},
-      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`).join('')}
-    </div>`;
-
-    // ─── CONSTANTES VITALES ────────────────────────────────────
-    if(S.onglet==='vitales'){
-      const vitales = [
-        { key:'fc',   label:'Fréquence cardiaque', abbr:'FC', icon:'❤️', unit:'bpm',    norm:n.fc,   step:1,  min:0,  max:250, info:'Mesurée au pouls radial ou par scope' },
-        { key:'fr',   label:'Fréquence respiratoire', abbr:'FR', icon:'🫁', unit:'/min', norm:n.fr,   step:1,  min:0,  max:60,  info:'Comptée sur 1 minute complète, patient au repos' },
-        { key:'pas',  label:'Pression artérielle syst.', abbr:'PAS', icon:'💉', unit:'mmHg', norm:n.pas,  step:1,  min:0,  max:250, info:'Bras droit, patient assis depuis 5 min' },
-        { key:'pad',  label:'Pression artérielle diast.', abbr:'PAD', icon:'💉', unit:'mmHg', norm:[60,90], step:1,  min:0,  max:150, info:'Toujours mesurée avec la PAS' },
-        { key:'spo2', label:'Saturation en O₂', abbr:'SpO₂', icon:'🫀', unit:'%',      norm:n.spo2, step:.1, min:70, max:100, info:`Norme adaptée : ${n.spo2[0]}–${n.spo2[1]}% pour ce profil` },
-        { key:'temp', label:'Température', abbr:'T°', icon:'🌡️', unit:'°C',    norm:n.temp, step:.1, min:34, max:42,  info:'Voie axillaire (+0,5°C pour voie rectale)' },
-        { key:'gcs',  label:'Score de Glasgow', abbr:'GCS', icon:'🧠', unit:'/15',  norm:n.gcs,  step:1,  min:3,  max:15,  info:'3 (coma) → 15 (conscient et orienté)' },
-      ];
-
-      h+=`<div class="fadeup">
-        <div class="info info-em" style="margin-bottom:16px">
-          Les normes affichées sont <strong>adaptées au profil de ${esc(pr)||'ce patient'}</strong> — ${S.patient.age} ans, ${pa.label}.
-          ${pa.id==='bpco'?'SpO₂ cible 88–92% pour BPCO (risque hypercapnie si O₂ excessif).'
-           :pa.id==='hta'?'PA habituelle plus élevée — seuil d\'alerte ajusté.'
-           :''}
-        </div>`;
-
-      vitales.forEach(v=>{
-        const val=S.vitales[v.key];
-        const z=zoneVitale(val, v.norm);
-        const pct=cursorPct(val, v.norm);
-        const hasVal=val!=='';
-
-        h+=`
-        <div class="cst-card">
-          <div class="cst-header">
-            <span class="cst-icon">${v.icon}</span>
-            <div style="flex:1">
-              <div class="cst-name">${v.label}</div>
-              <div class="cst-abbr">${v.abbr} · Norme : ${v.norm[0]}–${v.norm[1]} ${v.unit}</div>
-            </div>
-            <span class="zone-pill ${zoneClass(hasVal?z:'nc')}">${hasVal?zoneLabel(z):'— Non saisi'}</span>
-          </div>
-          <div class="cst-input-row">
-            <input class="cst-input" type="number" step="${v.step}" min="${v.min}" max="${v.max}"
-              value="${esc(val)}" placeholder="—"
-              oninput="S.vitales['${v.key}']=this.value;render()"
-              style="border-color:${hasVal?(z==='ok'?'rgba(64,216,128,.4)':z==='warn'?'rgba(248,192,64,.4)':'rgba(248,80,80,.4)'):'rgba(255,255,255,.08)'}">
-            <span class="cst-unit">${v.unit}</span>
-            <div class="sl-wrap" style="flex:1">
-              <button class="sl-btn" onclick="stepVitale('${v.key}',-${v.step})">−</button>
-              <input type="range" min="${v.min}" max="${v.max}" step="${v.step}"
-                value="${hasVal?val:((v.norm[0]+v.norm[1])/2)}"
-                oninput="S.vitales['${v.key}']=this.value;render()">
-              <button class="sl-btn" onclick="stepVitale('${v.key}',${v.step})">+</button>
-            </div>
-          </div>
-          ${hasVal?`
-          <div>
-            <div class="zone-bar-wrap">
-              <div class="zone-bar-ok"   style="left:${cursorPct(v.norm[0],v.norm)}%;right:${100-cursorPct(v.norm[1],v.norm)}%"></div>
-              <div class="zone-cursor"   style="left:${pct}%;background:${z==='ok'?'var(--z-ok)':z==='warn'?'var(--z-warn)':'var(--z-crit)'}"></div>
-            </div>
-            ${z==='warn'||z==='crit'?`<div class="info ${z==='crit'?'info-red':'info-amb'}" style="margin-top:6px;font-size:12px">
-              ${z==='crit'?'🔴 Valeur critique':'⚠️ Valeur limite'} — ${getExplication(v.key, +val, v.norm, S.patient)}
-            </div>`:''}
-          </div>`:''}
-          <div class="cst-norme">${v.info}</div>
-        </div>`;
-      });
-     
-      <div class="card fadeup" style="border-color:rgba(64,176,248,.1);margin-top:4px">
-        <div class="video-label">📺 Bien prendre la tension arterielle — Technique (Septembre 2025)</div>
-        <div class="video-wrap">
-          <iframe src="https://www.youtube.com/embed/06nDV0imIbs"
-            title="Comment bien prendre sa tension arterielle"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen loading="lazy"></iframe>
-        </div>
-        <div class="video-source">Technique de prise de tension · Dr Gerald Kierzek · Septembre 2025</div>
-        <div class="video-label">📺 Hypertension arterielle — Physiopathologie et recherche INSERM</div>
-        <div class="video-wrap">
-          <iframe src="https://www.youtube.com/embed/33cpRXmQnL8"
-            title="Hypertension arterielle : symptomes, traitements et recherche"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen loading="lazy"></iframe>
-        </div>
-        <div class="video-source">HTA · Physiopathologie · INSERM · 2023</div>
-      </div>
- h+=`</div>`;
-    }
-
-    // ─── BILAN BIOLOGIQUE ──────────────────────────────────────
-    else if(S.onglet==='bio'){
-      const bioItems = [
-        { section:'Numération Formule Sanguine', items:[
-          { key:'hb',  label:'Hémoglobine',    unit:'g/dL',  norm:bn.hb },
-          { key:'ht',  label:'Hématocrite',    unit:'%',     norm:bn.ht },
-          { key:'plq', label:'Plaquettes',     unit:'G/L',   norm:bn.plq },
-          { key:'gb',  label:'Globules blancs',unit:'G/L',   norm:bn.gb },
-        ]},
-        { section:'Ionogramme sanguin', items:[
-          { key:'na',  label:'Sodium (Na⁺)',   unit:'mmol/L',norm:bn.na },
-          { key:'k',   label:'Potassium (K⁺)', unit:'mmol/L',norm:bn.k },
-          { key:'cl',  label:'Chlore (Cl⁻)',   unit:'mmol/L',norm:bn.cl },
-          { key:'co2', label:'Bicarbonates',   unit:'mmol/L',norm:bn.co2 },
-        ]},
-        { section:'Bilan rénal', items:[
-          { key:'creat',label:'Créatinine',     unit:'µmol/L',norm:bn.creat },
-          { key:'uree', label:'Urée',           unit:'mmol/L',norm:bn.uree },
-          { key:'dfu',  label:'DFG estimé',     unit:'mL/min',norm:bn.dfu },
-        ]},
-        { section:'Bilan hépatique', items:[
-          { key:'ast',  label:'ASAT (TGO)',     unit:'UI/L',  norm:bn.ast },
-          { key:'alt',  label:'ALAT (TGP)',     unit:'UI/L',  norm:bn.alt },
-          { key:'bili', label:'Bilirubine totale',unit:'µmol/L',norm:bn.bili },
-        ]},
-        { section:'Marqueurs biologiques', items:[
-          { key:'crp',  label:'CRP',            unit:'mg/L',  norm:bn.crp },
-          { key:'glyc', label:'Glycémie',       unit:'mmol/L',norm:bn.glyc },
-          { key:'alb',  label:'Albumine',       unit:'g/L',   norm:bn.alb },
-        ]},
-      ];
-
-      h+=`<div class="fadeup">
-        <div class="info info-em" style="margin-bottom:16px">
-          Saisissez les valeurs du bilan. Les normes tiennent compte du <strong>sexe</strong> (${S.patient.sexe==='H'?'homme':'femme'}) et de la <strong>pathologie</strong> (${pa.label}).
-        </div>
-        <div class="bio-header">
-          <span>Paramètre</span><span style="text-align:center">Valeur</span><span style="text-align:center">Norme</span><span style="text-align:center">Zone</span>
-        </div>`;
-
-      bioItems.forEach(section=>{
-        h+=`<div class="bio-section-title">${section.section}</div>`;
-        section.items.forEach(item=>{
-          const val=S.bio[item.key];
-          const z=zoneBio(val,item.norm);
-          const hasVal=val!=='';
-          h+=`
-          <div class="bio-row">
-            <div class="bio-name">${item.label}</div>
-            <div class="bio-val">
-              <input type="number" step="0.1"
-                value="${esc(val)}" placeholder="—"
-                oninput="S.bio['${item.key}']=this.value;render()"
-                style="width:80px;padding:6px 8px;font-size:14px;text-align:center;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid ${hasVal?(z==='ok'?'rgba(64,216,128,.4)':z==='warn'?'rgba(248,192,64,.4)':'rgba(248,80,80,.4)'):'rgba(255,255,255,.08)'};color:var(--txt);font-family:'Fira Mono',monospace;outline:none">
-            </div>
-            <div class="bio-norme">${item.norm[0]}–${item.norm[1]} ${item.unit}</div>
-            <div style="text-align:center"><span class="zone-pill ${zoneClass(hasVal?z:'nc')}" style="font-size:11px;padding:3px 8px">${hasVal?zoneLabel(z):'—'}</span></div>
-          </div>`;
+  } else if(S.onglet==='constantes'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">// PROFIL PATIENT</div>';
+    h+='<div class="card-sub">Les normes s\'adaptent automatiquement.</div>';
+    h+='<div class="profil-grid">';
+    PROFILS.forEach(function(p){
+      h+='<div class="profil-btn '+(S.profil===p.id?'active':'')+'" onclick="S.profil=\''+p.id+'\';render()">';
+      h+='<span class="profil-icon">'+p.icon+'</span><div class="profil-label">'+p.label+'</div></div>';
+    });
+    h+='</div></div><div class="col8">';
+    CONSTANTES.forEach(function(cst){
+      var n=cst.normes[S.profil]||cst.normes['adulte'];
+      h+='<div class="cst-card '+(S.cstOpen===cst.id?'open':'')+'" onclick="toggleC(\''+cst.id+'\')">'; 
+      h+='<span class="cst-icon">'+cst.icon+'</span>';
+      h+='<div><div class="cst-nom">'+cst.nom+'</div><div class="cst-abbr">'+cst.abbr+' · '+cst.unite+'</div></div>';
+      h+='<div class="cst-zone zone-ok">'+esc(n.ok)+'</div>';
+      h+='<div class="cst-detail">';
+      h+='<p style="margin-bottom:10px">'+esc(n.info)+'</p>';
+      if(n.alerte){h+='<div class="info info-warn" style="margin-bottom:6px">⚠️ <strong>Alerte :</strong> '+esc(n.alerte)+'</div>';}
+      if(n.critique){h+='<div class="info info-crit">🔴 <strong>Critique :</strong> '+esc(n.critique)+'</div>';}
+      if(n.zones&&n.zones.length){
+        h+='<div class="zones-grid">';
+        n.zones.forEach(function(z){
+          h+='<div class="zone-item"><div class="zone-val" style="color:'+zc(z.c)+'">'+esc(z.v)+'</div><div class="zone-lbl">'+esc(z.l)+'</div></div>';
         });
-      });
-     
-      <div class="card fadeup" style="border-color:rgba(64,176,248,.1);margin-top:4px">
-        <div class="video-label">📺 Ionogramme sanguin — Normes et interpretation · Guide IDE (Decembre 2025)</div>
-        <div class="video-wrap">
-          <iframe src="https://www.youtube.com/embed/McnzcLy1c_Y"
-            title="Ionogramme sanguin : normes et interpretation guide infirmier"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen loading="lazy"></iframe>
-        </div>
-        <div class="video-source">Ionogramme · Normes IDE · Guide complet · Decembre 2025</div>
-        <div class="video-label">📺 Les 9 principaux marqueurs de la prise de sang</div>
-        <div class="video-wrap">
-          <iframe src="https://www.youtube.com/embed/VMYQREaQ8b0"
-            title="Les 9 principaux marqueurs de la prise de sang"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen loading="lazy"></iframe>
-        </div>
-        <div class="video-source">NFS, CRP, cholesterol, creatinine · 9 marqueurs biologiques cles</div>
-      </div>
- h+=`</div>`;
-    }
-
-    // ─── SURVEILLANCE ──────────────────────────────────────────
-    else if(S.onglet==='surv'){
-      const intervals = [
-        {v:15,  l:'Toutes les 15 min'},
-        {v:30,  l:'Toutes les 30 min'},
-        {v:60,  l:'Toutes les heures'},
-        {v:120, l:'Toutes les 2h'},
-        {v:240, l:'Toutes les 4h'},
-        {v:480, l:'Toutes les 8h (3×/24h)'},
-      ];
-
-      // Générer une timeline de surveillance fictive
-      const now=new Date();
-      const times=[];
-      for(let i=4;i>=0;i--){
-        const t=new Date(now-i*S.surv_interval*60000);
-        times.push({ h:t.getHours(), m:t.getMinutes().toString().padStart(2,'0'), i });
+        h+='</div>';
       }
+      h+='</div></div>';
+    });
+    h+='</div></div>';
 
-      const fc_ref=Math.round((normes().fc[0]+normes().fc[1])/2);
-      const spo2_ref=normes().spo2[0];
+  } else if(S.onglet==='biologie'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">// BILAN BIOLOGIQUE</div>';
+    h+='<div class="card-sub">Valeurs normales de référence · Adulte.</div>';
+    BIO.forEach(function(sec){
+      h+='<div class="bio-section"><div class="bio-title">'+sec.titre+'</div>';
+      sec.rows.forEach(function(row){
+        h+='<div class="bio-row"><span style="font-weight:500">'+esc(row.nom)+'</span><span class="bio-norm">'+esc(row.norm)+'</span></div>';
+      });
+      h+='</div>';
+    });
+    h+='</div>';
+    h+='<div class="info info-em">💡 <strong>Règle clinique :</strong> Ne jamais interpréter un paramètre biologique isolément. Corréler toujours avec la clinique et le contexte.</div>';
+    h+='<div class="info info-warn">⚠️ <strong>Piège :</strong> La créatinine peut être normale malgré une insuffisance rénale significative chez la personne âgée ou dénutrie.</div>';
+    h+='</div>';
 
-      h+=`<div class="fadeup">
-        <div style="margin-bottom:20px">
-          <label class="lbl">Fréquence de surveillance prescrite</label>
-          <div class="col8">
-            ${intervals.map(iv=>`
-              <div class="sel ${S.surv_interval===iv.v?'on':''}" onclick="S.surv_interval=${iv.v};render()">
-                <span class="si">⏱️</span>${iv.l}
-              </div>`).join('')}
-          </div>
-        </div>
+  } else if(S.onglet==='news2'){
+    var tot=nTotal();var filled=nFilled();var all=filled===NEWS2.length;
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">// SCORE NEWS2</div>';
+    h+='<div class="card-sub">7 paramètres · Détection précoce de dégradation.</div>';
+    NEWS2.forEach(function(p){
+      h+='<div class="news-param"><div class="news-lbl">'+p.lbl+'</div><div class="news-opts">';
+      p.opts.forEach(function(o){
+        var isSel=nGet(p.key)===o.s;
+        var sc=isSel?('sel'+Math.min(o.s,3)):'';
+        h+='<button class="news-opt '+sc+'" onclick="nSel(\''+p.key+'\','+o.s+')">'+esc(o.t)+' (+'+o.s+')</button>';
+      });
+      h+='</div></div>';
+    });
+    h+='<div class="score-box" style="border-color:'+nc(tot)+';margin-top:14px">';
+    h+='<div class="score-num" style="color:'+nc(tot)+'">'+(all?tot:'?')+'</div>';
+    h+='<div class="score-lbl" style="color:'+nc(tot)+'">'+(all?nl(tot):'Remplir tous les paramètres')+'</div>';
+    if(all){h+='<div class="score-act">'+esc(na(tot))+'</div>';}
+    h+='</div>';
+    h+='<button class="btn-g btn-full" onclick="clearN()" style="margin-top:10px">↺ Réinitialiser</button>';
+    h+='</div>';
+    h+='<div class="info info-em">📈 <strong>Usage clinique :</strong> Score ≥ 5 = alerte médicale sans attendre. Score ≥ 7 = urgence majeure.</div>';
+    h+='</div>';
 
-        <div class="info info-em" style="margin-bottom:16px">
-          💡 La fréquence de surveillance dépend de l'état clinique, des prescriptions médicales, du protocole de service. Pour ${esc(pr)||'ce patient'} (${pa.label}), une surveillance ${S.surv_interval<=30?'rapprochée est justifiée':S.surv_interval<=120?'régulière est adaptée':'espacée est possible si stable'}.
-        </div>
-
-        <div style="font-family:'Newsreader',serif;font-size:16px;font-weight:700;margin-bottom:14px">Feuille de surveillance simulée</div>
-        <div class="surv-timeline">
-          <div class="surv-line"></div>
-          ${times.map((t,idx)=>{
-            const isAlert = idx===3;
-            const isCrit  = idx===2;
-            const fc_val  = isCrit?fc_ref+38:isAlert?fc_ref+22:fc_ref+Math.round((Math.random()-0.5)*8);
-            const spo2_val= isCrit?spo2_ref-8:isAlert?spo2_ref-3:spo2_ref+1;
-            const temp_val= isCrit?38.9:isAlert?38.1:36.8;
-            const z_fc    = isCrit?'crit':isAlert?'warn':'ok';
-            const z_spo2  = isCrit?'crit':isAlert?'warn':'ok';
-            const z_temp  = isCrit?'crit':isAlert?'warn':'ok';
-            return `
-            <div class="surv-item">
-              <div class="surv-dot ${isCrit?'crit':isAlert?'alert':''}"></div>
-              <div class="surv-time">${t.h}h${t.m}</div>
-              <div class="surv-content">
-                <div class="surv-title" style="color:${isCrit?'var(--z-crit)':isAlert?'var(--z-warn)':'var(--txt)'}">
-                  ${isCrit?'🔴 Alerte critique':isAlert?'⚠️ Valeur limite':'✓ Constantes stables'}
-                </div>
-                <div class="surv-vals">
-                  <span class="surv-val-chip zone-${z_fc}">FC ${fc_val} bpm</span>
-                  <span class="surv-val-chip zone-${z_spo2}">SpO₂ ${spo2_val}%</span>
-                  <span class="surv-val-chip zone-${z_temp}">T° ${temp_val}°C</span>
-                  <span class="surv-val-chip zone-ok">PA 128/76</span>
-                </div>
-                ${isCrit?`<div style="font-size:12px;color:var(--z-crit);margin-top:6px">→ Alerte médecin immédiate · Réévaluation dans 15 min</div>`:''}
-                ${isAlert?`<div style="font-size:12px;color:var(--z-warn);margin-top:6px">→ Surveillance rapprochée · Informer l'IDE référent</div>`:''}
-              </div>
-            </div>`;
-          }).join('')}
-        </div>
-
-        <div class="info info-vio" style="margin-top:16px">
-          📋 <strong>Traçabilité :</strong> Toute constante anormale doit être <strong>tracée dans le dossier patient, horodatée, et transmise</strong> selon le protocole du service. Une valeur non tracée n'existe pas juridiquement.
-        </div>
-      </div>`;
+  } else if(S.onglet==='quiz'){
+    var pct=Math.round(S.qIdx/QUIZ.length*100);
+    h+='<div class="fadeup">';
+    h+='<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-bottom:7px">';
+    h+='<span>Question '+(S.qIdx%QUIZ.length+1)+' / '+QUIZ.length+'</span>';
+    h+='<span style="color:var(--em)">'+(S.qTotal>0?Math.round(S.qScore/S.qTotal*100)+'%':'—')+'</span></div>';
+    h+='<div class="progress-wrap" style="margin-bottom:14px"><div class="progress-bar" style="width:'+pct+'%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>';
+    h+='<div class="card em"><div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--txt)">'+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt,i){
+      var cls='';
+      if(S.qShown){if(i===q.rep)cls='correct';else if(i===S.qSel)cls='wrong';}
+      h+='<div class="quiz-opt '+cls+'" onclick="'+(S.qShown?'':'selQ('+i+')')+'">';
+      h+='<span style="font-family:var(--mono);font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span>';
+      h+='<span>'+esc(opt)+'</span></div>';
+    });
+    if(S.qShown){
+      h+='<div class="quiz-expl">'+q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h+='<button class="btn-p btn-full" style="margin-top:12px" onclick="nxtQ()">Question suivante →</button>';
     }
+    h+='</div>';
+    h+='<button class="btn-g btn-full" onclick="rstQ()" style="margin-top:8px;color:var(--ok);border-color:rgba(48,216,128,.2)">↺ Recommencer</button>';
+    h+='</div>';
 
-    // ─── ANALYSE ──────────────────────────────────────────────
-    else if(S.onglet==='analyse'){
-      const saisies=Object.values(S.vitales).filter(v=>v!=='').length + Object.values(S.bio).filter(v=>v!=='').length;
-      h+=`<div class="fadeup">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
-          <div style="flex:1">
-            <div style="font-family:'Newsreader',serif;font-size:18px;font-weight:700">Analyse clinique — ${esc(pr)||'ce patient'}</div>
-            <div style="font-size:13px;color:var(--txt3)">${saisies} valeur${saisies>1?'s':''} saisie${saisies>1?'s':''} · ${anom} anomalie${anom>1?'s':''}</div>
-          </div>
-          ${anom>0?`<span class="zone-pill ${anom>=3?'zone-crit':'zone-warn'}">${anom} anomalie${anom>1?'s':''}</span>`:'<span class="zone-pill zone-ok">Tout normal</span>'}
-        </div>
-
-        ${saisies===0?`<div class="info info-em">Saisissez d'abord des constantes dans les onglets "Constantes vitales" et "Bilan biologique".</div>`:''}
-
-        <hr class="div">
-        <label class="lbl" style="margin-bottom:14px">Ce que dit la clinique</label>
-
-        ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse clinique en cours…</div></div>`:''}
-
-        ${!S.loading&&!S.analyse?`
-          <div class="premium-box">
-            <div style="text-align:center;margin-bottom:22px">
-              <div style="font-size:38px;margin-bottom:10px">🔒</div>
-              <div style="font-family:'Newsreader',serif;font-size:18px;font-weight:700;color:var(--txt);margin-bottom:5px">Analyse clinique — Accès Premium</div>
-              <div style="font-size:13px;color:var(--txt3)">La saisie et la visualisation des constantes sont gratuites</div>
-            </div>
-            <div class="grid2" style="margin-bottom:16px">
-              <div style="border:1px solid rgba(64,216,128,.2);background:rgba(64,216,128,.05);border-radius:12px;padding:14px">
-                <div style="color:var(--green);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✓ GRATUIT</div>
-                <div style="font-size:12px;color:var(--txt3);line-height:1.8">Constantes vitales<br>Bilan biologique<br>Surveillance / Traçabilité</div>
-              </div>
-              <div style="border:1px solid rgba(64,176,248,.25);background:rgba(64,176,248,.06);border-radius:12px;padding:14px">
-                <div style="color:var(--em);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">✦ PREMIUM</div>
-                <div style="font-size:12px;color:var(--txt3);line-height:1.8">Analyse IA des anomalies<br>Cohérence clinique<br>Conduite à tenir</div>
-              </div>
-            </div>
-            <div class="grid3" style="margin-bottom:20px">
-              <div style="border:1px solid var(--bdr);border-radius:12px;padding:14px;text-align:center;background:rgba(255,255,255,.02)">
-                <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Module seul</div>
-                <div style="font-size:22px;font-weight:700;color:var(--txt)">4,99€</div>
-                <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">Accès à vie<br>1 module</div>
-              </div>
-              <div style="border:1px solid rgba(64,176,248,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(64,176,248,.05)">
-                <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--em);margin-bottom:8px">Suite complète</div>
-                <div style="font-size:22px;font-weight:700;color:var(--txt)">12,99€</div>
-                <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">7 modules<br>à vie</div>
-              </div>
-              <div style="border:1px solid rgba(176,96,248,.28);border-radius:12px;padding:14px;text-align:center;background:rgba(176,96,248,.05)">
-                <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--violet);margin-bottom:8px">Institution</div>
-                <div style="font-size:22px;font-weight:700;color:var(--txt)">Sur devis</div>
-                <div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.5">IFSI · Syndicat<br>Promotion entière</div>
-              </div>
-            </div>
-            <div style="text-align:center;margin-bottom:12px">
-              <a href="mailto:contact@simcare.fr" style="display:inline-block;padding:13px 32px;border-radius:12px;background:linear-gradient(135deg,var(--em2),var(--em));color:#080c12;font-weight:700;font-size:15px;text-decoration:none">Obtenir l'accès →</a>
-              <div style="margin-top:8px;font-size:12px;color:var(--txt3)">IFSI & établissements : <a href="mailto:contact@simcare.fr" style="color:var(--em);text-decoration:none">tarif institution sur devis</a></div>
-            </div>
-            <div style="text-align:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)">
-              <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace;letter-spacing:.5px">🔑 Espace formateur / développeur</button>
-            </div>
-          </div>
-          ${S.showKey?`<div class="apikey-box">
-            <p>Clé API Anthropic — réservé au formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir une clé →</a></p>
-            <div class="apikey-row">
-              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
-              <button onclick="saveKey()">Sauver</button>
-            </div>
-            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:12px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
-          </div>`:''}
-        `:''}
-        ${!S.loading&&S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div><button class="btn-g btn-full" onclick="S.analyse='';render()" style="margin-top:10px">↺ Nouvelle analyse</button>`:''}
-      </div>`;
+  } else if(S.onglet==='analyse'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">// ANALYSE IA · CONSTANTES</div>';
+    h+='<div class="card-sub">Décrivez un bilan de constantes — l\'IA vous aide à interpréter.</div>';
+    h+='<textarea id="ia-q" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(64,200,224,.12);border-radius:4px;color:var(--txt);padding:11px;font-size:13px;font-family:var(--mono);outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Patient 72 ans, PA 160/95, FC 108, FR 24, SpO2 92%, T° 38.2°C, GCS 14. Que penser de ce bilan ?"></textarea>';
+    h+='<button class="btn-p btn-full" onclick="runIA()">📊 Analyser ce bilan →</button>';
+    if(S.loading){h+='<div class="dots" style="margin-top:14px"><span></span><span></span><span></span><div class="dots-msg">Analyse en cours...</div></div>';}
+    if(!S.loading&&S.analyse){h+='<div class="analysis fadeup" style="margin-top:14px">'+md(S.analyse)+'</div>';}
+    h+='<hr class="div">';
+    if(!S.apiKeySaved){
+      h+='<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>';
+      h+='<div class="apikey-row"><input type="password" placeholder="sk-ant-api03-..." value="'+esc(S.apiKey)+'" oninput="S.apiKey=this.value">';
+      h+='<button onclick="svKey()">Sauver</button></div></div>';
+    } else {
+      h+='<div style="color:var(--ok);font-family:var(--mono);font-size:11px">// configured ✓</div>';
     }
-
-    h+=`<div style="margin-top:16px"><button class="btn-g" onclick="reset()" style="color:var(--teal);border-color:rgba(64,216,192,.2)">✦ Nouveau patient</button></div>`;
+    h+='</div>';
+    // Premium
+    h+='<div style="background:rgba(0,0,0,.3);border:1.5px solid rgba(64,200,224,.12);border-radius:8px;padding:22px;margin-bottom:12px">';
+    h+='<div style="text-align:center;margin-bottom:14px"><div style="font-size:28px;margin-bottom:8px">🔒</div>';
+    h+='<div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--txt);margin-bottom:4px">Analyse IA — Accès Premium</div>';
+    h+='<div style="font-size:12px;color:var(--txt2)">Constantes, biologie, NEWS2 et quiz sont entièrement gratuits</div></div>';
+    h+='<div class="grid3" style="margin-bottom:14px">';
+    [{who:'Module seul',price:'4,99€',desc:'à vie'},{who:'Suite complète',price:'12,99€',desc:'20 modules',em:true},{who:'Institution',price:'Devis',desc:'IFSI'}].forEach(function(t){
+      h+='<div style="border:1.5px solid '+(t.em?'rgba(64,200,224,.4)':'var(--bdr)')+';border-radius:4px;padding:12px;text-align:center;background:'+(t.em?'rgba(64,200,224,.07)':'rgba(255,255,255,.02)')+';">';
+      h+='<div style="font-family:var(--mono);font-size:9px;color:'+(t.em?'var(--em)':'var(--txt2)')+';margin-bottom:7px">'+t.who+'</div>';
+      h+='<div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--txt)">'+t.price+'</div>';
+      h+='<div style="font-size:10px;color:var(--txt2);margin-top:4px">'+t.desc+'</div></div>';
+    });
+    h+='</div><div style="text-align:center"><a href="mailto:contact@simcare.fr" style="display:inline-block;padding:11px 24px;border-radius:4px;background:linear-gradient(135deg,var(--em2),var(--em));color:#0c1018;font-weight:700;font-size:13px;text-decoration:none;font-family:var(--mono)">Obtenir l\'accès →</a></div>';
+    h+='</div>';
   }
 
-  // ─── PATIENT EDITOR ─────────────────────────────────────────
-  else if(S.view==='patient'){
-    h+=`
-    <div class="card fadeup" style="border-color:rgba(64,176,248,.16)">
-      <div class="card-title" style="color:var(--em)">👤 Votre patient</div>
-      <div class="card-sub">Les normes s'adaptent automatiquement à chaque paramètre.</div>
-      <div class="col">
-        <div>
-          <label class="lbl">Prénom</label>
-          <input type="text" value="${esc(S.patient.prenom)}" placeholder="Ex : Henri, Lucie, Jean-Paul…" oninput="up('prenom',this.value)">
-        </div>
-        <div>
-          <label class="lbl">Sexe biologique</label>
-          <div class="grid2">
-            ${[{v:'F',l:'Femme',i:'👩'},{v:'H',l:'Homme',i:'👨'}].map(s=>`
-              <div class="sel center ${S.patient.sexe===s.v?'on':''}" onclick="up('sexe','${s.v}')">
-                <span style="font-size:28px">${s.i}</span>
-                <span style="font-size:13px;margin-top:5px">${s.l}</span>
-              </div>`).join('')}
-          </div>
-        </div>
-        <div>
-          <div class="lbl-row"><label class="lbl" style="margin:0">Âge</label><span><span class="lbl-val">${S.patient.age} ans</span><span style="font-size:11px;color:var(--txt3);margin-left:6px">${ageLabel(S.patient.age)}</span></span></div>
-          <div class="sl-wrap">
-            <button class="sl-btn" onclick="upStep('age',-1)">−</button>
-            <input type="range" min="0" max="100" value="${S.patient.age}" oninput="up('age',+this.value)">
-            <button class="sl-btn" onclick="upStep('age',1)">+</button>
-          </div>
-        </div>
-        <div class="grid2">
-          <div>
-            <div class="lbl-row"><label class="lbl" style="margin:0">Poids</label><span class="lbl-val">${S.patient.poids} kg</span></div>
-            <div class="sl-wrap">
-              <button class="sl-btn" onclick="upStep('poids',-1)">−</button>
-              <input type="range" min="3" max="200" value="${S.patient.poids}" oninput="up('poids',+this.value)">
-              <button class="sl-btn" onclick="upStep('poids',1)">+</button>
-            </div>
-          </div>
-          <div>
-            <div class="lbl-row"><label class="lbl" style="margin:0">Taille</label><span class="lbl-val">${S.patient.taille} cm</span></div>
-            <div class="sl-wrap">
-              <button class="sl-btn" onclick="upStep('taille',-1)">−</button>
-              <input type="range" min="45" max="210" value="${S.patient.taille}" oninput="up('taille',+this.value)">
-              <button class="sl-btn" onclick="upStep('taille',1)">+</button>
-            </div>
-          </div>
-        </div>
-        <div>
-          <label class="lbl">Pathologie principale</label>
-          <div class="col8">
-            ${PATHOLOGIES.map(p=>`
-              <div class="sel ${S.patient.pathologie===p.id?'on':''}" onclick="up('pathologie','${p.id}')">
-                <span class="si">${p.icon}</span><span>${p.label}</span>
-              </div>`).join('')}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;justify-content:flex-end">
-      <button class="btn-p" onclick="go('main')">Voir les constantes →</button>
-    </div>`;
+  if(S.view!=='welcome'){
+    h+='<div style="margin-top:10px"><button class="btn-g" onclick="go(\'welcome\')" style="color:var(--em);border-color:rgba(64,200,224,.2)">← Accueil SimConstantes</button></div>';
   }
-
   h+='</div>';
   document.getElementById('app').innerHTML=h;
 }
 
-// ═══════════════════════════════════════
-//  EXPLICATIONS ANOMALIES
-// ═══════════════════════════════════════
-function getExplication(key, val, norm, patient){
-  const lo=norm[0], hi=norm[1];
-  const expl={
-    fc: val<lo ? `Bradycardie — peut indiquer un bloc auriculo-ventriculaire, une hypothyroïdie, ou un effet médicamenteux (bêtabloquants).`
-               : `Tachycardie — chercher une fièvre, une douleur, une hypovolémie, une anxiété ou une décompensation cardiaque.`,
-    fr: val<lo ? `Bradypnée — risque de dépression respiratoire. Surveiller saturation et gaz du sang.`
-               : `Tachypnée — signe d'effort ventilatoire. Chercher une infection, douleur, acidose, embolie pulmonaire.`,
-    pas: val<lo ? `Hypotension — peut indiquer une déshydratation, un choc, un médicament hypotenseur. Évaluer la perfusion périphérique.`
-                : `Hypertension — ${patient.pathologie==='hta'?'à comparer avec la PA habituelle de ce patient.':'risque cardio-vasculaire. Vérifier la prise de traitement.'}`,
-    spo2: val<lo ? `${patient.pathologie==='bpco'?'Désaturation sous le seuil cible BPCO (88-92%). Réévaluer l\'O₂ en cours. Éviter de dépasser 2 L/min.':'Désaturation — majorer la surveillance respiratoire. Contrôle gazométrique si < 90%.'}` : ``,
-    temp: val<lo ? `Hypothermie — risque de troubles du rythme cardiaque et de confusion. Réchauffer progressivement.`
-                 : `Fièvre — chercher un foyer infectieux. Hémocultures avant antibiotiques si T° > 38,5°C.`,
-    gcs: val<lo ? `Score de Glasgow abaissé — vigilance altérée. Position latérale de sécurité si GCS ≤ 8. Alerte médicale immédiate.` : ``,
-  };
-  return expl[key]||`Valeur hors norme — surveiller et informer le médecin.`;
-}
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setO(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function toggleC(id){S.cstOpen=S.cstOpen===id?null:id;render();}
+function nSel(k,s){nSet(k,s);render();}
+function clearN(){NEWS2.forEach(function(p){delete ST['n_'+p.key];});save(ST);render();}
+function selQ(i){if(S.qShown)return;S.qSel=i;S.qShown=true;S.qTotal++;if(i===QUIZ[S.qIdx%QUIZ.length].rep)S.qScore++;render();}
+function nxtQ(){S.qIdx++;S.qSel=null;S.qShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function rstQ(){S.qIdx=0;S.qScore=0;S.qTotal=0;S.qSel=null;S.qShown=false;render();}
+function svKey(){localStorage.setItem('simcst_key',S.apiKey);S.apiKeySaved=true;render();}
 
-// ═══════════════════════════════════════
-//  ACTIONS
-// ═══════════════════════════════════════
-function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'})}
-function setOnglet(o){S.onglet=o;render();window.scrollTo({top:0,behavior:'smooth'})}
-function up(k,v){S.patient={...S.patient,[k]:v};render()}
-function upStep(k,d){S.patient={...S.patient,[k]:Math.max(0,Math.min(220,S.patient[k]+d))};render()}
-function stepVitale(k,d){
-  const cur=parseFloat(S.vitales[k])||0;
-  S.vitales[k]=Math.round((cur+d)*10)/10;render();
-}
-function saveKey(){localStorage.setItem('simcst_key',S.apiKey);S.apiKeySaved=true;render()}
-function reset(){
-  S={...S,view:'welcome',
-    patient:{prenom:'',sexe:'F',age:45,poids:65,taille:165,pathologie:'sain'},
-    vitales:{fc:'',fr:'',pas:'',pad:'',spo2:'',temp:'',gcs:''},
-    bio:{hb:'',ht:'',plq:'',gb:'',na:'',k:'',cl:'',co2:'',creat:'',uree:'',dfu:'',ast:'',alt:'',bili:'',crp:'',glyc:'',alb:''},
-    analyse:''};
-  render();
-}
-
-// ═══════════════════════════════════════
-//  API CLAUDE
-// ═══════════════════════════════════════
-async function runAnalyse(){
-  const pa=pathoObj(), n=normes(), bn=bioNormes();
-  const pr=S.patient.prenom||'le patient';
-
-  const anomaliesVitales=[];
-  [['fc','FC',n.fc,'bpm'],['fr','FR',n.fr,'/min'],['pas','PAS',n.pas,'mmHg'],['spo2','SpO₂',n.spo2,'%'],['temp','T°',n.temp,'°C'],['gcs','GCS',n.gcs,'/15']].forEach(([k,label,norm,unit])=>{
-    const v=S.vitales[k];
-    if(v!==''){const z=zoneVitale(v,norm);if(z!=='ok') anomaliesVitales.push(`${label}: ${v} ${unit} (norme ${norm[0]}-${norm[1]}) — ${z}`);}
-  });
-
-  const anomaliesBio=[];
-  Object.entries(S.bio).forEach(([k,v])=>{
-    if(v!==''&&bn[k]){const z=zoneBio(v,bn[k]);if(z!=='ok'){const labels={hb:'Hb',ht:'Ht',plq:'Plaquettes',gb:'GB',na:'Na',k:'K',cl:'Cl',co2:'HCO3',creat:'Créatinine',uree:'Urée',dfu:'DFG',ast:'ASAT',alt:'ALAT',bili:'Bilirubine',crp:'CRP',glyc:'Glycémie',alb:'Albumine'};anomaliesBio.push(`${labels[k]||k}: ${v} (${z})`);}};
-  });
-
+async function runIA(){
+  var el=document.getElementById('ia-q');
+  if(!el||!el.value.trim())return;
   S.loading=true;S.analyse='';render();
-
-  const prompt=`Tu es un formateur infirmier expert en surveillance clinique. Un étudiant IFSI vient de saisir les constantes d'un patient. Aide-le à comprendre la signification clinique de ces valeurs.
-
-PATIENT : ${pr}, ${S.patient.sexe==='H'?'homme':'femme'} de ${S.patient.age} ans, ${S.patient.poids} kg.
-Pathologie : ${pa.label}.
-
-ANOMALIES CONSTATÉES :
-Constantes vitales : ${anomaliesVitales.length>0?anomaliesVitales.join(' | '):'Aucune anomalie saisie'}
-Bilan biologique : ${anomaliesBio.length>0?anomaliesBio.join(' | '):'Aucune anomalie saisie'}
-
-Réponds avec EXACTEMENT ces 4 blocs :
-
-**🔍 Tableau clinique global**
-[2-3 phrases. Que raconte l'ensemble de ces valeurs sur l'état de CE patient ? Lien entre les anomalies. Y a-t-il une cohérence qui oriente vers un diagnostic ?]
-
-**⚠️ L'anomalie prioritaire à surveiller**
-[2 phrases. Quelle est LA valeur la plus préoccupante pour CE profil ? Pourquoi précisément ?]
-
-**🏃 Conduite à tenir immédiate**
-[3 actions concrètes numérotées. Ce que l'IDE doit faire maintenant, dans l'ordre de priorité.]
-
-**⏱️ Fréquence de surveillance recommandée**
-[1-2 phrases. À quelle fréquence réévaluer et pourquoi, en lien avec les anomalies trouvées.]
-
-Tutoie l'étudiant. Direct, précis, cliniquement ancré.`;
-
   try{
-    const headers={'Content-Type':'application/json'};
-    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers,
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1100,messages:[{role:'user',content:prompt}]})
+    var h={'Content-Type':'application/json'};
+    if(S.apiKey){h['x-api-key']=S.apiKey;h['anthropic-version']='2023-06-01';}
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:h,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:'Tu es formateur IFSI expert en semiologie et surveillance clinique. Analyse ce bilan de constantes :\n\n'
+          +el.value+'\n\nAnalyse en 3 parties :\n**Lecture du bilan** — valeurs normales, alertes, critiques\n**Interpretation clinique** — signification de ce tableau\n**Conduite IDE** — actions dans ordre de priorite\n\nTutoie l etudiant. Sois direct. Utilise **gras** pour les points cles.'}]})
     });
-    const data=await res.json();
-    if(data.error) throw new Error(data.error.message);
-    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
-  }catch(e){
-    S.analyse=`**⚠️ Erreur**\n\n${e.message||'Vérifiez votre clé API et votre connexion.'}`;
-  }
+    var data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content&&data.content.find(function(b){return b.type==='text';})?data.content.find(function(b){return b.type==='text';}).text:'';
+  }catch(e){S.analyse='**Erreur**\n\n'+e.message;}
   S.loading=false;render();
 }
 
