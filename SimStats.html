@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimStats · Tableau de bord formateur</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #080c10;
+  --bg2:    #0d1218;
+  --card:   rgba(255,255,255,.04);
+  --bdr:    rgba(255,255,255,.08);
+  --txt:    #ccd8e8;
+  --txt2:   #445566;
+  --em:     #4af0a0;
+  --em2:    #20b870;
+  --blue:   #4090e0;
+  --amber:  #f0a030;
+  --red:    #e84040;
+  --violet: #9060e0;
+  --head:   'Syne', sans-serif;
+  --mono:   'Syne Mono', monospace;
+  --serif:  'Instrument Serif', serif;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 0%, rgba(74,240,160,.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 90% 100%, rgba(64,144,224,.05) 0%, transparent 50%);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(74,240,160,.015) 0px, rgba(74,240,160,.015) 1px, transparent 1px, transparent 60px),
+    repeating-linear-gradient(90deg, rgba(74,240,160,.015) 0px, rgba(74,240,160,.015) 1px, transparent 1px, transparent 60px);
+}
+
+/* ── LAYOUT ── */
+.page { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+/* ── HEADER ── */
+header {
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--bdr);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.header-brand { display: flex; flex-direction: column; gap: 6px; }
+.header-logo {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--em);
+}
+.header-title {
+  font-family: var(--head);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.header-title span { color: var(--em); }
+.header-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--txt2);
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+.header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── BOUTONS ── */
+.btn {
+  padding: 9px 18px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1.5px solid var(--bdr);
+  background: rgba(255,255,255,.03);
+  color: var(--txt2);
+  transition: all .2s;
+}
+.btn:hover { color: var(--txt); background: rgba(255,255,255,.07); }
+.btn.em {
+  background: rgba(74,240,160,.1);
+  border-color: rgba(74,240,160,.3);
+  color: var(--em);
+}
+.btn.em:hover { background: rgba(74,240,160,.18); }
+.btn.red { border-color: rgba(232,64,64,.3); color: var(--red); background: rgba(232,64,64,.06); }
+.btn.red:hover { background: rgba(232,64,64,.12); }
+
+/* ── STATS CARDS HERO ── */
+.stats-hero {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1.5px solid var(--bdr);
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.stat-card.c-em::before  { background: var(--em); }
+.stat-card.c-blue::before { background: var(--blue); }
+.stat-card.c-amber::before { background: var(--amber); }
+.stat-card.c-violet::before { background: var(--violet); }
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--txt2);
+  margin-bottom: 10px;
+}
+.stat-value {
+  font-family: var(--head);
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+.stat-value.em  { color: var(--em); }
+.stat-value.blue { color: var(--blue); }
+.stat-value.amber { color: var(--amber); }
+.stat-value.violet { color: var(--violet); }
+.stat-delta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--txt2);
+  margin-top: 6px;
+}
+
+/* ── GRILLE PRINCIPALE ── */
+.grid-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.grid-thirds {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--card);
+  border: 1.5px solid var(--bdr);
+  border-radius: 10px;
+  padding: 22px;
+}
+.card-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--txt2);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--em);
+}
+
+/* ── BARRES MODULES ── */
+.module-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.module-bar-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--txt2);
+  width: 120px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.module-bar-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.module-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--em2), var(--em));
+  transition: width .8s cubic-bezier(.4, 0, .2, 1);
+}
+.module-bar-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--em);
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── TIMELINE SESSIONS ── */
+.timeline-dot {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.timeline-dot:last-child { border-bottom: none; }
+.tl-bullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--em);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.tl-module {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--em);
+}
+.tl-student {
+  font-size: 12px;
+  color: var(--txt);
+}
+.tl-time {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--txt2);
+  margin-top: 2px;
+}
+
+/* ── QUIZ STATS ── */
+.quiz-ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.ring-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--txt2);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.ring-pct {
+  font-family: var(--head);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--em);
+  text-align: center;
+}
+
+/* ── APPAREILS DONUT ── */
+.device-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.device-icon { font-size: 18px; flex-shrink: 0; }
+.device-label { font-size: 13px; color: var(--txt); flex: 1; }
+.device-pct { font-family: var(--mono); font-size: 12px; color: var(--txt2); }
+.device-bar-wrap {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,.06);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.device-bar { height: 100%; border-radius: 2px; }
+
+/* ── TABLE ÉTUDIANTS ── */
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.student-table th {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--txt2);
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--bdr);
+}
+.student-table td {
+  padding: 10px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  vertical-align: middle;
+}
+.student-table tr:last-child td { border-bottom: none; }
+.student-table tr:hover td { background: rgba(255,255,255,.02); }
+.badge-device {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  background: rgba(74,240,160,.1);
+  color: var(--em);
+  border: 1px solid rgba(74,240,160,.2);
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+.empty-icon { font-size: 48px; margin-bottom: 16px; opacity: .4; }
+.empty-title {
+  font-family: var(--head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--txt2);
+  margin-bottom: 8px;
+}
+.empty-sub {
+  font-size: 14px;
+  color: var(--txt2);
+  line-height: 1.65;
+  max-width: 400px;
+  margin: 0 auto 24px;
+}
+.empty-code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: rgba(74,240,160,.06);
+  border: 1px solid rgba(74,240,160,.15);
+  border-radius: 6px;
+  padding: 14px 20px;
+  color: var(--em);
+  display: inline-block;
+  text-align: left;
+  line-height: 1.8;
+}
+
+/* ── HEATMAP HEURES ── */
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 3px;
+  margin-top: 8px;
+}
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: rgba(74,240,160,.06);
+  transition: background .2s;
+  cursor: pointer;
+  position: relative;
+}
+.heatmap-cell:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.9);
+  color: var(--em);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+}
+.heatmap-labels {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 3px;
+  margin-top: 4px;
+}
+.heatmap-lbl {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--txt2);
+  text-align: center;
+}
+
+/* ── DÉMO BANNER ── */
+.demo-banner {
+  background: rgba(240,160,48,.08);
+  border: 1px solid rgba(240,160,48,.25);
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--amber);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes countUp { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
+.fadeup { animation: fadeUp .4s ease both; }
+.count  { animation: countUp .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+
+@media (max-width: 900px) {
+  .stats-hero { grid-template-columns: 1fr 1fr; }
+  .grid-main  { grid-template-columns: 1fr; }
+  .grid-thirds { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .stats-hero { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page" id="app"></div>
+
+<!-- Charger la couche stats -->
+<script src="simcare-stats.js"></script>
+
+<script>
+// ═══════════════════════════════════════
+//  CONSTANTES
+// ═══════════════════════════════════════
+const MODULES_LABELS = {
+  simo2:'SimO₂', simperf:'SimPerf', simgluco:'SimGluco',
+  simcontention:'SimContention', simalmanach:'SimAlmanach',
+  simdouleur:'SimDouleur', simconstantes:'SimConstantes',
+  simrevision:'SimRévision', simenvironnement:'SimEnvironnement',
+  simconsultation:'SimConsultation', simpsy:'SimPsy',
+  simpediatrie:'SimPédiatrie', simtacath:'SimTACA·Théorie',
+  simtacas:'SimTACA·Stage', simlead:'SimLead',
+  simpico:'SimPICO', simprevention:'SimPrévention',
+  simnumerique:'SimNumérique', simipa:'SimIPA', simurgences:'SimUrgences',
+};
+
+const DEVICE_LABELS = { ios:'📱 iPhone / iPad', android:'📱 Android', mac:'💻 Mac', desktop:'🖥️ PC' };
+
+// ═══════════════════════════════════════
+//  DEMO DATA (si aucune donnée réelle)
+// ═══════════════════════════════════════
+function generateDemoData() {
+  const modules = Object.keys(MODULES_LABELS);
+  const students = ['Marie D.','Lucas P.','Amina K.','Thomas R.','Sofia B.','Hugo M.','Léa T.','Nathan V.'];
+  const devices  = ['ios','ios','ios','mac','desktop','android'];
+  const now = Date.now();
+
+  const sessions = [];
+  const events   = [];
+
+  for (let i = 0; i < 47; i++) {
+    const mod = modules[Math.floor(Math.random() * modules.length)];
+    const stu = students[Math.floor(Math.random() * students.length)];
+    const dev = devices[Math.floor(Math.random() * devices.length)];
+    const daysAgo = Math.floor(Math.random() * 14);
+    const hour    = 8 + Math.floor(Math.random() * 14);
+    const d = new Date(now - daysAgo * 86400000);
+    d.setHours(hour, Math.floor(Math.random() * 60));
+    const sid = 'demo_' + i;
+
+    sessions.push({ id: sid, module: mod, student: stu, start: d.toISOString(), device: dev });
+
+    // Events de session
+    const nOnglets = 2 + Math.floor(Math.random() * 4);
+    for (let o = 0; o < nOnglets; o++) {
+      events.push({ id: 'e_'+i+'_'+o, session: sid, module: mod, student: stu,
+        type: 'onglet_ouvert', payload: { onglet: ['Patient','Physiologie','Prescription','Quiz','Analyse IA'][o] || 'Autre' },
+        ts: d.toISOString(), device: dev });
+    }
+
+    // Quiz
+    const nQ = Math.floor(Math.random() * 6);
+    for (let q = 0; q < nQ; q++) {
+      events.push({ id: 'q_'+i+'_'+q, session: sid, module: mod, student: stu,
+        type: 'quiz_reponse', payload: { question: q+1, correct: Math.random() > 0.35, temps_ms: 3000 + Math.random()*12000 },
+        ts: d.toISOString(), device: dev });
+    }
+
+    // Fermeture
+    const duree = 180 + Math.floor(Math.random() * 1800);
+    events.push({ id: 'c_'+i, session: sid, module: mod, student: stu,
+      type: 'module_close', payload: { duree_sec: duree },
+      ts: d.toISOString(), device: dev });
+
+    // IA
+    if (Math.random() > 0.6) {
+      events.push({ id: 'ia_'+i, session: sid, module: mod, student: stu,
+        type: 'ia_question', payload: { chars: 80 + Math.floor(Math.random() * 200) },
+        ts: d.toISOString(), device: dev });
+    }
+  }
+
+  return { sessions, events, _demo: true };
+}
+
+// ═══════════════════════════════════════
+//  CALCULS
+// ═══════════════════════════════════════
+function computeStats(data) {
+  const { sessions, events } = data;
+  const isDemo = data._demo || false;
+
+  // Sessions par module
+  const byModule = {};
+  sessions.forEach(s => {
+    const m = s.module || 'inconnu';
+    if (!byModule[m]) byModule[m] = { sessions: 0, students: new Set(), durees: [] };
+    byModule[m].sessions++;
+    if (s.student) byModule[m].students.add(s.student);
+  });
+
+  // Durées par module
+  events.filter(e => e.type === 'module_close').forEach(e => {
+    const m = e.module || 'inconnu';
+    if (byModule[m]) byModule[m].durees.push(e.payload?.duree_sec || 0);
+  });
+
+  // Quiz
+  const quizEvts = events.filter(e => e.type === 'quiz_reponse');
+  const quizCorr = quizEvts.filter(e => e.payload?.correct).length;
+
+  // IA
+  const iaEvts = events.filter(e => e.type === 'ia_question');
+
+  // Appareils
+  const devices = {};
+  sessions.forEach(s => { devices[s.device || 'desktop'] = (devices[s.device || 'desktop'] || 0) + 1; });
+
+  // Étudiants uniques
+  const allStudents = [...new Set(sessions.filter(s => s.student).map(s => s.student))];
+
+  // Heatmap heures
+  const hourMap = new Array(24).fill(0);
+  sessions.forEach(s => {
+    if (s.start) {
+      const h = new Date(s.start).getHours();
+      hourMap[h]++;
+    }
+  });
+
+  // Durée moyenne globale
+  const allDurees = events.filter(e => e.type === 'module_close').map(e => e.payload?.duree_sec || 0);
+  const avgDuree  = allDurees.length ? Math.round(allDurees.reduce((a, b) => a + b, 0) / allDurees.length) : 0;
+
+  // Sessions récentes (10 dernières)
+  const recent = [...sessions].sort((a, b) => new Date(b.start) - new Date(a.start)).slice(0, 10);
+
+  return {
+    isDemo,
+    totalSessions:   sessions.length,
+    totalStudents:   allStudents.length,
+    totalEvents:     events.length,
+    totalIA:         iaEvts.length,
+    avgDuree,
+    byModule,
+    quizTotal:       quizEvts.length,
+    quizCorrect:     quizCorr,
+    quizPct:         quizEvts.length ? Math.round(quizCorr / quizEvts.length * 100) : 0,
+    avgQuizMs:       quizEvts.length ? Math.round(quizEvts.reduce((s, e) => s + (e.payload?.temps_ms || 0), 0) / quizEvts.length) : 0,
+    devices,
+    students:        allStudents,
+    hourMap,
+    recent,
+    sessions,
+    events,
+  };
+}
+
+function fmtDuree(sec) {
+  if (!sec) return '—';
+  if (sec < 60) return `${sec}s`;
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return s ? `${m}m${s}s` : `${m}min`;
+}
+
+function relativeTime(iso) {
+  if (!iso) return '—';
+  const diff = Math.round((Date.now() - new Date(iso)) / 1000);
+  if (diff < 60)   return 'il y a quelques secondes';
+  if (diff < 3600) return `il y a ${Math.floor(diff/60)} min`;
+  if (diff < 86400) return `il y a ${Math.floor(diff/3600)}h`;
+  return `il y a ${Math.floor(diff/86400)}j`;
+}
+
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+let VIEW = 'dashboard'; // 'dashboard' | 'students' | 'events'
+
+function render() {
+  // Charger les données
+  let raw;
+  try {
+    raw = JSON.parse(localStorage.getItem('simcare_stats_v1')) || { sessions: [], events: [] };
+  } catch(e) {
+    raw = { sessions: [], events: [] };
+  }
+
+  const hasData = raw.sessions.length > 0;
+  const data    = hasData ? raw : { ...generateDemoData() };
+  const st      = computeStats(data);
+
+  const maxSessions = Math.max(1, ...Object.values(st.byModule).map(m => m.sessions));
+  const maxHour     = Math.max(1, ...st.hourMap);
+
+  let h = `
+  <header class="fadeup">
+    <div class="header-brand">
+      <div class="header-logo">SimCare · Module Stats · v1.0</div>
+      <h1 class="header-title">Sim<span>Stats</span></h1>
+      <div class="header-sub">Tableau de bord formateur · Données ${hasData ? 'réelles' : 'de démonstration'}</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn ${VIEW==='dashboard'?'em':''}" onclick="VIEW='dashboard';render()">Dashboard</button>
+      <button class="btn ${VIEW==='students'?'em':''}" onclick="VIEW='students';render()">Étudiants</button>
+      <button class="btn ${VIEW==='events'?'em':''}" onclick="VIEW='events';render()">Événements</button>
+      <button class="btn em" onclick="exportCSV(st)">↓ CSV</button>
+      ${hasData ? `<button class="btn red" onclick="confirmReset()">✕ Réinitialiser</button>` : ''}
+    </div>
+  </header>`;
+
+  // Bannière démo
+  if (!hasData) {
+    h += `<div class="demo-banner fadeup">
+      ⚠️ <strong>Mode démonstration</strong> — Données simulées. Intégrez <code>simcare-stats.js</code> dans vos modules pour voir les vraies données.
+      <div class="empty-code" style="margin-top:12px;font-size:11px">
+        &lt;script src="simcare-stats.js"&gt;&lt;/script&gt;<br>
+        &lt;script&gt; SimStats.init('simgluco'); &lt;/script&gt;
+      </div>
+    </div>`;
+  }
+
+  if (VIEW === 'dashboard') {
+    // ── STATS HERO ──────────────────────────────────────
+    h += `<div class="stats-hero fadeup">
+      <div class="stat-card c-em">
+        <div class="stat-label">Sessions totales</div>
+        <div class="stat-value em count">${st.totalSessions}</div>
+        <div class="stat-delta">Ouvertures de modules</div>
+      </div>
+      <div class="stat-card c-blue">
+        <div class="stat-label">Étudiants identifiés</div>
+        <div class="stat-value blue count">${st.totalStudents}</div>
+        <div class="stat-delta">Prénoms / codes uniques</div>
+      </div>
+      <div class="stat-card c-amber">
+        <div class="stat-label">Durée moyenne</div>
+        <div class="stat-value amber count">${fmtDuree(st.avgDuree)}</div>
+        <div class="stat-delta">Par session</div>
+      </div>
+      <div class="stat-card c-violet">
+        <div class="stat-label">Questions IA</div>
+        <div class="stat-value violet count">${st.totalIA}</div>
+        <div class="stat-delta">Accès Premium</div>
+      </div>
+    </div>`;
+
+    // ── GRILLE PRINCIPALE ────────────────────────────────
+    h += `<div class="grid-main fadeup">
+      <!-- Modules les plus utilisés -->
+      <div class="card">
+        <div class="card-title">Modules · Sessions</div>
+        ${Object.entries(st.byModule)
+          .sort((a, b) => b[1].sessions - a[1].sessions)
+          .slice(0, 12)
+          .map(([id, m]) => `
+          <div class="module-bar">
+            <div class="module-bar-label">${esc(MODULES_LABELS[id] || id)}</div>
+            <div class="module-bar-track">
+              <div class="module-bar-fill" style="width:${Math.round(m.sessions/maxSessions*100)}%"></div>
+            </div>
+            <div class="module-bar-val">${m.sessions}</div>
+          </div>`).join('')}
+      </div>
+
+      <!-- Sessions récentes -->
+      <div class="card">
+        <div class="card-title">Sessions récentes</div>
+        ${st.recent.map(s => `
+          <div class="timeline-dot">
+            <div class="tl-bullet"></div>
+            <div>
+              <div class="tl-module">${esc(MODULES_LABELS[s.module] || s.module || '—')}</div>
+              <div class="tl-student">${esc(s.student || 'Anonyme')}</div>
+              <div class="tl-time">${relativeTime(s.start)} · ${DEVICE_LABELS[s.device] || '🖥️'}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+    // ── GRILLE SECONDAIRE ─────────────────────────────────
+    h += `<div class="grid-thirds fadeup">
+      <!-- Quiz -->
+      <div class="card">
+        <div class="card-title">Quiz · Performance</div>
+        <div class="quiz-ring-wrap">
+          <div class="ring-pct">${st.quizPct}%</div>
+          <div class="ring-label">Taux de bonnes réponses</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--txt2);text-align:center;line-height:1.8">
+            ${st.quizCorrect} / ${st.quizTotal} réponses<br>
+            Temps moyen : ${Math.round(st.avgQuizMs/1000)}s
+          </div>
+        </div>
+      </div>
+
+      <!-- Appareils -->
+      <div class="card">
+        <div class="card-title">Appareils</div>
+        ${Object.entries(st.devices)
+          .sort((a, b) => b[1] - a[1])
+          .map(([d, n]) => {
+            const pct = Math.round(n / st.totalSessions * 100);
+            const col = d === 'ios' ? 'var(--em)' : d === 'android' ? 'var(--blue)' : 'var(--amber)';
+            return `<div class="device-row">
+              <div class="device-icon">${d === 'ios' ? '📱' : d === 'android' ? '📱' : d === 'mac' ? '💻' : '🖥️'}</div>
+              <div>
+                <div style="display:flex;justify-content:space-between">
+                  <span class="device-label">${DEVICE_LABELS[d] || d}</span>
+                  <span class="device-pct">${pct}%</span>
+                </div>
+                <div class="device-bar-wrap">
+                  <div class="device-bar" style="width:${pct}%;background:${col}"></div>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}
+      </div>
+
+      <!-- Heatmap horaire -->
+      <div class="card">
+        <div class="card-title">Activité · Par heure</div>
+        <div class="heatmap">
+          ${st.hourMap.map((n, h) => {
+            const pct = n / maxHour;
+            const bg  = pct > 0
+              ? `rgba(74,240,160,${0.1 + pct * 0.7})`
+              : 'rgba(74,240,160,.06)';
+            return `<div class="heatmap-cell" style="background:${bg}" data-tip="${h}h : ${n} sessions"></div>`;
+          }).join('')}
+        </div>
+        <div class="heatmap-labels">
+          ${Array.from({length:24}, (_,h) => h%6===0 ? `<div class="heatmap-lbl" style="grid-column:${h+1}">${h}h</div>` : '<div></div>').join('')}
+        </div>
+      </div>
+    </div>`;
+
+  } else if (VIEW === 'students') {
+    // ── VUE ÉTUDIANTS ────────────────────────────────────
+    h += `<div class="card fadeup">
+      <div class="card-title">Étudiants identifiés — ${st.students.length} profils</div>
+      <table class="student-table">
+        <thead>
+          <tr>
+            <th>Étudiant</th>
+            <th>Sessions</th>
+            <th>Modules</th>
+            <th>Quiz</th>
+            <th>Durée moy.</th>
+            <th>Appareil</th>
+            <th>Dernière session</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${st.students.map(stu => {
+            const stuSessions = st.sessions.filter(s => s.student === stu);
+            const stuMods     = [...new Set(stuSessions.map(s => s.module))];
+            const stuEvents   = st.events.filter(e => e.student === stu);
+            const stuQuiz     = stuEvents.filter(e => e.type === 'quiz_reponse');
+            const stuCorr     = stuQuiz.filter(e => e.payload?.correct).length;
+            const stuDurees   = stuEvents.filter(e => e.type === 'module_close').map(e => e.payload?.duree_sec || 0);
+            const avgD        = stuDurees.length ? Math.round(stuDurees.reduce((a,b)=>a+b,0)/stuDurees.length) : 0;
+            const lastDev     = stuSessions[stuSessions.length-1]?.device || 'desktop';
+            const lastTs      = stuSessions.sort((a,b)=>new Date(b.start)-new Date(a.start))[0]?.start;
+            return `<tr>
+              <td style="font-weight:600;color:var(--em)">${esc(stu)}</td>
+              <td style="font-family:var(--mono)">${stuSessions.length}</td>
+              <td style="font-size:12px;color:var(--txt2)">${stuMods.map(m => MODULES_LABELS[m]||m).join(', ')}</td>
+              <td style="font-family:var(--mono);color:${stuQuiz.length?'var(--em)':'var(--txt2)'}">${stuQuiz.length ? stuCorr+'/'+stuQuiz.length : '—'}</td>
+              <td style="font-family:var(--mono)">${fmtDuree(avgD)}</td>
+              <td><span class="badge-device">${DEVICE_LABELS[lastDev]||lastDev}</span></td>
+              <td style="font-size:12px;color:var(--txt2)">${relativeTime(lastTs)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  } else if (VIEW === 'events') {
+    // ── VUE ÉVÉNEMENTS ───────────────────────────────────
+    const recentEvents = [...st.events]
+      .sort((a, b) => new Date(b.ts) - new Date(a.ts))
+      .slice(0, 50);
+
+    h += `<div class="card fadeup">
+      <div class="card-title">Événements récents — ${st.totalEvents} au total</div>
+      <table class="student-table">
+        <thead>
+          <tr>
+            <th>Horodatage</th>
+            <th>Module</th>
+            <th>Étudiant</th>
+            <th>Événement</th>
+            <th>Données</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${recentEvents.map(e => `<tr>
+            <td style="font-family:var(--mono);font-size:11px;color:var(--txt2)">${new Date(e.ts).toLocaleString('fr-FR')}</td>
+            <td style="color:var(--em);font-family:var(--mono);font-size:11px">${esc(MODULES_LABELS[e.module]||e.module||'—')}</td>
+            <td>${esc(e.student||'Anonyme')}</td>
+            <td><span style="font-family:var(--mono);font-size:10px;padding:2px 8px;background:rgba(74,240,160,.08);border-radius:3px;color:var(--em)">${esc(e.type)}</span></td>
+            <td style="font-family:var(--mono);font-size:11px;color:var(--txt2)">${esc(JSON.stringify(e.payload||{})).slice(0,60)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  document.getElementById('app').innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function exportCSV(st) {
+  const rows = [
+    ['horodatage','module','etudiant','evenement','donnees','appareil','session'],
+    ...st.events.map(e => [
+      e.ts, e.module||'', e.student||'anonyme', e.type,
+      JSON.stringify(e.payload||{}), e.device||'', e.session||''
+    ])
+  ];
+  const csv  = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `simcare-stats-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function confirmReset() {
+  if (confirm('Supprimer toutes les statistiques SimCare ?\n\nCette action est irréversible.')) {
+    localStorage.removeItem('simcare_stats_v1');
+    localStorage.removeItem('simcare_student_id');
+    render();
+  }
+}
+
+// ═══════════════════════════════════════
+//  INIT + AUTO-REFRESH
+// ═══════════════════════════════════════
+render();
+// Rafraîchir toutes les 30 secondes si la page est visible
+setInterval(() => { if (!document.hidden) render(); }, 30000);
+</script>
+</body>
+</html>
