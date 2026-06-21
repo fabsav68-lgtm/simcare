@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SimCare · Bienvenue Premium !</title>
+<title>PraxisCare · Bienvenue Premium !</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -116,7 +116,7 @@ body {
 
 <div class="card">
   <div class="title">Bienvenue<br>en mode Premium !</div>
-  <div class="sub">Votre abonnement est actif. L'analyse IA est désormais disponible dans tous les modules SimCare.</div>
+  <div class="sub">Votre abonnement est actif. L'analyse IA est désormais disponible dans tous les modules PraxisCare.</div>
 
   <div class="features">
     ${[
@@ -156,8 +156,8 @@ const SUPABASE_ANON = 'VOTRE_ANON_PUBLIC_KEY';
         .eq('user_id', session.user.id)
         .single();
       if (sub?.status === 'active') {
-        localStorage.setItem('simcare_premium', '1');
-        localStorage.setItem('simcare_jwt', session.access_token);
+        localStorage.setItem('praxiscare_premium', '1');
+        localStorage.setItem('praxiscare_jwt', session.access_token);
       }
     }
   } catch(e) { console.warn('Refresh statut:', e); }

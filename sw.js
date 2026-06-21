@@ -1,48 +1,49 @@
-// ═══════════════════════════════════════
-//  praxisveto — Service Worker
-//  Cache offline · PWA
-// ═══════════════════════════════════════
-
-const CACHE_NAME = 'praxisveto-v1';
-
-const CACHE_FILES = [
-  './',
-  './index.html',
+// PraxisCare Service Worker v3.0 — 10 modules
+const CACHE_NAME = 'praxiscare-v3';
+const FILES = [
+  './PraxisCare.html',
+  './PraxisO2-IFSI.html',
+  './PraxisPerf-IFSI.html',
+  './PraxisGluco-IFSI.html',
+  './PraxisContention-IFSI.html',
+  './PraxisAlmanach-IFSI.html',
+  './PraxisDouleur-IFSI.html',
+  './PraxisConstantes-IFSI.html',
+  './PraxisRevision-IFSI.html',
+  './PraxisEnvironnement-IFSI.html',
+  './PraxisConsultation-IFSI.html',
+  './PraxisCare-icon.svg',
   './manifest.json',
-  './PraxisVeto-icon.svg',
-  './PraxisVeto-Diabete-Canin.html',
 ];
 
-// Installation — mise en cache
-self.addEventListener('install', function(e) {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(CACHE_FILES);
-    })
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(FILES))
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-// Activation — nettoyage anciens caches
-self.addEventListener('activate', function(e) {
-  e.waitUntil(
-    caches.keys().then(function(keys) {
-      return Promise.all(
-        keys.filter(function(k) { return k !== CACHE_NAME; })
-            .map(function(k) { return caches.delete(k); })
-      );
-    })
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch — cache first, réseau en fallback
-self.addEventListener('fetch', function(e) {
-  e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      return cached || fetch(e.request).catch(function() {
-        return caches.match('./index.html');
-      });
-    })
+// Réseau d'abord, cache ensuite — pour toujours avoir la dernière version
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
+      })
+      .catch(() =>
+        caches.match(event.request)
+          .then(cached => cached || caches.match('./PraxisCare.html'))
+      )
   );
 });

@@ -1,16 +1,16 @@
 {
-  "name": "PraxisVeto · Suite pédagogique ASV",
-  "short_name": "PraxisVeto",
-  "description": "Suite pédagogique pour Auxiliaires de Santé Vétérinaire",
+  "name": "PraxisCare · Suite pédagogique IFSI",
+  "short_name": "PraxisCare",
+  "description": "Suite pédagogique IFSI 2026 — 20 modules cliniques",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0a0d08",
-  "theme_color": "#0a0d08",
+  "background_color": "#0a0c10",
+  "theme_color": "#0a0c10",
   "orientation": "portrait",
   "lang": "fr",
   "icons": [
     {
-      "src": "PraxisVeto-icon.svg",
+      "src": "PraxisCare-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
@@ -18,11 +18,32 @@
   ],
   "shortcuts": [
     {
-      "name": "PraxisGlyco Canin",
-      "short_name": "Diabète canin",
-      "description": "Glycémie et insulinothérapie du chien",
-      "url": "./PraxisVeto-Diabete-Canin.html",
-      "icons": [{ "src": "PraxisVeto-icon.svg", "sizes": "any" }]
+      "name": "PraxisO₂",
+      "short_name": "PraxisO₂",
+      "description": "Oxygénothérapie · UE B.3",
+      "url": "./PraxisO2-IFSI.html",
+      "icons": [{ "src": "PraxisCare-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "PraxisUrgences",
+      "short_name": "Urgences",
+      "description": "ABCDE · IDE seul · SFMU",
+      "url": "./PraxisUrgences-IFSI.html",
+      "icons": [{ "src": "PraxisCare-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "PraxisConstantes",
+      "short_name": "Constantes",
+      "description": "Constantes vitales · Bilan bio · NEWS2",
+      "url": "./PraxisConstantes-IFSI.html",
+      "icons": [{ "src": "PraxisCare-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "PraxisPrévention",
+      "short_name": "Prévention",
+      "description": "Infirmier référent · ALD · ETP",
+      "url": "./PraxisPrevention-IFSI.html",
+      "icons": [{ "src": "PraxisCare-icon.svg", "sizes": "any" }]
     }
   ]
 }

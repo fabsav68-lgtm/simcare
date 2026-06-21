@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisConstantes · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@300;400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c1018;--bg2:#121820;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#d8e4f0;--txt2:#4a6080;--em:#40c8e0;--em2:#2090a8;
+  --ok:#30d880;--warn:#f0b030;--crit:#f04040;
+  --mono:'Azeret Mono',monospace;--sans:'Instrument Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);
+  min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(64,200,224,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 20% 90%,rgba(48,216,128,.04) 0%,transparent 45%);
+  background-image:linear-gradient(rgba(64,200,224,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(64,200,224,.025) 1px,transparent 1px);
+  background-size:48px 48px}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+.site-header{padding:40px 22px 24px;text-align:center;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(64,200,224,.08);
+  border:1px solid rgba(64,200,224,.2);color:var(--em);padding:4px 16px;border-radius:3px;
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-family:var(--mono);font-size:clamp(28px,5vw,52px);font-weight:700;
+  letter-spacing:-2px;line-height:1;margin-bottom:8px}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:12px;font-family:var(--mono);letter-spacing:1px}
+.tabs{display:flex;gap:3px;padding:0 0 18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:7px 14px;border-radius:3px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;
+  font-family:var(--mono);letter-spacing:1px;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt);background:rgba(64,200,224,.05)}
+.tab.active{background:rgba(64,200,224,.1);border-color:rgba(64,200,224,.35);color:var(--em)}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:8px;padding:22px;
+  margin-bottom:12px;position:relative;z-index:1}
+.card.em{border-top:2px solid var(--em)}
+.card-title{font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:1px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px;line-height:1.65;font-family:var(--mono)}
+.profil-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+.profil-btn{padding:10px 8px;border-radius:4px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);cursor:pointer;text-align:center;transition:all .2s;
+  -webkit-tap-highlight-color:transparent}
+.profil-btn:hover{background:rgba(64,200,224,.06)}
+.profil-btn.active{background:rgba(64,200,224,.12);border-color:rgba(64,200,224,.4)}
+.profil-icon{font-size:22px;display:block;margin-bottom:5px}
+.profil-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--txt2)}
+.profil-btn.active .profil-label{color:var(--em)}
+.cst-card{background:rgba(0,0,0,.25);border:1.5px solid var(--bdr);border-radius:6px;
+  padding:16px;margin-bottom:8px;display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;gap:14px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.cst-card:hover{background:rgba(0,0,0,.35)}
+.cst-card.open{border-color:rgba(64,200,224,.3)}
+.cst-icon{font-size:26px;flex-shrink:0}
+.cst-nom{font-family:var(--mono);font-size:14px;font-weight:600;margin-bottom:3px}
+.cst-abbr{font-family:var(--mono);font-size:10px;color:var(--txt2);letter-spacing:2px}
+.cst-zone{text-align:right;font-family:var(--mono);font-size:11px;padding:4px 10px;
+  border-radius:20px;font-weight:600}
+.zone-ok{background:rgba(48,216,128,.12);color:var(--ok);border:1px solid rgba(48,216,128,.25)}
+.cst-detail{grid-column:1/-1;font-size:12px;color:var(--txt2);line-height:1.7;display:none;
+  margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+.cst-card.open .cst-detail{display:block}
+.zones-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.zone-item{background:rgba(0,0,0,.3);border-radius:4px;padding:8px;text-align:center}
+.zone-val{font-family:var(--mono);font-size:12px;font-weight:700;margin-bottom:2px}
+.zone-lbl{font-family:var(--mono);font-size:9px;color:var(--txt2);letter-spacing:1px;text-transform:uppercase}
+.bio-section{margin-bottom:16px}
+.bio-title{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--em);margin-bottom:8px}
+.bio-row{display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:10px;
+  padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.bio-row:last-child{border-bottom:none}
+.bio-row:hover{background:rgba(255,255,255,.02);border-radius:4px}
+.bio-norm{font-family:var(--mono);font-size:11px;color:var(--txt2)}
+.news-param{background:rgba(0,0,0,.2);border-radius:4px;padding:12px;margin-bottom:8px}
+.news-lbl{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--txt2);margin-bottom:8px}
+.news-opts{display:flex;gap:4px;flex-wrap:wrap}
+.news-opt{padding:5px 11px;border-radius:3px;font-family:var(--mono);font-size:11px;
+  border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+  color:var(--txt2);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.news-opt:hover{border-color:rgba(64,200,224,.3);color:var(--txt)}
+.sel0{border-color:var(--ok)!important;color:var(--ok)!important;background:rgba(48,216,128,.1)!important}
+.sel1,.sel2{border-color:var(--warn)!important;color:var(--warn)!important;background:rgba(240,176,48,.1)!important}
+.sel3{border-color:var(--crit)!important;color:var(--crit)!important;background:rgba(240,64,64,.12)!important}
+.score-box{border-radius:6px;padding:18px;text-align:center;border:2px solid var(--bdr);transition:border-color .4s}
+.score-num{font-family:var(--mono);font-size:64px;font-weight:700;line-height:1;margin-bottom:6px}
+.score-lbl{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:1px;margin-bottom:6px}
+.score-act{font-size:12px;color:var(--txt2);line-height:1.65}
+.quiz-opt{padding:11px 14px;border-radius:4px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;font-size:13px;
+  margin-bottom:7px;transition:all .15s;display:flex;align-items:center;gap:10px;
+  -webkit-tap-highlight-color:transparent}
+.quiz-opt:hover{background:rgba(64,200,224,.05);color:var(--txt)}
+.quiz-opt.correct{background:rgba(48,216,128,.1);border-color:rgba(48,216,128,.4);color:var(--ok)}
+.quiz-opt.wrong{background:rgba(240,64,64,.1);border-color:rgba(240,64,64,.4);color:var(--crit)}
+.quiz-expl{background:rgba(64,200,224,.05);border:1px solid rgba(64,200,224,.15);border-radius:4px;
+  padding:11px 13px;margin-top:10px;font-size:12px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+.info{border-radius:4px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em{background:rgba(64,200,224,.06);border-left:3px solid rgba(64,200,224,.5);color:var(--em)}
+.info-ok{background:rgba(48,216,128,.06);border-left:3px solid rgba(48,216,128,.5);color:var(--ok)}
+.info-warn{background:rgba(240,176,48,.06);border-left:3px solid rgba(240,176,48,.5);color:var(--warn)}
+.info-crit{background:rgba(240,64,64,.06);border-left:3px solid rgba(240,64,64,.5);color:var(--crit)}
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:4px;
+  color:#0c1018;font-family:var(--mono);font-size:13px;font-weight:700;padding:11px 24px;
+  cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:1px}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);border-radius:4px;
+  color:var(--txt2);font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:9px 16px;cursor:pointer;transition:all .15s}
+.btn-g:hover{background:rgba(64,200,224,.05);color:var(--txt)}
+.btn-full{width:100%}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.col8{display:flex;flex-direction:column;gap:8px}
+.progress-wrap{background:rgba(255,255,255,.06);border-radius:2px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:2px;transition:width .5s ease}
+.dots{text-align:center;padding:22px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--em);
+  margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:12px;margin-top:10px;font-family:var(--mono)}
+.analysis p{margin-bottom:13px;font-size:14px;line-height:1.85;color:#5878a0}
+.analysis strong{color:var(--txt)}
+.apikey-box{background:rgba(64,200,224,.04);border:1px solid rgba(64,200,224,.12);
+  border-radius:4px;padding:11px}
+.apikey-box p{font-size:12px;color:var(--txt2);margin-bottom:9px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:6px}
+.apikey-row input{flex:1;padding:8px 10px;font-size:11px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.08);border-radius:4px;color:var(--txt);
+  font-family:var(--mono);outline:none}
+.apikey-row input:focus{border-color:rgba(64,200,224,.3)}
+.apikey-row button{padding:8px 12px;border:none;border-radius:4px;background:var(--em2);
+  color:#0c1018;font-weight:700;cursor:pointer;font-size:11px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
+.pts{display:flex;flex-direction:column;gap:10px;margin:16px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .3s ease forwards}
+@media(max-width:480px){.profil-grid{grid-template-columns:repeat(2,1fr)}.zones-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// Données profils
+var PROFILS = [
+  {id:'adulte',icon:'🧑',label:'Adulte',age:'18-64 ans'},
+  {id:'senior',icon:'👴',label:'65 ans+',age:'Senior'},
+  {id:'enfant',icon:'🧒',label:'Enfant',age:'6-12 ans'},
+  {id:'neonat',icon:'👶',label:'Nourrisson',age:'0-28 jours'},
+];
+
+// Constantes vitales
+var CONSTANTES = [
+  {
+    id:'pa',icon:'❤️',nom:'Pression Artérielle',abbr:'PA',unite:'mmHg',
+    normes:{
+      adulte:{ok:'120/80 mmHg',alerte:'> 140/90 ou < 90/60',critique:'> 180/110 ou < 80/50',
+        info:'Mesurer en position assise après 5 min de repos. Brassard au niveau du coeur. Toujours noter les deux chiffres (systolique/diastolique). Comparer les deux bras lors du premier examen.',
+        zones:[{v:'< 80/50',l:'Choc',c:'crit'},{v:'90-120',l:'Normal',c:'ok'},{v:'> 140/90',l:'HTA',c:'warn'},{v:'> 180',l:'Urgence HTA',c:'crit'}]},
+      senior:{ok:'130-150/70-90 mmHg',alerte:'> 160/90 ou < 100/60',critique:'> 180/110 ou < 80/50',
+        info:'Chez la personne âgée, une PAS entre 130 et 150 mmHg est souvent acceptable. Attention aux hypotensions orthostatiques. Mesurer couché ET debout (delta > 20 mmHg = hypotension orthostatique).',
+        zones:[]},
+      enfant:{ok:'100-120/60-80 mmHg',alerte:'< 80/50 ou > 130/80',critique:'< 60/40',
+        info:'La PA normale chez l\'enfant : PAS = 80 + (2 x âge en années). Utiliser un brassard adapté (largeur = 2/3 de la longueur du bras).',
+        zones:[]},
+      neonat:{ok:'60-90/30-60 mmHg',alerte:'< 40/20 ou > 90/60',critique:'< 30/20',
+        info:'PA mesurée au membre inférieur ou supérieur. PAS normale environ 60-80 mmHg. Monitorage continu en néonatalogie.',
+        zones:[]},
+    }
+  },
+  {
+    id:'fc',icon:'💓',nom:'Fréquence Cardiaque',abbr:'FC',unite:'bpm',
+    normes:{
+      adulte:{ok:'60-100 bpm',alerte:'< 50 ou > 100',critique:'< 40 ou > 130',
+        info:'Mesurer au pouls radial pendant 60 secondes. Noter le rythme (régulier/irrégulier) et la force du pouls. Tachycardie > 100 bpm. Bradycardie < 60 bpm.',
+        zones:[{v:'< 40',l:'Bradycardie sévère',c:'crit'},{v:'40-60',l:'Bradycardie',c:'warn'},{v:'60-100',l:'Normal',c:'ok'},{v:'100-130',l:'Tachycardie',c:'warn'},{v:'> 130',l:'Tachycardie sévère',c:'crit'}]},
+      senior:{ok:'55-90 bpm',alerte:'< 50 ou > 100',critique:'< 40 ou > 120',
+        info:'Une bradycardie modérée peut être liée aux beta-bloquants. Toujours corréler avec la clinique et les traitements.',
+        zones:[]},
+      enfant:{ok:'70-120 bpm',alerte:'< 60 ou > 130',critique:'< 50 ou > 180',
+        info:'La FC diminue avec l\'âge. Nourrisson 120-160 bpm. Enfant 6 ans 75-115 bpm. La fièvre augmente la FC de 10-15 bpm par degré.',
+        zones:[]},
+      neonat:{ok:'120-160 bpm',alerte:'< 100 ou > 160',critique:'< 80 ou > 180',
+        info:'FC normale du nouveau-né 120-160 bpm. En dessous de 100 bpm : bradycardie à signaler immédiatement.',
+        zones:[]},
+    }
+  },
+  {
+    id:'fr',icon:'🌬️',nom:'Fréquence Respiratoire',abbr:'FR',unite:'/min',
+    normes:{
+      adulte:{ok:'12-20 /min',alerte:'< 10 ou > 24',critique:'< 8 ou > 30',
+        info:'La FR est le paramètre vital le plus prédictif d\'une dégradation — et le plus souvent omis. Compter pendant 60 secondes complètes. Ne pas prévenir le patient pour éviter le biais conscient.',
+        zones:[{v:'< 8',l:'Apnée',c:'crit'},{v:'8-12',l:'Bradypnée',c:'warn'},{v:'12-20',l:'Normal',c:'ok'},{v:'20-25',l:'Polypnée',c:'warn'},{v:'> 25',l:'Détresse',c:'crit'}]},
+      senior:{ok:'14-22 /min',alerte:'< 10 ou > 25',critique:'< 8 ou > 30',
+        info:'Une FR à 20/min chez la personne âgée peut signer une pneumopathie. Les réserves respiratoires sont diminuées. FR > 25/min = signe d\'alarme sérieux.',
+        zones:[]},
+      enfant:{ok:'20-30 /min',alerte:'< 15 ou > 40',critique:'< 10 ou > 50',
+        info:'La FR normale est plus élevée chez l\'enfant. Nourrisson 40-60/min. La polypnée est le premier signe de détresse respiratoire pédiatrique.',
+        zones:[]},
+      neonat:{ok:'40-60 /min',alerte:'< 30 ou > 60',critique:'< 20 ou > 80',
+        info:'Des pauses de 5-10 secondes sont normales. L\'apnée (> 20 secondes) est pathologique. Le geignement (grunting) = détresse respiratoire.',
+        zones:[]},
+    }
+  },
+  {
+    id:'spo2',icon:'🩺',nom:'Saturation en O₂',abbr:'SpO₂',unite:'%',
+    normes:{
+      adulte:{ok:'95-100%',alerte:'92-94%',critique:'< 92%',
+        info:'Mesure au bout du doigt, sans vernis. La SpO₂ ne mesure pas la ventilation — un patient en hypercapnie peut avoir une SpO₂ normale sous O₂. Chez le BPCO : cible 88-92%, jamais 100%.',
+        zones:[{v:'< 88%',l:'Hypoxémie sévère',c:'crit'},{v:'88-92%',l:'BPCO cible',c:'warn'},{v:'92-94%',l:'Alerte',c:'warn'},{v:'95-100%',l:'Normal',c:'ok'}]},
+      senior:{ok:'94-100%',alerte:'90-93%',critique:'< 90%',
+        info:'Les personnes âgées BPCO : cible 88-92%. Ne pas chercher la saturation à 100%.',
+        zones:[]},
+      enfant:{ok:'97-100%',alerte:'94-96%',critique:'< 94%',
+        info:'SpO₂ < 94% chez un enfant = signe d\'alerte. Toujours corréler avec la fréquence respiratoire.',
+        zones:[]},
+      neonat:{ok:'95-100%',alerte:'90-94%',critique:'< 90%',
+        info:'Se normalise en 10-15 min après la naissance. Mesure au poignet droit (SpO₂ pré-ductale).',
+        zones:[]},
+    }
+  },
+  {
+    id:'temp',icon:'🌡️',nom:'Température',abbr:'T°',unite:'°C',
+    normes:{
+      adulte:{ok:'36,5 - 37,5°C',alerte:'38-38,5°C ou 35-36,4°C',critique:'> 39°C ou < 35°C',
+        info:'Varie selon le site : axillaire -0,5°C, rectale +0,5°C. Fièvre = T > 38°C. L\'hypothermie (< 36°C) est sous-diagnostiquée, notamment dans les sepsis et chez les personnes âgées.',
+        zones:[{v:'< 35°C',l:'Hypothermie',c:'crit'},{v:'35-36,4°C',l:'Subfébrile',c:'warn'},{v:'36,5-37,5°C',l:'Normal',c:'ok'},{v:'38-39°C',l:'Fièvre',c:'warn'},{v:'> 39°C',l:'Hyperthermie',c:'crit'}]},
+      senior:{ok:'36 - 37,4°C',alerte:'> 37,5°C ou < 35,5°C',critique:'> 39°C ou < 35°C',
+        info:'La réponse thermique est atténuée chez la personne âgée. Un sepsis peut se manifester sans fièvre. T° > 37,5°C = signe à ne pas négliger.',
+        zones:[]},
+      enfant:{ok:'36,5 - 37,5°C',alerte:'38-40°C ou < 36°C',critique:'> 40°C ou < 35°C',
+        info:'Convulsions fébriles liées à la rapidité de montée. Mesure rectale de référence avant 2 ans.',
+        zones:[]},
+      neonat:{ok:'36,5 - 37,5°C',alerte:'< 36,5°C ou > 37,8°C',critique:'< 35,5°C ou > 38,5°C',
+        info:'L\'hypothermie est la principale cause de mortalité néonatale évitable. Contact peau à peau et bonnet dès la naissance.',
+        zones:[]},
+    }
+  },
+  {
+    id:'glyc',icon:'🩸',nom:'Glycémie capillaire',abbr:'HGT',unite:'g/L',
+    normes:{
+      adulte:{ok:'0,7 - 1,4 g/L (à jeun)',alerte:'0,5-0,69 ou > 1,8',critique:'< 0,5 ou > 3,0',
+        info:'Nettoyer le doigt à l\'eau (pas à l\'alcool). Essuyer la première goutte, utiliser la deuxième. Vérifier la date de péremption des bandelettes.',
+        zones:[{v:'< 0,5',l:'Hypo sévère',c:'crit'},{v:'0,5-0,7',l:'Hypoglycémie',c:'warn'},{v:'0,7-1,4',l:'Normal',c:'ok'},{v:'1,4-2,0',l:'Post-prandial',c:'warn'},{v:'> 2,0',l:'Hyperglycémie',c:'crit'}]},
+      senior:{ok:'0,7 - 1,6 g/L',alerte:'< 0,6 ou > 2,0',critique:'< 0,5 ou > 3,0',
+        info:'Chez la personne âgée diabétique, les signes d\'hypoglycémie peuvent être atypiques : confusion, chute, malaise sans sueurs.',
+        zones:[]},
+      enfant:{ok:'0,7 - 1,2 g/L',alerte:'< 0,6 ou > 1,5',critique:'< 0,4 ou > 2,5',
+        info:'Seuil d\'alerte : < 0,6 g/L. Resucrage immédiat si conscient.',
+        zones:[]},
+      neonat:{ok:'0,4 - 0,7 g/L',alerte:'< 0,4 ou > 0,8',critique:'< 0,25',
+        info:'Hypoglycémie néonatale définie par < 0,4 g/L dans les 48 premières heures. Allaitement précoce et fréquent.',
+        zones:[]},
+    }
+  },
+  {
+    id:'gcs',icon:'🧠',nom:'Conscience — GCS',abbr:'GCS',unite:'/15',
+    normes:{
+      adulte:{ok:'15/15',alerte:'13-14/15',critique:'< 13/15',
+        info:'3 composantes : Yeux (1-4) + Verbal (1-5) + Moteur (1-6). GCS 15 = conscient. GCS < 8 = coma, risque d\'obstruction des voies aériennes → PLS si ventilation présente.',
+        zones:[{v:'3-8',l:'Coma',c:'crit'},{v:'9-12',l:'Obnubilé',c:'warn'},{v:'13-14',l:'Confusion',c:'warn'},{v:'15',l:'Normal',c:'ok'}]},
+      senior:{ok:'15/15',alerte:'13-14/15',critique:'< 13/15',
+        info:'Une confusion aiguë chez la personne âgée est toujours pathologique. Évaluer aussi la CAM (Confusion Assessment Method).',
+        zones:[]},
+      enfant:{ok:'15/15',alerte:'13-14/15',critique:'< 13/15',
+        info:'GCS pédiatrique adapte la réponse verbale selon l\'âge. GCS < 10 chez un enfant = urgence pédiatrique.',
+        zones:[]},
+      neonat:{ok:'Score Apgar 8-10',alerte:'Apgar 4-7',critique:'Apgar < 4',
+        info:'Score d\'Apgar à 1 et 5 minutes : FC, Respiration, Tonus, Réflexes, Couleur. Score < 4 = réanimation immédiate.',
+        zones:[]},
+    }
+  },
+];
+
+// Bilan biologique
+var BIO = [
+  {titre:'HÉMOGRAMME (NFS)',rows:[
+    {nom:'Hémoglobine (Hb)',norm:'H : 13-17 g/dL · F : 12-16 g/dL'},
+    {nom:'Hématocrite',norm:'H : 40-52% · F : 37-47%'},
+    {nom:'Globules blancs',norm:'4 000-10 000 /mm³'},
+    {nom:'Plaquettes',norm:'150 000-400 000 /mm³'},
+  ]},
+  {titre:'IONOGRAMME SANGUIN',rows:[
+    {nom:'Sodium (Na+)',norm:'135-145 mmol/L'},
+    {nom:'Potassium (K+)',norm:'3,5-5,0 mmol/L'},
+    {nom:'Chlore (Cl-)',norm:'95-105 mmol/L'},
+    {nom:'Bicarbonates',norm:'22-28 mmol/L'},
+  ]},
+  {titre:'FONCTION RÉNALE',rows:[
+    {nom:'Créatinine',norm:'H : 70-106 µmol/L · F : 44-80 µmol/L'},
+    {nom:'Urée',norm:'2,5-7,5 mmol/L'},
+    {nom:'DFG (CKD-EPI)',norm:'> 60 mL/min/1,73m²'},
+  ]},
+  {titre:'MARQUEURS INFLAMMATOIRES',rows:[
+    {nom:'CRP',norm:'< 5 mg/L'},
+    {nom:'Procalcitonine',norm:'< 0,5 ng/mL'},
+    {nom:'Fibrinogène',norm:'2-4 g/L'},
+  ]},
+  {titre:'COAGULATION',rows:[
+    {nom:'TP (%)',norm:'70-100%'},
+    {nom:'INR',norm:'0,8-1,2 (cible AVK : 2-3)'},
+    {nom:'TCA',norm:'25-35 secondes'},
+  ]},
+];
+
+// NEWS2
+var NEWS2 = [
+  {key:'fr',  lbl:'Fréquence respiratoire', opts:[{t:'≤ 8',s:3},{t:'9-11',s:1},{t:'12-20',s:0},{t:'21-24',s:2},{t:'≥ 25',s:3}]},
+  {key:'spo2',lbl:'SpO₂ (sans O₂)',        opts:[{t:'≤ 91%',s:3},{t:'92-93%',s:2},{t:'94-95%',s:1},{t:'≥ 96%',s:0}]},
+  {key:'o2',  lbl:'Oxygène supplémentaire', opts:[{t:'Non',s:0},{t:'Oui',s:2}]},
+  {key:'temp',lbl:'Température',            opts:[{t:'≤ 35°C',s:3},{t:'35-36°C',s:1},{t:'36-38°C',s:0},{t:'38-39°C',s:1},{t:'≥ 39°C',s:2}]},
+  {key:'pas', lbl:'PA systolique',          opts:[{t:'≤ 90',s:3},{t:'91-100',s:2},{t:'101-110',s:1},{t:'111-219',s:0},{t:'≥ 220',s:3}]},
+  {key:'fc',  lbl:'Fréquence cardiaque',    opts:[{t:'≤ 40',s:3},{t:'41-50',s:1},{t:'51-90',s:0},{t:'91-110',s:1},{t:'111-130',s:2},{t:'≥ 131',s:3}]},
+  {key:'avpu',lbl:'Conscience (AVPU)',       opts:[{t:'Alerte',s:0},{t:'Voix',s:3},{t:'Douleur',s:3},{t:'Aucune',s:3}]},
+];
+
+// Quiz
+var QUIZ = [
+  {q:'La fréquence respiratoire normale chez un adulte au repos est de :',
+   opts:['8-12 /min','12-20 /min','20-30 /min','30-40 /min'],rep:1,
+   expl:'**12-20 /min** est la norme adulte. La FR est le paramètre le plus prédictif d\'une dégradation et le plus souvent omis. Compter pendant **60 secondes complètes** sans prévenir le patient.'},
+  {q:'Une SpO₂ à 90% chez un patient BPCO connu sous 2L/min d\'O₂ :',
+   opts:['Est normale — la cible BPCO est 88-92%','Nécessite d\'augmenter l\'O₂ à 15L/min','Impose un arrêt immédiat de l\'O₂','Est une urgence vitale absolue'],rep:0,
+   expl:'Chez le **BPCO**, la cible SpO₂ est **88-92%**. Une hyperoxie peut supprimer le drive respiratoire et provoquer une hypercapnie. SpO₂ 90% sous 2L/min = dans la cible.'},
+  {q:'Un score de Glasgow à 8/15 signifie :',
+   opts:['Légère confusion, surveillance standard','Risque obstruction voies aériennes — PLS','Patient conscient et orienté','Coma dépassé'],rep:1,
+   expl:'**GCS < 8 = coma**. Risque majeur d\'obstruction des voies aériennes par chute de la langue. Si ventilation présente : **position latérale de sécurité**. Alerte médicale immédiate.'},
+  {q:'Le score NEWS2 intègre combien de paramètres ?',
+   opts:['4','5','6','7'],rep:3,
+   expl:'Le **NEWS2** intègre **7 paramètres** : FR, SpO₂, O₂ supplémentaire, Température, PA systolique, FC, Conscience (AVPU). Score ≥ 5 = alerte. Score ≥ 7 = urgence majeure.'},
+  {q:'Une hypokaliémie (K+ < 3,5 mmol/L) peut provoquer :',
+   opts:['Une hypertension artérielle','Des crampes et troubles du rythme cardiaque','Une acidose métabolique','Une hypoglycémie réactionnelle'],rep:1,
+   expl:'**L\'hypokaliémie** provoque crampes, faiblesse musculaire et surtout des **troubles du rythme cardiaque**. Particulièrement dangereux sous digitaliques. Surveillance ECG si K+ < 3,0.'},
+  {q:'La glycémie capillaire doit être mesurée avec :',
+   opts:['La première goutte de sang','La deuxième goutte après avoir essuyé la première','Après nettoyage à l\'alcool','La troisième goutte uniquement'],rep:1,
+   expl:'La **première goutte** contient des résidus tissulaires qui faussent la mesure. On l\'essuie et on utilise la **deuxième goutte**. Nettoyage à l\'eau — pas à l\'alcool qui dénature les glucides.'},
+];
+
+// État
+var SK = 'simcst';
+function load(){try{return JSON.parse(localStorage.getItem(SK))||{};}catch(e){return {};}}
+function save(d){try{localStorage.setItem(SK,JSON.stringify(d));}catch(e){}}
+var ST = load();
+function nGet(k){return ST['n_'+k];}
+function nSet(k,s){ST['n_'+k]=s;save(ST);}
+function nTotal(){
+  var t=0;
+  NEWS2.forEach(function(p){if(nGet(p.key)!==undefined)t+=nGet(p.key);});
+  return t;
+}
+function nFilled(){
+  var c=0;
+  NEWS2.forEach(function(p){if(nGet(p.key)!==undefined)c++;});
+  return c;
+}
+
+var S={
+  view:'welcome',onglet:'constantes',profil:'adulte',cstOpen:null,
+  qIdx:0,qSel:null,qShown:false,qScore:0,qTotal:0,
+  analyse:'',loading:false,showKey:false,
+  apiKey:localStorage.getItem('simcst_key')||'',
+  apiKeySaved:!!localStorage.getItem('simcst_key'),
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function md(t){
+  return t.split('\n\n').filter(function(p){return p.trim();}).map(function(para){
+    var parts=para.split(/\*\*([^*]+)\*\*/g);
+    var inner=parts.map(function(p,i){return i%2===1?'<strong>'+esc(p)+'</strong>':esc(p);}).join('');
+    return '<p>'+inner+'</p>';
+  }).join('');
+}
+function nc(s){
+  if(s<=1)return 'var(--ok)';
+  if(s<=4)return 'var(--ok)';
+  if(s<=6)return 'var(--warn)';
+  return 'var(--crit)';
+}
+function nl(s){
+  if(s<=1)return 'Faible risque';
+  if(s<=4)return 'Risque modéré';
+  if(s<=6)return 'Risque élevé';
+  if(s<=8)return 'RISQUE MAJEUR';
+  return 'URGENCE VITALE';
+}
+function na(s){
+  if(s<=1)return 'Surveillance standard. Mesures toutes les 6-12h.';
+  if(s<=4)return 'Alerte équipe soignante. Réévaluation toutes les 4-6h.';
+  if(s<=6)return 'Appel médecin urgent. Réévaluation toutes les 30 min.';
+  if(s<=8)return 'Urgence — appel médecin IMMÉDIAT. Monitoring continu.';
+  return 'URGENCE VITALE — activation équipe réanimation. Ne pas laisser seul.';
+}
+function zc(c){return c==='ok'?'var(--ok)':c==='warn'?'var(--warn)':'var(--crit)';}
+
+function render(){
+  var h='';
+  var q=QUIZ[S.qIdx%QUIZ.length];
+
+  if(S.view!=='welcome'){
+    h+='<div class="site-header"><div class="badge">📊 UE B.1 · Constantes · 2026</div>';
+    h+='<h1>Sim<span>Constantes</span></h1><p>// Constantes vitales · Bilan biologique · NEWS2</p></div>';
+    h+='<div class="tabs">';
+    [{id:'constantes',l:'📊 Constantes'},{id:'biologie',l:'🔬 Bilan bio'},{id:'news2',l:'📈 NEWS2'},{id:'quiz',l:'🎯 Quiz'},{id:'analyse',l:'🤖 IA'}].forEach(function(t){
+      h+='<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+ t.l+'</button>';
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="site-header" style="padding-top:44px"><div class="badge">📊 UE B.1 · Constantes · 2026</div>';
+    h+='<h1>Sim<span>Constantes</span></h1></div>';
+  }
+  h+='<div class="wrap">';
+
+  if(S.view==='welcome'){
+    h+='<div class="card em fadeup"><div style="text-align:center;padding:8px 0 18px">';
+    h+='<div style="font-size:48px;margin-bottom:14px">📊</div>';
+    h+='<p style="color:var(--txt2);font-size:14px;line-height:1.85;max-width:460px;margin:0 auto">Les constantes ne varient pas — mais leur <strong style="color:var(--txt)">interprétation change selon le profil patient</strong>. PraxisConstantes adapte les normes à chaque âge.</p>';
+    h+='<div class="pts"><div class="pt"><span class="pt-i">📊</span><span class="pt-t"><strong>7 constantes vitales</strong> — normes adaptées : adulte, senior, enfant, nourrisson</span></div>';
+    h+='<div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Bilan biologique</strong> — ionogramme, NFS, coagulation, marqueurs inflammatoires</span></div>';
+    h+='<div class="pt"><span class="pt-i">📈</span><span class="pt-t"><strong>Score NEWS2</strong> — calculateur interactif, détection précoce de dégradation</span></div>';
+    h+='<div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>Quiz</strong> — 6 questions sur les valeurs seuils et leur signification clinique</span></div>';
+    h+='</div><button class="btn-p btn-full" onclick="go(\'main\')">Entrer dans PraxisConstantes →</button>';
+    h+='</div></div>';
+
+  } else if(S.onglet==='constantes'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">// PROFIL PATIENT</div>';
+    h+='<div class="card-sub">Les normes s\'adaptent automatiquement.</div>';
+    h+='<div class="profil-grid">';
+    PROFILS.forEach(function(p){
+      h+='<div class="profil-btn '+(S.profil===p.id?'active':'')+'" onclick="S.profil=\''+p.id+'\';render()">';
+      h+='<span class="profil-icon">'+p.icon+'</span><div class="profil-label">'+p.label+'</div></div>';
+    });
+    h+='</div></div><div class="col8">';
+    CONSTANTES.forEach(function(cst){
+      var n=cst.normes[S.profil]||cst.normes['adulte'];
+      h+='<div class="cst-card '+(S.cstOpen===cst.id?'open':'')+'" onclick="toggleC(\''+cst.id+'\')">'; 
+      h+='<span class="cst-icon">'+cst.icon+'</span>';
+      h+='<div><div class="cst-nom">'+cst.nom+'</div><div class="cst-abbr">'+cst.abbr+' · '+cst.unite+'</div></div>';
+      h+='<div class="cst-zone zone-ok">'+esc(n.ok)+'</div>';
+      h+='<div class="cst-detail">';
+      h+='<p style="margin-bottom:10px">'+esc(n.info)+'</p>';
+      if(n.alerte){h+='<div class="info info-warn" style="margin-bottom:6px">⚠️ <strong>Alerte :</strong> '+esc(n.alerte)+'</div>';}
+      if(n.critique){h+='<div class="info info-crit">🔴 <strong>Critique :</strong> '+esc(n.critique)+'</div>';}
+      if(n.zones&&n.zones.length){
+        h+='<div class="zones-grid">';
+        n.zones.forEach(function(z){
+          h+='<div class="zone-item"><div class="zone-val" style="color:'+zc(z.c)+'">'+esc(z.v)+'</div><div class="zone-lbl">'+esc(z.l)+'</div></div>';
+        });
+        h+='</div>';
+      }
+      h+='</div></div>';
+    });
+    h+='</div></div>';
+
+  } else if(S.onglet==='biologie'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">// BILAN BIOLOGIQUE</div>';
+    h+='<div class="card-sub">Valeurs normales de référence · Adulte.</div>';
+    BIO.forEach(function(sec){
+      h+='<div class="bio-section"><div class="bio-title">'+sec.titre+'</div>';
+      sec.rows.forEach(function(row){
+        h+='<div class="bio-row"><span style="font-weight:500">'+esc(row.nom)+'</span><span class="bio-norm">'+esc(row.norm)+'</span></div>';
+      });
+      h+='</div>';
+    });
+    h+='</div>';
+    h+='<div class="info info-em">💡 <strong>Règle clinique :</strong> Ne jamais interpréter un paramètre biologique isolément. Corréler toujours avec la clinique et le contexte.</div>';
+    h+='<div class="info info-warn">⚠️ <strong>Piège :</strong> La créatinine peut être normale malgré une insuffisance rénale significative chez la personne âgée ou dénutrie.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='news2'){
+    var tot=nTotal();var filled=nFilled();var all=filled===NEWS2.length;
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">// SCORE NEWS2</div>';
+    h+='<div class="card-sub">7 paramètres · Détection précoce de dégradation.</div>';
+    NEWS2.forEach(function(p){
+      h+='<div class="news-param"><div class="news-lbl">'+p.lbl+'</div><div class="news-opts">';
+      p.opts.forEach(function(o){
+        var isSel=nGet(p.key)===o.s;
+        var sc=isSel?('sel'+Math.min(o.s,3)):'';
+        h+='<button class="news-opt '+sc+'" onclick="nSel(\''+p.key+'\','+o.s+')">'+esc(o.t)+' (+'+o.s+')</button>';
+      });
+      h+='</div></div>';
+    });
+    h+='<div class="score-box" style="border-color:'+nc(tot)+';margin-top:14px">';
+    h+='<div class="score-num" style="color:'+nc(tot)+'">'+(all?tot:'?')+'</div>';
+    h+='<div class="score-lbl" style="color:'+nc(tot)+'">'+(all?nl(tot):'Remplir tous les paramètres')+'</div>';
+    if(all){h+='<div class="score-act">'+esc(na(tot))+'</div>';}
+    h+='</div>';
+    h+='<button class="btn-g btn-full" onclick="clearN()" style="margin-top:10px">↺ Réinitialiser</button>';
+    h+='</div>';
+    h+='<div class="info info-em">📈 <strong>Usage clinique :</strong> Score ≥ 5 = alerte médicale sans attendre. Score ≥ 7 = urgence majeure.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='quiz'){
+    var pct=Math.round(S.qIdx/QUIZ.length*100);
+    h+='<div class="fadeup">';
+    h+='<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-bottom:7px">';
+    h+='<span>Question '+(S.qIdx%QUIZ.length+1)+' / '+QUIZ.length+'</span>';
+    h+='<span style="color:var(--em)">'+(S.qTotal>0?Math.round(S.qScore/S.qTotal*100)+'%':'—')+'</span></div>';
+    h+='<div class="progress-wrap" style="margin-bottom:14px"><div class="progress-bar" style="width:'+pct+'%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>';
+    h+='<div class="card em"><div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--txt)">'+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt,i){
+      var cls='';
+      if(S.qShown){if(i===q.rep)cls='correct';else if(i===S.qSel)cls='wrong';}
+      h+='<div class="quiz-opt '+cls+'" onclick="'+(S.qShown?'':'selQ('+i+')')+'">';
+      h+='<span style="font-family:var(--mono);font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span>';
+      h+='<span>'+esc(opt)+'</span></div>';
+    });
+    if(S.qShown){
+      h+='<div class="quiz-expl">'+q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h+='<button class="btn-p btn-full" style="margin-top:12px" onclick="nxtQ()">Question suivante →</button>';
+    }
+    h+='</div>';
+    h+='<button class="btn-g btn-full" onclick="rstQ()" style="margin-top:8px;color:var(--ok);border-color:rgba(48,216,128,.2)">↺ Recommencer</button>';
+    h+='</div>';
+
+  } else if(S.onglet==='analyse'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">// ANALYSE IA · CONSTANTES</div>';
+    h+='<div class="card-sub">Décrivez un bilan de constantes — l\'IA vous aide à interpréter.</div>';
+    h+='<textarea id="ia-q" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(64,200,224,.12);border-radius:4px;color:var(--txt);padding:11px;font-size:13px;font-family:var(--mono);outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Patient 72 ans, PA 160/95, FC 108, FR 24, SpO2 92%, T° 38.2°C, GCS 14. Que penser de ce bilan ?"></textarea>';
+    h+='<button class="btn-p btn-full" onclick="runIA()">📊 Analyser ce bilan →</button>';
+    if(S.loading){h+='<div class="dots" style="margin-top:14px"><span></span><span></span><span></span><div class="dots-msg">Analyse en cours...</div></div>';}
+    if(!S.loading&&S.analyse){h+='<div class="analysis fadeup" style="margin-top:14px">'+md(S.analyse)+'</div>';}
+    h+='<hr class="div">';
+    if(!S.apiKeySaved){
+      h+='<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>';
+      h+='<div class="apikey-row"><input type="password" placeholder="sk-ant-api03-..." value="'+esc(S.apiKey)+'" oninput="S.apiKey=this.value">';
+      h+='<button onclick="svKey()">Sauver</button></div></div>';
+    } else {
+      h+='<div style="color:var(--ok);font-family:var(--mono);font-size:11px">// configured ✓</div>';
+    }
+    h+='</div>';
+    // Premium
+    h+='<div style="background:rgba(0,0,0,.3);border:1.5px solid rgba(64,200,224,.12);border-radius:8px;padding:22px;margin-bottom:12px">';
+    h+='<div style="text-align:center;margin-bottom:14px"><div style="font-size:28px;margin-bottom:8px">🔒</div>';
+    h+='<div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--txt);margin-bottom:4px">Analyse IA — Accès Premium</div>';
+    h+='<div style="font-size:12px;color:var(--txt2)">Constantes, biologie, NEWS2 et quiz sont entièrement gratuits</div></div>';
+    h+='<div class="grid3" style="margin-bottom:14px">';
+    [{who:'Module seul',price:'4,99€',desc:'à vie'},{who:'Suite complète',price:'12,99€',desc:'20 modules',em:true},{who:'Institution',price:'Devis',desc:'IFSI'}].forEach(function(t){
+      h+='<div style="border:1.5px solid '+(t.em?'rgba(64,200,224,.4)':'var(--bdr)')+';border-radius:4px;padding:12px;text-align:center;background:'+(t.em?'rgba(64,200,224,.07)':'rgba(255,255,255,.02)')+';">';
+      h+='<div style="font-family:var(--mono);font-size:9px;color:'+(t.em?'var(--em)':'var(--txt2)')+';margin-bottom:7px">'+t.who+'</div>';
+      h+='<div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--txt)">'+t.price+'</div>';
+      h+='<div style="font-size:10px;color:var(--txt2);margin-top:4px">'+t.desc+'</div></div>';
+    });
+    h+='</div><div style="text-align:center"><a href="mailto:contact@praxiscare.fr" style="display:inline-block;padding:11px 24px;border-radius:4px;background:linear-gradient(135deg,var(--em2),var(--em));color:#0c1018;font-weight:700;font-size:13px;text-decoration:none;font-family:var(--mono)">Obtenir l\'accès →</a></div>';
+    h+='</div>';
+  }
+
+  if(S.view!=='welcome'){
+    h+='<div style="margin-top:10px"><button class="btn-g" onclick="go(\'welcome\')" style="color:var(--em);border-color:rgba(64,200,224,.2)">← Accueil PraxisConstantes</button></div>';
+  }
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setO(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function toggleC(id){S.cstOpen=S.cstOpen===id?null:id;render();}
+function nSel(k,s){nSet(k,s);render();}
+function clearN(){NEWS2.forEach(function(p){delete ST['n_'+p.key];});save(ST);render();}
+function selQ(i){if(S.qShown)return;S.qSel=i;S.qShown=true;S.qTotal++;if(i===QUIZ[S.qIdx%QUIZ.length].rep)S.qScore++;render();}
+function nxtQ(){S.qIdx++;S.qSel=null;S.qShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function rstQ(){S.qIdx=0;S.qScore=0;S.qTotal=0;S.qSel=null;S.qShown=false;render();}
+function svKey(){localStorage.setItem('simcst_key',S.apiKey);S.apiKeySaved=true;render();}
+
+async function runIA(){
+  var el=document.getElementById('ia-q');
+  if(!el||!el.value.trim())return;
+  S.loading=true;S.analyse='';render();
+  try{
+    var h={'Content-Type':'application/json'};
+    if(S.apiKey){h['x-api-key']=S.apiKey;h['anthropic-version']='2023-06-01';}
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:h,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:'Tu es formateur IFSI expert en semiologie et surveillance clinique. Analyse ce bilan de constantes :\n\n'
+          +el.value+'\n\nAnalyse en 3 parties :\n**Lecture du bilan** — valeurs normales, alertes, critiques\n**Interpretation clinique** — signification de ce tableau\n**Conduite IDE** — actions dans ordre de priorite\n\nTutoie l etudiant. Sois direct. Utilise **gras** pour les points cles.'}]})
+    });
+    var data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content&&data.content.find(function(b){return b.type==='text';})?data.content.find(function(b){return b.type==='text';}).text:'';
+  }catch(e){S.analyse='**Erreur**\n\n'+e.message;}
+  S.loading=false;render();
+}
+
+render();
+</script>
+  <!-- PraxisCare Stats -->
+  <script src="praxiscare-stats.js"></script>
+  <script>PraxisStats.init('simconstantes');</script>
+</body>
+</html>

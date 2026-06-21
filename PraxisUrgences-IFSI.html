@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisUrgences · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Barlow:wght@300;400;500;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:    #0a0a08;
+  --bg2:   #121210;
+  --card:  rgba(255,255,255,.03);
+  --bdr:   rgba(255,255,255,.07);
+  --txt:   #e8e8d8;
+  --txt2:  #707060;
+  --txt3:  #202018;
+  --red:   #e83030;
+  --red2:  #b01818;
+  --amber: #f0b030;
+  --green: #40c060;
+  --blue:  #3080e0;
+  --white: #f0f0e8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--bg);color:var(--txt);
+  min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(232,48,48,.07) 0%,transparent 50%),
+    radial-gradient(ellipse 40% 30% at 20% 90%, rgba(48,128,224,.04) 0%,transparent 45%);
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(232,48,48,.02) 0px,rgba(232,48,48,.02) 1px,transparent 1px,transparent 40px);
+}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.site-header{padding:44px 24px 24px;text-align:center;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(232,48,48,.1);border:1px solid rgba(232,48,48,.3);
+  color:var(--red);padding:5px 18px;border-radius:2px;
+  font-family:'Fira Mono',monospace;font-size:11px;
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;
+}
+.site-header h1{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(48px,10vw,96px);font-weight:800;
+  letter-spacing:4px;text-transform:uppercase;
+  line-height:.95;margin-bottom:8px;color:var(--white);
+}
+.site-header h1 span{color:var(--red)}
+.site-header p{color:var(--txt2);font-size:13px;font-family:'Fira Mono',monospace;letter-spacing:1px}
+
+/* ── ONGLETS ── */
+.tabs{display:flex;gap:3px;padding:0 0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{
+  padding:8px 14px;border-radius:2px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;
+  white-space:nowrap;transition:all .15s;
+  font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;
+}
+.tab:hover{color:var(--txt);background:rgba(232,48,48,.06)}
+.tab.active{background:rgba(232,48,48,.12);border-color:rgba(232,48,48,.4);color:var(--red)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:4px;padding:22px;margin-bottom:14px;position:relative;z-index:1}
+.card.red{border-top:3px solid var(--red)}
+.card.amber{border-top:3px solid var(--amber)}
+.card.green{border-top:3px solid var(--green)}
+.card.blue{border-top:3px solid var(--blue)}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:13px;margin-bottom:18px;line-height:1.6}
+
+/* ── ABCDE ── */
+.abcde-row{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px;border-radius:3px;margin-bottom:6px;
+  border-left:4px solid transparent;background:rgba(0,0,0,.3);
+  cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;
+}
+.abcde-row:hover{background:rgba(0,0,0,.45)}
+.abcde-letter{
+  font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;
+  flex-shrink:0;width:36px;line-height:1;
+}
+.abcde-titre{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
+.abcde-desc{font-size:13px;color:var(--txt2);line-height:1.65}
+.abcde-detail{font-size:12px;color:var(--txt2);line-height:1.7;display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)}
+.abcde-row.open .abcde-detail{display:block}
+
+/* ── SITUATIONS ── */
+.situation-card{
+  background:rgba(232,48,48,.06);border:1.5px solid rgba(232,48,48,.2);
+  border-radius:4px;padding:18px;margin-bottom:10px;cursor:pointer;
+  transition:all .2s;-webkit-tap-highlight-color:transparent;
+}
+.situation-card:hover{background:rgba(232,48,48,.1)}
+.situation-card.open{border-color:rgba(232,48,48,.45)}
+.situation-titre{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:5px}
+.situation-body{display:none;margin-top:12px}
+.situation-card.open .situation-body{display:block}
+
+/* ── CHOCS ── */
+.choc-card{
+  border-radius:4px;padding:16px;margin-bottom:8px;border-left:3px solid transparent;
+  background:rgba(0,0,0,.25);cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;
+}
+.choc-card:hover{background:rgba(0,0,0,.35)}
+.choc-titre{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.choc-body{font-size:12px;color:var(--txt2);line-height:1.7;display:none;margin-top:8px}
+.choc-card.open .choc-body{display:block}
+
+/* ── SCORE NEWS2 ── */
+.news-param{margin-bottom:14px}
+.news-label{font-size:12px;font-family:'Fira Mono',monospace;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.news-options{display:flex;gap:4px;flex-wrap:wrap}
+.news-opt{
+  padding:6px 12px;border-radius:2px;font-family:'Fira Mono',monospace;font-size:12px;
+  border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+  color:var(--txt2);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;
+}
+.news-opt:hover{border-color:rgba(232,48,48,.3);color:var(--txt)}
+.news-opt.on{border-color:var(--red);color:var(--red);background:rgba(232,48,48,.1)}
+.news-opt.s0{border-color:var(--green);color:var(--green);background:rgba(64,192,96,.1)}
+.news-opt.on.s1{border-color:var(--amber)}
+.news-opt.on.s2{border-color:var(--red)}
+.news-opt.on.s3{border-color:var(--red);background:rgba(232,48,48,.2)}
+
+/* ── QUIZ ── */
+.quiz-opt{
+  padding:12px 16px;border-radius:3px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);
+  cursor:pointer;font-size:14px;margin-bottom:8px;
+  transition:all .18s;display:flex;align-items:center;gap:12px;
+  -webkit-tap-highlight-color:transparent;
+}
+.quiz-opt:hover{background:rgba(232,48,48,.06);color:var(--txt)}
+.quiz-opt.correct{background:rgba(64,192,96,.1);border-color:rgba(64,192,96,.4);color:var(--green)}
+.quiz-opt.wrong  {background:rgba(232,48,48,.1); border-color:rgba(232,48,48,.4); color:var(--red)}
+.quiz-expl{background:rgba(232,48,48,.05);border:1px solid rgba(232,48,48,.15);border-radius:3px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+
+/* ── INFO ── */
+.info{border-radius:3px;padding:11px 14px;font-size:13px;line-height:1.75;margin-bottom:12px}
+.info-red  {background:rgba(232,48,48,.07);  border-left:3px solid rgba(232,48,48,.6);   color:var(--red)}
+.info-amber{background:rgba(240,176,48,.07); border-left:3px solid rgba(240,176,48,.6);  color:var(--amber)}
+.info-green{background:rgba(64,192,96,.07);  border-left:3px solid rgba(64,192,96,.6);   color:var(--green)}
+.info-blue {background:rgba(48,128,224,.07); border-left:3px solid rgba(48,128,224,.6);  color:var(--blue)}
+
+/* ── BOUTONS ── */
+.btn-p{background:linear-gradient(135deg,var(--red2),var(--red));border:none;border-radius:3px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;padding:12px 26px;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:2px;text-transform:uppercase;}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);border-radius:3px;color:var(--txt2);font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;padding:10px 18px;cursor:pointer;transition:all .18s;}
+.btn-g:hover{background:rgba(255,255,255,.06);color:var(--txt)}
+.btn-full{width:100%}
+.col8{display:flex;flex-direction:column;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:16px 0}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.35);border:1px solid rgba(232,48,48,.1);border-radius:3px;padding:12px;text-align:center}
+.stat-v{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:var(--red);display:block;line-height:1;letter-spacing:2px}
+.stat-l{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;font-family:'Fira Mono',monospace;display:block;margin-top:4px}
+
+/* ── PROGRESS ── */
+.progress-bar-wrap{background:rgba(255,255,255,.06);border-radius:2px;height:8px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:2px;transition:width .5s ease}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:24px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:13px;margin-top:10px;font-family:'Fira Mono',monospace}
+.analysis p{margin-bottom:14px;font-size:15px;line-height:1.85;color:#806858}
+.analysis strong{color:var(--txt)}
+
+/* ── PREMIUM ── */
+.premium-box{background:rgba(0,0,0,.3);border:1.5px solid rgba(232,48,48,.15);border-radius:4px;padding:24px;margin-bottom:14px}
+.apikey-box{background:rgba(232,48,48,.04);border:1px solid rgba(232,48,48,.12);border-radius:3px;padding:12px}
+.apikey-box p{font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--red)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:3px;color:var(--txt);font-family:'Fira Mono',monospace;outline:none}
+.apikey-row input:focus{border-color:rgba(232,48,48,.3)}
+.apikey-row button{padding:9px 14px;border:none;border-radius:3px;background:var(--red2);color:#fff;font-weight:700;cursor:pointer;font-size:12px}
+.apikey-saved{color:var(--green);font-size:11px;margin-top:5px;font-family:'Fira Mono',monospace}
+
+/* ── WELCOME ── */
+.pts{display:flex;flex-direction:column;gap:10px;margin:18px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+/* ── ALERTE ROUGE ── */
+.alerte-rouge{
+  background:rgba(232,48,48,.12);border:2px solid rgba(232,48,48,.5);
+  border-radius:4px;padding:14px 16px;margin-bottom:14px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.alerte-icon{font-size:24px;flex-shrink:0}
+.alerte-txt{font-size:13px;color:var(--red);line-height:1.7}
+.alerte-txt strong{font-family:'Barlow Condensed',sans-serif;font-size:16px;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:3px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.fadeup{animation:fadeUp .35s ease forwards}
+.pulse{animation:blink 1.5s ease infinite}
+@media(max-width:480px){.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+
+const ABCDE = [
+  {l:'A', col:'var(--red)',   titre:'Airway — Voies aériennes',
+   check:['Parole possible ? (voies aériennes libres)','Bruit anormal ? (stridor, ronflement, silence)','Corps étranger visible ?','Position tête-cou-tronc alignée ?'],
+   actions:'Libérer les voies aériennes (LVA). Subluxation mandibulaire. Aspirations si sécrétions. Canule de Guedel si inconscient. Position latérale de sécurité (PLS) si respiration présente.',
+   mnemo:'A = Airway — Toujours en premier. Un patient qui parle a les voies aériennes libres.'},
+  {l:'B', col:'var(--amber)', titre:'Breathing — Ventilation',
+   check:['Fréquence respiratoire (normale 12-20/min)','Amplitude, symétrie des mouvements thoraciques','SpO₂','Signes de détresse : tirage, balancement thoraco-abdominal, cyanose'],
+   actions:'O₂ si SpO₂ < 95% ou détresse. Masque haute concentration si SpO₂ < 90%. Ventilation au masque si apnée. Position ½ assise (orthopnée). Alerter SAMU.',
+   mnemo:'B = Breathing — Regarder, écouter, sentir. 10 secondes max.'},
+  {l:'C', col:'var(--red)',   titre:'Circulation — Circulation',
+   check:['Pouls (présent ? rapide ? filant ?)','PA (chute = choc ?)','Signes de choc : pâleur, marbrures, extrémités froides, TRC > 3s','Saignement extériorisé'],
+   actions:'Compression directe sur toute hémorragie. Garrot si membre. Position allongée jambes surélevées (sauf trauma, OAP). VVP si possible. O₂. Ne pas mobiliser si suspicion trauma.',
+   mnemo:'C = Circulation — Chercher une hémorragie. Tout saignement visible = comprimer immédiatement.'},
+  {l:'D', col:'var(--amber)', titre:'Disability — État neurologique',
+   check:['Score de Glasgow (GCS) ou échelle AVPU (Alerte/Voix/Douleur/Aucune)','Pupilles (taille, symétrie, réactivité)','Glycémie capillaire systématique','Déficit moteur ou sensitif ?'],
+   actions:'Glycémie < 0,6g/L → sucre per os si conscient, glucagon si inconscient. GCS < 8 → risque d\'inhalation → position PLS. Crise convulsive → protection, latéraliser, ne pas contraindre.',
+   mnemo:'D = Disability — Toujours faire une glycémie. Un coma peut être une hypoglycémie.'},
+  {l:'E', col:'var(--green)',  titre:'Exposure — Exposition',
+   check:['Déshabiller le patient (chercher trauma caché, éruption, plaie)','Température (hypothermie, hyperthermie)','Contexte : médicaments, allergies, antécédents','Environnement : CO, chute, intoxication ?'],
+   actions:'Couvrir après exposition pour éviter l\'hypothermie. Identifier le contexte (médicaments, intoxication). Récupérer l\'ordonnancier. Alerter l\'entourage pour contexte.',
+   mnemo:'E = Exposure — Chercher ce qui se voit pas. Déshabiller = voir. Couvrir = protéger.'},
+];
+
+const SITUATIONS = [
+  {
+    id:'ac', titre:'ARRÊT CARDIAQUE', icon:'💔', couleur:'var(--red)',
+    contexte:'M. Dupont, 58 ans, s\'effondre devant vous en unité de soins. Il est inconscient, ne respire pas (ou gasps). Vous êtes seul.',
+    abcde:'A : voies aériennes libres (inconscient → PLS non, RCP) · B : absent · C : pas de pouls carotidien',
+    actions:[
+      '1. Appeler à l\'aide — alerter immédiatement (15, code urgence établissement)',
+      '2. RCP 30 compressions thoraciques / 2 insufflations — fréquence 100-120/min — profondeur 5-6 cm',
+      '3. Préparer le défibrillateur automatisé (DEA/DSA) — analyser le rythme',
+      '4. Si rythme choquable (FV/TV) → choc électrique → reprendre RCP 2 min immédiatement',
+      '5. Si rythme non choquable → RCP 2 min → réévaluer',
+      '6. VVP si possible SANS interrompre la RCP',
+      '7. Ne pas arrêter la RCP avant l\'arrivée du médecin ou après 20 min d\'asystolie inexpliquée',
+    ],
+    regle:'Ne jamais interrompre la RCP plus de 10 secondes pour quelque raison que ce soit.',
+    ref:'SFMU — Recommandations IDE seul devant arrêt cardiaque',
+  },
+  {
+    id:'dr', titre:'DÉTRESSE RESPIRATOIRE AIGUË', icon:'🫁', couleur:'var(--amber)',
+    contexte:'Mme Chen, 72 ans, BPCO connue. FR 32/min, SpO₂ 84%, tirage sus-claviculaire, impossible de finir ses phrases. Elle est assise, penchée en avant.',
+    abcde:'A : libres · B : FR 32, SpO₂ 84%, tirage, orthopnée · C : PA 148/90, FC 118 · D : consciente, anxieuse · E : BPCO, tabac 40 PA',
+    actions:[
+      '1. Position ½ assise ou orthopnéique — ne pas allonger',
+      '2. O₂ — chez BPCO : lunettes nasales 2L/min, cible SpO₂ 88-92% (pas 100%)',
+      '3. Appeler le SAMU 15 — SBAR immédiat',
+      '4. Monitoring : SpO₂, FC, PA, FR en continu',
+      '5. VVP de sécurité si possible',
+      '6. Ne pas laisser seule — surveiller l\'évolution toutes les 5 minutes',
+      '7. Préparer les aérosols bronchodilatateurs si prescription disponible',
+    ],
+    regle:'Chez le BPCO : JAMAIS 15L/min. L\'hypercapnie peut s\'aggraver si SpO₂ > 94%.',
+    ref:'SFMU — Recommandations détresse respiratoire IDE seul',
+  },
+  {
+    id:'choc', titre:'ÉTAT DE CHOC', icon:'🩸', couleur:'var(--red)',
+    contexte:'M. Martin, 45 ans, post-opératoire J1 cholécystectomie. Il appelle : "Je ne me sens pas bien". PA 78/40 mmHg, FC 128 bpm, pâle, marbrures aux genoux, extrémités froides.',
+    abcde:'A : libres · B : FR 24, SpO₂ 96% · C : PA 78/40, FC 128, pâleur, marbrures, TRC > 3s · D : conscient, agité · E : post-op J1',
+    actions:[
+      '1. Alerter immédiatement le médecin — appel urgent',
+      '2. Position allongée, jambes surélevées à 45° (Trendelenburg modifié)',
+      '3. O₂ haute concentration (masque 15L/min)',
+      '4. VVP — si déjà posée, vérifier perméabilité et débit libre',
+      '5. Arrêter tout médicament vasodilatateur en cours',
+      '6. Monitoring complet (PA, FC, SpO₂, FR) toutes les 5 min',
+      '7. Ne pas laisser seul — chercher la cause : hémorragie, allergie, infection ?',
+    ],
+    regle:'Un choc est une urgence vitale. Ne pas attendre pour appeler. Toujours chercher la cause.',
+    ref:'SFMU — États de choc · IDE seul devant détresse médicale',
+  },
+  {
+    id:'avc', titre:'SUSPICION D\'AVC', icon:'🧠', couleur:'var(--blue)',
+    contexte:'Mme Leblanc, 68 ans. Son voisin de chambre appelle : "Elle parle bizarre et son bras gauche ne bouge plus." Début des symptômes il y a 20 minutes.',
+    abcde:'A : libres · B : FR 18, SpO₂ 97% · C : PA 180/100, FC 82 · D : consciente, aphasie, déficit moteur hémicorps gauche, déviation tête vers la droite · E : HTA, anticoagulants',
+    actions:[
+      '1. FAST immédiat : Face (déviation), Arm (déficit), Speech (aphasie), Time (noter l\'heure exacte)',
+      '2. APPELER SAMU 15 EN URGENCE — AVC = urgence temps-dépendante (thrombolyse possible < 4h30)',
+      '3. Position demi-assise 30° — NE PAS ALLONGER (risque d\'inhalation)',
+      '4. Monitoring : PA (ne pas traiter l\'HTA sauf ordre médical), FC, SpO₂, glycémie',
+      '5. O₂ si SpO₂ < 94%',
+      '6. NE PAS DONNER À BOIRE OU À MANGER (fausses routes si aphasie)',
+      '7. Rassurer — répéter son prénom, expliquer calmement',
+    ],
+    regle:'LE TEMPS, C\'EST DU CERVEAU. 1,9 million de neurones meurent chaque minute sans traitement.',
+    ref:'Sociétés Françaises de Neurologie · HAS — AVC ischémique · Thrombolyse < 4h30',
+  },
+  {
+    id:'anaphylaxie', titre:'CHOC ANAPHYLACTIQUE', icon:'⚠️', couleur:'var(--red)',
+    contexte:'M. Renard, 34 ans, reçoit une perfusion d\'amoxicilline depuis 5 min. Il se plaint de prurit, vous voyez une urticaire diffuse, il commence à avoir du mal à respirer. PA 85/50 mmHg.',
+    abcde:'A : stridor débutant · B : SpO₂ 92%, sibilances · C : PA 85/50, FC 132, urticaire · D : conscient, angoissé · E : amoxicilline en cours → STOPPER',
+    actions:[
+      '1. ARRÊTER IMMÉDIATEMENT la perfusion (ou supprimer l\'allergène)',
+      '2. APPELER LE MÉDECIN EN URGENCE — code rouge',
+      '3. Position allongée jambes surélevées (SAUF si détresse respiratoire → ½ assise)',
+      '4. O₂ 15L/min masque haute concentration',
+      '5. VVP (ou utiliser celle en place) — sérum physiologique en attente',
+      '6. Adrénaline auto-injectable (0,3mg IM cuisse si disponible et selon protocole)',
+      '7. Monitoring continu — risque de biphasie (2ème réaction dans les 8h)',
+    ],
+    regle:'ADRÉNALINE = traitement de l\'anaphylaxie. Pas d\'antihistaminiques en 1ère intention. Ne jamais attendre.',
+    ref:'SFAR · HAS — Anaphylaxie 2024 · Adrénaline IM cuisse = traitement de première ligne',
+  },
+  {
+    id:'hypogly', titre:'HYPOGLYCÉMIE SÉVÈRE', icon:'🩸', couleur:'var(--amber)',
+    contexte:'M. Legrand, 62 ans, diabétique type 1. Vous le trouvez confus, agité, suant abondamment. Glycémie capillaire : 0,38 g/L. Il ne répond pas aux ordres simples.',
+    abcde:'A : libres · B : normale · C : FC 108, sueurs · D : GCS 12, agitation, hypoglycémie confirmée · E : diabète type 1, insuline',
+    actions:[
+      '1. Ne pas donner à manger ou à boire (trouble de conscience → fausse route)',
+      '2. Décubitus latéral de sécurité si GCS < 10',
+      '3. VVP + sérum glucosé 30% 30mL IV ou 50mL G10% sur 10 min si VVP en place',
+      '4. Si pas de VVP : glucagon 1mg IM (cuisse ou bras) si prescrit',
+      '5. Contrôler la glycémie toutes les 15 min jusqu\'à > 0,8 g/L',
+      '6. Alerter le médecin',
+      '7. Chercher la cause : dose insuline, repas sauté, effort, erreur ?',
+    ],
+    regle:'Glycémie < 0,5 g/L avec signes neurologiques = urgence. Le sucre par voie orale est contre-indiqué si trouble de conscience.',
+    ref:'SFD — Hypoglycémie sévère 2024 · SFMU',
+  },
+];
+
+const CHOCS = [
+  {id:'hypo', couleur:'#e83030', titre:'Choc hémorragique',
+   signes:'Hémorragie extériorisée ou suspectée (post-op, trauma). Tachycardie, hypotension, pâleur, marbrures, soif intense.',
+   cible:'Comprimer le saignement EN PREMIER. Garrot si membre. Allonger jambes surélevées. O₂. VVP. Alerter SAMU.',
+   piege:'Ne pas oublier les hémorragies internes (hémoptysie, méléna, hématome post-op caché).'},
+  {id:'cardio', couleur:'#3080e0', titre:'Choc cardiogénique',
+   signes:'Insuffisance cardiaque aiguë. Patient pâle, froid, suant, orthopnée, galop cardiaque, crépitants pulmonaires.',
+   cible:'Position ½ assise. O₂. Monitoring. Pas de Trendelenburg (aggrave l\'OAP). Alerter urgences.',
+   piege:'Ne pas mettre les jambes surélevées contrairement aux autres chocs.'},
+  {id:'septique', couleur:'#f0b030', titre:'Choc septique',
+   signes:'Fièvre ou hypothermie, tachycardie, polypnée, hypotension. Contexte infectieux. Confusion.',
+   cible:'Hémocultures avant antibiotiques si possible. VVP + remplissage. O₂. Score qSOFA (FR ≥ 22, confusion, PAS ≤ 100). Alerter.',
+   piege:'Le choc septique peut débuter avec des membres CHAUDS (choc chaud) → ne pas rassurer prématurément.'},
+  {id:'anaphyl', couleur:'#e83030', titre:'Choc anaphylactique',
+   signes:'Urticaire, angioedème, stridor, bronchospasme, hypotension brutale. Contexte allergénique récent.',
+   cible:'Adrénaline IM cuisse EN PREMIER. Arrêter l\'allergène. O₂. Position. Monitoring. Risque biphasique.',
+   piege:'Les antihistaminiques et corticoïdes ne traitent PAS l\'anaphylaxie en urgence — c\'est l\'adrénaline.'},
+];
+
+const NEWS2_PARAMS = [
+  {label:'Fréquence respiratoire', key:'fr', opts:[
+    {t:'≤ 8',s:3},{t:'9-11',s:1},{t:'12-20',s:0},{t:'21-24',s:2},{t:'≥ 25',s:3}
+  ]},
+  {label:'SpO₂ (sans O₂ et sans BPCO)', key:'spo2', opts:[
+    {t:'≤ 91%',s:3},{t:'92-93%',s:2},{t:'94-95%',s:1},{t:'≥ 96%',s:0}
+  ]},
+  {label:'Oxygène supplémentaire', key:'o2', opts:[
+    {t:'Non',s:0},{t:'Oui',s:2}
+  ]},
+  {label:'Température', key:'temp', opts:[
+    {t:'≤ 35°C',s:3},{t:'35.1-36°C',s:1},{t:'36.1-38°C',s:0},{t:'38.1-39°C',s:1},{t:'≥ 39.1°C',s:2}
+  ]},
+  {label:'Pression artérielle systolique', key:'pas', opts:[
+    {t:'≤ 90',s:3},{t:'91-100',s:2},{t:'101-110',s:1},{t:'111-219',s:0},{t:'≥ 220',s:3}
+  ]},
+  {label:'Fréquence cardiaque', key:'fc', opts:[
+    {t:'≤ 40',s:3},{t:'41-50',s:1},{t:'51-90',s:0},{t:'91-110',s:1},{t:'111-130',s:2},{t:'≥ 131',s:3}
+  ]},
+  {label:'Niveau de conscience (AVPU)', key:'avpu', opts:[
+    {t:'Alerte',s:0},{t:'Voix',s:3},{t:'Douleur',s:3},{t:'Aucune',s:3}
+  ]},
+];
+
+const QUIZ = [
+  {q:'L\'IDE seul devant un arrêt cardiaque doit EN PREMIER :', opts:['Appeler le médecin de garde puis commencer la RCP','Appeler à l\'aide et commencer la RCP immédiatement','Préparer le chariot d\'urgence','Mettre le patient en PLS'], rep:1,
+   expl:'La **RCP immédiate** est prioritaire — chaque minute sans RCP réduit les chances de survie de 10%. On commence la RCP et on appelle à l\'aide simultanément. La survie dépend de la rapidité de la 1ère compression thoracique.'},
+  {q:'Chez un patient BPCO en détresse respiratoire, l\'objectif de SpO₂ est :', opts:['100% — saturation maximale','95-100%','88-92%','80-85%'], rep:2,
+   expl:'Chez le **BPCO** : cible SpO₂ **88-92%**. Une SpO₂ trop élevée peut inhiber le drive respiratoire hypoxique et aggraver l\'hypercapnie. Règle clé : ne jamais mettre 15L/min sur un BPCO. Lunettes nasales à 1-2L/min pour commencer.'},
+  {q:'Le score NEWS2 est utilisé pour :', opts:['Évaluer la douleur du patient','Détecter précocement la dégradation clinique et déclencher une alerte','Calculer les doses médicamenteuses','Mesurer le niveau de conscience'], rep:1,
+   expl:'Le **NEWS2** (National Early Warning Score 2) est un score de détection précoce de dégradation clinique. Il agrège 7 paramètres vitaux. Score ≥ 5 = alerte. Score ≥ 7 = urgence majeure. L\'IDE doit déclencher une alerte sans attendre que le médecin le demande.'},
+  {q:'Devant une suspicion d\'AVC, l\'IDE doit EN PREMIER :', opts:['Allonger le patient à plat','Utiliser le FAST et noter l\'heure exacte du début des symptômes','Prendre la tension pour réduire l\'HTA','Donner à boire pour hydrater'], rep:1,
+   expl:'**FAST + heure = vie**. La thrombolyse est possible jusqu\'à **4h30** après le début des symptômes — l\'heure exacte est vitale pour la décision thérapeutique. Ne jamais allonger (risque inhalation). Ne jamais donner à boire (aphasie = fausse route possible).'},
+  {q:'En cas de choc anaphylactique, le traitement de 1ère ligne est :', opts:['Antihistaminique IV','Corticoïde IV','Adrénaline IM dans la cuisse','Sérum physiologique en remplissage rapide'], rep:2,
+   expl:'L\'**adrénaline IM** (0,3 mg dans la cuisse) est le seul traitement efficace en 1ère ligne du choc anaphylactique. Les antihistaminiques et corticoïdes ne sauvent pas en urgence — ils préviennent la réaction biphasique. L\'adrénaline peut être administrée par l\'IDE selon protocole.'},
+  {q:'Le principe ABCDE en urgence signifie :', opts:['On évalue tout simultanément et on agit globalement','On évalue dans l\'ordre A→B→C→D→E et on corrige chaque défaillance avant de passer au suivant','On commence par D (niveau de conscience) car c\'est le plus important','C\'est uniquement pour le tri aux urgences'], rep:1,
+   expl:'**ABCDE = séquentiel et correctif**. On évalue A et on corrige (LVA, aspiration) AVANT de passer à B. On évalue B et on corrige (O₂) AVANT de passer à C. Cette rigueur évite de traiter un symptôme secondaire avant de corriger la défaillance primaire qui en est la cause.'},
+];
+
+const STORE_KEY='simurg';
+function loadStore(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||{};}catch(e){return {};}}
+function saveStore(d){try{localStorage.setItem(STORE_KEY,JSON.stringify(d));}catch(e){}}
+let STORE=loadStore();
+function getNews(k){return STORE['news_'+k];}
+function setNews(k,s){STORE['news_'+k]=s;saveStore(STORE);}
+function newsTotal(){return NEWS2_PARAMS.reduce((t,p)=>{const v=getNews(p.key);return v!==undefined?t+v:t;},0);}
+function newsColor(s){return s<=4?'var(--green)':s<=6?'var(--amber)':s<=8?'var(--red)':'var(--red)';}
+function newsLabel(s){return s<=1?'Faible risque':s<=4?'Risque modéré bas':s<=6?'Risque modéré':s<=8?'Risque élevé':'URGENCE VITALE';}
+
+let S={
+  view:'welcome',onglet:'abcde',
+  abcdeOpen:null,sitOpen:null,chocOpen:null,
+  quizIdx:0,quizSelected:null,quizShown:false,quizScore:0,quizTotal:0,
+  analyse:'',loading:false,showKey:false,
+  apiKey:localStorage.getItem('simurg_key')||'',
+  apiKeySaved:!!localStorage.getItem('simurg_key'),
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(t){return t.split('\n\n').filter(p=>p.trim()).map(para=>{const parts=para.split(/\*\*([^*]+)\*\*/g);const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');return `<p>${inner}</p>`;}).join('');}
+
+function render(){
+  let h='';
+  if(S.view!=='welcome'){
+    h+=`<div class="site-header">
+      <div class="badge">🚨 Urgences · IDE seul</div>
+      <h1><span>SIM</span>URGENCES</h1>
+      <p>// DETRESSE MEDICALE · ABCDE · NEWS2 · SFMU 2026</p>
+    </div>
+    <div class="tabs">
+      ${[
+        {id:'abcde',    label:'🔴 ABCDE'},
+        {id:'situations',label:'⚡ Situations'},
+        {id:'chocs',    label:'💉 États de choc'},
+        {id:'news2',    label:'📊 NEWS2'},
+        {id:'quiz',     label:'🎯 Quiz'},
+        {id:'analyse',  label:'🔬 IA Coach'},
+      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+      <div class="badge">🚨 Urgences · IDE seul</div>
+      <h1><span>SIM</span>URGENCES</h1>
+    </div>`;
+  }
+  h+='<div class="wrap">';
+
+  // ── WELCOME ────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`<div class="card red fadeup">
+    <div style="text-align:center;padding:8px 0 20px">
+    <div class="alerte-rouge" style="margin-bottom:20px">
+      <span class="alerte-icon">🚨</span>
+      <div class="alerte-txt">
+        <strong>IDE seul devant une situation de détresse médicale</strong>
+        Recommandations officielles SFMU. En France, l'IDE peut être seul face à une urgence vitale. Ce module prépare à agir sans panique et sans attendre.
+      </div>
+    </div>
+    <div class="pts">
+    <div class="pt"><span class="pt-i">🔴</span><span class="pt-t"><strong>Méthode ABCDE</strong> — évaluation et actions séquentielles</span></div>
+    <div class="pt"><span class="pt-i">⚡</span><span class="pt-t"><strong>6 situations critiques</strong> — arrêt cardiaque, détresse resp., choc, AVC, anaphylaxie, hypoglycémie</span></div>
+    <div class="pt"><span class="pt-i">💉</span><span class="pt-t"><strong>4 états de choc</strong> — différencier pour agir juste</span></div>
+    <div class="pt"><span class="pt-i">📊</span><span class="pt-t"><strong>Score NEWS2</strong> — calculateur interactif, détection précoce</span></div>
+    <div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>Quiz SFMU</strong> — 6 questions sur les urgences vitales</span></div>
+    </div>
+    <button class="btn-p btn-full" onclick="go('main')">ENTRER EN SALLE D'URGENCE →</button>
+    </div></div>`;
+  }
+
+  // ── ABCDE ──────────────────────────────────────────────────
+  else if(S.onglet==='abcde'){
+    h+=`<div class="fadeup">
+    <div class="card red">
+    <div class="card-title" style="color:var(--red)">ABCDE — ÉVALUATION SÉQUENTIELLE</div>
+    <div class="card-sub">// Toujours dans l'ordre. Corriger avant de passer au suivant.</div>
+    <div class="col8">
+    ${ABCDE.map((a,i)=>`
+      <div class="abcde-row ${S.abcdeOpen===i?'open':''}" style="border-left-color:${a.col}" onclick="S.abcdeOpen=S.abcdeOpen===i?null:${i};render()">
+        <div class="abcde-letter" style="color:${a.col}">${a.l}</div>
+        <div style="flex:1">
+          <div class="abcde-titre" style="color:${a.col}">${a.titre}</div>
+          <div class="abcde-desc">${a.mnemo}</div>
+          <div class="abcde-detail">
+            <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:${a.col};margin-bottom:6px">Check-list évaluation</div>
+            ${a.check.map(c=>`<div style="font-size:12px;margin-bottom:4px;display:flex;gap:8px"><span style="color:${a.col};flex-shrink:0">→</span>${c}</div>`).join('')}
+            <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:${a.col};margin:10px 0 6px">Actions IDE</div>
+            <p style="font-size:12px;line-height:1.65">${a.actions}</p>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div></div>
+    <div class="info info-red">
+    ⏱️ <strong>Règle des 10 secondes :</strong> L'évaluation ABCDE complète doit prendre moins de 60 secondes. Pour B : 10 secondes max pour regarder, écouter, sentir. Pour C : pouls carotidien en 10 secondes max.
+    </div></div>`;
+  }
+
+  // ── SITUATIONS ─────────────────────────────────────────────
+  else if(S.onglet==='situations'){
+    h+=`<div class="fadeup">
+    <div class="card red">
+    <div class="card-title" style="color:var(--red)">SITUATIONS DE DÉTRESSE — IDE SEUL</div>
+    <div class="card-sub">// Recommandations SFMU · Protocoles de soins infirmiers d'urgence</div>
+    <div class="col8">
+    ${SITUATIONS.map(s=>`
+      <div class="situation-card ${S.sitOpen===s.id?'open':''}" onclick="S.sitOpen=S.sitOpen===s.id?null:'${s.id}';render()">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:22px">${s.icon}</span>
+          <div class="situation-titre">${s.titre}</div>
+        </div>
+        <div class="situation-body">
+          <div style="background:rgba(0,0,0,.3);border-radius:3px;padding:12px;margin-bottom:12px">
+            <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:5px">Situation</div>
+            <p style="font-size:13px;color:var(--txt2);line-height:1.65">${s.contexte}</p>
+          </div>
+          <div style="background:rgba(48,128,224,.08);border-radius:3px;padding:10px 12px;margin-bottom:10px">
+            <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:4px">ABCDE initial</div>
+            <p style="font-size:12px;color:var(--txt2)">${s.abcde}</p>
+          </div>
+          <div style="font-size:11px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:8px">Actions IDE — dans l'ordre</div>
+          ${s.actions.map(a=>`<div style="font-size:13px;color:var(--txt2);margin-bottom:6px;line-height:1.6;padding:6px 10px;border-radius:3px;background:rgba(0,0,0,.2)">${a}</div>`).join('')}
+          <div style="background:rgba(232,48,48,.1);border:1.5px solid rgba(232,48,48,.3);border-radius:3px;padding:10px 12px;margin-top:10px">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--red);font-weight:700">RÈGLE D'OR : </span>
+            <span style="font-size:13px;color:var(--txt2)">${s.regle}</span>
+          </div>
+          <div style="font-size:11px;font-family:'Fira Mono',monospace;color:var(--txt2);margin-top:8px;font-style:italic">Réf : ${s.ref}</div>
+        </div>
+      </div>`).join('')}
+    </div></div>
+    </div>`;
+  }
+
+  // ── CHOCS ──────────────────────────────────────────────────
+  else if(S.onglet==='chocs'){
+    h+=`<div class="fadeup">
+    <div class="card red">
+    <div class="card-title" style="color:var(--red)">ÉTATS DE CHOC — DIFFÉRENCIER POUR AGIR</div>
+    <div class="card-sub">// 4 types · 1 point commun : urgence vitale</div>
+    <div class="grid2" style="margin-bottom:14px">
+      <div class="stat"><span class="stat-v">4</span><span class="stat-l">Types de choc</span></div>
+      <div class="stat"><span class="stat-v pulse" style="color:var(--amber)">15</span><span class="stat-l">Appeler le SAMU</span></div>
+    </div>
+    <div class="col8">
+    ${CHOCS.map(c=>`
+      <div class="choc-card ${S.chocOpen===c.id?'open':''}" style="border-left-color:${c.couleur}" onclick="S.chocOpen=S.chocOpen===c.id?null:'${c.id}';render()">
+        <div class="choc-titre" style="color:${c.couleur}">${c.titre}</div>
+        <div class="choc-body">
+          <div style="margin-bottom:8px">
+            <div style="font-size:10px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:${c.couleur};margin-bottom:4px">Signes cliniques</div>
+            <p style="font-size:12px;line-height:1.6">${c.signes}</p>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="font-size:10px;font-family:'Fira Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:${c.couleur};margin-bottom:4px">Conduite IDE</div>
+            <p style="font-size:12px;line-height:1.6">${c.cible}</p>
+          </div>
+          <div style="background:rgba(232,48,48,.08);border-left:2px solid rgba(232,48,48,.4);padding:8px 10px;border-radius:2px">
+            <span style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px">⚠ Piège : </span>
+            <span style="font-size:12px;color:var(--txt2)">${c.piege}</span>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div></div>
+    <div class="info info-amber">
+    💡 <strong>Point commun à tous les chocs :</strong> Tachycardie + hypotension + signes de bas débit (marbrures, TRC > 3s, oligurie, confusion). La cause différencie — la conduite immédiate est la même : O₂, VVP, monitoring, alerte.
+    </div></div>`;
+  }
+
+  // ── NEWS2 ──────────────────────────────────────────────────
+  else if(S.onglet==='news2'){
+    const total = newsTotal();
+    const filledCount = NEWS2_PARAMS.filter(p=>getNews(p.key)!==undefined).length;
+    h+=`<div class="fadeup">
+    <div class="card red">
+    <div class="card-title" style="color:var(--red)">SCORE NEWS2</div>
+    <div class="card-sub">// National Early Warning Score 2 · Détection précoce de dégradation clinique</div>
+
+    ${NEWS2_PARAMS.map(p=>`
+    <div class="news-param">
+      <div class="news-label">${p.label}</div>
+      <div class="news-options">
+        ${p.opts.map(o=>{
+          const sel=getNews(p.key)===o.s&&getNews(p.key)!==undefined;
+          // Détecter si plusieurs options ont le même score
+          return `<button class="news-opt ${sel?'on s'+Math.min(o.s,3):''}" onclick="setNews('${p.key}',${o.s});render()">${o.t} (${o.s>0?'+'+o.s:'0'})</button>`;
+        }).join('')}
+      </div>
+    </div>`).join('')}
+
+    <div style="margin-top:16px;padding:16px;border-radius:4px;background:rgba(0,0,0,.3);border:2px solid ${newsColor(total)};">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2)">Score NEWS2</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:800;color:${newsColor(total)};line-height:1">${filledCount<NEWS2_PARAMS.length?'?':total}</span>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:${newsColor(total)};margin-bottom:8px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase">${filledCount<NEWS2_PARAMS.length?'Remplir tous les paramètres':newsLabel(total)}</div>
+      ${filledCount>=NEWS2_PARAMS.length?`
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" style="width:${Math.min(100,total/20*100)}%;background:${newsColor(total)}"></div>
+      </div>
+      <div style="font-size:12px;color:var(--txt2);margin-top:8px;line-height:1.65">
+        ${total<=1?'Surveillance standard. Réévaluation systématique à chaque changement d\'état.':
+          total<=4?'Alerte équipe soignante. Réévaluation toutes les heures. Informer le médecin.':
+          total<=6?'Appel médecin urgent. Réévaluation toutes les 30 min. Préparer transfert éventuel.':
+          total<=8?'Urgence — appel médecin IMMÉDIAT. Risque de dégradation rapide.':
+          'URGENCE VITALE — activation code rouge. Appel SAMU ou réanimateur. Ne pas laisser seul.'}
+      </div>`:''}
+    </div>
+    <button class="btn-g btn-full" onclick="NEWS2_PARAMS.forEach(p=>delete STORE['news_'+p.key]);saveStore(STORE);render()" style="margin-top:10px;color:var(--txt2)">↺ Réinitialiser</button>
+    </div>
+    <div class="info info-amber">
+    📊 <strong>Utilisation clinique :</strong> Le NEWS2 se calcule à chaque prise de constantes. Un score ≥ 5 doit déclencher une alerte médicale, quelle que soit l'heure. L'IDE ne doit jamais attendre que le médecin lui demande de calculer le NEWS2.
+    </div></div>`;
+  }
+
+  // ── QUIZ ───────────────────────────────────────────────────
+  else if(S.onglet==='quiz'){
+    const q=QUIZ[S.quizIdx%QUIZ.length];
+    const pct=Math.round(S.quizIdx/QUIZ.length*100);
+    h+=`<div class="fadeup">
+    <div style="display:flex;justify-content:space-between;font-family:'Fira Mono',monospace;font-size:11px;color:var(--txt2);margin-bottom:8px">
+      <span>Question ${S.quizIdx%QUIZ.length+1} / ${QUIZ.length}</span>
+      <span style="color:var(--red)">${S.quizTotal>0?Math.round(S.quizScore/S.quizTotal*100)+'% correct':'—'}</span>
+    </div>
+    <div class="progress-bar-wrap" style="margin-bottom:16px"><div class="progress-bar" style="width:${pct}%;background:linear-gradient(90deg,var(--red2),var(--red))"></div></div>
+    <div class="card red">
+    <div style="font-family:'Barlow',sans-serif;font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:18px;color:var(--txt)">${esc(q.q)}</div>
+    ${q.opts.map((opt,i)=>{let cls='';if(S.quizShown){if(i===q.rep)cls='correct';else if(i===S.quizSelected)cls='wrong';}return `<div class="quiz-opt ${cls}" onclick="${S.quizShown?'':'selectQuiz('+i+')'}"><span style="font-family:'Fira Mono',monospace;font-size:11px;flex-shrink:0">${['A','B','C','D'][i]}</span><span>${esc(opt)}</span></div>`;}).join('')}
+    ${S.quizShown?`<div class="quiz-expl">${q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</div><button class="btn-p btn-full" style="margin-top:14px" onclick="nextQuiz()">QUESTION SUIVANTE →</button>`:''}
+    </div>
+    <button class="btn-g btn-full" onclick="S.quizIdx=0;S.quizScore=0;S.quizTotal=0;S.quizSelected=null;S.quizShown=false;render()" style="margin-top:8px;color:var(--green);border-color:rgba(64,192,96,.2)">↺ RECOMMENCER</button>
+    </div>`;
+  }
+
+  // ── ANALYSE IA ─────────────────────────────────────────────
+  else if(S.onglet==='analyse'){
+    h+=`<div class="fadeup">
+    <div class="card red">
+    <div class="card-title" style="color:var(--red)">IA COACH — URGENCES IDE</div>
+    <div class="card-sub">// Décrivez une situation d'urgence — l'IA vous aide à analyser votre conduite.</div>
+    <textarea id="question-urg" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(232,48,48,.15);border-radius:3px;color:var(--txt);padding:12px;font-size:13px;font-family:'Barlow',sans-serif;outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Un patient chute dans sa chambre et est inconscient — quelle est ma conduite A B C D E ? Comment différencier un malaise vagal d'un arrêt cardiaque ? Que faire si une perfusion d'antibiotique provoque une réaction allergique ?"></textarea>
+    <button class="btn-p btn-full" onclick="runAnalyse()">🚨 ANALYSER LA SITUATION →</button>
+    ${S.loading?`<div class="dots" style="margin-top:16px"><span></span><span></span><span></span><div class="dots-msg">// ANALYSE EN COURS...</div></div>`:''}
+    ${!S.loading&&S.analyse?`<div class="analysis fadeup" style="margin-top:16px">${renderMd(S.analyse)}</div>`:''}
+    <hr class="div">
+    ${!S.apiKeySaved?`<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p><div class="apikey-row"><input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value"><button onclick="saveKey()">Sauver</button></div></div>`:`<div style="color:var(--green);font-family:'Fira Mono',monospace;font-size:11px">// API_KEY : configured ✓</div>`}
+    </div>
+    <div class="premium-box">
+    <div style="text-align:center;margin-bottom:18px"><div style="font-size:32px;margin-bottom:8px">🔒</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;letter-spacing:3px;text-transform:uppercase;color:var(--txt);margin-bottom:5px">IA Coach — Accès Premium</div><div style="font-size:13px;color:var(--txt2)">ABCDE, situations, chocs, NEWS2 et quiz sont entièrement gratuits</div></div>
+    <div class="grid3" style="margin-bottom:16px">
+    ${[{who:'Module seul',price:'4,99€',desc:'PraxisUrgences à vie'},{who:'Suite complète',price:'12,99€',desc:'20 modules à vie',em:true},{who:'Institution',price:'Devis',desc:'IFSI · Syndicat'}].map(t=>`<div style="border:1.5px solid ${t.em?'rgba(232,48,48,.4)':'var(--bdr)'};border-radius:3px;padding:14px;text-align:center;background:${t.em?'rgba(232,48,48,.08)':'rgba(255,255,255,.02)'}"><div style="font-family:'Fira Mono',monospace;font-size:10px;color:${t.em?'var(--red)':'var(--txt2)'};margin-bottom:8px">${t.who}</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:2px;color:var(--txt)">${t.price}</div><div style="font-size:11px;color:var(--txt2);margin-top:5px">${t.desc}</div></div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-bottom:10px"><a href="mailto:contact@praxiscare.fr" style="display:inline-block;padding:12px 28px;border-radius:3px;background:linear-gradient(135deg,var(--red2),var(--red));color:#fff;font-weight:700;font-size:14px;text-decoration:none;font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;text-transform:uppercase">OBTENIR L'ACCÈS →</a></div>
+    <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)"><button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt2);font-size:11px;cursor:pointer;font-family:'Fira Mono',monospace">// formateur_key</button></div>
+    ${S.showKey?`<div class="apikey-box" style="margin-top:12px"><p>Clé API — formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p><div class="apikey-row"><input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value"><button onclick="saveKey()">Sauver</button></div>${S.apiKeySaved?'<div class="apikey-saved">// configured ✓</div>':''}</div>`:''}
+    </div></div>`;
+  }
+
+  if(S.view!=='welcome'){
+    h+=`<div style="margin-top:12px"><button class="btn-g" onclick="go('welcome')" style="color:var(--red);border-color:rgba(232,48,48,.2)">← Accueil PraxisUrgences</button></div>`;
+  }
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setOnglet(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function selectQuiz(i){if(S.quizShown)return;S.quizSelected=i;S.quizShown=true;S.quizTotal++;if(i===QUIZ[S.quizIdx%QUIZ.length].rep)S.quizScore++;render();}
+function nextQuiz(){S.quizIdx++;S.quizSelected=null;S.quizShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function saveKey(){localStorage.setItem('simurg_key',S.apiKey);S.apiKeySaved=true;render();}
+
+async function runAnalyse(){
+  const q=document.getElementById('question-urg')?.value||'';
+  if(!q.trim())return;
+  S.loading=true;S.analyse='';render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:`Tu es un formateur IFSI expert en urgences infirmières et en prise en charge des détresses médicales. Tu connais parfaitement les recommandations SFMU "IDE seul devant une situation de détresse médicale", la méthode ABCDE, le score NEWS2 et les protocoles de soins infirmiers d'urgence (PISU) 2024.\n\nSituation ou question : ${q}\n\nRéponds en 3-4 paragraphes pratiques. Structure ta réponse avec la méthode ABCDE si pertinent. Cite les recommandations SFMU. Tutoie l'étudiant. Sois direct — en urgence, pas de circonvolutions. Utilise **gras** pour les actions prioritaires.`}]})});
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){S.analyse=`**Erreur**\n\n${e.message}`;}
+  S.loading=false;render();
+}
+
+render();
+</script>
+  <!-- PraxisCare Stats -->
+  <script src="praxiscare-stats.js"></script>
+  <script>PraxisStats.init('simurgences');</script>
+</body>
+</html>

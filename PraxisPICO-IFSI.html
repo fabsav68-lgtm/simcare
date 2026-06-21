@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisPICO · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c12;--bg2:#0e1420;--card:rgba(255,255,255,.03);--bdr:rgba(255,255,255,.07);
+  --txt:#dde8f4;--txt2:#5878a0;--txt3:#182030;
+  --em:#00c8a0;--em2:#009870;--pm:#e06040;--coch:#2080d0;--bdsp:#8040c0;
+  --p:#60a0ff;--i:#ff8060;--c:#60d080;--o:#ffc040;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 30% 20%,rgba(0,200,160,.05) 0%,transparent 55%),radial-gradient(ellipse 50% 35% at 70% 80%,rgba(32,128,208,.05) 0%,transparent 50%);}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.site-header{padding:44px 24px 28px;text-align:center;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,200,160,.08);border:1px solid rgba(0,200,160,.22);color:var(--em);padding:5px 18px;border-radius:20px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+.site-header h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,6vw,54px);font-weight:700;letter-spacing:-2px;line-height:1.05;margin-bottom:8px;}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:13px}
+.tabs{display:flex;gap:4px;padding:0 0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:8px 16px;border-radius:20px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt2);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .18s;-webkit-tap-highlight-color:transparent;}
+.tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+.tab.active{background:rgba(0,200,160,.1);border-color:rgba(0,200,160,.35);color:var(--em)}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:16px;padding:24px;margin-bottom:14px;position:relative;z-index:1}
+.card-title{font-size:19px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:13px;margin-bottom:18px;line-height:1.65}
+.pico-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.pico-block{border-radius:12px;padding:16px;position:relative;overflow:hidden;}
+.pico-letter{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:'Space Mono',monospace;font-size:60px;font-weight:700;opacity:.08;line-height:1;}
+.pico-titre{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:4px;}
+.pico-sous{font-size:11px;opacity:.7;margin-bottom:10px;line-height:1.5}
+.pico-area{width:100%;border-radius:8px;padding:9px 12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);color:var(--txt);font-size:13px;font-family:'Space Grotesk',sans-serif;outline:none;resize:vertical;min-height:55px;line-height:1.6;transition:border-color .2s;}
+.pico-area:focus{border-color:rgba(255,255,255,.2)}
+.pyramide{text-align:center;margin:16px 0}
+.pyr-level{display:flex;align-items:center;justify-content:center;margin:3px auto;border-radius:6px;cursor:pointer;transition:all .2s;position:relative;-webkit-tap-highlight-color:transparent;}
+.pyr-level:hover{filter:brightness(1.2)}
+.pyr-label{font-size:12px;font-weight:600;color:#fff;text-align:center;padding:0 10px;line-height:1.3}
+.pyr-num{position:absolute;right:12px;font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);}
+.pyr-detail{background:rgba(0,0,0,.3);border-radius:8px;padding:12px;margin-top:8px;font-size:12px;color:var(--txt2);line-height:1.7;text-align:left;border:1px solid rgba(255,255,255,.07);}
+.bdd-card{border-radius:14px;padding:20px;margin-bottom:10px;border:1.5px solid transparent;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.bdd-card:hover{transform:translateY(-2px)}
+.bdd-header{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.bdd-logo{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.bdd-name{font-size:18px;font-weight:700;letter-spacing:-.5px}
+.bdd-tagline{font-size:12px;opacity:.7;margin-top:2px}
+.bdd-body{display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
+.bdd-card.active .bdd-body{display:block}
+.tuto-step{background:rgba(0,0,0,.25);border-radius:10px;padding:14px;margin-bottom:8px;border-left:3px solid transparent;}
+.tuto-num{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;margin-bottom:5px;opacity:.7}
+.tuto-titre{font-size:14px;font-weight:600;margin-bottom:5px}
+.tuto-desc{font-size:12px;color:var(--txt2);line-height:1.65}
+.tuto-code{font-family:'Space Mono',monospace;font-size:11px;background:rgba(0,200,160,.08);border:1px solid rgba(0,200,160,.2);border-radius:6px;padding:8px 12px;margin-top:8px;color:var(--em);word-break:break-all;}
+.mesh-input{width:100%;border-radius:10px;padding:12px 16px;font-size:14px;background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);color:var(--txt);font-family:'Space Grotesk',sans-serif;outline:none;margin-bottom:10px;transition:border-color .2s;}
+.mesh-input:focus{border-color:rgba(0,200,160,.4)}
+.mesh-result{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.mesh-tag{padding:4px 12px;border-radius:20px;font-size:12px;font-family:'Space Mono',monospace;letter-spacing:.5px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.quiz-opt{padding:12px 16px;border-radius:10px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;font-size:14px;margin-bottom:8px;transition:all .18s;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent;}
+.quiz-opt:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+.quiz-opt.correct{background:rgba(0,200,160,.1);border-color:rgba(0,200,160,.4);color:var(--em)}
+.quiz-opt.wrong{background:rgba(224,96,64,.1);border-color:rgba(224,96,64,.4);color:var(--pm)}
+.quiz-expl{background:rgba(0,200,160,.05);border:1px solid rgba(0,200,160,.15);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+.info{border-radius:10px;padding:11px 14px;font-size:13px;line-height:1.75;margin-bottom:12px}
+.info-em{background:rgba(0,200,160,.07);border-left:3px solid rgba(0,200,160,.5);color:var(--em)}
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:10px;color:#080c12;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;padding:13px 28px;cursor:pointer;transition:opacity .2s,transform .1s;}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt2);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;padding:10px 18px;cursor:pointer;transition:all .18s;}
+.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-full{width:100%}
+.col8{display:flex;flex-direction:column;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:12px;text-align:center}
+.stat-v{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--em);display:block}
+.stat-l{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;font-family:'Space Mono',monospace;display:block;margin-top:4px}
+.progress-bar-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:8px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .6s ease}
+.dots{text-align:center;padding:24px 0}
+.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:13px;margin-top:10px;font-style:italic}
+.analysis p{margin-bottom:14px;font-size:15px;line-height:1.85;color:#6090a0}
+.analysis strong{color:var(--txt)}
+.premium-box{background:rgba(0,0,0,.3);border:1.5px solid rgba(0,200,160,.15);border-radius:16px;padding:24px;margin-bottom:14px}
+.apikey-box{background:rgba(0,200,160,.04);border:1px solid rgba(0,200,160,.12);border-radius:10px;padding:12px}
+.apikey-box p{font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:8px;color:var(--txt);font-family:'Space Mono',monospace;outline:none}
+.apikey-row input:focus{border-color:rgba(0,200,160,.3)}
+.apikey-row button{padding:9px 14px;border:none;border-radius:8px;background:var(--em2);color:#080c12;font-weight:700;cursor:pointer;font-size:12px}
+.apikey-saved{color:var(--em);font-size:11px;margin-top:5px;font-family:'Space Mono',monospace}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:16px 0}
+.pts{display:flex;flex-direction:column;gap:10px;margin:18px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.grid2,.pico-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const PYRAMIDE=[
+  {niveau:1,label:"Meta-analyses et Revues systematiques",ex:"Cochrane, JAMA meta-analysis",couleur:"#00c8a0",largeur:90,detail:"Le sommet des preuves. Synthese rigoureuse de toutes les etudes existantes sur un sujet. La Cochrane Library en est la reference mondiale. Si une revue Cochrane repond a votre question PICO, commencez par la."},
+  {niveau:2,label:"Essais controles randomises (ECR)",ex:"RCT — Gold standard clinique",couleur:"#20c060",largeur:76,detail:"L'etude la plus fiable pour tester l'efficacite d'une intervention. Les patients sont repartis aleatoirement dans deux groupes. Le biais est minimise. A chercher sur ClinicalTrials.gov et PubMed."},
+  {niveau:3,label:"Etudes de cohorte et Cas-temoins",ex:"Etudes observationnelles",couleur:"#60c040",largeur:62,detail:"Etudes qui observent sans intervenir. La cohorte suit des sujets dans le temps. Le cas-temoin compare des malades a des non-malades. Utiles pour les questions de causalite."},
+  {niveau:4,label:"Etudes transversales et Series de cas",ex:"Photographies a un instant T",couleur:"#c0a020",largeur:48,detail:"Etudes descriptives — elles decrivent une situation sans demontrer de lien de causalite. Utiles pour estimer une prevalence. Niveau de preuve modere."},
+  {niveau:5,label:"Avis experts et Opinion clinique",ex:"Recommandations, consensus",couleur:"#c06020",largeur:34,detail:"Le niveau de preuve le plus faible — mais parfois le seul disponible. Les recommandations HAS, SFAR sont des consensus d'experts. Valables quand les etudes manquent."},
+];
+const BASES=[
+  {id:"pubmed",nom:"PubMed",emoji:"🔬",tagline:"35+ millions d'articles · NCBI · Gratuit",couleur:"#e06040",bg:"rgba(224,96,64,.08)",bdr:"rgba(224,96,64,.25)",desc:"La base de donnees de reference mondiale en sciences biomedicales. Geree par le NCBI. Acces gratuit et illimite.",url:"https://pubmed.ncbi.nlm.nih.gov",
+   etapes:[
+    {n:"01",t:"Traduire votre PICO en termes MeSH",d:"MeSH (Medical Subject Headings) est le thesaurus de PubMed. Chaque concept a un terme officiel en anglais.",code:"PubMed → MeSH Database → Taper votre concept → Trouver le terme anglais"},
+    {n:"02",t:"Construire votre equation de recherche",d:"Combiner les termes avec les operateurs booleens : AND (les deux termes), OR (l'un ou l'autre), NOT (exclure).",code:'"Pain"[MeSH] AND "Nurses"[MeSH] AND "Aged"[MeSH]'},
+    {n:"03",t:"Appliquer les filtres",d:"Cliquer sur Filters : Article type (Meta-Analysis, RCT, Review), Date (5 dernières années), Language (French, English).",code:"Filters → Last 5 years → Meta-Analysis → French"},
+    {n:"04",t:"Lire le résumé (Abstract)",d:"La structure IMRAD : Introduction → Methods → Results → Discussion. L'acces au texte complet peut necessiter un acces institutionnel via votre IFSI.",code:"Title → Abstract → Methods → Results → Conclusions"},
+   ],
+   astuces:["Ajouter [tiab] pour chercher dans le titre ET l'abstract","OR pour combiner des synonymes","Similar Articles pour elargir","Creer un compte NCBI pour sauvegarder"]},
+  {id:"cochrane",nom:"Cochrane Library",emoji:"📚",tagline:"Revues systematiques · Niveau de preuve maximal",couleur:"#2080d0",bg:"rgba(32,128,208,.08)",bdr:"rgba(32,128,208,.25)",desc:"La reference mondiale des revues systematiques. Chaque revue Cochrane synthetise toutes les etudes existantes sur une question clinique. Niveau de preuve le plus eleve.",url:"https://www.cochranelibrary.com",
+   etapes:[
+    {n:"01",t:"Acceder a la Cochrane Library",d:"Le site est en anglais mais les resumes en langage clair sont traduits en francais pour de nombreuses revues. Acces gratuit aux resumes.",code:"cochranelibrary.com → Cochrane Reviews → Rechercher par sujet"},
+    {n:"02",t:"Chercher par question clinique",d:"Taper directement votre question en anglais. La Cochrane est organisee par groupes thematiques (Nursing, Pain, Cardiology...).",code:'"pain assessment elderly nursing" → Filter: Cochrane Reviews'},
+    {n:"03",t:"Lire le Plain Language Summary",d:"Resume en langage accessible, souvent traduit en francais. Il repond directement : Cette intervention est-elle efficace ? Avec quel niveau de certitude ?",code:"Abstract → Plain Language Summary → Quality of evidence (GRADE)"},
+    {n:"04",t:"Interpreter le GRADE",d:"Systeme GRADE : evaluation de la certitude des preuves. Haute (4 ronds pleins) → Tres faible (1 rond plein). Une preuve de haute qualite = recommandation solide.",code:"GRADE : ⊕⊕⊕⊕ Haute · ⊕⊕⊕◯ Moderee · ⊕◯◯◯ Tres faible"},
+   ],
+   astuces:["Cochrane Protocols = revues en cours","Cochrane Wounds Group pour les plaies","Plain Language Summary traduit en francais","Cochrane Corner dans les revues infirmieres"]},
+  {id:"bdsp",nom:"BDSP",emoji:"🇫🇷",tagline:"Banque de Donnees Sante Publique · France · Gratuit",couleur:"#8040c0",bg:"rgba(128,64,192,.08)",bdr:"rgba(128,64,192,.25)",desc:"La base de donnees francaise en sante publique. References bibliographiques en francais, orientees politiques de sante, soins infirmiers. Indispensable pour les memoires IFSI.",url:"https://bdsp-ehesp.inist.fr",
+   etapes:[
+    {n:"01",t:"Acceder a la BDSP",d:"Contient des documents francais sur la sante publique, le systeme de soins, les professions de sante. Tres utile pour les references reglementaires et les rapports HAS.",code:"bdsp-ehesp.inist.fr → Recherche simple ou avancee"},
+    {n:"02",t:"Chercher en francais",d:"La BDSP indexe des documents francophones. On peut chercher directement en francais. Filtres : type de document, date, organisme (HAS, DREES, INSERM).",code:"evaluation douleur personne agee → Type : Rapport → HAS"},
+    {n:"03",t:"Utiliser les rapports HAS",d:"La Haute Autorite de Sante publie des recommandations de bonne pratique (RBP) utiles pour etayer un memoire infirmier, basees sur les meilleures preuves.",code:"has-sante.fr → Recommandations → Rechercher par theme"},
+   ],
+   astuces:["SUDOC pour les theses et memoires","CAIRN pour les sciences humaines en francais","Revue de l'Infirmiere via BDSP","DRESS pour les donnees epidemiologiques"]},
+  {id:"other",nom:"Autres ressources",emoji:"🌐",tagline:"HAS · CISMeF · ClinicalTrials · Google Scholar",couleur:"#00c8a0",bg:"rgba(0,200,160,.08)",bdr:"rgba(0,200,160,.25)",desc:"Un ecosysteme complet de ressources complementaires pour une recherche documentaire exhaustive.",url:"https://www.has-sante.fr",
+   etapes:[
+    {n:"01",t:"HAS — Haute Autorite de Sante",d:"Recommandations de bonne pratique francaises. Organisees par theme. Basees sur des revues systematiques. La reference pour les pratiques infirmieres en France.",code:"has-sante.fr → Recommandations → Soins infirmiers"},
+    {n:"02",t:"CISMeF",d:"Catalogue et Index des Sites Medicaux Francophones. Repertoire de ressources medicales en francais. Tres utile pour trouver des sites institutionnels fiables.",code:"cismef.chu-rouen.fr → Recherche par concept ou theme"},
+    {n:"03",t:"ClinicalTrials.gov",d:"Registre mondial des essais cliniques en cours et termines. Permet de trouver des etudes recentes pas encore publiees.",code:"clinicaltrials.gov → Search → Conditions + Interventions"},
+    {n:"04",t:"Google Scholar",d:"Moteur de recherche academique. Utile pour trouver rapidement des articles, verifier les citations, acceder aux versions preprint gratuites.",code:'scholar.google.com → Filtres : date, type · site:has-sante.fr'},
+   ],
+   astuces:["Sante Publique France pour les donnees epi","OMS WHO pour les recommandations internationales","PubMed Central (PMC) pour les articles en acces libre","ANAP pour la qualite des soins"]},
+];
+const MESH_MAP={
+  "douleur":["Pain[MeSH]","Pain Management[MeSH]","Analgesics[MeSH]"],
+  "infirmier":["Nurses[MeSH]","Nursing Care[MeSH]","Nursing Staff[MeSH]"],
+  "personne agee":["Aged[MeSH]","Geriatrics[MeSH]","Frail Elderly[MeSH]"],
+  "diabete":["Diabetes Mellitus[MeSH]","Insulin[MeSH]","Glycemic Control[MeSH]"],
+  "plaie":["Wounds and Injuries[MeSH]","Wound Healing[MeSH]","Pressure Ulcer[MeSH]"],
+  "anxiete":["Anxiety[MeSH]","Anxiety Disorders[MeSH]","Stress Psychological[MeSH]"],
+  "education":["Patient Education[MeSH]","Health Education[MeSH]","Teaching[MeSH]"],
+  "hypertension":["Hypertension[MeSH]","Blood Pressure[MeSH]"],
+  "depression":["Depression[MeSH]","Depressive Disorder[MeSH]"],
+  "soins palliatifs":["Palliative Care[MeSH]","Hospice Care[MeSH]"],
+  "chute":["Accidental Falls[MeSH]","Fall Prevention[MeSH]"],
+  "infection":["Infection[MeSH]","Cross Infection[MeSH]","Anti-Infective Agents[MeSH]"],
+  "obesite":["Obesity[MeSH]","Body Mass Index[MeSH]","Overweight[MeSH]"],
+  "sommeil":["Sleep[MeSH]","Sleep Disorders[MeSH]","Sleep Quality[MeSH]"],
+};
+const QUIZ=[
+  {q:"Dans la methode PICO, que represente le C ?",opts:["Cause de la maladie","Comparaison — l'alternative a l'intervention etudiee","Conclusion de l'etude","Critere d'inclusion"],rep:1,expl:"**C = Comparaison** — c'est le groupe controle ou l'alternative a laquelle on compare l'intervention. Sans comparaison, on ne peut pas savoir si l'intervention est plus efficace que l'absence de traitement."},
+  {q:"Quel est le niveau de preuve le plus eleve dans la pyramide des preuves ?",opts:["L'essai controle randomise (ECR)","L'avis d'expert","La meta-analyse et revue systematique","L'etude de cas"],rep:2,expl:"La **meta-analyse** et la **revue systematique** sont au sommet — elles synthetisent l'ensemble des etudes existantes sur un sujet. La Cochrane Library est la reference mondiale de ce type de publications."},
+  {q:"MeSH signifie :",opts:["Medical Education Standard Hierarchy","Medical Subject Headings","Method of Evidence Synthesis","Medical Evidence Search Hub"],rep:1,expl:"**MeSH** (Medical Subject Headings) est le thesaurus officiel de PubMed. Chaque concept medical a un terme MeSH standardise en anglais. Utiliser les termes MeSH ameliore considerablement la precision de la recherche."},
+  {q:"Vous cherchez la meilleure preuve sur la prevention des chutes en EHPAD. Ou cherchez-vous EN PREMIER ?",opts:["Google","PubMed avec une recherche libre","La Cochrane Library","Le manuel de soins infirmiers"],rep:2,expl:"**Cochrane Library en premier** — si une revue systematique existe sur votre question, c'est la meilleure preuve disponible. Ensuite PubMed pour les ECR recents. La HAS pour les recommandations francaises."},
+  {q:"L'operateur booleen AND dans une recherche PubMed :",opts:["Elargit la recherche","Reduit la recherche en exigeant les deux termes","Exclut un terme","Cherche une expression exacte"],rep:1,expl:"**AND** restreint la recherche — tous les resultats doivent contenir les deux termes. OR elargit. NOT exclut. Les guillemets cherchent une expression exacte."},
+  {q:"Le systeme GRADE dans une revue Cochrane evalue :",opts:["Le nombre de patients","La qualite et la certitude des preuves","Le cout de l'intervention","La duree de l'etude"],rep:1,expl:"**GRADE** evalue la **certitude des preuves** : 4 ronds = Haute certitude → 1 rond = Tres faible certitude. Une certitude elevee signifie qu'on est tres confiant que l'effet observe reflète la realite clinique."},
+];
+const STORE_KEY='simpico';
+function loadStore(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||{};}catch(e){return {};}}
+function saveStore(d){try{localStorage.setItem(STORE_KEY,JSON.stringify(d));}catch(e){}}
+let STORE=loadStore();
+function getPICO(k){return STORE['pico_'+k]||'';}
+function setPICO(k,v){STORE['pico_'+k]=v;saveStore(STORE);}
+let S={view:'welcome',onglet:'pico',pyrActive:null,bddActive:null,meshTerme:'',meshResults:[],quizIdx:0,quizSelected:null,quizShown:false,quizScore:0,quizTotal:0,analyse:'',loading:false,showKey:false,apiKey:localStorage.getItem('simpico_key')||'',apiKeySaved:!!localStorage.getItem('simpico_key')};
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(t){return t.split('\n\n').filter(p=>p.trim()).map(para=>{const parts=para.split(/\*\*([^*]+)\*\*/g);const inner=parts.map((p,i)=>i%2===1?'<strong>'+esc(p)+'</strong>':esc(p)).join('');return '<p>'+inner+'</p>';}).join('');}
+function buildPicoQuestion(){const p=getPICO('P'),i=getPICO('I'),c=getPICO('C'),o=getPICO('O');if(!p&&!i&&!o)return '';let q='Chez '+(p||'[population]');if(i)q+=', '+(i||'[intervention]');if(c)q+=', compare a '+(c||'[comparaison]');if(o)q+=', ameliore-t-il '+(o||'[resultat]')+' ?';return q;}
+function searchMesh(terme){const t=terme.toLowerCase().trim();if(!t){S.meshResults=[];return;}const results=[];for(const[key,terms]of Object.entries(MESH_MAP)){if(key.includes(t)||t.split(' ').some(w=>key.includes(w))){results.push({concept:key,terms});}}S.meshResults=results;}
+
+function render(){
+  const q=S.quizIdx<QUIZ.length*10?QUIZ[S.quizIdx%QUIZ.length]:QUIZ[0];
+  let h='';
+  if(S.view!=='welcome'){
+    h+='<div class="site-header"><div class="badge">🔬 E.1 · Recherche · Référentiel 2026</div><h1>Sim<span>PICO</span></h1><p>Recherche documentaire infirmière · PubMed · Cochrane · Données probantes</p></div>';
+    h+='<div class="tabs">';
+    [{id:'pico',label:'🎯 PICO'},{id:'pyramide',label:'📊 Niveaux de preuve'},{id:'bdd',label:'🔍 Bases de données'},{id:'mesh',label:'🏷️ MeSH'},{id:'quiz',label:'🎯 Quiz'},{id:'analyse',label:'🔬 Analyse IA'}].forEach(t=>{h+=`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`;});
+    h+='</div>';
+  } else {
+    h+='<div class="site-header" style="padding-top:44px"><div class="badge">🔬 E.1 · Recherche · Référentiel 2026</div><h1>Sim<span>PICO</span></h1></div>';
+  }
+  h+='<div class="wrap">';
+
+  if(S.view==='welcome'){
+    h+=`<div class="card fadeup" style="border-color:rgba(0,200,160,.15)"><div style="text-align:center;padding:8px 0 20px">
+    <div style="font-size:52px;margin-bottom:16px">🔬</div>
+    <p style="color:var(--txt2);font-size:15px;line-height:1.85;max-width:480px;margin:0 auto">L'infirmier de 2026 ne suit pas des protocoles — il <strong style="color:var(--txt)">cherche des preuves</strong>, les évalue et adapte sa pratique. PraxisPICO t'apprend à naviguer dans l'océan des données scientifiques.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px auto;max-width:360px">
+    ${[{l:'P',c:'var(--p)',t:'Population',d:'Qui ?'},{l:'I',c:'var(--i)',t:'Intervention',d:'Quoi ?'},{l:'C',c:'var(--c)',t:'Comparaison',d:'vs quoi ?'},{l:'O',c:'var(--o)',t:'Outcome',d:'Résultat ?'}].map(b=>`<div style="background:${b.c}12;border:1px solid ${b.c}30;border-radius:8px;padding:10px;text-align:center"><div style="font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:${b.c}">${b.l}</div><div style="font-size:12px;font-weight:600;color:var(--txt)">${b.t}</div><div style="font-size:11px;color:var(--txt2)">${b.d}</div></div>`).join('')}
+    </div>
+    <div class="pts">
+    <div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>Construire sa question PICO</strong> — à partir d'une situation clinique réelle</span></div>
+    <div class="pt"><span class="pt-i">📊</span><span class="pt-t"><strong>Pyramide des preuves</strong> — de l'opinion d'expert à la méta-analyse</span></div>
+    <div class="pt"><span class="pt-i">🔍</span><span class="pt-t"><strong>Tutoriels PubMed, Cochrane, BDSP</strong> — chercher, filtrer, lire un abstract</span></div>
+    <div class="pt"><span class="pt-i">🏷️</span><span class="pt-t"><strong>Convertisseur MeSH</strong> — traduire vos concepts en termes de recherche</span></div>
+    </div>
+    <button class="btn-p btn-full" onclick="go('main')">Explorer PraxisPICO →</button>
+    </div></div>`;
+  } else if(S.onglet==='pico'){
+    const question=buildPicoQuestion();
+    h+=`<div class="fadeup"><div class="card" style="border-color:rgba(0,200,160,.15)"><div class="card-title" style="color:var(--em)">Construire ma question PICO</div><div class="card-sub">Partez d'une situation clinique vécue en stage. La question PICO vous permettra de chercher les preuves scientifiques pertinentes.</div>
+    <div class="pico-grid">
+    ${[{k:'P',t:'POPULATION',c:'var(--p)',bc:'rgba(96,160,255,.1)',d:'Qui est le patient ? Âge, pathologie, contexte.',ex:'Ex : patients diabétiques de type 2 hospitalisés'},{k:'I',t:'INTERVENTION',c:'var(--i)',bc:'rgba(255,128,96,.1)',d:'Quelle intervention, soin ou programme ?',ex:"Ex : éducation thérapeutique sur l'insuline"},{k:'C',t:'COMPARAISON',c:'var(--c)',bc:'rgba(96,208,128,.1)',d:"Comparé à quoi ? (peut être absence d'intervention)",ex:'Ex : prise en charge standard'},{k:'O',t:'OUTCOME',c:'var(--o)',bc:'rgba(255,192,64,.1)',d:'Quel résultat mesure-t-on ? Soyez précis.',ex:"Ex : amélioration de l'HbA1c à 3 mois"}].map(b=>`<div class="pico-block" style="background:${b.bc};border:1.5px solid ${b.c}30"><div class="pico-letter" style="color:${b.c}">${b.k}</div><div class="pico-titre" style="color:${b.c}">${b.k} — ${b.t}</div><div class="pico-sous" style="color:${b.c}">${b.d}</div><textarea class="pico-area" placeholder="${b.ex}" oninput="setPICOAction('${b.k}',this.value)">${esc(getPICO(b.k))}</textarea></div>`).join('')}
+    </div>
+    ${question?`<div style="background:rgba(0,200,160,.07);border:1.5px solid rgba(0,200,160,.25);border-radius:10px;padding:16px;margin-top:6px"><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--em);margin-bottom:8px">Ma question de recherche</div><div style="font-size:15px;color:var(--txt);line-height:1.7;font-style:italic">"${esc(question)}"</div></div><button class="btn-g btn-full" onclick="setOnglet('bdd')" style="margin-top:10px;color:var(--em);border-color:rgba(0,200,160,.25)">→ Chercher sur PubMed et Cochrane</button>`:'<div class="info info-em">💡 Remplissez les 4 blocs pour que votre question de recherche apparaisse.</div>'}
+    </div><div class="info info-em">🎯 <strong>Conseil :</strong> Commencez par une situation vécue en stage qui vous a interrogé. "Est-ce qu'on aurait pu faire autrement ?" — c'est souvent là que naît la meilleure question PICO.</div></div>`;
+
+  } else if(S.onglet==='pyramide'){
+    h+=`<div class="fadeup"><div class="card" style="border-color:rgba(0,200,160,.15)"><div class="card-title" style="color:var(--em)">Pyramide des niveaux de preuve</div><div class="card-sub">Toutes les études ne se valent pas. Cliquez sur chaque niveau pour en savoir plus.</div>
+    <div class="pyramide">
+    ${PYRAMIDE.map(p=>`<div class="pyr-level" style="width:${p.largeur}%;height:44px;background:${p.couleur}${S.pyrActive===p.niveau?'dd':'88'}" onclick="S.pyrActive=S.pyrActive===p.niveau?null:${p.niveau};render()"><div class="pyr-label">${p.label}</div><div class="pyr-num">${p.niveau}</div></div>${S.pyrActive===p.niveau?`<div class="pyr-detail fadeup"><strong style="color:${p.couleur}">${p.ex}</strong><br>${p.detail}</div>`:''}`).join('')}
+    <div style="font-size:11px;font-family:'Space Mono',monospace;color:var(--txt3);text-align:center;margin-top:12px;letter-spacing:1px">↑ NIVEAU DE PREUVE CROISSANT</div>
+    </div></div>
+    <div class="grid2"><div class="stat"><span class="stat-v" style="color:#2080d0">8000+</span><span class="stat-l">Revues Cochrane</span></div><div class="stat"><span class="stat-v">35M+</span><span class="stat-l">Articles PubMed</span></div></div>
+    <div class="info info-em" style="margin-top:10px">⚡ <strong>Ordre de recherche :</strong> Cochrane → PubMed (meta-analyses et ECR) → HAS → BDSP. Citez toujours le niveau de preuve des etudes que vous utilisez.</div></div>`;
+
+  } else if(S.onglet==='bdd'){
+    h+=`<div class="fadeup"><div class="card" style="border-color:rgba(0,200,160,.15)"><div class="card-title" style="color:var(--em)">Bases de données — Tutoriels</div><div class="card-sub">Cliquez sur chaque base pour découvrir son utilité et apprendre à l'utiliser étape par étape.</div><div class="col8">`;
+    BASES.forEach(b=>{
+      h+=`<div class="bdd-card ${S.bddActive===b.id?'active':''}" style="background:${b.bg};border-color:${S.bddActive===b.id?b.bdr:'var(--bdr)'}" onclick="toggleBDD('${b.id}')">
+      <div class="bdd-header"><div class="bdd-logo" style="background:${b.couleur}20">${b.emoji}</div><div><div class="bdd-name" style="color:${b.couleur}">${b.nom}</div><div class="bdd-tagline">${b.tagline}</div></div><div style="margin-left:auto;font-size:18px;color:${b.couleur};opacity:.7">${S.bddActive===b.id?'▲':'▼'}</div></div>
+      <p style="font-size:13px;color:var(--txt2);line-height:1.65">${b.desc}</p>
+      <div class="bdd-body">
+      <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${b.couleur};margin-bottom:10px">Étapes</div>
+      ${b.etapes.map(e=>`<div class="tuto-step" style="border-left-color:${b.couleur}"><div class="tuto-num" style="color:${b.couleur}">ÉTAPE ${e.n}</div><div class="tuto-titre">${e.t}</div><div class="tuto-desc">${e.d}</div><div class="tuto-code">${esc(e.code)}</div></div>`).join('')}
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0">${b.astuces.map(a=>`<span style="padding:4px 10px;border-radius:20px;font-size:11px;background:${b.couleur}15;color:${b.couleur};font-family:'Space Mono',monospace">→ ${esc(a)}</span>`).join('')}</div>
+      <a href="${b.url}" target="_blank" rel="noopener" style="display:inline-block;margin-top:4px;padding:10px 20px;border-radius:8px;background:${b.couleur};color:#080c12;font-weight:700;font-size:13px;text-decoration:none">Ouvrir ${b.nom} →</a>
+      </div></div>`;
+    });
+    h+='</div></div></div>';
+
+  } else if(S.onglet==='mesh'){
+    h+=`<div class="fadeup"><div class="card" style="border-color:rgba(0,200,160,.15)"><div class="card-title" style="color:var(--em)">Convertisseur MeSH</div><div class="card-sub">Traduisez vos concepts français en termes MeSH pour des recherches PubMed précises.</div>
+    <input type="text" class="mesh-input" placeholder="Tapez un concept en français… Ex : douleur, diabète, chute, plaie" value="${esc(S.meshTerme)}" oninput="S.meshTerme=this.value;searchMesh(this.value);render()">
+    ${S.meshResults.length>0?S.meshResults.map(r=>`<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:14px;margin-bottom:8px;border:1px solid rgba(0,200,160,.15)"><div style="font-size:13px;font-weight:600;color:var(--em);margin-bottom:8px">→ ${esc(r.concept)}</div><div class="mesh-result">${r.terms.map(t=>`<span class="mesh-tag" style="background:rgba(0,200,160,.1);color:var(--em);border:1px solid rgba(0,200,160,.25)" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(t)}').then(()=>alert('Copie : ${esc(t)}')).catch(()=>alert('${esc(t)}'))">${esc(t)} 📋</span>`).join('')}</div></div>`).join(''):''}
+    ${S.meshTerme&&S.meshResults.length===0?'<div class="info info-em">🔍 Terme non trouvé. Cherchez sur <a href="https://www.ncbi.nlm.nih.gov/mesh/" target="_blank" style="color:var(--em)">MeSH Database →</a></div>':''}
+    <div style="font-family:\'Space Mono\',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin:16px 0 10px">Termes courants</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+    ${Object.keys(MESH_MAP).map(k=>`<button onclick="S.meshTerme='${k}';searchMesh('${k}');render()" style="padding:5px 12px;border-radius:20px;font-size:12px;border:1px solid var(--bdr);background:rgba(255,255,255,.03);color:var(--txt2);cursor:pointer;font-family:'Space Grotesk',sans-serif;">${k}</button>`).join('')}
+    </div>
+    </div>
+    <div class="info info-em">💡 <strong>Astuce :</strong> Combinez vos termes MeSH avec AND : <code style="background:rgba(0,200,160,.1);padding:2px 6px;border-radius:4px;font-family:'Space Mono',monospace;font-size:11px">"Pain"[MeSH] AND "Nurses"[MeSH]</code></div></div>`;
+
+  } else if(S.onglet==='quiz'){
+    const pct=Math.round(S.quizIdx/QUIZ.length*100);
+    h+=`<div class="fadeup"><div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px;color:var(--txt2);margin-bottom:8px"><span>Question ${S.quizIdx%QUIZ.length+1} / ${QUIZ.length}</span><span style="color:var(--em)">${S.quizTotal>0?Math.round(S.quizScore/S.quizTotal*100)+'% correct':'—'}</span></div>
+    <div class="progress-bar-wrap" style="margin-bottom:16px"><div class="progress-bar" style="width:${pct}%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>
+    <div class="card" style="border-color:rgba(0,200,160,.15)"><div style="font-size:clamp(15px,2.5vw,18px);font-weight:600;line-height:1.5;margin-bottom:18px;color:var(--txt)">${esc(q.q)}</div>
+    ${q.opts.map((opt,i)=>{let cls='';if(S.quizShown){if(i===q.rep)cls='correct';else if(i===S.quizSelected)cls='wrong';}return `<div class="quiz-opt ${cls}" onclick="${S.quizShown?'':'selectQuiz('+i+')'}"><span style="font-family:'Space Mono',monospace;font-size:11px;flex-shrink:0">${['A','B','C','D'][i]}</span><span>${esc(opt)}</span></div>`;}).join('')}
+    ${S.quizShown?`<div class="quiz-expl">${q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</div><button class="btn-p btn-full" style="margin-top:14px" onclick="nextQuiz()">Question suivante →</button>`:''}
+    </div><button class="btn-g btn-full" onclick="S.quizIdx=0;S.quizScore=0;S.quizTotal=0;S.quizSelected=null;S.quizShown=false;render()" style="margin-top:8px;color:var(--em);border-color:rgba(0,200,160,.2)">↺ Recommencer</button></div>`;
+
+  } else if(S.onglet==='analyse'){
+    const picoQ=buildPicoQuestion();
+    h+=`<div class="fadeup"><div class="card" style="border-color:rgba(0,200,160,.15)"><div class="card-title" style="color:var(--em)">Analyse IA — Lecture critique</div><div class="card-sub">Collez un abstract d'article ou décrivez votre recherche — l'IA vous aide à évaluer la qualité des preuves.</div>
+    ${picoQ?`<div class="info info-em" style="margin-bottom:10px">📌 <strong>Votre question PICO :</strong> "${esc(picoQ)}"</div>`:''}
+    <textarea id="question-pico" style="width:100%;min-height:100px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:10px;color:var(--txt);padding:12px;font-size:13px;font-family:'Space Grotesk',sans-serif;outline:none;resize:vertical;line-height:1.65;margin-bottom:10px" placeholder="Collez ici un abstract PubMed ou Cochrane, ou décrivez votre question de recherche…"></textarea>
+    <button class="btn-p btn-full" onclick="runAnalyse()">🔬 Analyser cet article →</button>
+    ${S.loading?'<div class="dots" style="margin-top:16px"><span></span><span></span><span></span><div class="dots-msg">Lecture critique en cours…</div></div>':''}
+    ${!S.loading&&S.analyse?`<div class="analysis fadeup" style="margin-top:16px">${renderMd(S.analyse)}</div>`:''}
+    <hr class="div">
+    ${!S.apiKeySaved?`<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p><div class="apikey-row"><input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value"><button onclick="saveKey()">Sauver</button></div></div>`:`<div style="color:var(--em);font-family:'Space Mono',monospace;font-size:11px">✓ Clé API configurée</div>`}
+    </div>
+    <div class="premium-box"><div style="text-align:center;margin-bottom:18px"><div style="font-size:32px;margin-bottom:8px">🔒</div><div style="font-size:18px;font-weight:700;color:var(--txt);margin-bottom:5px">Lecture critique IA — Accès Premium</div><div style="font-size:13px;color:var(--txt2)">PICO, pyramide, bases de données, MeSH et quiz sont entièrement gratuits</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+    ${[{who:'Module seul',price:'4,99€',desc:'PraxisPICO à vie'},{who:'Suite complète',price:'12,99€',desc:'16 modules à vie',em:true},{who:'Institution',price:'Devis',desc:'IFSI · Syndicat'}].map(t=>`<div style="border:1.5px solid ${t.em?'rgba(0,200,160,.4)':'var(--bdr)'};border-radius:10px;padding:14px;text-align:center;background:${t.em?'rgba(0,200,160,.07)':'rgba(255,255,255,.02)'}"><div style="font-family:'Space Mono',monospace;font-size:10px;color:${t.em?'var(--em)':'var(--txt2)'};margin-bottom:8px">${t.who}</div><div style="font-size:22px;font-weight:700;color:var(--txt)">${t.price}</div><div style="font-size:11px;color:var(--txt2);margin-top:5px">${t.desc}</div></div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-bottom:10px"><a href="mailto:contact@praxiscare.fr" style="display:inline-block;padding:12px 28px;border-radius:10px;background:linear-gradient(135deg,var(--em2),var(--em));color:#080c12;font-weight:700;font-size:14px;text-decoration:none">Obtenir l'accès →</a></div>
+    <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)"><button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt2);font-size:11px;cursor:pointer;font-family:'Space Mono',monospace">🔑 Espace formateur</button></div>
+    ${S.showKey?`<div class="apikey-box" style="margin-top:12px"><p>Clé API — formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p><div class="apikey-row"><input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value"><button onclick="saveKey()">Sauver</button></div>${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div>':''}</div>`:''}
+    </div></div>`;
+  }
+
+  if(S.view!=='welcome'){
+    h+=`<div style="margin-top:12px"><button class="btn-g" onclick="go('welcome')" style="color:var(--em);border-color:rgba(0,200,160,.2)">← Accueil PraxisPICO</button></div>`;
+  }
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setOnglet(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function setPICOAction(k,v){setPICO(k,v);}
+function toggleBDD(id){S.bddActive=S.bddActive===id?null:id;render();}
+function selectQuiz(i){if(S.quizShown)return;S.quizSelected=i;S.quizShown=true;S.quizTotal++;if(i===QUIZ[S.quizIdx%QUIZ.length].rep)S.quizScore++;render();}
+function nextQuiz(){S.quizIdx++;S.quizSelected=null;S.quizShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function saveKey(){localStorage.setItem('simpico_key',S.apiKey);S.apiKeySaved=true;render();}
+
+async function runAnalyse(){
+  const qEl=document.getElementById('question-pico');
+  const q=qEl?qEl.value:'';
+  if(!q.trim())return;
+  const picoQ=buildPicoQuestion();
+  S.loading=true;S.analyse='';render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`Tu es un formateur IFSI expert en methodologie de recherche et lecture critique d'articles scientifiques, specialiste de l'EBP en soins infirmiers.\n\n${picoQ?'Question PICO : "'+picoQ+'"\n\n':''}Texte a analyser :\n${q}\n\nAnalyse en 4 parties :\n\n**Type d'etude et niveau de preuve**\n[Identifie le type d'etude et son niveau dans la pyramide]\n\n**Points forts methodologiques**\n[2-3 points forts]\n\n**Limites et biais potentiels**\n[2-3 limites]\n\n**Applicabilite clinique infirmiere**\n[Transferable a la pratique infirmiere francaise ?]\n\nTutoie l'etudiant. Utilise **gras** pour les termes cles.`}]})});
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){S.analyse='**Erreur**\n\n'+e.message;}
+  S.loading=false;render();
+}
+
+render();
+</script>
+  <!-- PraxisCare Stats -->
+  <script src="praxiscare-stats.js"></script>
+  <script>PraxisStats.init('simpico');</script>
+</body>
+</html>

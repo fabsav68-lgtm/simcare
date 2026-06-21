@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PraxisO₂ · Outil pédagogique IFSI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #07101f;
+      --bg2:    #0c1a2e;
+      --card:   rgba(255,255,255,.038);
+      --bdr:    rgba(255,255,255,.09);
+      --txt:    #e2e8f0;
+      --txt2:   #94a3b8;
+      --txt3:   #475569;
+      --sky:    #38bdf8;
+      --teal:   #14b8a6;
+      --amber:  #f59e0b;
+      --violet: #a78bfa;
+      --green:  #22c55e;
+      --red:    #ef4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 55%, var(--bg) 100%);
+      color: var(--txt);
+      min-height: 100vh;
+      padding-bottom: 72px;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────────── */
+    .wrap { max-width: 680px; margin: 0 auto; padding: 0 18px; }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    .site-header { text-align: center; padding: 38px 24px 22px; }
+    .badge {
+      display: inline-block;
+      background: rgba(56,189,248,.1); border: 1px solid rgba(56,189,248,.25);
+      color: var(--sky); padding: 4px 16px; border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .site-header h1 { font-size: clamp(22px, 5vw, 36px); font-weight: 700; letter-spacing: -.5px; }
+    .site-header p  { color: var(--txt3); font-size: 14px; margin-top: 7px; font-style: italic; }
+
+    /* ── STEPS BAR ──────────────────────────────────────── */
+    .steps-bar {
+      display: flex; justify-content: center; align-items: center;
+      gap: 5px; padding: 0 16px 26px; flex-wrap: wrap;
+    }
+    .step-dot {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; transition: all .28s;
+      border: 2px solid var(--bdr); background: rgba(255,255,255,.03); color: var(--txt3);
+    }
+    .step-dot.active { background: rgba(56,189,248,.15); border-color: var(--sky); color: var(--sky); }
+    .step-dot.done   { background: var(--sky); border-color: var(--sky); color: #06101f; }
+    .step-lbl { font-size: 12px; color: var(--txt3); transition: color .28s; }
+    .step-lbl.active { color: var(--txt2); }
+    .step-line { width: 18px; height: 1px; background: var(--bdr); }
+
+    /* ── CARDS ──────────────────────────────────────────── */
+    .card {
+      background: var(--card); border: 1.5px solid var(--bdr);
+      border-radius: 18px; padding: 26px; margin-bottom: 16px;
+      backdrop-filter: blur(8px);
+    }
+    .card-title { font-size: 20px; font-weight: 600; margin-bottom: 5px; }
+    .card-sub   { color: var(--txt3); font-size: 13px; margin-bottom: 22px; }
+
+    /* ── FORM ───────────────────────────────────────────── */
+    .lbl {
+      display: block; font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--txt3); margin-bottom: 8px;
+    }
+    .lbl-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .lbl-val { font-family: 'JetBrains Mono', monospace; color: var(--sky); font-size: 15px; font-weight: 600; }
+    .lbl-sub { font-size: 11px; color: var(--txt3); margin-left: 6px; font-family: Outfit,sans-serif; }
+
+    input[type=text] {
+      background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 10px; color: var(--txt); padding: 10px 14px;
+      font-size: 16px; font-family: 'JetBrains Mono', monospace;
+      outline: none; width: 100%; transition: border-color .2s;
+    }
+    input[type=text]:focus { border-color: rgba(56,189,248,.4); }
+
+    
+    
+    .range-lbl { display: flex; justify-content: space-between; font-size: 10px; color: var(--txt3); margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .col   { display: flex; flex-direction: column; gap: 16px; }
+    .col8  { display: flex; flex-direction: column; gap: 8px; }
+
+    /* ── SELECT CARDS ───────────────────────────────────── */
+    .sel {
+      cursor: pointer; border: 1.5px solid var(--bdr); border-radius: 12px;
+      padding: 12px 16px; background: rgba(255,255,255,.025);
+      color: var(--txt2); font-family: Outfit, sans-serif; font-size: 15px;
+      transition: all .18s; display: flex; align-items: center; gap: 12px;
+      user-select: none;
+    }
+    .sel:hover { background: rgba(255,255,255,.06); color: var(--txt); border-color: rgba(255,255,255,.15); }
+    .sel.on    { background: rgba(56,189,248,.1); color: var(--txt); border-color: rgba(56,189,248,.42); }
+    .sel.center { justify-content: center; flex-direction: column; text-align: center; padding: 16px 8px; }
+    .sel .si   { font-size: 22px; flex-shrink: 0; }
+    .sel .sd   { font-size: 12px; color: var(--txt3); margin-top: 2px; }
+
+    /* ── BUTTONS ────────────────────────────────────────── */
+    .btn-p {
+      background: linear-gradient(135deg,#0ea5e9,#38bdf8);
+      border: none; border-radius: 12px; color: #06101f;
+      font-family: Outfit, sans-serif; font-size: 16px; font-weight: 700;
+      padding: 13px 28px; cursor: pointer; transition: opacity .2s, transform .1s;
+      white-space: nowrap;
+    }
+    .btn-p:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-p:active { transform: translateY(0); }
+    .btn-g {
+      background: rgba(255,255,255,.04); border: 1.5px solid var(--bdr);
+      border-radius: 12px; color: var(--txt2); font-family: Outfit, sans-serif;
+      font-size: 15px; padding: 11px 22px; cursor: pointer; transition: all .18s;
+      white-space: nowrap;
+    }
+    .btn-g:hover { background: rgba(255,255,255,.08); color: var(--txt); }
+    .btn-full { width: 100%; }
+    .btn-row  { display: flex; gap: 10px; justify-content: space-between; }
+
+    /* ── STAT CARDS ─────────────────────────────────────── */
+    .stat {
+      background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.06);
+      border-radius: 13px; padding: 15px; text-align: center;
+    }
+    .stat-v { font-family: 'JetBrains Mono', monospace; font-size: 23px; font-weight: 600; color: var(--teal); display: block; }
+    .stat-l { font-size: 10px; color: var(--txt3); text-transform: uppercase; letter-spacing: 1px; font-family: 'JetBrains Mono', monospace; display: block; margin-top: 4px; }
+    .stat-s { font-size: 12px; color: #4b5563; font-style: italic; display: block; margin-top: 6px; }
+
+    /* ── BREATHING ANIMATION ────────────────────────────── */
+    .breath-scene {
+      display: flex; flex-direction: column; align-items: center; margin-bottom: 26px;
+    }
+    .breath-ring-wrap {
+      position: relative; width: 180px; height: 180px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ring-anim {
+      position: absolute; width: 132px; height: 132px; border-radius: 50%;
+      border: 2px solid rgba(20,184,166,.32);
+    }
+    .lung-anim {
+      width: 112px; height: 112px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(20,184,166,.22) 0%, rgba(20,184,166,.06) 100%);
+      border: 2px solid rgba(20,184,166,.52);
+      display: flex; align-items: center; justify-content: center; font-size: 44px;
+    }
+    .rr-display { font-family: 'JetBrains Mono', monospace; color: var(--teal); font-size: 16px; font-weight: 600; margin-top: 14px; }
+    .rr-sub     { color: var(--txt3); font-size: 12px; margin-top: 3px; }
+
+    /* ── AIR BARS ────────────────────────────────────────── */
+    .air-box { background: rgba(0,0,0,.2); border-radius: 12px; padding: 14px; }
+    .air-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--txt3); margin-bottom: 8px; }
+    .air-bar { display: flex; border-radius: 8px; overflow: hidden; height: 34px; }
+    .air-o2  { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; transition: width .4s ease; min-width: 38px; }
+    .air-n2  { flex: 1; background: rgba(100,116,139,.18); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--txt3); }
+    .air-note { font-size: 12px; color: var(--txt3); margin-top: 8px; font-style: italic; line-height: 1.5; }
+
+    /* ── FIO2 PREVIEW ────────────────────────────────────── */
+    .preview-box { background: rgba(0,0,0,.22); border-radius: 14px; padding: 18px; }
+    .fio2-num   { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; }
+    .fio2-row   { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .fio2-bar-wrap { position: relative; height: 38px; border-radius: 9px; overflow: hidden; background: rgba(100,116,139,.12); margin-bottom: 12px; }
+    .fio2-base  { position: absolute; left: 0; top: 0; height: 100%; width: 21%; background: rgba(100,116,139,.32); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--txt3); font-family: 'JetBrains Mono', monospace; }
+    .fio2-fill  { position: absolute; left: 0; top: 0; height: 100%; border-radius: 9px; transition: width .4s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+    .fio2-fill span { color: #fff; font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .fio2-lvl  { border-radius: 10px; padding: 12px; }
+    .fio2-lvl-t { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .fio2-per  { font-size: 13px; color: var(--txt3); }
+
+    /* ── INFO BOXES ─────────────────────────────────────── */
+    .info { border-radius: 11px; padding: 13px 15px; font-size: 13px; line-height: 1.65; }
+    .info-amber { background: rgba(245,158,11,.07); border: 1px solid rgba(245,158,11,.22); color: #f59e0b; }
+    .info-teal  { background: rgba(20,184,166,.07);  border: 1px solid rgba(20,184,166,.22);  color: #14b8a6; }
+
+    /* ── RECAP GRID (step 4) ─────────────────────────────── */
+    .recap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+    .rc { background: rgba(0,0,0,.22); border-radius: 10px; padding: 10px 13px; }
+    .rc-k { font-size: 10px; color: #374151; text-transform: uppercase; letter-spacing: 1px; font-family: 'JetBrains Mono', monospace; }
+    .rc-v { font-size: 13px; color: var(--txt); margin-top: 4px; line-height: 1.4; }
+
+    /* ── ANALYSIS TEXT ───────────────────────────────────── */
+    .analysis p { margin-bottom: 16px; color: #c2cfe0; font-size: 15px; line-height: 1.8; }
+    .analysis strong { color: #f1f5f9; font-size: 16px; }
+
+    /* ── LOADING DOTS ────────────────────────────────────── */
+    .dots { text-align: center; padding: 26px 0; }
+    .dots span {
+      display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+      background: var(--sky); margin: 0 3px;
+      animation: dotB 1.4s ease-in-out infinite both;
+    }
+    .dots span:nth-child(2) { animation-delay: .16s; }
+    .dots span:nth-child(3) { animation-delay: .32s; }
+    .dots-msg { color: var(--txt3); font-size: 13px; margin-top: 10px; font-style: italic; }
+
+    /* ── DIVIDER ─────────────────────────────────────────── */
+    hr.div { border: none; border-top: 1px solid rgba(255,255,255,.07); margin: 18px 0; }
+
+    /* ── WELCOME ─────────────────────────────────────────── */
+    .welcome { text-align: center; padding: 6px 0 32px; }
+    .welcome-icon { font-size: 62px; display: block; margin-bottom: 22px; }
+    .welcome p { color: var(--txt2); font-size: 16px; line-height: 1.75; max-width: 460px; margin: 0 auto; }
+    .pts { display: flex; flex-direction: column; gap: 14px; margin: 26px 0; text-align: left; }
+    .pt  { display: flex; gap: 12px; align-items: flex-start; }
+    .pt-i { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .pt-t { font-size: 15px; color: var(--txt2); line-height: 1.6; }
+    .pt-t strong { color: var(--txt); }
+
+    /* ── API KEY INPUT ───────────────────────────────────── */
+    .apikey-box {
+      background: rgba(56,189,248,.06); border: 1px solid rgba(56,189,248,.2);
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+    }
+    .apikey-box p { font-size: 13px; color: var(--txt3); margin-bottom: 10px; line-height: 1.6; }
+    .apikey-box a { color: var(--sky); }
+    .apikey-input-row { display: flex; gap: 8px; }
+    .apikey-input-row input { flex: 1; padding: 9px 12px; font-size: 14px; }
+    .apikey-input-row button { padding: 9px 16px; font-size: 14px; border-radius: 9px; border: none; background: var(--sky); color: #06101f; font-weight: 700; cursor: pointer; font-family: Outfit,sans-serif; }
+    .apikey-saved { color: var(--green); font-size: 12px; margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+
+    /* ── NAV ACTIONS ─────────────────────────────────────── */
+    .nav-col { display: flex; flex-direction: column; gap: 10px; }
+    .nav-row { display: flex; gap: 10px; }
+    .nav-row > * { flex: 1; }
+
+    /* ── ANIMATIONS ─────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes dotB {
+      0%,80%,100% { transform: scale(0); }
+      40%          { transform: scale(1); }
+    }
+    .fadeup { animation: fadeUp .35s ease forwards; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width:480px) {
+      .grid2 { grid-template-columns: 1fr; }
+      .recap  { grid-template-columns: 1fr; }
+      .btn-row { flex-direction: column; }
+    }
+  
+    /* ── SLIDERS AMÉLIORÉS ── */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%; height: 10px;
+      border-radius: 5px;
+      background: rgba(255,255,255,.10);
+      outline: none; cursor: pointer;
+      margin-top: 4px;
+      touch-action: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid rgba(255,255,255,.18);
+      box-shadow: 0 2px 12px rgba(0,0,0,.5);
+      transition: transform .15s;
+    }
+    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.18); }
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 10px; border-radius: 5px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      background: #38bdf8;
+    }
+
+    /* ── STEPPER WRAPPER ── */
+    .sl-wrap {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+    }
+    .sl-wrap input[type=range] { flex: 1; }
+    .sl-btn {
+      flex-shrink: 0;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      border: 1.5px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.55);
+      font-size: 20px; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s, transform .1s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .sl-btn:hover  { background: rgba(255,255,255,.12); color: #fff; }
+    .sl-btn:active { transform: scale(.9); }
+
+
+/* ── VIDÉOS ── */
+.video-wrap{position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000;margin:10px 0}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-label{font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;margin-top:14px}
+.video-source{font-size:11px;color:var(--txt3);font-style:italic;margin-top:5px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+// ═══════════════════════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════════════════════
+const PATHOLOGIES = [
+  { id:'sain',            label:'Aucune pathologie respiratoire',  short:'Bonne santé',  icon:'💚' },
+  { id:'bpco_stable',     label:'BPCO stable',                     short:'BPCO stable',  icon:'🫁' },
+  { id:'bpco_decompense', label:'BPCO décompensé',                 short:'BPCO déc.',    icon:'⚠️' },
+  { id:'detresse',        label:'Détresse respiratoire aiguë',     short:'Détresse',     icon:'🔴' },
+  { id:'postop',          label:'Post-opératoire',                  short:'Post-op',      icon:'🏥' },
+  { id:'cardiac',         label:'OAP / Insuffisance cardiaque',    short:'OAP',          icon:'❤️' },
+  { id:'pneumonie',       label:'Pneumonie',                        short:'Pneumonie',    icon:'🦠' },
+];
+const DISPOSITIFS = [
+  { id:'lunettes',      label:'Lunettes nasales',            icon:'👃', dMin:0.5, dMax:6  },
+  { id:'masque_simple', label:'Masque simple',               icon:'😷', dMin:5,   dMax:10 },
+  { id:'mhc',           label:'Masque haute concentration',  icon:'🫧', dMin:8,   dMax:15 },
+];
+
+// ═══════════════════════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════════════════════
+let S = {
+  view: 'welcome',
+  patient: { prenom:'Marie', sexe:'F', age:72, taille:162, poids:65, pathologie:'bpco_stable' },
+  rx:      { dispositif:'lunettes', debit:2 },
+  analyse: '', loading: false,
+  apiKey: localStorage.getItem('simo2_key') || '',
+  apiKeySaved: !!localStorage.getItem('simo2_key'),
+  showKey: false,
+};
+
+// ═══════════════════════════════════════════════════════
+//  PHYSIOLOGIE
+// ═══════════════════════════════════════════════════════
+function physio() {
+  const { age, sexe, poids, taille, pathologie } = S.patient;
+  const pit = Math.max(18, sexe==='H' ? 50+0.91*(taille-152.4) : 45.5+0.91*(taille-152.4));
+  let vt = age<12 ? poids*7.5 : Math.min(750, pit*7);
+  let rr = age<1?42 : age<3?30 : age<6?25 : age<12?20 : age<18?16 : age<65?15 : 17;
+  if      (pathologie==='detresse')        { rr=Math.round(rr*1.75); vt*=0.72; }
+  else if (pathologie==='bpco_decompense') { rr=Math.round(rr*1.40); vt*=0.82; }
+  else if (pathologie==='bpco_stable')     { rr=Math.round(rr*1.15); vt*=0.88; }
+  else if (pathologie==='cardiac')         { rr=Math.round(rr*1.30); vt*=0.88; }
+  else if (pathologie==='pneumonie')       { rr=Math.round(rr*1.25); vt*=0.88; }
+  else if (pathologie==='postop')          { rr=Math.round(rr*1.10); }
+  vt = Math.round(Math.max(80, Math.min(800,vt)));
+  rr = Math.max(10,Math.min(42,rr));
+  const vm  = Math.round((vt*rr)/100)/10;
+  const vo2 = Math.round(poids*3.5);
+  const spo2Map = {sain:age>70?96:98,bpco_stable:93,bpco_decompense:86,detresse:81,postop:95,cardiac:92,pneumonie:90};
+  const spo2 = spo2Map[pathologie]||97;
+  const analog = vt<150?'un verre à liqueur':vt<260?'un pot de yaourt (125 mL)':vt<360?'un grand verre d\'eau':vt<480?'une canette de soda (33 cL)':vt<580?'une bouteille d\'eau (50 cL)':'une grande bouteille d\'eau';
+  return { pit:Math.round(pit), vt, rr, vm, vo2, spo2, analog };
+}
+
+function fio2() {
+  const { dispositif, debit } = S.rx;
+  if (dispositif==='lunettes')      return Math.round(Math.min(44, 21+debit*4));
+  if (dispositif==='masque_simple') return Math.round(Math.min(50, 28+debit*2.5));
+  if (dispositif==='mhc')           return Math.round(Math.min(95, 50+debit*3.5));
+  return 21;
+}
+
+function lvl(f) {
+  if (f<=24) return { t:'Enrichissement très léger',   c:'#22c55e' };
+  if (f<=35) return { t:'Enrichissement modéré',       c:'#84cc16' };
+  if (f<=50) return { t:'Enrichissement significatif', c:'#f59e0b' };
+  if (f<=70) return { t:'Enrichissement élevé',        c:'#f97316' };
+  return           { t:'Enrichissement très élevé',    c:'#ef4444' };
+}
+
+function ageLabel(a) {
+  if (a<3) return 'Nourrisson / bambin';
+  if (a<12) return 'Enfant';
+  if (a<18) return 'Adolescent';
+  if (a<65) return 'Adulte';
+  return 'Personne âgée';
+}
+
+// ═══════════════════════════════════════════════════════
+//  ANIMATION RESPIRATOIRE (CSS injecté dynamiquement)
+// ═══════════════════════════════════════════════════════
+function updateBreath(rr, vt) {
+  const s  = (60/rr).toFixed(2);
+  const sc = Math.min(1.5, 1+vt/1200);
+  let el = document.getElementById('breath-css');
+  if (!el) { el=document.createElement('style'); el.id='breath-css'; document.head.appendChild(el); }
+  el.textContent = `
+    @keyframes breathe  { 0%,100%{transform:scale(1);opacity:.75} 50%{transform:scale(${sc});opacity:1} }
+    @keyframes ring-out { 0%{transform:scale(1);opacity:.4}        100%{transform:scale(1.9);opacity:0} }
+    .lung-anim { animation: breathe  ${s}s ease-in-out infinite; }
+    .ring-anim { animation: ring-out ${s}s ease-out   infinite; }
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderMd(text) {
+  return text.split('\n\n').filter(p=>p.trim()).map(para => {
+    const parts = para.split(/\*\*([^*]+)\*\*/g);
+    const inner = parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+function disp() { return DISPOSITIFS.find(d=>d.id===S.rx.dispositif)||DISPOSITIFS[0]; }
+function patho(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0]; }
+
+// ═══════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════
+//  RENDU PRINCIPAL
+// ═══════════════════════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(t){
+  return t.split('\n\n').filter(p=>p.trim()).map(p=>{
+    const parts=p.split(/\*\*([^*]+)\*\*/g);
+    return '<p>'+parts.map((x,i)=>i%2===1?'<strong>'+esc(x)+'</strong>':esc(x)).join('')+'</p>';
+  }).join('');
+}
+
+function render(scrollTop=false){
+  const ph=physio(), fi=fio2(), lv=lvl(fi), dp=disp(), pa=patho();
+  const pr=S.patient.prenom||'votre patient';
+  const stepNum={step1:1,step2:2,step3:3,step4:4}[S.view]||0;
+  let h='';
+
+  if(S.view!=='welcome'){
+    const steps=['Patient','Physiologie','Prescription','Analyse'];
+    h+=`<div class="site-header">
+      <div class="badge">B.3 · Pratiques infirmières · Référentiel 2026</div>
+      <h1>PraxisO₂</h1>
+      <p>Comprendre l\'oxygénothérapie à travers la physiologie d\'un patient réel</p>
+    </div>
+    <div class="steps-bar">
+      ${steps.map((s,i)=>`
+        <div class="step-dot ${stepNum>i+1?'done':stepNum===i+1?'active':''}">${stepNum>i+1?'✓':i+1}</div>
+        <span class="step-lbl ${stepNum===i+1?'active':''}">${s}</span>
+        ${i<3?'<div class="step-line"></div>':''}
+      `).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+      <div class="badge">B.3 · Pratiques infirmières · Référentiel 2026</div>
+      <h1>PraxisO₂</h1>
+    </div>`;
+  }
+
+  h+='<div class="wrap">';
+
+  // ── WELCOME ──
+  if(S.view==='welcome'){
+    h+=`<div class="card fadeup" style="border-color:rgba(56,189,248,.18)">
+      <div class="welcome">
+        <span class="welcome-icon">🫁</span>
+        <p>Ce n\'est pas un outil de calcul. C\'est un outil de <strong style="color:var(--txt)">compréhension clinique</strong> — visualisez les poumons de votre patient se soulever en temps réel.</p>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Construisez un patient réel</strong> — âge, sexe, pathologie</span></div>
+          <div class="pt"><span class="pt-i">🫁</span><span class="pt-t"><strong>Visualisez ses poumons en direct</strong> — FR, volume courant, VM</span></div>
+          <div class="pt"><span class="pt-i">📋</span><span class="pt-t"><strong>Entrez la prescription médicale</strong> — dispositif, débit, FiO₂</span></div>
+          <div class="pt"><span class="pt-i">🔬</span><span class="pt-t"><strong>Analysez la cohérence clinique</strong> — Premium</span></div>
+        </div>
+        <button class="btn-p" onclick="go('step1')">Commencer avec un patient →</button>
+      </div>
+    </div>`;
+  }
+
+  // ── STEP 1 — PATIENT ──
+  else if(S.view==='step1'){
+    h+=`<div class="card fadeup" style="border-color:rgba(245,158,11,.18)">
+      <div class="card-title" style="color:var(--amber)">👤 Construisez votre patient</div>
+      <div class="card-sub">Chaque paramètre modifiera en temps réel la physiologie affichée à l\'étape suivante.</div>
+      <div class="col">
+        <div>
+          <label class="lbl">Prénom</label>
+          <input type="text" value="${esc(S.patient.prenom)}" placeholder="Ex : Marie, Jean, Amina…" oninput="S.patient.prenom=this.value">
+        </div>
+        <div>
+          <label class="lbl">Sexe biologique</label>
+          <div class="grid2">
+            <div class="sel ${S.patient.sexe==='F'?'on':''}" onclick="S.patient.sexe='F';render()" style="justify-content:center;flex-direction:column;text-align:center;padding:14px">
+              <span style="font-size:26px">👩</span><span style="margin-top:5px;font-weight:500">Femme</span>
+            </div>
+            <div class="sel ${S.patient.sexe==='H'?'on':''}" onclick="S.patient.sexe='H';render()" style="justify-content:center;flex-direction:column;text-align:center;padding:14px">
+              <span style="font-size:26px">👨</span><span style="margin-top:5px;font-weight:500">Homme</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Âge</label><span class="lbl-val">${S.patient.age} ans</span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upPat('age',-1)">−</button>
+            <input type="range" min="0" max="100" value="${S.patient.age}" oninput="S.patient.age=+this.value;render()">
+            <button class="sl-btn" onclick="upPat('age',1)">+</button>
+          </div>
+        </div>
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Poids</label><span class="lbl-val">${S.patient.poids} kg</span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upPat('poids',-1)">−</button>
+            <input type="range" min="3" max="200" value="${S.patient.poids}" oninput="S.patient.poids=+this.value;render()">
+            <button class="sl-btn" onclick="upPat('poids',1)">+</button>
+          </div>
+        </div>
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Taille</label><span class="lbl-val">${S.patient.taille} cm</span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upPat('taille',-1)">−</button>
+            <input type="range" min="100" max="210" value="${S.patient.taille}" oninput="S.patient.taille=+this.value;render()">
+            <button class="sl-btn" onclick="upPat('taille',1)">+</button>
+          </div>
+        </div>
+        <div>
+          <label class="lbl">Pathologie respiratoire</label>
+          <div class="col8">
+            ${PATHOLOGIES.map(p=>`
+              <div class="sel ${S.patient.pathologie===p.id?'on':''}" onclick="S.patient.pathologie='${p.id}';render()">
+                <span class="si">${p.icon}</span>
+                <div style="font-weight:500">${p.label}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-p" onclick="go('step2')">Visualiser la physiologie →</button>
+    </div>
+    <div class="card fadeup" style="border-color:rgba(56,189,248,.1);margin-top:4px">
+      <div class="video-label">📺 Physiologie respiratoire — SFAR</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/u90Ri648-RM"
+          title="Notions de physiologie respiratoire"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Physiologie respiratoire · SFAR · Societe Francaise d'Anesthesie et Reanimation</div>
+      <div class="video-label">📺 Les echanges gazeux — Au coeur des organes</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/tYTbbPSGIHk"
+          title="Au coeur des organes : La respiration"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Les echanges gazeux au niveau alveolaire · Animation pedagogique</div>
+    </div>`;
+  }
+
+  // ── STEP 2 — PHYSIOLOGIE ──
+  else if(S.view==='step2'){
+    const imc=(S.patient.poids/((S.patient.taille/100)**2)).toFixed(1);
+    h+=`<div class="card fadeup" style="border-color:rgba(56,189,248,.18)">
+      <div class="card-title" style="color:var(--em)">🫁 Physiologie respiratoire — ${esc(pr)}</div>
+      <div class="card-sub">Ces valeurs sont calculées pour CE patient précis. Elles changent si vous modifiez son profil.</div>
+      
+      <!-- Animation poumons -->
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:72px;animation:breathe ${(60/ph.rr).toFixed(1)}s ease-in-out infinite;display:inline-block">🫁</div>
+      </div>
+      
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="stat">
+          <span class="stat-v" style="color:var(--em)">${ph.rr}</span>
+          <span class="stat-l">cycles/min</span>
+          <span class="stat-s">Fréquence respiratoire</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v" style="color:var(--em)">${ph.vt}</span>
+          <span class="stat-l">mL</span>
+          <span class="stat-s">Volume courant</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v" style="color:var(--em)">${ph.vm}</span>
+          <span class="stat-l">L/min</span>
+          <span class="stat-s">Volume minute</span>
+        </div>
+        <div class="stat">
+          <span class="stat-v" style="color:${ph.spo2<90?'var(--red)':ph.spo2<95?'var(--amber)':'var(--green)'}">
+            ${ph.spo2}%
+          </span>
+          <span class="stat-l">SpO₂ estimée</span>
+          <span class="stat-s">Sans O₂ supplémentaire</span>
+        </div>
+      </div>
+
+      <div class="info info-em">
+        💡 Volume courant de ${esc(pr)} ≈ <strong>${esc(ph.analog)}</strong>
+      </div>
+
+      <div class="info info-${pa.id==='sain'?'grn':pa.id.includes('bpco')||pa.id==='detresse'?'red':'amb'}" style="margin-top:10px">
+        ${pa.icon} <strong>${pa.label}</strong> — ${
+          pa.id==='sain'?'Physiologie normale. Aucune adaptation particulière nécessaire.':
+          pa.id==='bpco_stable'?'Hypoxémie chronique. Cible SpO₂ 88–92% — éviter l\'hyperoxie.':
+          pa.id==='bpco_decompense'?'Décompensation. Attention au drive hypoxique — O₂ titré.':
+          pa.id==='detresse'?'Détresse respiratoire aiguë. Majoration urgente du support ventilatoire.':
+          pa.id==='cardiac'?'Insuffisance cardiaque. Dyspnée d\'origine centrale — traiter la cause.':
+          pa.id==='pneumonie'?'Pneumonie. Hypoxémie inflammatoire — O₂ pour maintenir SpO₂ > 94%.':
+          pa.id==='postop'?'Post-opératoire. Surveillance rapprochée — risque atélectasie.':''}
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step1')">← Modifier le patient</button>
+      <button class="btn-p" onclick="go('step3')">Simuler la prescription →</button>
+    </div>
+    <div class="card fadeup" style="border-color:rgba(56,189,248,.1);margin-top:4px">
+      <div class="video-label">📺 Oxygenotherapie a bas debit — Indications et techniques (Avril 2025)</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/JfAQFVi1Rls"
+          title="Presentation de l'Oxygenotherapie a Bas Debit"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Oxygenotherapie bas debit · Indications, Techniques, Precautions · Avril 2025</div>
+      <div class="video-label">📺 Dispositifs d'oxygenotherapie — Comparatif</div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/g_02Ve68yb8"
+          title="Dispositifs d'oxygenotherapie"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-source">Lunettes, masque simple, masque haute concentration · Comparatif clinique</div>
+    </div>`;
+  }
+
+  // ── STEP 3 — PRESCRIPTION ──
+  else if(S.view==='step3'){
+    const spo2_cible = pa.id==='bpco_stable'||pa.id==='bpco_decompense' ? '88–92%' : '94–98%';
+    h+=`<div class="card fadeup" style="border-color:rgba(245,158,11,.18)">
+      <div class="card-title" style="color:var(--amber)">📋 Prescription O₂ — ${esc(pr)}</div>
+      <div class="card-sub">Cible SpO₂ pour ce profil : <strong style="color:var(--em)">${spo2_cible}</strong></div>
+
+      <div style="margin-bottom:20px">
+        <label class="lbl">Dispositif d\'oxygénothérapie</label>
+        <div class="col8">
+          ${DISPOSITIFS.map(d=>`
+            <div class="sel ${S.rx.dispositif===d.id?'on':''}" onclick="S.rx.dispositif='${d.id}';S.rx.debit=Math.min(Math.max(S.rx.debit,${d.dMin}),${d.dMax});render()">
+              <span class="si">${d.icon}</span>
+              <div>
+                <div style="font-weight:500">${d.label}</div>
+                <div class="sd">${d.dMin}–${d.dMax} L/min</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div>
+        <div class="lbl-row">
+          <label class="lbl" style="margin:0">Débit O₂</label>
+          <span class="lbl-val">${S.rx.debit} L/min</span>
+        </div>
+        <div class="sl-wrap">
+          <button class="sl-btn" onclick="upDebit(-0.5)">−</button>
+          <input type="range" min="${dp.dMin}" max="${dp.dMax}" step="0.5" value="${S.rx.debit}" oninput="S.rx.debit=+this.value;render()">
+          <button class="sl-btn" onclick="upDebit(0.5)">+</button>
+        </div>
+      </div>
+
+      <div style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:14px;padding:18px;margin-top:16px;text-align:center">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;font-family:monospace">FiO₂ délivrée estimée</div>
+        <div style="font-size:52px;font-weight:700;color:var(--em);font-family:monospace">${fi}%</div>
+        <div style="font-size:14px;color:var(--txt3);margin-top:4px">${lv.t}</div>
+        <div style="height:10px;border-radius:5px;background:rgba(255,255,255,.06);margin-top:12px;overflow:hidden">
+          <div style="height:100%;width:${Math.min(100,(fi-21)/74*100)}%;background:${lv.c};border-radius:5px;transition:width .5s"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-family:monospace;font-size:10px;color:var(--txt3);margin-top:4px">
+          <span>21% (air)</span><span>100%</span>
+        </div>
+      </div>
+
+      <div class="info info-${fi>55&&(pa.id==='bpco_stable'||pa.id==='bpco_decompense')?'red':fi<24?'amb':'grn'}" style="margin-top:12px">
+        ${fi>55&&(pa.id==='bpco_stable'||pa.id==='bpco_decompense')?
+          '⚠️ <strong>Attention :</strong> FiO₂ trop élevée pour un patient BPCO — risque de dépression du drive hypoxique. Cibler 88–92%.':
+          fi<24?'⚠️ Débit insuffisant — FiO₂ proche de l\'air ambiant. Augmenter le débit.':
+          '✓ Prescription cohérente avec le profil du patient.'}
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-g" onclick="go('step2')">← Physiologie</button>
+      <button class="btn-p" onclick="go('step4')">Analyse clinique →</button>
+    </div>`;
+  }
+
+  // ── STEP 4 — ANALYSE ──
+  else if(S.view==='step4'){
+    h+=`<div class="card fadeup" style="border-color:rgba(56,189,248,.18)">
+      <div class="card-title" style="color:var(--em)">🔬 Analyse clinique — ${esc(pr)}</div>
+      
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="stat"><span class="stat-v">${esc(pa.label)}</span><span class="stat-l">Pathologie</span></div>
+        <div class="stat"><span class="stat-v">${esc(dp.label)}</span><span class="stat-l">Dispositif</span></div>
+        <div class="stat"><span class="stat-v">${S.rx.debit} L/min</span><span class="stat-l">Débit</span></div>
+        <div class="stat"><span class="stat-v" style="color:var(--em)">${fi}%</span><span class="stat-l">FiO₂</span></div>
+      </div>
+
+      ${S.loading?`<div class="dots"><span></span><span></span><span></span><div class="dots-msg">Analyse clinique en cours…</div></div>`:''}
+      ${!S.loading&&!S.analyse?`
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:18px">
+            <div style="font-size:36px;margin-bottom:8px">🔒</div>
+            <div style="font-family:'Spectral',serif;font-size:17px;font-weight:700;color:var(--txt);margin-bottom:5px">Analyse clinique — Accès Premium</div>
+          </div>
+          <div class="grid2" style="margin-bottom:14px">
+            <div style="border:1px solid rgba(56,189,248,.2);background:rgba(56,189,248,.05);border-radius:12px;padding:12px">
+              <div style="color:var(--grn);font-size:11px;font-weight:700;margin-bottom:6px">✓ GRATUIT</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Étapes 1–3</div>
+            </div>
+            <div style="border:1px solid rgba(56,189,248,.25);background:rgba(56,189,248,.06);border-radius:12px;padding:12px">
+              <div style="color:var(--em);font-size:11px;font-weight:700;margin-bottom:6px">✦ PREMIUM</div>
+              <div style="font-size:12px;color:var(--txt3);line-height:1.8">Analyse IA · 4,99€</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:10px">
+            <a href="mailto:contact@praxiscare.fr" style="display:inline-block;padding:11px 26px;border-radius:10px;background:linear-gradient(135deg,var(--em2,#0ea5e9),var(--em));color:#04090f;font-weight:700;font-size:14px;text-decoration:none">Obtenir l\'accès →</a>
+          </div>
+          <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt3);font-size:11px;cursor:pointer;font-family:monospace">🔑 Espace formateur</button>
+          </div>
+          ${S.showKey?`<div class="apikey-box" style="margin-top:10px">
+            <p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div><div style="text-align:center;margin-top:10px"><button class="btn-p" onclick="runAnalyse()">🔍 Lancer l\'analyse</button></div>':''}
+          </div>`:''}
+        </div>`:''}
+      ${!S.loading&&S.analyse?`<div class="analysis fadeup">${renderMd(S.analyse)}</div>`:''}
+    </div>
+    <div class="nav-col">
+      <div class="nav-row">
+        <button class="btn-g" onclick="go('step3')">← Prescription</button>
+        <button class="btn-g" onclick="runAnalyse()" style="color:var(--em);border-color:rgba(56,189,248,.25)">↺ Relancer</button>
+      </div>
+      <button class="btn-g btn-full" onclick="reset()" style="color:var(--teal);border-color:rgba(56,189,248,.2)">✦ Nouveau patient</button>
+    </div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+  if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── ACTIONS ──
+function go(v){S.view=v;render(true)}
+function upPat(k,d){S.patient[k]=Math.max(0,Math.min(220,S.patient[k]+d));render()}
+function upDebit(d){
+  const dp=disp();
+  S.rx.debit=Math.round((Math.max(dp.dMin,Math.min(dp.dMax,S.rx.debit+d)))*2)/2;
+  render();
+}
+function saveKey(){localStorage.setItem('simo2_key',S.apiKey);S.apiKeySaved=true;render()}
+function reset(){S={...S,view:'welcome',patient:{prenom:'',sexe:'F',age:65,poids:65,taille:165,pathologie:'sain'},rx:{dispositif:'lunettes',debit:2},analyse:'',showKey:false};render(true)}
+
+async function runAnalyse(){
+  const ph=physio(),fi=fio2(),dp=disp(),pa=patho();
+  S.loading=true;S.analyse='';render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:`Tu es formateur IFSI expert en oxygénothérapie. Analyse cette prescription pour un étudiant.
+Patient: ${S.patient.prenom}, ${S.patient.sexe==='H'?'homme':'femme'} ${S.patient.age} ans, ${S.patient.poids}kg, ${S.patient.taille}cm.
+Pathologie: ${pa.label}. Physiologie: FR ${ph.rr}/min, VT ${ph.vt}mL, SpO₂ estimée ${ph.spo2}%.
+Prescription: ${dp.label} à ${S.rx.debit} L/min → FiO₂ estimée ${fi}%.
+Réponds en 4 blocs avec titres en gras: **🎯 Cohérence**, **⚠️ Points de vigilance**, **🔬 Physiologie**, **✅ Surveillance**. Tutoie l\'étudiant.`}]})
+    });
+    const d=await res.json();
+    if(d.error)throw new Error(d.error.message);
+    S.analyse=d.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){S.analyse=`**Erreur**\n\n${e.message}`}
+  S.loading=false;render();
+}
+
+try {
+  render();
+} catch(e) {
+  document.getElementById('app').innerHTML = `
+    <div style="padding:30px;color:#ef4444;font-family:monospace;font-size:14px;background:#1a0a0a;min-height:100vh">
+      <h2 style="margin-bottom:16px">Erreur JavaScript détectée</h2>
+      <p style="color:#e2e8f0;margin-bottom:8px"><strong>Message :</strong> ${e.message}</p>
+      <p style="color:#e2e8f0;margin-bottom:8px"><strong>Type :</strong> ${e.name}</p>
+      <p style="color:#94a3b8;font-size:12px;margin-top:16px">Transmettez ce message au développeur.</p>
+    </div>`;
+}
+</script>
+  <!-- PraxisCare Stats -->
+  <script src="praxiscare-stats.js"></script>
+  <script>PraxisStats.init('simo2');</script>
+</body>
+</html>

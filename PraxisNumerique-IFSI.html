@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisNumérique · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:    #06080f;
+  --bg2:   #0b0e18;
+  --card:  rgba(255,255,255,.028);
+  --bdr:   rgba(100,180,255,.08);
+  --txt:   #c8d8f0;
+  --txt2:  #4868a0;
+  --txt3:  #121828;
+  --em:    #38c8ff;
+  --em2:   #0898cf;
+  --green: #30d880;
+  --warn:  #f0a830;
+  --red:   #f04848;
+  --purple:'#a060f0';
+  --pur:   #a060f0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Syne',sans-serif;
+  background:var(--bg);color:var(--txt);
+  min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative;
+}
+/* Fond circuit imprimé */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(56,200,255,.07) 0%,transparent 50%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(48,216,128,.05) 0%,transparent 45%);
+  background-image:
+    linear-gradient(rgba(56,200,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,200,255,.03) 1px, transparent 1px);
+  background-size:50px 50px, 50px 50px;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 100% 60% at 50% 0%, rgba(56,200,255,.04) 0%,transparent 60%);
+}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.site-header{padding:44px 24px 28px;text-align:center;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(56,200,255,.08);border:1px solid rgba(56,200,255,.2);
+  color:var(--em);padding:5px 18px;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;
+}
+.site-header h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(28px,6vw,52px);font-weight:800;
+  letter-spacing:-2px;line-height:1.0;margin-bottom:8px;
+}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+
+/* ── ONGLETS ── */
+.tabs{display:flex;gap:4px;padding:0 0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{
+  padding:8px 16px;border-radius:4px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;
+  white-space:nowrap;transition:all .18s;font-family:'Syne',sans-serif;
+  letter-spacing:.5px;-webkit-tap-highlight-color:transparent;
+}
+.tab:hover{color:var(--txt);background:rgba(56,200,255,.04)}
+.tab.active{background:rgba(56,200,255,.1);border-color:rgba(56,200,255,.35);color:var(--em)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:10px;padding:24px;margin-bottom:14px;position:relative;z-index:1}
+.card.em{border-top:2px solid var(--em)}
+.card.green{border-top:2px solid var(--green)}
+.card.warn{border-top:2px solid var(--warn)}
+.card.pur{border-top:2px solid var(--pur)}
+.card-title{font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:13px;margin-bottom:18px;line-height:1.65;font-family:'JetBrains Mono',monospace}
+
+/* ── DPI NAVIGATOR ── */
+.dpi-tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap}
+.dpi-tab{
+  padding:6px 12px;border-radius:4px;border:1px solid rgba(56,200,255,.15);
+  background:rgba(56,200,255,.04);color:var(--txt2);font-size:11px;
+  cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.dpi-tab.on{background:rgba(56,200,255,.12);border-color:rgba(56,200,255,.35);color:var(--em)}
+.dpi-screen{
+  background:rgba(0,0,0,.4);border:1px solid rgba(56,200,255,.12);
+  border-radius:8px;padding:18px;font-family:'JetBrains Mono',monospace;
+  font-size:12px;min-height:160px;
+}
+.dpi-field{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.dpi-field:last-child{border-bottom:none}
+.dpi-label{color:var(--txt2);font-size:11px;letter-spacing:1px;flex-shrink:0;width:120px}
+.dpi-value{color:var(--txt);font-size:12px;line-height:1.5}
+.dpi-value.alert{color:var(--warn)}
+.dpi-value.ok{color:var(--green)}
+.dpi-value.critical{color:var(--red)}
+
+/* ── TÉLÉSURVEILLANCE ── */
+.tele-device{
+  background:rgba(48,216,128,.05);border:1.5px solid rgba(48,216,128,.2);
+  border-radius:10px;padding:16px;margin-bottom:8px;cursor:pointer;
+  transition:all .2s;-webkit-tap-highlight-color:transparent;
+}
+.tele-device:hover{background:rgba(48,216,128,.09)}
+.tele-device.active{background:rgba(48,216,128,.1);border-color:rgba(48,216,128,.4)}
+.tele-nom{font-size:14px;font-weight:700;color:var(--green);margin-bottom:3px}
+.tele-desc{font-size:12px;color:var(--txt2);line-height:1.6}
+.tele-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(48,216,128,.1)}
+.tele-device.active .tele-detail{display:block}
+
+/* ── RGPD ── */
+.rgpd-item{
+  padding:14px;border-radius:8px;margin-bottom:8px;
+  border-left:3px solid transparent;background:rgba(0,0,0,.2);
+  cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;
+}
+.rgpd-item:hover{background:rgba(0,0,0,.3)}
+.rgpd-titre{font-size:14px;font-weight:700;margin-bottom:3px}
+.rgpd-body{font-size:12px;color:var(--txt2);line-height:1.7;display:none;margin-top:8px}
+.rgpd-item.open .rgpd-body{display:block}
+
+/* ── IA SANTÉ ── */
+.ia-card{
+  background:rgba(160,96,240,.05);border:1.5px solid rgba(160,96,240,.18);
+  border-radius:10px;padding:18px;margin-bottom:10px;
+  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;
+}
+.ia-card:hover{background:rgba(160,96,240,.09)}
+.ia-card.active{background:rgba(160,96,240,.1);border-color:rgba(160,96,240,.35)}
+.ia-titre{font-size:15px;font-weight:700;color:var(--pur);margin-bottom:4px}
+.ia-body{display:none;font-size:12px;color:var(--txt2);line-height:1.7;margin-top:8px}
+.ia-card.active .ia-body{display:block}
+
+/* ── QUIZ ── */
+.quiz-opt{
+  padding:12px 16px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);
+  cursor:pointer;font-size:14px;margin-bottom:8px;
+  transition:all .18s;display:flex;align-items:center;gap:12px;
+  -webkit-tap-highlight-color:transparent;
+}
+.quiz-opt:hover{background:rgba(56,200,255,.05);color:var(--txt)}
+.quiz-opt.correct{background:rgba(48,216,128,.1);border-color:rgba(48,216,128,.4);color:var(--green)}
+.quiz-opt.wrong  {background:rgba(240,72,72,.1); border-color:rgba(240,72,72,.4); color:var(--red)}
+.quiz-expl{background:rgba(56,200,255,.05);border:1px solid rgba(56,200,255,.15);border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+
+/* ── INFO ── */
+.info{border-radius:6px;padding:11px 14px;font-size:13px;line-height:1.75;margin-bottom:12px}
+.info-em  {background:rgba(56,200,255,.07); border-left:3px solid rgba(56,200,255,.5);  color:var(--em)}
+.info-green{background:rgba(48,216,128,.07);border-left:3px solid rgba(48,216,128,.5);  color:var(--green)}
+.info-warn {background:rgba(240,168,48,.07); border-left:3px solid rgba(240,168,48,.5);  color:var(--warn)}
+.info-pur  {background:rgba(160,96,240,.07); border-left:3px solid rgba(160,96,240,.5);  color:var(--pur)}
+
+/* ── BOUTONS ── */
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:6px;color:#06080f;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;padding:12px 26px;cursor:pointer;transition:opacity .2s,transform .1s;}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);border-radius:6px;color:var(--txt2);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;padding:10px 18px;cursor:pointer;transition:all .18s;}
+.btn-g:hover{background:rgba(56,200,255,.05);color:var(--txt)}
+.btn-full{width:100%}
+.col8{display:flex;flex-direction:column;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+hr.div{border:none;border-top:1px solid rgba(100,180,255,.07);margin:16px 0}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.3);border:1px solid rgba(56,200,255,.07);border-radius:8px;padding:12px;text-align:center}
+.stat-v{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--em);display:block}
+.stat-l{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;font-family:'JetBrains Mono',monospace;display:block;margin-top:4px}
+
+/* ── PROGRESS ── */
+.progress-bar-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .6s ease}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:24px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:13px;margin-top:10px;font-family:'JetBrains Mono',monospace}
+.analysis p{margin-bottom:14px;font-size:15px;line-height:1.85;color:#6080a0}
+.analysis strong{color:var(--txt)}
+
+/* ── PREMIUM ── */
+.premium-box{background:rgba(0,0,0,.3);border:1.5px solid rgba(56,200,255,.12);border-radius:10px;padding:24px;margin-bottom:14px}
+.apikey-box{background:rgba(56,200,255,.04);border:1px solid rgba(56,200,255,.12);border-radius:6px;padding:12px}
+.apikey-box p{font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);font-family:'JetBrains Mono',monospace;outline:none}
+.apikey-row input:focus{border-color:rgba(56,200,255,.3)}
+.apikey-row button{padding:9px 14px;border:none;border-radius:6px;background:var(--em2);color:#06080f;font-weight:700;cursor:pointer;font-size:12px}
+.apikey-saved{color:var(--green);font-size:11px;margin-top:5px;font-family:'JetBrains Mono',monospace}
+
+/* ── WELCOME ── */
+.pts{display:flex;flex-direction:column;gap:10px;margin:18px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+/* ── TAG ── */
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-top:5px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.fadeup{animation:fadeUp .35s ease forwards}
+.cursor{animation:blink 1s step-end infinite}
+@media(max-width:480px){.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+
+const DPI_SCREENS = {
+  identite:{
+    titre:'Identité patient',
+    fields:[
+      {l:'NOM / Prénom',v:'MARTIN Jean',ok:true},
+      {l:'DDN / IPP',v:'12/04/1956 — IPP: 2045-6782',ok:true},
+      {l:'Médecin traitant',v:'Dr. Dupont — Tél: 04 72 XX XX XX',ok:true},
+      {l:'Allergie(s)',v:'⚠ Pénicilline — AINS',alert:true},
+      {l:'Groupe sanguin',v:'A+ (vérifié le 14/03/2025)',ok:true},
+      {l:'Directives anticipées',v:'Non renseignées',alert:true},
+    ]
+  },
+  constantes:{
+    titre:'Constantes du jour',
+    fields:[
+      {l:'PA',v:'156/94 mmHg — Heure : 08h30',alert:true},
+      {l:'FC',v:'88 bpm',ok:true},
+      {l:'SpO₂',v:'97%',ok:true},
+      {l:'T°',v:'37,2°C',ok:true},
+      {l:'Glycémie cap.',v:'1,82 g/L (post-prandial)',alert:true},
+      {l:'Poids',v:'89 kg (+2 kg vs J-3)',critical:true},
+    ]
+  },
+  traitements:{
+    titre:'Traitements en cours',
+    fields:[
+      {l:'Metformine',v:'1000 mg × 2/j — Matin/Soir',ok:true},
+      {l:'Ramipril',v:'5 mg × 1/j — Matin',ok:true},
+      {l:'Furosémide',v:'40 mg × 1/j — Matin ⚠ Surveillance K+',alert:true},
+      {l:'Bisoprolol',v:'2,5 mg × 1/j — Matin',ok:true},
+      {l:'Insuline basale',v:'Glargine 16UI — 22h — Nouveau',alert:true},
+      {l:'Dernière admin.',v:'✓ Vérifiée 08h45 — IDE: Dupont',ok:true},
+    ]
+  },
+  transmissions:{
+    titre:'Transmissions ciblées',
+    fields:[
+      {l:'Date/Heure',v:'15/05/2026 — 14h20',ok:true},
+      {l:'Cible',v:'DOULEUR / ŒDÈME',alert:true},
+      {l:'Données',v:'Patient se plaint douleur mollet G 6/10. Œdème tibia gauche augmenté vs matin.',ok:true},
+      {l:'Actions',v:'Écho-doppler demandée. Médecin prévenu. Alitement membre surélevé.',ok:true},
+      {l:'Résultats',v:'En attente radio. Prochain contrôle 16h.',alert:true},
+      {l:'IDE',v:'Dupont Marie — Signature électronique',ok:true},
+    ]
+  }
+};
+
+const TELE_DEVICES = [
+  {id:'balance', nom:'Balance connectée', icon:'⚖️', couleur:var(--green),
+   desc:'Mesure quotidienne du poids — envoi automatique au DPI et alertes IDE si +2kg en 3 jours.',
+   usage:'Insuffisance cardiaque, insuffisance rénale, obésité. L\'IDE programme les seuils d\'alerte personnalisés. Données accessibles via l\'application mobile sécurisée.',
+   avantages:'Détection précoce décompensation. Évite l\'hospitalisation si alerte rapide. Autonomise le patient.',
+   limites:'Connexion Internet nécessaire. Nécessite l\'éducation du patient. Données doivent être intégrées dans le DPI.'},
+  {id:'tension', nom:'Tensiomètre connecté', icon:'🫀', couleur:'#e06040',
+   desc:'Automesure à domicile — 3 mesures matin et soir pendant 3 jours (règle des 3).',
+   usage:'HTA, suivi post-AVC, insuffisance cardiaque. Données transmises au médecin et IDE en temps réel. Règle des 3 : 3 mesures, 3 moments, 3 jours.',
+   avantages:'Élimination de l\'effet blouse blanche. Suivi en conditions réelles. Aide à l\'observance.',
+   limites:'Brassard mal positionné = mesure fausse. L\'IDE doit vérifier la technique lors des visites.'},
+  {id:'glycemie', nom:'Capteur glucose continu (CGM)', icon:'🩸', couleur:'#e8a840',
+   desc:'Capteur sous-cutané mesurant la glycémie toutes les 5 minutes — courbe continue partagée avec l\'IDE.',
+   usage:'Diabète type 1 et 2 sous insuline. Patch changé tous les 14 jours. L\'IDE vérifie la pose, la courbe (TIR : temps dans la cible), les hypoglycémies nocturnes.',
+   avantages:'Supprime la douleur des dextros répétitifs. Détecte les hypos nocturnes. Motive le patient par visualisation.',
+   limites:'Décalage de 5-15 min vs glycémie capillaire. Coût. Calibration nécessaire pour certains modèles.'},
+  {id:'spo2', nom:'Oxymètre connecté', icon:'🫁', couleur:'#4090b8',
+   desc:'SpO₂ et FC en continu — alertes automatiques si SpO₂ < seuil programmé.',
+   usage:'BPCO, insuffisance respiratoire, oxygénothérapie à domicile, apnée du sommeil. L\'IDE programme les seuils d\'alerte selon la pathologie (ex: SpO₂ < 88% en BPCO).',
+   avantages:'Surveillance nocturne. Détection exacerbations précoces. Sécurisation des patients à risque.',
+   limites:'Vernis à ongles, mouvements = artefacts. Ne remplace pas l\'évaluation clinique.'},
+];
+
+const RGPD_ITEMS = [
+  {id:'consentement', couleur:'#38c8ff', titre:'Consentement éclairé et droit à l\'information',
+   corps:'Le patient doit être informé de façon claire et compréhensible de : quelles données sont collectées, pourquoi (finalité), qui y a accès, combien de temps elles sont conservées. Il doit consentir explicitement. En santé, le consentement peut être présumé pour les données nécessaires aux soins, mais pas pour la recherche ou les assurances.'},
+  {id:'minimisation', couleur:'#30d880', titre:'Principe de minimisation des données',
+   corps:'Ne collecter que les données strictement nécessaires à la finalité. En pratique IDE : ne pas noter dans le DPI des informations personnelles (situation familiale, convictions religieuses) qui ne sont pas utiles aux soins. Les données de santé sont des données sensibles — niveau de protection maximal du RGPD.'},
+  {id:'securite', couleur:'#f0a830', titre:'Sécurité et confidentialité des données',
+   corps:'Mot de passe DPI personnel et non partagé — jamais laisser une session ouverte. MSSanté (Messagerie Sécurisée de Santé) obligatoire pour tout envoi de données de santé par courriel. Interdiction formelle d\'envoyer des données patients par Gmail, WhatsApp ou tout service non agréé. Chiffrement des données stockées.'},
+  {id:'violation', couleur:'#f04848', titre:'Violation de données — Que faire ?',
+   corps:'Toute violation de données de santé (accès non autorisé, vol, perte) doit être notifiée à la CNIL dans les 72 heures. Et au patient concerné si la violation est susceptible de lui causer un risque élevé. En pratique : ordinateur volé avec données patients non chiffrées = obligation de notification. L\'IDE doit connaître le référent sécurité de son établissement ou réseau.'},
+  {id:'droits', couleur:'#a060f0', titre:'Droits des patients sur leurs données',
+   corps:'Droit d\'accès : le patient peut demander à consulter ses données. Droit de rectification : corriger une erreur. Droit à l\'effacement : limité en santé (conservation légale 20 ans pour les DPI). Droit à la portabilité : récupérer ses données dans un format lisible. L\'IDE doit orienter le patient vers le DPO (Délégué à la Protection des Données) de l\'établissement.'},
+];
+
+const IA_USAGES = [
+  {id:'detection', titre:'Détection précoce de dégradation', couleur:'#38c8ff',
+   corps:'Les algorithmes d\'IA analysent les données du DPI (constantes, médicaments, résultats bio) et alertent l\'IDE sur une possible dégradation clinique AVANT les signes cliniques visibles. Score NEWS2 automatisé, prédiction de réhospitalisation, détection des sepsis précoces. L\'IDE reste le décideur — l\'IA est un assistant.'},
+  {id:'aide_decision', titre:'Aide à la décision clinique', couleur:'#30d880',
+   corps:'Alertes interactions médicamenteuses dans le circuit du médicament. Suggestions de protocoles selon les antécédents. Vérification des dosages selon le poids et la fonction rénale. En France, ces outils doivent être certifiés dispositifs médicaux (marquage CE) et n\'engagent pas la responsabilité de l\'IDE si l\'alerte est suivie de bonne foi.'},
+  {id:'admin', titre:'IA et tâches administratives', couleur:'#a060f0',
+   corps:'Génération automatique des transmissions à partir des constantes (aide à la rédaction). Planification optimisée des tournées IDE à domicile. Rappels automatiques de rendez-vous. Traitement des ordonnances (OCR). Ces usages réduisent la charge administrative — environ 30% du temps IDE est consacré à l\'administratif.'},
+  {id:'limites', titre:'Limites et risques de l\'IA en santé', couleur:'#f0a830',
+   corps:'Biais algorithmiques (sous-représentation de certaines populations dans les données d\'entraînement). Hallucinations : l\'IA peut générer des informations fausses avec confiance. L\'IDE ne doit JAMAIS déléguer un jugement clinique à une IA. Responsabilité : en cas d\'erreur basée sur une recommandation IA, la responsabilité reste celle du professionnel de santé.'},
+];
+
+const QUIZ = [
+  {q:'MSSanté (Messagerie Sécurisée de Santé) est obligatoire pour :', opts:['Tout envoi de données de santé par courriel','Les messages entre collègues IDE d\'un même service','La communication interne au sein d\'un établissement','Les commandes de matériel médical'], rep:0,
+   expl:'**MSSanté** est le service de messagerie électronique sécurisé pour les professionnels de santé. Tout envoi de données de santé (résultats d\'analyse, comptes-rendus, photos de plaies) par voie électronique doit passer par MSSanté ou un service équivalent certifié. L\'utilisation de Gmail ou WhatsApp pour des données patients est une violation du RGPD.'},
+  {q:'Dans le DPI, les transmissions ciblées IDE suivent la structure :', opts:['SBAR — Situation Background Assessment Recommendation','D-A-R — Données, Actions, Résultats','C-R-P — Cible, Résultat, Plan','SOAP — Subjective, Objective, Assessment, Plan'], rep:1,
+   expl:'Les **transmissions ciblées** en France suivent la méthode **D-A-R** : Données (ce que j\'observe, les faits), Actions (ce que j\'ai fait ou décidé), Résultats (l\'évolution attendue ou observée). C\'est la méthode standardisée dans les établissements français depuis les années 2000.'},
+  {q:'Une balance connectée chez un patient insuffisant cardiaque alerte l\'IDE si :', opts:['Le patient pèse plus de 80 kg','Le poids augmente de 2 kg en 3 jours ou 1 kg par jour','Le poids varie de plus de 500g en une journée','Le poids dépasse le poids de forme habituel'], rep:1,
+   expl:'Le seuil d\'alerte standard en insuffisance cardiaque est **+2 kg en 3 jours** ou **+1 kg/jour**. Cette prise de poids rapide traduit une rétention hydrique et peut signer une décompensation débutante. La détection précoce par balance connectée permet d\'ajuster le traitement diurétique avant que la décompensation ne nécessite une hospitalisation.'},
+  {q:'En cas de violation de données de santé, l\'établissement doit notifier la CNIL dans :', opts:['24 heures','48 heures','72 heures','7 jours'], rep:2,
+   expl:'Le **RGPD** impose une notification à la CNIL dans les **72 heures** suivant la découverte d\'une violation de données. Si la violation représente un risque élevé pour les personnes concernées, elles doivent également être informées. En pratique : vol d\'ordinateur contenant des données patients non chiffrées = notification obligatoire.'},
+  {q:'Lorsqu\'une IA recommande une décision clinique, la responsabilité appartient à :', opts:['L\'éditeur du logiciel d\'IA','Le médecin prescripteur exclusivement','L\'IDE ou le professionnel de santé qui prend la décision','La direction de l\'établissement'], rep:2,
+   expl:'**La responsabilité reste celle du professionnel de santé**. L\'IA est un outil d\'aide à la décision — elle ne décide pas. Si l\'IDE suit une recommandation IA sans exercer son jugement clinique, il engage sa responsabilité. En cas d\'erreur, le professionnel ne peut pas se dédouaner en invoquant la recommandation algorithmique.'},
+  {q:'Le principe de minimisation des données RGPD signifie que l\'IDE doit :', opts:['Collecter le maximum de données pour anticiper les besoins','Ne noter que les données strictement nécessaires aux soins','Supprimer les données des patients guéris immédiatement','Partager les données avec tous les professionnels de l\'établissement'], rep:1,
+   expl:'Le **principe de minimisation** impose de ne collecter que les données **strictement nécessaires** à la finalité du traitement. Pour l\'IDE : noter dans le DPI uniquement les données utiles aux soins. Les données de santé étant des données sensibles au sens du RGPD, elles bénéficient du niveau de protection le plus élevé.'},
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let S={
+  view:'welcome', onglet:'dpi',
+  dpiScreen:'identite', teleActive:null, rgpdOpen:null, iaActive:null,
+  quizIdx:0, quizSelected:null, quizShown:false, quizScore:0, quizTotal:0,
+  analyse:'', loading:false, showKey:false,
+  apiKey:localStorage.getItem('simnum_key')||'',
+  apiKeySaved:!!localStorage.getItem('simnum_key'),
+};
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(t){
+  return t.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  let h='';
+  if(S.view!=='welcome'){
+    h+=`
+    <div class="site-header">
+      <div class="badge">💻 Numérique en santé · Référentiel 2026</div>
+      <h1>Sim<span>Numérique</span></h1>
+      <p>// DPI · Télésurveillance · RGPD · IA en santé</p>
+    </div>
+    <div class="tabs">
+      ${[
+        {id:'dpi',   label:'📁 DPI'},
+        {id:'tele',  label:'📡 Télésurveillance'},
+        {id:'rgpd',  label:'🔒 RGPD'},
+        {id:'ia',    label:'🤖 IA en santé'},
+        {id:'outils',label:'🛠️ Outils IDE'},
+        {id:'quiz',  label:'🎯 Quiz'},
+        {id:'analyse',label:'🔬 IA Coach'},
+      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`).join('')}
+    </div>`;
+  } else {
+    h+=`<div class="site-header" style="padding-top:44px">
+      <div class="badge">💻 Numérique en santé · Référentiel 2026</div>
+      <h1>Sim<span>Numérique</span></h1>
+    </div>`;
+  }
+  h+='<div class="wrap">';
+
+  // ─── WELCOME ─────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`<div class="card em fadeup">
+    <div style="text-align:center;padding:8px 0 20px">
+    <div style="font-size:52px;margin-bottom:16px">💻</div>
+    <p style="color:var(--txt2);font-size:15px;line-height:1.85;max-width:480px;margin:0 auto">
+    Le numérique n'est plus optionnel en santé. <strong style="color:var(--txt)">DPI, objets connectés, IA, RGPD</strong> — l'IDE 2026 navigue dans ces outils quotidiennement. PraxisNumérique t'y prépare.
+    </p>
+    <div class="pts">
+    <div class="pt"><span class="pt-i">📁</span><span class="pt-t"><strong>DPI interactif</strong> — naviguer dans un dossier patient informatisé simulé</span></div>
+    <div class="pt"><span class="pt-i">📡</span><span class="pt-t"><strong>Télésurveillance</strong> — balance, tensiomètre, CGM, oxymètre connectés</span></div>
+    <div class="pt"><span class="pt-i">🔒</span><span class="pt-t"><strong>RGPD santé</strong> — protection des données, MSSanté, droits des patients</span></div>
+    <div class="pt"><span class="pt-i">🤖</span><span class="pt-t"><strong>IA en santé</strong> — usages, limites, responsabilité de l'IDE</span></div>
+    <div class="pt"><span class="pt-i">🛠️</span><span class="pt-t"><strong>Boîte à outils IDE numérique</strong> — MSSanté, Mon Espace Santé, e-prescription</span></div>
+    </div>
+    <button class="btn-p btn-full" onclick="go('main')">Entrer dans PraxisNumérique →</button>
+    </div></div>`;
+  }
+
+  // ─── DPI ─────────────────────────────────────────────────────
+  else if(S.onglet==='dpi'){
+    const screen = DPI_SCREENS[S.dpiScreen];
+    h+=`<div class="fadeup"><div class="card em">
+    <div class="card-title" style="color:var(--em)">DPI — Dossier Patient Informatisé</div>
+    <div class="card-sub">// Simulation d'un DPI en situation clinique réelle</div>
+    <div class="dpi-tabs">
+      ${Object.entries(DPI_SCREENS).map(([k,v])=>`<div class="dpi-tab ${S.dpiScreen===k?'on':''}" onclick="S.dpiScreen='${k}';render()">${v.titre}</div>`).join('')}
+    </div>
+    <div class="dpi-screen">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--em);letter-spacing:2px;margin-bottom:12px;border-bottom:1px solid rgba(56,200,255,.1);padding-bottom:8px">
+        DPI v3.2 · Établissement : CHU PraxisCare · ${screen.titre} · ${new Date().toLocaleDateString('fr-FR')} <span class="cursor">█</span>
+      </div>
+      ${screen.fields.map(f=>`
+        <div class="dpi-field">
+          <span class="dpi-label">${esc(f.l)}</span>
+          <span class="dpi-value ${f.critical?'critical':f.alert?'alert':f.ok?'ok':''}">${esc(f.v)}</span>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <span style="background:rgba(48,216,128,.1);color:var(--green);padding:3px 10px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px">✓ NORMAL</span>
+      <span style="background:rgba(240,168,48,.1);color:var(--warn);padding:3px 10px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px">⚠ ALERTE</span>
+      <span style="background:rgba(240,72,72,.1);color:var(--red);padding:3px 10px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px">🔴 CRITIQUE</span>
+    </div>
+    </div>
+    <div class="info info-em">
+    💡 <strong>Règles d'or du DPI :</strong> Session personnelle et non partagée. Déconnexion systématique en quittant le poste. Seules les informations utiles aux soins sont saisies. Les transmissions ciblées D-A-R sont la norme française.
+    </div>
+    <div class="info info-warn">
+    ⚠ <strong>Erreur fréquente :</strong> Utiliser le code d'un collègue absent, noter dans les transmissions des informations non vérifiées, ou laisser une session ouverte — ce sont des fautes professionnelles susceptibles d'engager la responsabilité de l'IDE.
+    </div></div>`;
+  }
+
+  // ─── TÉLÉSURVEILLANCE ─────────────────────────────────────────
+  else if(S.onglet==='tele'){
+    h+=`<div class="fadeup"><div class="card green">
+    <div class="card-title" style="color:var(--green)">Objets connectés & Télésurveillance</div>
+    <div class="card-sub">// 4 dispositifs essentiels — cliquez pour voir le rôle IDE</div>
+    <div class="col8">
+    ${TELE_DEVICES.map(d=>`
+      <div class="tele-device ${S.teleActive===d.id?'active':''}" onclick="S.teleActive=S.teleActive===d.id?null:'${d.id}';render()">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:5px">
+          <span style="font-size:24px">${d.icon}</span>
+          <div><div class="tele-nom">${d.nom}</div><div class="tele-desc">${d.desc}</div></div>
+        </div>
+        <div class="tele-detail">
+          <div style="margin-bottom:8px"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:4px">Usage clinique</div><p style="font-size:12px;color:var(--txt2);line-height:1.65">${d.usage}</p></div>
+          <div style="margin-bottom:8px"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:4px">Avantages</div><p style="font-size:12px;color:var(--txt2);line-height:1.65">${d.avantages}</p></div>
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--warn);margin-bottom:4px">Limites IDE</div><p style="font-size:12px;color:var(--txt2);line-height:1.65">${d.limites}</p></div>
+        </div>
+      </div>`).join('')}
+    </div></div>
+    <div class="info info-green">
+    📡 <strong>Le numérique ne remplace pas l'évaluation clinique :</strong> Un oxymètre connecté peut afficher SpO₂ 96% et le patient être en détresse respiratoire. La télésurveillance est un outil d'aide — l'IDE reste le capteur le plus sensible et le plus fiable.
+    </div></div>`;
+  }
+
+  // ─── RGPD ─────────────────────────────────────────────────────
+  else if(S.onglet==='rgpd'){
+    h+=`<div class="fadeup"><div class="card warn">
+    <div class="card-title" style="color:var(--warn)">RGPD — Protection des données de santé</div>
+    <div class="card-sub">// Les données de santé sont des données sensibles — protection maximale</div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="stat"><span class="stat-v" style="color:var(--warn)">72h</span><span class="stat-l">Délai notification CNIL</span></div>
+      <div class="stat"><span class="stat-v" style="color:var(--red)">20M€</span><span class="stat-l">Amende max RGPD</span></div>
+    </div>
+    <div class="col8">
+    ${RGPD_ITEMS.map(r=>`
+      <div class="rgpd-item ${S.rgpdOpen===r.id?'open':''}" style="border-left-color:${r.couleur}" onclick="S.rgpdOpen=S.rgpdOpen===r.id?null:'${r.id}';render()">
+        <div class="rgpd-titre" style="color:${r.couleur}">${r.titre}</div>
+        <div class="rgpd-body">${r.corps}</div>
+      </div>`).join('')}
+    </div></div>
+    <div class="info info-warn">
+    🔒 <strong>MSSanté en pratique :</strong> Pour activer votre boîte MSSanté, rendez-vous sur mssante.fr avec votre carte CPE (Carte de Professionnel de l'Espace de Santé). Toute photo de plaie, résultat de labo ou ordonnance envoyée par email doit passer par MSSanté ou ProSanté Connect.
+    </div></div>`;
+  }
+
+  // ─── IA EN SANTÉ ─────────────────────────────────────────────
+  else if(S.onglet==='ia'){
+    h+=`<div class="fadeup"><div class="card pur">
+    <div class="card-title" style="color:var(--pur)">Intelligence Artificielle en santé</div>
+    <div class="card-sub">// Usages, limites et responsabilité de l'IDE face à l'IA</div>
+    <div class="col8">
+    ${IA_USAGES.map(a=>`
+      <div class="ia-card ${S.iaActive===a.id?'active':''}" onclick="S.iaActive=S.iaActive===a.id?null:'${a.id}';render()">
+        <div class="ia-titre" style="color:${a.couleur}">${a.titre}</div>
+        <div class="ia-body">${a.corps}</div>
+      </div>`).join('')}
+    </div></div>
+    <div class="info info-pur">
+    🤖 <strong>Règle fondamentale :</strong> L'IA est un outil d'aide à la décision — jamais un décideur. L'IDE qui suit aveuglément une recommandation algorithmique engage sa responsabilité professionnelle. Face à une alerte IA, la réponse est : évaluation clinique, puis décision.
+    </div></div>`;
+  }
+
+  // ─── OUTILS IDE ─────────────────────────────────────────────
+  else if(S.onglet==='outils'){
+    h+=`<div class="fadeup"><div class="card em">
+    <div class="card-title" style="color:var(--em)">Boîte à outils numérique IDE</div>
+    <div class="card-sub">// Les outils numériques essentiels de l'IDE en 2026</div>
+    <div class="col8">
+    ${[
+      {n:'Mon Espace Santé', ic:'🏥', url:'https://www.monespacesante.fr', desc:'Espace personnel de santé du patient — le patient y partage ses documents avec les professionnels autorisés. L\'IDE peut y accéder avec l\'accord du patient via carte CPE. Contient : ordonnances, résultats, DMP.', tag:'Patient + IDE'},
+      {n:'MSSanté', ic:'✉️', url:'https://www.mssante.fr', desc:'Messagerie Sécurisée de Santé — obligatoire pour tout échange de données de santé par voie électronique entre professionnels. Gratuit avec carte CPE. Compatible avec les logiciels métiers IDE.', tag:'Obligatoire'},
+      {n:'ProSanté Connect', ic:'🔐', url:'https://www.esante.gouv.fr', desc:'Identité nationale des professionnels de santé — accès unique à tous les services numériques de santé (DMP, MSSanté, Ségur). Nécessite carte CPE ou e-CPS (application mobile).', tag:'Identité numérique'},
+      {n:'e-CPS (application)', ic:'📱', url:'https://esante.gouv.fr/produits-services/e-cps', desc:'Version mobile de la carte CPE — permet de s\'authentifier sur les plateformes de santé depuis un smartphone. Idéal pour l\'IDE libérale en tournée à domicile. Téléchargeable sur App Store et Google Play.', tag:'IDE libérale'},
+      {n:'Annuaire Santé', ic:'🔍', url:'https://annuaire.sante.fr', desc:'Annuaire officiel des professionnels de santé — trouver un médecin, un IDE, un kiné, avec leurs coordonnées, la carte vitale acceptée, l\'accessibilité... Utile pour la coordination interprofessionnelle.', tag:'Coordination'},
+      {n:'Ordonnance numérique', ic:'💊', url:'https://www.ameli.fr', desc:'L\'ordonnance numérique (e-prescription) est généralisée depuis 2025. Le médecin envoie l\'ordonnance directement à la pharmacie et à l\'IDE. Plus de risque de perte. L\'IDE accède à l\'ordonnance via son logiciel métier agréé Ségur.', tag:'Ségur du numérique'},
+    ].map(o=>`
+      <div style="background:rgba(56,200,255,.04);border:1.5px solid rgba(56,200,255,.12);border-radius:8px;padding:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <span style="font-size:20px">${o.ic}</span>
+          <div style="font-weight:700;font-size:14px;color:var(--em)">${o.n}</div>
+          <span class="tag" style="background:rgba(56,200,255,.1);color:var(--em);margin-left:auto">${o.tag}</span>
+        </div>
+        <p style="font-size:12px;color:var(--txt2);line-height:1.65;margin-bottom:8px">${o.desc}</p>
+        <a href="${o.url}" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--em);text-decoration:none">→ ${o.url.replace('https://','')}</a>
+      </div>`).join('')}
+    </div></div>
+    <div class="info info-em">
+    🛠️ <strong>Ségur du numérique en santé :</strong> Le programme Ségur finance la mise à jour des logiciels de soins pour les rendre interopérables. Un logiciel métier IDE agréé Ségur permet d\'accéder au DMP, à l\'e-prescription et à MSSanté depuis une interface unique.
+    </div></div>`;
+  }
+
+  // ─── QUIZ ─────────────────────────────────────────────────────
+  else if(S.onglet==='quiz'){
+    const q=QUIZ[S.quizIdx%QUIZ.length];
+    const pct=Math.round(S.quizIdx/QUIZ.length*100);
+    h+=`<div class="fadeup">
+    <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--txt2);margin-bottom:8px">
+      <span>Question ${S.quizIdx%QUIZ.length+1} / ${QUIZ.length}</span>
+      <span style="color:var(--em)">${S.quizTotal>0?Math.round(S.quizScore/S.quizTotal*100)+'% correct':'—'}</span>
+    </div>
+    <div class="progress-bar-wrap" style="margin-bottom:16px"><div class="progress-bar" style="width:${pct}%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>
+    <div class="card em">
+    <div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:18px;color:var(--txt)">${esc(q.q)}</div>
+    ${q.opts.map((opt,i)=>{let cls='';if(S.quizShown){if(i===q.rep)cls='correct';else if(i===S.quizSelected)cls='wrong';}return `<div class="quiz-opt ${cls}" onclick="${S.quizShown?'':'selectQuiz('+i+')'}"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;flex-shrink:0">${['A','B','C','D'][i]}</span><span>${esc(opt)}</span></div>`;}).join('')}
+    ${S.quizShown?`<div class="quiz-expl">${q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}</div><button class="btn-p btn-full" style="margin-top:14px" onclick="nextQuiz()">Question suivante →</button>`:''}
+    </div>
+    <button class="btn-g btn-full" onclick="S.quizIdx=0;S.quizScore=0;S.quizTotal=0;S.quizSelected=null;S.quizShown=false;render()" style="margin-top:8px;color:var(--green);border-color:rgba(48,216,128,.2)">↺ Recommencer</button>
+    </div>`;
+  }
+
+  // ─── ANALYSE IA ──────────────────────────────────────────────
+  else if(S.onglet==='analyse'){
+    h+=`<div class="fadeup"><div class="card em">
+    <div class="card-title" style="color:var(--em)">IA Coach — Numérique en santé</div>
+    <div class="card-sub">// Posez une question sur le numérique en santé, le RGPD, les outils IDE ou l'IA clinique</div>
+    <textarea id="question-num" style="width:100%;min-height:80px;background:rgba(0,0,0,.3);border:1.5px solid rgba(56,200,255,.1);border-radius:8px;color:var(--txt);padding:12px;font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;resize:vertical;line-height:1.65;margin-bottom:10px" placeholder="Ex: Comment sécuriser l'envoi d'une photo de plaie à un médecin ? Quelle est ma responsabilité si une alerte IA s'avère fausse ? Comment activer mon accès MSSanté ?"></textarea>
+    <button class="btn-p btn-full" onclick="runAnalyse()">💻 Analyser →</button>
+    ${S.loading?`<div class="dots" style="margin-top:16px"><span></span><span></span><span></span><div class="dots-msg">// Traitement en cours...</div></div>`:''}
+    ${!S.loading&&S.analyse?`<div class="analysis fadeup" style="margin-top:16px">${renderMd(S.analyse)}</div>`:''}
+    <hr class="div">
+    ${!S.apiKeySaved?`<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p><div class="apikey-row"><input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value"><button onclick="saveKey()">Sauver</button></div></div>`:`<div style="color:var(--green);font-family:'JetBrains Mono',monospace;font-size:11px">// API_KEY: configured ✓</div>`}
+    </div>
+    <div class="premium-box">
+    <div style="text-align:center;margin-bottom:18px"><div style="font-size:32px;margin-bottom:8px">🔒</div><div style="font-size:18px;font-weight:800;color:var(--txt);margin-bottom:5px">IA Coach — Accès Premium</div><div style="font-size:13px;color:var(--txt2)">DPI, télésurveillance, RGPD, outils et quiz sont entièrement gratuits</div></div>
+    <div class="grid3" style="margin-bottom:16px">
+    ${[{who:'Module seul',price:'4,99€',desc:'PraxisNumérique à vie'},{who:'Suite complète',price:'12,99€',desc:'18 modules à vie',em:true},{who:'Institution',price:'Devis',desc:'IFSI · Syndicat'}].map(t=>`<div style="border:1.5px solid ${t.em?'rgba(56,200,255,.4)':'var(--bdr)'};border-radius:6px;padding:14px;text-align:center;background:${t.em?'rgba(56,200,255,.07)':'rgba(255,255,255,.02)'}"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${t.em?'var(--em)':'var(--txt2)'};margin-bottom:8px">${t.who}</div><div style="font-size:22px;font-weight:800;color:var(--txt)">${t.price}</div><div style="font-size:11px;color:var(--txt2);margin-top:5px">${t.desc}</div></div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-bottom:10px"><a href="mailto:contact@praxiscare.fr" style="display:inline-block;padding:12px 28px;border-radius:6px;background:linear-gradient(135deg,var(--em2),var(--em));color:#06080f;font-weight:800;font-size:14px;text-decoration:none">Obtenir l'accès →</a></div>
+    <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(100,180,255,.07)"><button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt2);font-size:11px;cursor:pointer;font-family:'JetBrains Mono',monospace">// formateur_key</button></div>
+    ${S.showKey?`<div class="apikey-box" style="margin-top:12px"><p>Clé API — formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p><div class="apikey-row"><input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value"><button onclick="saveKey()">Sauver</button></div>${S.apiKeySaved?'<div class="apikey-saved">// configured ✓</div>':''}</div>`:''}
+    </div></div>`;
+  }
+
+  if(S.view!=='welcome'){
+    h+=`<div style="margin-top:12px"><button class="btn-g" onclick="go('welcome')" style="color:var(--em);border-color:rgba(56,200,255,.2)">← Accueil PraxisNumérique</button></div>`;
+  }
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setOnglet(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function selectQuiz(i){if(S.quizShown)return;S.quizSelected=i;S.quizShown=true;S.quizTotal++;if(i===QUIZ[S.quizIdx%QUIZ.length].rep)S.quizScore++;render();}
+function nextQuiz(){S.quizIdx++;S.quizSelected=null;S.quizShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function saveKey(){localStorage.setItem('simnum_key',S.apiKey);S.apiKeySaved=true;render();}
+
+async function runAnalyse(){
+  const q=document.getElementById('question-num')?.value||'';
+  if(!q.trim())return;
+  S.loading=true;S.analyse='';render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:`Tu es un formateur IFSI expert en numérique en santé, RGPD, DPI, télésurveillance et IA clinique. Tu connais le programme Ségur du numérique, MSSanté, Mon Espace Santé, e-CPS et les enjeux de la transformation numérique du système de santé français en 2026.\n\nQuestion : ${q}\n\nRéponds en 3-4 paragraphes pratiques. Tutoie l'étudiant. Donne des exemples concrets issus de la pratique IDE. Cite les textes réglementaires si pertinent (RGPD, Ségur, CNIL). Utilise **gras** pour les points clés.`}]})});
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){S.analyse=`**Erreur**\n\n${e.message}`;}
+  S.loading=false;render();
+}
+
+render();
+</script>
+  <!-- PraxisCare Stats -->
+  <script src="praxiscare-stats.js"></script>
+  <script>PraxisStats.init('simnumerique');</script>
+</body>
+</html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisTACA · Théorie · Outil pédagogique IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:    #0d1117;
+  --bg2:   #161b22;
+  --card:  rgba(255,255,255,.03);
+  --bdr:   rgba(255,255,255,.08);
+  --txt:   #e6edf3;
+  --txt2:  #7d8590;
+  --txt3:  #21262d;
+  --ink:   #1c2128;
+
+  /* Couleurs par semestre */
+  --s1: #58a6ff;  /* Bleu guidé */
+  --s2: #3fb950;  /* Vert accompagné */
+  --s3: #d29922;  /* Ambre semi-autonome */
+  --s4: #e07060;  /* Corail autonome */
+  --s5: #a371f7;  /* Violet réflexif */
+  --s6: #f0c040;  /* Or expert */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'IBM Plex Sans',sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  padding-bottom:80px;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* Fond papier millimétré subtil */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(88,166,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(88,166,255,.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(88,166,255,.06) 0%,transparent 60%);
+}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.site-header{padding:40px 24px 32px;text-align:center;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);
+  color:var(--s1);padding:5px 16px;border-radius:4px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;
+}
+.site-header h1{
+  font-family:'Lora',serif;
+  font-size:clamp(26px,5vw,42px);font-weight:600;
+  font-style:italic;line-height:1.15;letter-spacing:-.5px;margin-bottom:8px;
+}
+.site-header h1 em{font-style:normal;color:var(--s1)}
+.site-header p{color:var(--txt2);font-size:13px;line-height:1.6}
+
+/* ── CRESCENDO VISUEL ── */
+.crescendo{
+  display:flex;align-items:flex-end;justify-content:center;
+  gap:6px;padding:24px 0 8px;height:80px;
+}
+.cres-bar{
+  display:flex;flex-direction:column;align-items:center;
+  gap:6px;cursor:pointer;transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.cres-bar-inner{
+  width:38px;border-radius:4px 4px 0 0;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  opacity:.35;
+}
+.cres-bar.active .cres-bar-inner{opacity:1;box-shadow:0 0 16px currentColor}
+.cres-bar:hover .cres-bar-inner{opacity:.75}
+.cres-lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  color:var(--txt2);letter-spacing:1px;transition:color .2s;
+}
+.cres-bar.active .cres-lbl{font-weight:600}
+
+/* ── SEMESTRE INFO ── */
+.sem-info{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1.5px solid var(--bdr);
+  border-radius:12px;padding:16px 20px;margin-bottom:20px;
+  position:relative;z-index:1;transition:border-color .3s;
+}
+.sem-badge{
+  width:52px;height:52px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;flex-shrink:0;
+}
+.sem-name{font-family:'Lora',serif;font-size:18px;font-weight:500;font-style:italic}
+.sem-posture{font-size:12px;color:var(--txt2);margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:1px}
+.sem-heures{
+  margin-left:auto;text-align:right;
+  font-family:'IBM Plex Mono',monospace;
+}
+.sem-heures-v{font-size:28px;font-weight:500;display:block;line-height:1}
+.sem-heures-l{font-size:10px;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase}
+
+/* ── ONGLETS ── */
+.tabs{display:flex;gap:4px;padding:0 0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+.tab{
+  padding:8px 16px;border-radius:6px;
+  border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:all .18s;font-family:'IBM Plex Sans',sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.tab:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+.tab.active{background:rgba(88,166,255,.08);border-color:rgba(88,166,255,.3);color:var(--s1)}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:14px;position:relative;z-index:1}
+.card-title{font-family:'Lora',serif;font-size:18px;font-weight:500;font-style:italic;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:13px;margin-bottom:18px;line-height:1.65}
+
+/* ── PLANNING ── */
+.planning-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.plan-day{
+  aspect-ratio:1;border-radius:6px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  cursor:pointer;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  transition:all .15s;-webkit-tap-highlight-color:transparent;
+  position:relative;
+}
+.plan-day:hover{background:rgba(255,255,255,.06)}
+.plan-day.done{border-color:transparent}
+.plan-day.done::after{
+  content:'✓';position:absolute;font-size:14px;
+}
+.plan-day-n{color:var(--txt2);font-size:9px}
+.plan-day-h{font-size:13px;font-weight:500;color:var(--txt)}
+
+.progress-bar-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:10px;overflow:hidden;margin:8px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .6s cubic-bezier(.34,1.2,.64,1)}
+
+/* ── RESSOURCES ── */
+.ressource-item{
+  display:flex;align-items:flex-start;gap:14px;
+  background:rgba(0,0,0,.2);border-radius:10px;padding:14px;
+  margin-bottom:8px;border-left:3px solid transparent;
+  transition:all .18s;cursor:pointer;
+}
+.ressource-item:hover{background:rgba(0,0,0,.3)}
+.ressource-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.ressource-titre{font-size:14px;font-weight:500;margin-bottom:3px}
+.ressource-desc{font-size:12px;color:var(--txt2);line-height:1.6}
+.ressource-tag{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;
+  letter-spacing:1px;text-transform:uppercase;margin-top:6px;
+}
+
+/* ── AUTO-ÉVAL ── */
+.competence-row{margin-bottom:14px}
+.comp-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.comp-label{font-size:13px;font-weight:500}
+.comp-val{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--txt2)}
+.comp-slider{
+  -webkit-appearance:none;width:100%;height:8px;
+  border-radius:4px;background:rgba(255,255,255,.07);outline:none;cursor:pointer;
+}
+.comp-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:22px;height:22px;
+  border-radius:50%;background:var(--em-current,var(--s1));
+  cursor:pointer;border:2px solid rgba(255,255,255,.15);
+  transition:transform .15s;
+}
+.comp-slider:active::-webkit-slider-thumb{transform:scale(1.2)}
+.comp-desc{font-size:11px;color:var(--txt2);margin-top:4px;font-style:italic;line-height:1.5}
+
+/* ── OBJECTIFS ── */
+.obj-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:12px 14px;border-radius:8px;margin-bottom:6px;
+  background:rgba(255,255,255,.025);border:1px solid var(--bdr);
+  transition:all .15s;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.obj-check{
+  width:20px;height:20px;border-radius:4px;border:1.5px solid var(--bdr);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  margin-top:1px;transition:all .15s;font-size:12px;
+}
+.obj-item.done .obj-check{background:var(--em-current,var(--s1));border-color:transparent;color:#0d1117}
+.obj-txt{font-size:13px;color:var(--txt2);line-height:1.6}
+.obj-item.done .obj-txt{text-decoration:line-through;color:var(--txt3)}
+
+/* ── INFO ── */
+.info{border-radius:8px;padding:11px 14px;font-size:13px;line-height:1.75;margin-bottom:12px}
+.info-blue {background:rgba(88,166,255,.07);border-left:3px solid rgba(88,166,255,.5);color:var(--s1)}
+.info-green{background:rgba(63,185,80,.07); border-left:3px solid rgba(63,185,80,.5); color:var(--s2)}
+.info-gold {background:rgba(210,153,34,.07); border-left:3px solid rgba(210,153,34,.5); color:var(--s3)}
+.info-coral{background:rgba(224,112,96,.07); border-left:3px solid rgba(224,112,96,.5); color:var(--s4)}
+.info-lav  {background:rgba(163,113,247,.07);border-left:3px solid rgba(163,113,247,.5);color:var(--s5)}
+.info-sun  {background:rgba(240,192,64,.07); border-left:3px solid rgba(240,192,64,.5); color:var(--s6)}
+
+/* ── BOUTONS ── */
+.btn-p{
+  border:none;border-radius:8px;color:#0d1117;
+  font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;
+  padding:12px 24px;cursor:pointer;transition:opacity .2s,transform .1s;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);
+  border-radius:8px;color:var(--txt2);
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;
+  padding:10px 18px;cursor:pointer;transition:all .18s;
+}
+.btn-g:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:10px}
+.nav-row>*{flex:1}
+.col8{display:flex;flex-direction:column;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── STAT ── */
+.stat{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:12px;text-align:center}
+.stat-v{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;display:block}
+.stat-l{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace;display:block;margin-top:4px}
+
+/* ── LOADING ── */
+.dots{text-align:center;padding:24px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}
+.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{font-size:13px;margin-top:10px;font-style:italic;color:var(--txt2)}
+.analysis p{margin-bottom:14px;font-size:15px;line-height:1.85;color:#8090a0}
+.analysis strong{color:var(--txt)}
+
+/* ── PREMIUM ── */
+.premium-box{background:rgba(0,0,0,.3);border:1.5px solid rgba(88,166,255,.15);border-radius:12px;padding:24px;margin-bottom:14px}
+.apikey-box{background:rgba(88,166,255,.04);border:1px solid rgba(88,166,255,.12);border-radius:8px;padding:12px}
+.apikey-box p{font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6}
+.apikey-box a{color:var(--s1)}
+.apikey-row{display:flex;gap:8px}
+.apikey-row input{flex:1;padding:9px 12px;font-size:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);font-family:'IBM Plex Mono',monospace;outline:none}
+.apikey-row input:focus{border-color:rgba(88,166,255,.3)}
+.apikey-row button{padding:9px 14px;border:none;border-radius:6px;color:#0d1117;font-weight:700;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:12px}
+.apikey-saved{color:var(--s2);font-size:11px;margin-top:5px;font-family:'IBM Plex Mono',monospace}
+
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:16px 0}
+
+/* ── WELCOME ── */
+.welcome{text-align:center;padding:4px 0 20px}
+.pts{display:flex;flex-direction:column;gap:10px;margin:18px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.grid2{grid-template-columns:1fr}.nav-row{flex-direction:column}.planning-grid{grid-template-columns:repeat(5,1fr)}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+// ═══════════════════════════════════════
+//  DONNÉES SEMESTRES — CRESCENDO
+// ═══════════════════════════════════════
+const SEMESTRES = [
+  {
+    id:1, label:'S1', couleur:'#58a6ff', hauteur:20,
+    posture:'🌱 Guidé', titre:'Découverte accompagnée',
+    heures:70,
+    message:'En S1, tout commence. PraxisTACA structure tes 70h pour que tu ne te retrouves jamais devant une page blanche. Les ressources sont sélectionnées pour toi — ton travail est de les s\'approprier.',
+    infoClass:'info-blue',
+    objectifs:[
+      'Découvrir l\'organisation de la formation (6 semestres, 180 ECTS)',
+      'Lire et comprendre les textes du référentiel 2026',
+      'Explorer les 4 domaines A, B, C, D — identifier leurs différences',
+      'Utiliser PraxisO₂, PraxisPerf ou PraxisGluco pour un premier cas clinique',
+      'Rédiger une fiche de synthèse sur une UE de ton choix (B.1 ou B.3)',
+      'Identifier 2 points forts et 2 axes de progression personnels',
+    ],
+    ressources:[
+      {icon:'🫁', titre:'PraxisO₂', ue:'B.3', desc:'Premier module clinique recommandé — physiologie respiratoire, oxygénothérapie. Idéal pour débuter avec un cas patient.', tag:'Recommandé S1', praxiscare:'PraxisO2-IFSI.html'},
+      {icon:'🩸', titre:'PraxisGluco', ue:'B.1 · B.3', desc:'Régulation glycémique — lien direct avec les sciences biomédicales du S1. Animation INSERM intégrée.', tag:'Accessible S1', praxiscare:'PraxisGluco-IFSI.html'},
+      {icon:'📊', titre:'PraxisConstantes', ue:'B.1', desc:'Normes vitales — connaître les valeurs de référence est la base de tout raisonnement clinique.', tag:'Fondamental', praxiscare:'PraxisConstantes-IFSI.html'},
+    ],
+    competences:[
+      {label:'Compréhension du référentiel', key:'ref', desc:'Savez-vous expliquer les 4 domaines A, B, C, D ?'},
+      {label:'Lecture scientifique', key:'lect', desc:'Parviens-tu à lire un article court sans te perdre ?'},
+      {label:'Lien théorie–pratique', key:'ltp', desc:'Arrives-tu à faire le lien entre un cours et une situation clinique ?'},
+    ],
+  },
+  {
+    id:2, label:'S2', couleur:'#3fb950', hauteur:32,
+    posture:'🌿 Accompagné', titre:'Exploration structurée',
+    heures:70,
+    message:'En S2, tu commences à choisir. Les ressources sont proposées mais l\'ordre t\'appartient. Tu développes ta capacité à planifier ton travail personnel.',
+    infoClass:'info-green',
+    objectifs:[
+      'Planifier seul(e) tes 70h sur le semestre — agenda personnel',
+      'Approfondir 2 UE au choix avec les modules PraxisCare correspondants',
+      'Réaliser au moins 2 quiz PraxisRévision en conditions d\'examen',
+      'Identifier et lire un article de la revue Soins ou Revue de l\'Infirmière',
+      'Construire une fiche mnémotechnique sur un soin technique (PraxisPerf ou PraxisContention)',
+      'Comparer ta première auto-évaluation S1 avec tes acquis actuels',
+    ],
+    ressources:[
+      {icon:'💉', titre:'PraxisPerf', ue:'B.3', desc:'Perfusion IV — rôle IDE recentré sur la prescription médicale. Vidéos CHU 2025 intégrées.', tag:'S2 recommandé', praxiscare:'PraxisPerf-IFSI.html'},
+      {icon:'🧦', titre:'PraxisContention', ue:'B.3', desc:'Mesures et contention veineuse — animation retour veineux, checklist pose IDE.', tag:'Technique', praxiscare:'PraxisContention-IFSI.html'},
+      {icon:'📚', titre:'PraxisRévision', ue:'A·B·C·D', desc:'QCM et cas cliniques pour tester tes connaissances de 1ère année.', tag:'Auto-évaluation', praxiscare:'PraxisRevision-IFSI.html'},
+    ],
+    competences:[
+      {label:'Planification autonome', key:'plan', desc:'Sais-tu organiser tes 70h sans qu\'on te le demande ?'},
+      {label:'Mémorisation active', key:'mem', desc:'Utilises-tu des techniques de mémorisation (schémas, fiches, quiz) ?'},
+      {label:'Esprit critique', key:'crit', desc:'Arrives-tu à questionner ce que tu lis ou entends en cours ?'},
+    ],
+  },
+  {
+    id:3, label:'S3', couleur:'#d29922', hauteur:44,
+    posture:'🌳 Semi-autonome', titre:'Construction personnelle',
+    heures:70,
+    message:'En S3, tu construis ton propre chemin. Tu fixes des objectifs dans un cadre — PraxisTACA t\'accompagne mais ne te dirige plus. Tu as commencé à développer ton style d\'apprentissage.',
+    infoClass:'info-gold',
+    objectifs:[
+      'Fixer toi-même 6 objectifs SMART pour le semestre — les noter ici',
+      'Choisir 3 modules PraxisCare à approfondir selon tes lacunes identifiées',
+      'Lire et analyser un article de recherche en soins infirmiers',
+      'Réaliser une présentation de 10 min sur un sujet de ta 2ème année',
+      'Participer à un groupe de travail entre pairs (simulation, révision)',
+      'Initier ton portfolio de compétences professionnelles',
+    ],
+    ressources:[
+      {icon:'🌡️', titre:'PraxisDouleur', ue:'B.3 · A.1', desc:'Évaluation douleur — EN, EVA, FLACC, DOLOPLUS. Animation trajet nociceptif. Lien raisonnement clinique A.1.', tag:'Raisonnement clinique', praxiscare:'PraxisDouleur-IFSI.html'},
+      {icon:'🧠', titre:'PraxisPsy', ue:'D.1', desc:'Santé mentale — troubles psychiques, urgences psy. Stage psychiatrie obligatoire en S3.', tag:'Stage psy S3', praxiscare:'PraxisPsy-IFSI.html'},
+      {icon:'🌿', titre:'PraxisEnvironnement', ue:'C.2', desc:'One Health — UE pionnière du référentiel 2026. Aucun manuel papier ne la couvre encore.', tag:'Pionnier 2026', praxiscare:'PraxisEnvironnement-IFSI.html'},
+    ],
+    competences:[
+      {label:'Autonomie dans le travail', key:'auto', desc:'Travailles-tu sans avoir besoin qu\'on te rappelle tes obligations ?'},
+      {label:'Analyse et synthèse', key:'ana', desc:'Sais-tu extraire l\'essentiel d\'un document complexe ?'},
+      {label:'Raisonnement clinique', key:'rclin', desc:'Face à un patient, identifies-tu les priorités de soins ?'},
+    ],
+  },
+  {
+    id:4, label:'S4', couleur:'#e07060', hauteur:56,
+    posture:'🦋 Autonome', titre:'Affirmation professionnelle',
+    heures:70,
+    message:'En S4, tu es autonome. Tu gères ton TACA sans cadre imposé. Tu commences à avoir une identité professionnelle. PraxisTACA devient un compagnon de réflexion plutôt qu\'un guide.',
+    infoClass:'info-coral',
+    objectifs:[
+      'Construire ton plan de TACA complet sans modèle imposé',
+      'Approfondir une thématique transversale (ex : douleur chronique + psy + pédiatrie)',
+      'Rédiger une analyse réflexive sur ta pratique de stage S3',
+      'Réaliser une veille documentaire sur une actualité en soins infirmiers',
+      'Préparer un exposé ou poster pour une journée pédagogique IFSI',
+      'Identifier ta posture professionnelle et les valeurs qui la fondent',
+    ],
+    ressources:[
+      {icon:'📋', titre:'PraxisConsultation', ue:'A.1 · B.3', desc:'Consultation infirmière — anamnèse, diagnostic NANDA, prescription encadrée 2026. Compétence phare du diplôme.', tag:'Compétence clé', praxiscare:'PraxisConsultation-IFSI.html'},
+      {icon:'👶', titre:'PraxisPédiatrie', ue:'B.3 · D.2', desc:'Soins de l\'enfant — normes par âge, douleur pédiatrique, protection. Stage pédiatrie obligatoire.', tag:'Stage pédiatrie', praxiscare:'PraxisPediatrie-IFSI.html'},
+      {icon:'📊', titre:'PraxisConstantes', ue:'B.1', desc:'Bilan biologique — ionogramme, NFS, marqueurs. Lecture d\'un dossier patient complet.', tag:'Dossier patient', praxiscare:'PraxisConstantes-IFSI.html'},
+    ],
+    competences:[
+      {label:'Gestion de projet personnel', key:'gproj', desc:'Sais-tu gérer un projet (planning, étapes, évaluation) seul(e) ?'},
+      {label:'Posture professionnelle', key:'post', desc:'Identifies-tu tes valeurs soignantes et les appliques-tu ?'},
+      {label:'Coordination interdisciplinaire', key:'coord', desc:'Sais-tu communiquer avec d\'autres professionnels de santé ?'},
+    ],
+  },
+  {
+    id:5, label:'S5', couleur:'#a371f7', hauteur:68,
+    posture:'🚀 Réflexif', titre:'Intégration et transversalité',
+    heures:70,
+    message:'En S5, tu croises les savoirs. Tu ne travailles plus UE par UE — tu vois les liens entre les domaines. Ta réflexivité est au cœur de ton développement professionnel.',
+    infoClass:'info-lav',
+    objectifs:[
+      'Identifier 3 liens transversaux entre des UE différentes (ex : environnement + psy + clinique)',
+      'Rédiger un essai réflexif court (2-3 pages) sur un enjeu de santé actuel',
+      'Analyser une situation éthique vécue en stage à travers un cadre conceptuel',
+      'Préparer ta soutenance de mémoire ou ton projet de fin d\'études',
+      'Participer à un groupe de travail ou une journée de recherche en soins infirmiers',
+      'Développer un projet d\'éducation thérapeutique pour un patient chronique',
+    ],
+    ressources:[
+      {icon:'🌿', titre:'PraxisEnvironnement', ue:'C.2', desc:'One Health — relier santé humaine, animale, environnementale. Approche systémique avancée.', tag:'Transversal', praxiscare:'PraxisEnvironnement-IFSI.html'},
+      {icon:'🧠', titre:'PraxisPsy', ue:'D.1', desc:'Éco-anxiété, santé mentale communautaire — lien C.2 et D.1. Nouvelles compétences 2026.', tag:'Lien C.2 · D.1', praxiscare:'PraxisPsy-IFSI.html'},
+      {icon:'📚', titre:'PraxisRévision', ue:'A·B·C·D', desc:'Cas cliniques complexes de 3ème année — intégration de plusieurs UE dans une situation unique.', tag:'Cas complexes', praxiscare:'PraxisRevision-IFSI.html'},
+    ],
+    competences:[
+      {label:'Pensée systémique', key:'syst', desc:'Vois-tu les liens entre les différentes dimensions d\'une situation de soin ?'},
+      {label:'Réflexivité critique', key:'reflex', desc:'Analyses-tu ta propre pratique avec recul et honnêteté intellectuelle ?'},
+      {label:'Production de savoirs', key:'prod', desc:'Es-tu capable de produire un écrit professionnel argumenté ?'},
+    ],
+  },
+  {
+    id:6, label:'S6', couleur:'#f0c040', hauteur:80,
+    posture:'🎓 Expert', titre:'Projection professionnelle',
+    heures:70,
+    message:'En S6, tu regardes devant toi. Le TACA devient préparation à l\'exercice professionnel. Formation continue, spécialisation, DPC — tu construis ton projet infirmier au-delà du diplôme.',
+    infoClass:'info-sun',
+    objectifs:[
+      'Définir ton projet professionnel post-diplôme (secteur, spécialité, géographie)',
+      'Identifier les formations DPC qui t\'intéressent et planifier les premières',
+      'Finaliser et soutenir ton mémoire de fin d\'études',
+      'Réaliser un bilan de compétences sur l\'ensemble des 6 semestres',
+      'Contribuer à la formation de tes pairs (tutorer un(e) étudiant(e) de S1 ou S2)',
+      'Découvrir les exercices avancés : IPA, IDEL, coordination, recherche',
+    ],
+    ressources:[
+      {icon:'📋', titre:'PraxisConsultation', ue:'A.1 · B.3', desc:'Consultation infirmière avancée — prescription, diagnostic NANDA expert. Préparation à l\'exercice autonome.', tag:'Exercice autonome', praxiscare:'PraxisConsultation-IFSI.html'},
+      {icon:'📰', titre:'PraxisAlmanach', ue:'C.1', desc:'Actualité en santé — veille professionnelle, communauté soignante. L\'IDE citoyen.', tag:'Veille pro', praxiscare:'PraxisAlmanach-IFSI.html'},
+      {icon:'📚', titre:'PraxisRévision', ue:'A·B·C·D', desc:'Révision globale — préparation aux épreuves finales et à l\'exercice professionnel.', tag:'Bilan 3 ans', praxiscare:'PraxisRevision-IFSI.html'},
+    ],
+    competences:[
+      {label:'Projet professionnel', key:'proj', desc:'As-tu une vision claire de l\'IDE que tu veux être ?'},
+      {label:'Formation tout au long de la vie', key:'ftlv', desc:'Identifies-tu les ressources pour continuer à te former après le diplôme ?'},
+      {label:'Leadership soignant', key:'lead', desc:'Contribues-tu à la formation et au développement de tes pairs ?'},
+    ],
+  },
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+const STORE_KEY = 'simtaca_theo';
+
+function loadStore(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY))||{}; } catch(e){ return {}; }
+}
+function saveStore(data){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e){}
+}
+
+let STORE = loadStore();
+
+function getHdone(sem){ return STORE[`h_done_${sem}`]||0; }
+function setHdone(sem, v){ STORE[`h_done_${sem}`]=v; saveStore(STORE); }
+function getObjDone(sem){ return STORE[`obj_done_${sem}`]||[]; }
+function toggleObj(sem, i){
+  const arr = getObjDone(sem);
+  const idx = arr.indexOf(i);
+  if(idx>=0) arr.splice(idx,1); else arr.push(i);
+  STORE[`obj_done_${sem}`]=arr; saveStore(STORE);
+}
+function getComp(sem, key){ return STORE[`comp_${sem}_${key}`]||0; }
+function setComp(sem, key, v){ STORE[`comp_${sem}_${key}`]=v; saveStore(STORE); }
+
+let S = {
+  view:'welcome',
+  sem:1,
+  onglet:'planning',
+  analyse:'', loading:false, showKey:false,
+  apiKey: localStorage.getItem('simtaca_key')||'',
+  apiKeySaved: !!localStorage.getItem('simtaca_key'),
+};
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderMd(text){
+  return text.split('\n\n').filter(p=>p.trim()).map(para=>{
+    const parts=para.split(/\*\*([^*]+)\*\*/g);
+    const inner=parts.map((p,i)=>i%2===1?`<strong>${esc(p)}</strong>`:esc(p)).join('');
+    return `<p>${inner}</p>`;
+  }).join('');
+}
+
+function semObj(){ return SEMESTRES[S.sem-1]; }
+function semCouleur(){ return semObj().couleur; }
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  const sem = semObj();
+  const couleur = sem.couleur;
+  const hdone = getHdone(S.sem);
+  const pct = Math.min(100, Math.round(hdone/sem.heures*100));
+
+  let h = '';
+
+  // ── HEADER ──────────────────────────────────────────────────
+  if(S.view!=='welcome'){
+    h+=`
+    <div class="site-header">
+      <div class="badge">📚 TACA · Théorie · 70h / semestre</div>
+      <h1>Sim<em>TACA</em> · Théorie</h1>
+      <p>Temps d'Appropriation des Connaissances Acquises · En IFSI · Référentiel 2026</p>
+    </div>
+
+    <!-- Crescendo -->
+    <div style="position:relative;z-index:1;padding:0 20px 0">
+      <div class="crescendo">
+        ${SEMESTRES.map(sm=>`
+          <div class="cres-bar ${S.sem===sm.id?'active':''}" onclick="setSem(${sm.id})" style="color:${sm.couleur}">
+            <div class="cres-bar-inner" style="height:${sm.hauteur}px;background:${sm.couleur}"></div>
+            <div class="cres-lbl" style="${S.sem===sm.id?'color:'+sm.couleur:''}">${sm.label}</div>
+          </div>`).join('')}
+      </div>
+      <div style="text-align:center;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--txt3);letter-spacing:1px;padding-bottom:16px">↑ CRESCENDO — Guidé → Expert</div>
+    </div>
+
+    <!-- Info semestre -->
+    <div class="wrap">
+    <div class="sem-info fadeup" style="border-color:${couleur}30">
+      <div class="sem-badge" style="background:${couleur}18">${sem.posture.split(' ')[0]}</div>
+      <div>
+        <div class="sem-name" style="color:${couleur}">${sem.posture} — ${sem.titre}</div>
+        <div class="sem-posture">${sem.heures}h autonomie IFSI · Semestre ${sem.id} sur 6</div>
+      </div>
+      <div class="sem-heures">
+        <span class="sem-heures-v" style="color:${couleur}">${hdone}<span style="font-size:16px;opacity:.5">/${sem.heures}</span></span>
+        <span class="sem-heures-l">heures réalisées</span>
+      </div>
+    </div>
+
+    <!-- Onglets -->
+    <div class="tabs">
+      ${[
+        {id:'planning',   label:'📅 Planning'},
+        {id:'objectifs',  label:'🎯 Objectifs'},
+        {id:'ressources', label:'📖 Ressources'},
+        {id:'competences',label:'⭐ Compétences'},
+        {id:'analyse',    label:'🔬 Analyse IA'},
+      ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')" style="${S.onglet===t.id?'background:'+couleur+'18;border-color:'+couleur+'50;color:'+couleur:''}">${t.label}</button>`).join('')}
+    </div>`;
+  } else {
+    h += `<div class="site-header" style="padding-top:44px">
+      <div class="badge">📚 TACA · Théorie · Référentiel 2026</div>
+      <h1>Sim<em>TACA</em> · Théorie</h1>
+    </div><div class="wrap">`;
+  }
+
+  // ─── WELCOME ─────────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+=`
+    <div class="card fadeup" style="border-color:rgba(88,166,255,.15)">
+      <div class="welcome">
+        <div style="font-size:52px;text-align:center;margin-bottom:16px">📚</div>
+        <p style="color:var(--txt2);font-size:15px;line-height:1.85;max-width:480px;margin:0 auto;text-align:center">
+          <strong style="color:var(--txt)">420 heures</strong> de travail en autonomie sur 3 ans.<br>
+          <strong style="color:var(--txt)">70 heures par semestre</strong> — en IFSI, sans enseignant.<br>
+          PraxisTACA structure ces heures pour qu'elles construisent vraiment ta compétence.
+        </p>
+        <div style="margin:24px auto;max-width:320px">
+          <div class="crescendo" style="height:60px">
+            ${SEMESTRES.map(sm=>`
+              <div class="cres-bar" style="color:${sm.couleur}">
+                <div class="cres-bar-inner" style="height:${sm.hauteur*0.7}px;background:${sm.couleur};opacity:.6"></div>
+                <div class="cres-lbl">${sm.label}</div>
+              </div>`).join('')}
+          </div>
+          <div style="text-align:center;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--txt3);letter-spacing:1px;margin-top:4px">Guidé → Accompagné → Autonome → Expert</div>
+        </div>
+        <div class="pts">
+          <div class="pt"><span class="pt-i">📅</span><span class="pt-t"><strong>Planning personnalisé</strong> — suivi de tes heures semestre par semestre</span></div>
+          <div class="pt"><span class="pt-i">🎯</span><span class="pt-t"><strong>Objectifs par semestre</strong> — adaptés à ta posture du moment</span></div>
+          <div class="pt"><span class="pt-i">📖</span><span class="pt-t"><strong>Ressources PraxisCare</strong> — les modules à approfondir selon le semestre</span></div>
+          <div class="pt"><span class="pt-i">⭐</span><span class="pt-t"><strong>Auto-évaluation</strong> — curseurs de compétences, mémorisés entre les sessions</span></div>
+        </div>
+        <button class="btn-p btn-full" style="background:var(--s1)" onclick="go('main')">Commencer mon TACA →</button>
+      </div>
+    </div>`;
+  }
+
+  // ─── MAIN ────────────────────────────────────────────────────
+  else {
+
+    // ── PLANNING ────────────────────────────────────────────────
+    if(S.onglet==='planning'){
+      const semaine_h = Math.round(sem.heures / 18); // ~18 semaines/semestre
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Mon planning TACA — Semestre ${sem.id}</div>
+          <div class="card-sub">${sem.message}</div>
+
+          <!-- Progression globale -->
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txt2);margin-bottom:6px">
+            <span>Progression</span><span style="color:${couleur}">${pct}% · ${hdone}h / ${sem.heures}h</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" style="width:${pct}%;background:linear-gradient(90deg,${couleur}aa,${couleur})"></div>
+          </div>
+
+          <!-- Ajusteur d'heures -->
+          <div style="margin:16px 0;text-align:center">
+            <div style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Ajouter des heures réalisées</div>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+              ${[0.5,1,2,3,5].map(h=>`
+                <button onclick="addH(${h})" style="padding:8px 16px;border-radius:6px;border:1.5px solid ${couleur}40;background:${couleur}10;color:${couleur};font-family:'IBM Plex Mono',monospace;font-size:13px;cursor:pointer;font-weight:500">+${h}h</button>`).join('')}
+              <button onclick="resetH()" style="padding:8px 14px;border-radius:6px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--txt2);font-family:'IBM Plex Mono',monospace;font-size:12px;cursor:pointer">Réinitialiser</button>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid2">
+            <div class="stat">
+              <span class="stat-v" style="color:${couleur}">${sem.heures - hdone}h</span>
+              <span class="stat-l">Restantes</span>
+            </div>
+            <div class="stat">
+              <span class="stat-v" style="color:${couleur}">${semaine_h}h</span>
+              <span class="stat-l">/ semaine recommandées</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info ${sem.infoClass}">
+          📌 <strong>Posture ${sem.posture} :</strong> ${
+            sem.id===1?'PraxisTACA te guide entièrement — suis les ressources et objectifs proposés.' :
+            sem.id===2?'Tu choisis l\'ordre dans lequel tu explores les ressources proposées.' :
+            sem.id===3?'Tu fixes tes propres objectifs dans le cadre suggéré par PraxisTACA.' :
+            sem.id===4?'Tu gères ton TACA sans contrainte — PraxisTACA observe et t\'accompagne.' :
+            sem.id===5?'Tu croises les savoirs et produis des analyses transversales.' :
+            'Tu te projettes vers l\'exercice professionnel et la formation continue.'
+          }
+        </div>
+
+        <!-- Bilan tous semestres -->
+        <div class="card" style="border-color:var(--bdr)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:14px">Bilan global — 420h TACA Théorie</div>
+          ${SEMESTRES.map(sm=>{
+            const hd = getHdone(sm.id);
+            const p = Math.min(100,Math.round(hd/sm.heures*100));
+            return `<div style="margin-bottom:10px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                <span style="color:${sm.couleur};font-family:'IBM Plex Mono',monospace">${sm.label} — ${sm.posture}</span>
+                <span style="color:var(--txt2);font-family:'IBM Plex Mono',monospace">${hd}/${sm.heures}h</span>
+              </div>
+              <div class="progress-bar-wrap" style="height:6px">
+                <div class="progress-bar" style="width:${p}%;background:${sm.couleur}"></div>
+              </div>
+            </div>`;
+          }).join('')}
+          <div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--txt);margin-top:8px">
+            Total : ${SEMESTRES.reduce((acc,sm)=>acc+getHdone(sm.id),0)}h / 420h
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ── OBJECTIFS ────────────────────────────────────────────────
+    else if(S.onglet==='objectifs'){
+      const objDone = getObjDone(S.sem);
+      const nb = objDone.length;
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Objectifs — Semestre ${sem.id}</div>
+          <div class="card-sub">${nb}/${sem.objectifs.length} objectifs atteints · Cochez au fil de votre progression.</div>
+          <div class="col8">
+            ${sem.objectifs.map((obj,i)=>`
+              <div class="obj-item ${objDone.includes(i)?'done':''}" onclick="toggleObjAction(${i})">
+                <div class="obj-check">${objDone.includes(i)?'✓':''}</div>
+                <div class="obj-txt">${esc(obj)}</div>
+              </div>`).join('')}
+          </div>
+          <div class="progress-bar-wrap" style="margin-top:14px">
+            <div class="progress-bar" style="width:${Math.round(nb/sem.objectifs.length*100)}%;background:linear-gradient(90deg,${couleur}aa,${couleur})"></div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ── RESSOURCES ────────────────────────────────────────────────
+    else if(S.onglet==='ressources'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Ressources PraxisCare — Semestre ${sem.id}</div>
+          <div class="card-sub">Modules recommandés pour ce semestre, en lien avec ta posture ${sem.posture}.</div>
+          <div class="col8">
+            ${sem.ressources.map(r=>`
+              <div class="ressource-item" style="border-left-color:${couleur}" onclick="window.open('${r.praxiscare}','_blank')">
+                <span class="ressource-icon">${r.icon}</span>
+                <div>
+                  <div class="ressource-titre" style="color:${couleur}">${r.titre}</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txt2);margin-bottom:4px">${r.ue}</div>
+                  <div class="ressource-desc">${r.desc}</div>
+                  <span class="ressource-tag" style="background:${couleur}15;color:${couleur}">${r.tag}</span>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="info ${sem.infoClass}">
+          📖 <strong>Méthode recommandée :</strong> Pour chaque module, réalise d'abord les 3 premières étapes sans l'IA. Note tes questions. Reviens ensuite avec l'analyse IA pour approfondir les points que tu n'as pas compris — pas avant.
+        </div>
+      </div>`;
+    }
+
+    // ── COMPÉTENCES ────────────────────────────────────────────
+    else if(S.onglet==='competences'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Auto-évaluation — Semestre ${sem.id}</div>
+          <div class="card-sub">Positionne-toi honnêtement sur chaque compétence. Ces données sont mémorisées localement pour suivre ta progression.</div>
+          <div style="--em-current:${couleur}">
+            ${sem.competences.map(c=>{
+              const val = getComp(S.sem, c.key);
+              const labels = ['Débutant','En cours','Acquis','Maîtrisé','Expert'];
+              return `<div class="competence-row">
+                <div class="comp-header">
+                  <span class="comp-label">${c.label}</span>
+                  <span class="comp-val" style="color:${couleur}">${labels[val]||'—'}</span>
+                </div>
+                <input type="range" class="comp-slider" min="0" max="4" value="${val}"
+                  style="--em-current:${couleur}"
+                  oninput="setCompAction('${c.key}',+this.value)"
+                  onchange="setCompAction('${c.key}',+this.value)">
+                <div class="comp-desc">${c.desc}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- Vue globale toutes compétences -->
+        <div class="card" style="border-color:var(--bdr)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:14px">Vue globale — Tous semestres</div>
+          ${SEMESTRES.map(sm=>`
+            <div style="margin-bottom:12px">
+              <div style="font-size:12px;color:${sm.couleur};font-family:'IBM Plex Mono',monospace;margin-bottom:6px">${sm.label} — ${sm.posture}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                ${sm.competences.map(c=>{
+                  const v = getComp(sm.id, c.key);
+                  const labels=['Débutant','En cours','Acquis','Maîtrisé','Expert'];
+                  return `<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-family:'IBM Plex Mono',monospace;background:${sm.couleur}15;color:${sm.couleur}">${c.label.split(' ')[0]} · ${labels[v]||'?'}</span>`;
+                }).join('')}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    }
+
+    // ── ANALYSE IA ────────────────────────────────────────────────
+    else if(S.onglet==='analyse'){
+      h+=`<div class="fadeup">
+        <div class="card" style="border-color:${couleur}25">
+          <div class="card-title" style="color:${couleur}">Analyse IA — TACA Théorie S${sem.id}</div>
+          <div class="card-sub">Posez une question sur votre travail d'appropriation, vos difficultés d'apprentissage ou la progression de vos compétences.</div>
+          <textarea id="question-taca"
+            style="width:100%;min-height:80px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:8px;color:var(--txt);padding:12px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;outline:none;resize:vertical;line-height:1.6;margin-bottom:10px"
+            placeholder="Ex : Je n'arrive pas à retenir les normes biologiques — quelle méthode de mémorisation me conseilles-tu ? Comment articuler les domaines A et B dans un cas clinique ? Je suis en S2 et je me sens perdu dans mon planning..."></textarea>
+          <button class="btn-p btn-full" style="background:${couleur}" onclick="runAnalyse()">📚 Obtenir un accompagnement pédagogique →</button>
+          ${S.loading?`<div class="dots" style="margin-top:16px"><span style="background:${couleur}"></span><span style="background:${couleur}"></span><span style="background:${couleur}"></span><div class="dots-msg">Analyse de ta progression...</div></div>`:''}
+          ${!S.loading&&S.analyse?`<div class="analysis fadeup" style="margin-top:16px">${renderMd(S.analyse)}</div>`:''}
+          <hr class="div">
+          ${!S.apiKeySaved?`<div class="apikey-box">
+            <p>Clé API Anthropic pour activer l'analyse IA. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button style="background:${couleur};color:#0d1117" onclick="saveKey()">Sauver</button>
+            </div>
+          </div>`:`<div style="color:var(--s2);font-family:'IBM Plex Mono',monospace;font-size:11px">✓ Clé API configurée</div>`}
+        </div>
+
+        <div class="premium-box">
+          <div style="text-align:center;margin-bottom:18px">
+            <div style="font-size:32px;margin-bottom:8px">🔒</div>
+            <div style="font-family:'Lora',serif;font-size:18px;font-style:italic;color:var(--txt);margin-bottom:5px">Accompagnement IA — Accès Premium</div>
+            <div style="font-size:13px;color:var(--txt2)">Planning, objectifs, ressources et compétences sont entièrement gratuits</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+            ${[
+              {who:'Module seul', price:'4,99€', desc:'PraxisTACA·Théorie à vie'},
+              {who:'Suite complète', price:'12,99€', desc:'12 modules + TACA à vie', em:true},
+              {who:'Institution', price:'Devis', desc:'IFSI · Syndicat'},
+            ].map(t=>`<div style="border:1.5px solid ${t.em?couleur+'50':'var(--bdr)'};border-radius:10px;padding:14px;text-align:center;background:${t.em?couleur+'08':'rgba(255,255,255,.02)'}">
+              <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:${t.em?couleur:'var(--txt2)'};margin-bottom:8px;letter-spacing:1px">${t.who}</div>
+              <div style="font-size:22px;font-weight:700;color:var(--txt);font-family:'Lora',serif">${t.price}</div>
+              <div style="font-size:11px;color:var(--txt2);margin-top:5px">${t.desc}</div>
+            </div>`).join('')}
+          </div>
+          <div style="text-align:center;margin-bottom:10px">
+            <a href="mailto:contact@praxiscare.fr" style="display:inline-block;padding:11px 26px;border-radius:8px;background:${couleur};color:#0d1117;font-weight:700;font-size:14px;text-decoration:none">Obtenir l'accès →</a>
+          </div>
+          <div style="text-align:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+            <button onclick="S.showKey=!S.showKey;render()" style="background:none;border:none;color:var(--txt2);font-size:11px;cursor:pointer;font-family:'IBM Plex Mono',monospace">🔑 Espace formateur</button>
+          </div>
+          ${S.showKey?`<div class="apikey-box" style="margin-top:12px">
+            <p>Clé API Anthropic — formateur. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>
+            <div class="apikey-row">
+              <input type="text" placeholder="sk-ant-api03-…" value="${esc(S.apiKey)}" oninput="S.apiKey=this.value">
+              <button style="background:${couleur};color:#0d1117" onclick="saveKey()">Sauver</button>
+            </div>
+            ${S.apiKeySaved?'<div class="apikey-saved">✓ Clé enregistrée</div>':''}
+          </div>`:''}
+        </div>
+      </div>`;
+    }
+
+    h+=`<div style="margin-top:12px"><button class="btn-g" onclick="go('welcome')" style="color:${couleur};border-color:${couleur}30">← Accueil PraxisTACA</button></div>`;
+  }
+
+  h+='</div>';
+  document.getElementById('app').innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){ S.view=v; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setSem(n){ S.sem=n; S.analyse=''; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setOnglet(o){ S.onglet=o; S.analyse=''; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function addH(v){
+  const sem = semObj();
+  const curr = getHdone(S.sem);
+  setHdone(S.sem, Math.min(sem.heures, curr + v));
+  render();
+}
+function resetH(){ setHdone(S.sem, 0); render(); }
+function toggleObjAction(i){ toggleObj(S.sem, i); render(); }
+function setCompAction(key, v){ setComp(S.sem, key, v); render(); }
+function saveKey(){ localStorage.setItem('simtaca_key', S.apiKey); S.apiKeySaved=true; render(); }
+
+// ═══════════════════════════════════════
+//  API CLAUDE
+// ═══════════════════════════════════════
+async function runAnalyse(){
+  const q = document.getElementById('question-taca')?.value || '';
+  if(!q.trim()) return;
+  const sem = semObj();
+  const hdone = getHdone(S.sem);
+  const objDone = getObjDone(S.sem);
+
+  S.loading=true; S.analyse=''; render();
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers,
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:900,
+        messages:[{role:'user', content:`Tu es un formateur IFSI expert en pédagogie infirmière, spécialiste du TACA (Temps d'Appropriation des Connaissances Acquises) du référentiel 2026. Tu accompagnes un étudiant infirmier dans son travail personnel en autonomie.
+
+Contexte étudiant :
+- Semestre actuel : S${S.sem} — posture "${sem.posture} · ${sem.titre}"
+- Heures TACA réalisées ce semestre : ${hdone}h / ${sem.heures}h
+- Objectifs validés : ${objDone.length} / ${sem.objectifs.length}
+
+Question de l'étudiant : ${q}
+
+Réponds de façon bienveillante et pédagogique en 3 paragraphes maximum. Tutoie l'étudiant. Propose des méthodes concrètes adaptées à sa posture "${sem.posture}". Encourage sans être condescendant. Si pertinent, rappelle-lui les ressources PraxisCare disponibles pour son semestre. Utilise **gras** pour les termes clés.`}]
+      })
+    });
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse = data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){
+    S.analyse=`**Erreur**\n\n${e.message}`;
+  }
+  S.loading=false; render();
+}
+
+render();
+</script>
+  <!-- PraxisCare Stats -->
+  <script src="praxiscare-stats.js"></script>
+  <script>PraxisStats.init('simtacath');</script>
+</body>
+</html>
