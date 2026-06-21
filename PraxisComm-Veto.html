@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisComm · PraxisVeto ASV</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Karla:wght@300;400;500;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080a10;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#d0d8f0;--txt2:#404870;--em:#6090e0;--em2:#3060b0;
+  --amber:#e8a030;--red:#e84040;--green:#50c870;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 40% at 20% 0%,rgba(96,144,224,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 80% 90%,rgba(80,200,112,.04) 0%,transparent 50%)}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+.site-header{padding:40px 22px 24px;text-align:center;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(96,144,224,.08);
+  border:1px solid rgba(96,144,224,.22);color:var(--em);padding:4px 16px;border-radius:20px;
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-family:var(--head);font-size:clamp(26px,5vw,48px);font-weight:800;
+  letter-spacing:-2px;line-height:1;margin-bottom:8px}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:12px;font-family:var(--mono);letter-spacing:1px}
+.tabs{display:flex;gap:3px;padding:0 0 18px;overflow-x:auto}
+.tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:all .15s;font-family:var(--mono);letter-spacing:1px;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt);background:rgba(96,144,224,.06)}
+.tab.active{background:rgba(96,144,224,.12);border-color:rgba(96,144,224,.4);color:var(--em)}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:22px;
+  margin-bottom:12px;position:relative;z-index:1}
+.card.em{border-top:2px solid var(--em)}
+.card-title{font-family:var(--head);font-size:15px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px;line-height:1.65}
+
+/* Langage corporel */
+.espece-tabs{display:flex;gap:6px;margin-bottom:14px}
+.espece-tab{padding:8px 14px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);cursor:pointer;font-family:var(--mono);font-size:11px;
+  color:var(--txt2);transition:all .15s;-webkit-tap-highlight-color:transparent}
+.espece-tab.active{background:rgba(96,144,224,.1);border-color:rgba(96,144,224,.35);color:var(--em)}
+
+.signal-row{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;
+  border-radius:6px;margin-bottom:6px;background:rgba(0,0,0,.2);cursor:pointer;
+  transition:all .15s;border-left:3px solid transparent;-webkit-tap-highlight-color:transparent}
+.signal-row:hover{background:rgba(0,0,0,.3)}
+.signal-row.open{border-left-color:var(--em)}
+.sig-emoji{font-size:22px;flex-shrink:0;margin-top:2px}
+.sig-content{flex:1}
+.sig-nom{font-size:14px;font-weight:600;margin-bottom:2px}
+.sig-etat{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.etat-ok  {color:var(--green)}
+.etat-warn{color:var(--amber)}
+.etat-bad {color:var(--red)}
+.sig-detail{font-size:12px;color:var(--txt2);line-height:1.7;display:none;margin-top:6px}
+.signal-row.open .sig-detail{display:block}
+
+/* Approche steps */
+.approach-card{border-radius:10px;padding:14px;margin-bottom:8px;
+  border:1.5px solid var(--bdr);background:rgba(0,0,0,.2);
+  display:flex;align-items:flex-start;gap:12px}
+.app-num{font-family:var(--head);font-size:20px;font-weight:800;color:var(--em);
+  flex-shrink:0;width:28px;line-height:1.2}
+.app-txt strong{color:var(--txt);font-size:13px}
+.app-txt p{font-size:12px;color:var(--txt2);line-height:1.65;margin-top:3px}
+.app-do{display:inline-block;padding:2px 8px;border-radius:20px;font-family:var(--mono);
+  font-size:9px;margin-top:5px;letter-spacing:1px}
+.do{background:rgba(80,200,112,.1);color:var(--green);border:1px solid rgba(80,200,112,.2)}
+.dont{background:rgba(232,64,64,.1);color:var(--red);border:1px solid rgba(232,64,64,.2)}
+
+/* Propriétaire */
+.proprio-row{background:rgba(0,0,0,.2);border-radius:8px;padding:12px;
+  margin-bottom:8px;border-left:3px solid var(--amber)}
+.proprio-situation{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:6px}
+.proprio-reponse{font-size:13px;color:var(--txt2);line-height:1.65}
+.proprio-reponse strong{color:var(--txt)}
+
+.quiz-opt{padding:11px 14px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;font-size:13px;
+  margin-bottom:7px;transition:all .15s;display:flex;align-items:center;gap:10px;
+  -webkit-tap-highlight-color:transparent}
+.quiz-opt:hover{background:rgba(96,144,224,.06);color:var(--txt)}
+.quiz-opt.correct{background:rgba(80,200,112,.1);border-color:rgba(80,200,112,.4);color:var(--green)}
+.quiz-opt.wrong{background:rgba(232,64,64,.1);border-color:rgba(232,64,64,.4);color:var(--red)}
+.quiz-expl{background:rgba(96,144,224,.05);border:1px solid rgba(96,144,224,.15);
+  border-radius:8px;padding:11px 13px;margin-top:10px;font-size:12px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+.info{border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em  {background:rgba(96,144,224,.06);border-left:3px solid rgba(96,144,224,.5);color:var(--em)}
+.info-warn{background:rgba(232,160,48,.06);border-left:3px solid rgba(232,160,48,.5);color:var(--amber)}
+.info-ok  {background:rgba(80,200,112,.06);border-left:3px solid rgba(80,200,112,.5);color:var(--green)}
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:8px;
+  color:#fff;font-family:var(--head);font-size:13px;font-weight:700;padding:11px 22px;
+  cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-0.3px}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;
+  color:var(--txt2);font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:9px 16px;cursor:pointer;transition:all .15s}
+.btn-g:hover{background:rgba(96,144,224,.06);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:8px}.nav-row>*{flex:1}
+.progress-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .5s ease}
+.pts{display:flex;flex-direction:column;gap:10px;margin:16px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+.dots{text-align:center;padding:22px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--em);
+  margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:12px;margin-top:10px;font-style:italic}
+.analysis p{margin-bottom:13px;font-size:14px;line-height:1.85;color:#5060a0}
+.analysis strong{color:var(--txt)}
+.apikey-box{background:rgba(96,144,224,.04);border:1px solid rgba(96,144,224,.12);
+  border-radius:8px;padding:11px}
+.apikey-box p{font-size:12px;color:var(--txt2);margin-bottom:9px}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:6px}
+.apikey-row input{flex:1;padding:8px 10px;font-size:11px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);
+  font-family:var(--mono);outline:none}
+.apikey-row button{padding:8px 12px;border:none;border-radius:6px;background:var(--em2);
+  color:#fff;font-weight:700;cursor:pointer;font-size:11px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+
+/* ── BOUTON ACCUEIL FIXE ── */
+.home-btn-fixed {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  background: rgba(10,13,8,.92);
+  border: 1.5px solid rgba(120,216,64,.3);
+  border-radius: 30px;
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #78d840;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.home-btn-fixed:hover {
+  background: rgba(120,216,64,.12);
+  border-color: rgba(120,216,64,.5);
+}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var ESPECES = ['chien','chat','nac'];
+
+var LANGAGE = {
+  chien:{
+    label:'🐕 Chien',
+    signaux:[
+      {emoji:'😌',nom:'Corps détendu, queue basse et remuante',etat:'ok',
+       detail:'Animal calme et sociable. Approche possible. Corps souple, mouvements fluides. Queue qui remue en cercle = très bonne disposition.'},
+      {emoji:'🙂',nom:'Renifle le sol, évite le regard',etat:'ok',
+       detail:'Signal d\'apaisement — le chien communique qu\'il n\'est pas une menace. Comportement normal dans un environnement nouveau. Laisser explorer.'},
+      {emoji:'😐',nom:'Corps tendu, regard fixe',etat:'warn',
+       detail:'Attention accrue. Le chien évalue la situation. Ralentir l\'approche, se mettre de côté, parler doucement. Ne pas forcer le contact.'},
+      {emoji:'😰',nom:'Halètement excessif, bâillements répétés',etat:'warn',
+       detail:'Stress modéré. Le bâillement chez le chien est un signal d\'apaisement, pas de fatigue. Ralentir, laisser de l\'espace.'},
+      {emoji:'😠',nom:'Poils hérissés, corps rigide',etat:'bad',
+       detail:'Piloérection = activation maximale. Agressivité imminente possible. Arrêter toute approche. Prévenir le vétérinaire.'},
+      {emoji:'😡',nom:'Grognement, babines retroussées',etat:'bad',
+       detail:'Dernier avertissement avant morsure. NE JAMAIS punir ce signal. Reculer lentement, sans bruit, sans contact visuel direct.'},
+    ]
+  },
+  chat:{
+    label:'🐈 Chat',
+    signaux:[
+      {emoji:'😌',nom:'Queue dressée, clignements lents',etat:'ok',
+       detail:'Chat confiant et sociable. Le clignement lent est un "bisou" de chat. Répondre avec un clignement lent vous-même — c\'est un signal d\'apaisement reconnu.'},
+      {emoji:'🙂',nom:'Ronronnement, frottements',etat:'ok',
+       detail:'Marquage de territoire ET signe de bien-être. Un chat qui se frotte contre vous est à l\'aise. Approche possible avec douceur.'},
+      {emoji:'😐',nom:'Queue qui fouette, oreilles légèrement en arrière',etat:'warn',
+       detail:'Irritation croissante. Le fouettement de queue chez le chat signifie le contraire de chez le chien. Attention — il peut passer à l\'attaque rapidement.'},
+      {emoji:'😰',nom:'Se cache dans le transport, tremblements',etat:'warn',
+       detail:'Peur intense. Ne pas forcer la sortie du transport. Démonter le dessus si possible. Laisser le chat sortir seul à son rythme.'},
+      {emoji:'😠',nom:'Dos arqué, poils hérissés, crachements',etat:'bad',
+       detail:'Position de défense maximale. Chat prêt à attaquer. Gants de contention et serviette obligatoires. Pas d\'approche directe.'},
+      {emoji:'😡',nom:'Feulements, griffes sorties, oreilles plaquées',etat:'bad',
+       detail:'Attaque imminente. Technique burrito ou cage de contention. Prévenir le vétérinaire. Ne pas insister seul.'},
+    ]
+  },
+  nac:{
+    label:'🐇 NAC',
+    signaux:[
+      {emoji:'😌',nom:'Lapin : corps allongé, oreilles en arrière relax',etat:'ok',
+       detail:'Lapin détendu et en confiance. Les oreilles en arrière décontractées ≠ oreilles en arrière crispées (peur). Observer l\'ensemble du corps.'},
+      {emoji:'🙂',nom:'Oiseau : plumes gonflées, clignements',etat:'ok',
+       detail:'Oiseau à l\'aise et chaud. Attention : plumes gonflées prolongées peut aussi indiquer la maladie. Évaluer en contexte.'},
+      {emoji:'😐',nom:'Lapin : thumping (frappe du sol)',etat:'warn',
+       detail:'Signal d\'alarme. Le lapin perçoit un danger. Environnement trop bruyant ou stressant. Calme absolu requis.'},
+      {emoji:'😰',nom:'Oiseau : respiration visible, ailes tombantes',etat:'warn',
+       detail:'Stress ou maladie. Les oiseaux cachent leur faiblesse par instinct. Ces signes sont souvent tardifs — prise en charge urgente.'},
+      {emoji:'😠',nom:'Furet : dos arqué, danse de guerre',etat:'bad',
+       detail:'Furet en phase de jeu agressif ou vraiment agressif. Distinguer difficile. Gants fins. Mouvements lents.'},
+      {emoji:'😡',nom:'Reptile : gueule ouverte, corps aplati',etat:'bad',
+       detail:'Comportement défensif maximal chez le reptile. Ne pas manipuler sans expérience spécifique. Appeler le vétérinaire.'},
+    ]
+  }
+};
+
+var URGENCES_TEL = [
+  {icone:'🚨', titre:'Détresse respiratoire', signes:'Animal qui suffoque, gueule ouverte, langue bleue', action:'Venir IMMÉDIATEMENT — prévenir le vétérinaire en arrivant'},
+  {icone:'🩸', titre:'Hémorragie importante', signes:'Saignement qui ne s\'arrête pas, plaie profonde', action:'Comprimer avec tissu propre, venir en urgence'},
+  {icone:'😵', titre:'Animal inconscient', signes:'Ne répond plus, ne se lève plus', action:'Ne pas donner à boire, venir immédiatement allongé'},
+  {icone:'⚠️', titre:'Intoxication suspectée', signes:'Vomissements répétés, convulsions, ingestion produit', action:'Garder l\'emballage du produit, venir en urgence'},
+  {icone:'🤕', titre:'Traumatisme/Accident', signes:'Choc, chute, morsure profonde', action:'Minimiser les manipulations, venir rapidement'},
+  {icone:'💧', titre:'Non-urgence', signes:'Boite légèrement, mange moins, gratte une oreille', action:'Proposer un RDV dans les 24-48h, conseiller surveillance'},
+];
+
+var APPROCHE_STEPS = [
+  {n:'1',titre:'Se présenter à l\'animal avant de toucher',
+   do:'Se baisser légèrement, corps de côté, voix calme',
+   dont:'Approcher de face, brusquement, à hauteur du visage',
+   desc:'L\'animal a besoin de vous identifier comme non-menaçant. Laissez-lui 5-10 secondes pour vous évaluer.'},
+  {n:'2',titre:'Laisser renifler le dos de la main fermée',
+   do:'Main fermée, basse, proposée sans imposer',
+   dont:'Tendre les doigts ouverts, imposer le contact',
+   desc:'Le reniflage est le premier contact naturel. La main fermée protège les doigts. Ne jamais forcer.'},
+  {n:'3',titre:'Premier contact sur la joue ou le cou',
+   do:'Gratter doucement derrière les oreilles ou le menton',
+   dont:'Commencer par toucher la tête de dessus ou la queue',
+   desc:'La tête de dessus est perçue comme dominante. Le menton et les joues sont des zones neutres et appréciées.'},
+  {n:'4',titre:'Observer la réaction',
+   do:'Si l\'animal se penche vers vous : continuer',
+   dont:'Continuer si l\'animal recule ou se raidit',
+   desc:'Le consentement de l\'animal est la clé. Un animal qui cherche le contact vous dit qu\'il est à l\'aise.'},
+  {n:'5',titre:'Contention minimale et progressive',
+   do:'Guider plutôt que forcer, utiliser le poids du corps',
+   dont:'Saisir brusquement, maintenir trop longtemps',
+   desc:'Une contention rapide et assurée est moins stressante qu\'une contention hésitante et prolongée.'},
+];
+
+var PROPRIO_CAS = [
+  {situation:'Le propriétaire dit "il ne mord jamais" alors que le chien grogne',
+   reponse:'Reformuler sans contredire : <strong>"Je comprends que chez vous il est très calme. Dans notre cabinet il peut être stressé par l\'environnement — c\'est très courant. Pour sa sécurité et la nôtre, je préfère qu\'on prenne nos précautions."</strong>'},
+  {situation:'Le propriétaire veut tenir son animal lui-même',
+   reponse:'Évaluer la situation : si l\'animal est calme avec son propriétaire, c\'est souvent la meilleure solution. <strong>"Bien sûr, vous pouvez maintenir sa tête pendant que je... — mais si vous sentez qu\'il va réagir, dites-le moi immédiatement."</strong>'},
+  {situation:'Le propriétaire est plus stressé que l\'animal',
+   reponse:'Le stress du propriétaire se transmet à l\'animal. <strong>"Votre compagnon vous lit parfaitement. Si vous êtes détendu(e), lui aussi sera plus tranquille. Respirez, posez votre main sur lui calmement."</strong>'},
+  {situation:'L\'enfant veut participer à l\'examen',
+   reponse:'Impliquer l\'enfant de façon sécurisée : <strong>"Tu peux parler doucement à [nom de l\'animal] pendant qu\'on l\'examine — ta voix le rassure. Reste bien derrière moi."</strong> Jamais à portée de morsure.'},
+];
+
+var QUIZ = [
+  {q:'Un chien bâille plusieurs fois pendant l\'examen. Cela signifie :',
+   opts:['Il est fatigué et veut dormir','C\'est un signal d\'apaisement — il est stressé','Il a faim','Il s\'ennuie'],
+   rep:1,expl:'Le **bâillement chez le chien est un signal d\'apaisement** — il communique "je ne suis pas une menace" ou "je suis mal à l\'aise". Ce n\'est pas de la fatigue. Ralentir l\'approche et laisser de l\'espace.'},
+  {q:'Pour le premier contact avec un chien inconnu, vous devez :',
+   opts:['Tendre les doigts ouverts pour qu\'il renifle','Présenter le dos de la main fermée, basse','Caresser directement la tête par le dessus','Établir un contact visuel prolongé pour montrer l\'autorité'],
+   rep:1,expl:'**Dos de la main fermée, proposée bas** — la main fermée protège les doigts, la position basse est non-menaçante. Caresser la tête par le dessus est perçu comme dominant. Le contact visuel direct peut être interprété comme un défi.'},
+  {q:'Un chat remue la queue vigoureusement. Cela signifie :',
+   opts:['Il est content et joueur comme un chien','Il est irrité ou agité — signe d\'alerte','Il demande à manger','Il veut jouer'],
+   rep:1,expl:'**Chez le chat, le fouettement de queue = irritation** — c\'est l\'inverse du chien. Un chat qui remue la queue vigoureusement est en train de monter en tension. Ralentir ou arrêter ce qu\'on fait.'},
+  {q:'Le clignement lent chez le chat est :',
+   opts:['Un signe de somnolence','Un signal d\'apaisement et de confiance — le "bisou de chat"','Un signe de douleur oculaire','Un réflexe involontaire'],
+   rep:1,expl:'Le **clignement lent est un signal de confiance et d\'apaisement** chez le chat. Vous pouvez y répondre en clignant lentement vous-même — c\'est reconnu comme un signal non-menaçant. Utile pour établir le premier contact.'},
+  {q:'Un propriétaire anxieux tient son animal pour l\'examen. L\'ASV devrait :',
+   opts:['Le remplacer immédiatement par une contention professionnelle','L\'aider à se détendre car son stress se transmet à l\'animal','L\'ignorer et se concentrer sur l\'animal','Demander au vétérinaire de gérer le propriétaire'],
+   rep:1,expl:'Le **stress du propriétaire se transmet directement à l\'animal** par le langage corporel, la tension musculaire, la voix. Aider le propriétaire à se détendre est aussi important que de gérer l\'animal. C\'est une compétence clé de l\'ASV.'},
+];
+
+var S={
+  view:'welcome',onglet:'langage',espece:'chien',sigOpen:null,
+  qIdx:0,qSel:null,qShown:false,qScore:0,qTotal:0,
+  analyse:'',loading:false,
+  apiKey:localStorage.getItem('simcomm_key')||'',
+  apiKeySaved:!!localStorage.getItem('simcomm_key'),
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function md(t){return t.split('\n\n').filter(function(p){return p.trim();}).map(function(para){
+  var parts=para.split(/\*\*([^*]+)\*\*/g);
+  var inner=parts.map(function(p,i){return i%2===1?'<strong>'+esc(p)+'</strong>':esc(p);}).join('');
+  return '<p>'+inner+'</p>';}).join('');}
+
+function render(){
+  var h='';
+  var q=QUIZ[S.qIdx%QUIZ.length];
+  var lang=LANGAGE[S.espece];
+
+  if(S.view!=='welcome'){
+    h+='<div class="site-header"><div class="badge">🐾 PraxisVeto · Communication · Comportement · UC1 CAFASV</div>';
+    h+='<h1>Sim<span>Comm</span></h1>';
+    h+='<p>// Premiers contacts · Langage animal · Propriétaire</p></div>';
+    h+='<div class="tabs">';
+    [{id:'langage',l:'🐾 Langage'},{id:'approche',l:'👋 Approche'},{id:'proprio',l:'👤 Propriétaire'},
+     {id:'quiz',l:'🎯 Quiz'},{id:'ia',l:'🤖 IA'}
+    ].forEach(function(t){
+      h+='<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+t.l+'</button>';
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="site-header" style="padding-top:44px"><div class="badge">🐾 PraxisVeto · Communication · Comportement</div>';
+    h+='<h1>Sim<span>Comm</span></h1></div>';
+  }
+  h+='<div class="wrap">';
+
+  if(S.view==='welcome'){
+    h+='<div class="card em fadeup"><div style="text-align:center;padding:8px 0 18px">';
+    h+='<div style="font-size:52px;margin-bottom:14px">🐾</div>';
+    h+='<p style="color:var(--txt2);font-size:14px;line-height:1.85;max-width:460px;margin:0 auto">';
+    h+='Chaque animal communique en permanence. L\'ASV qui sait lire ce langage travaille plus vite, plus sûrement, et cause moins de stress. PraxisComm vous apprend à écouter avant de toucher.';
+    h+='</p>';
+    h+='<div class="pts">';
+    h+='<div class="pt"><span class="pt-i">🐾</span><span class="pt-t"><strong>Langage corporel</strong> — chien, chat, NAC : les signaux à reconnaître</span></div>';
+    h+='<div class="pt"><span class="pt-i">👋</span><span class="pt-t"><strong>Protocole d\'approche</strong> — les 5 étapes du premier contact</span></div>';
+    h+='<div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Communication propriétaire</strong> — gérer les situations délicates</span></div>';
+    h+='</div>';
+    h+='<button class="btn-p btn-full" onclick="go(\'main\')">Commencer →</button>';
+    h+='</div></div>';
+
+  } else if(S.onglet==='langage'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">🐾 Langage corporel par espèce</div>';
+    h+='<div class="card-sub">Cliquez sur chaque signal pour comprendre ce qu\'il communique.</div>';
+    h+='<div class="espece-tabs">';
+    ESPECES.forEach(function(e){
+      h+='<button class="espece-tab '+(S.espece===e?'active':'')+'" onclick="S.espece=\''+e+'\';S.sigOpen=null;render()">'+LANGAGE[e].label+'</button>';
+    });
+    h+='</div>';
+    lang.signaux.forEach(function(sig,i){
+      var open=S.sigOpen===i;
+      var ec=sig.etat==='ok'?'etat-ok':sig.etat==='warn'?'etat-warn':'etat-bad';
+      h+='<div class="signal-row '+(open?'open':'')+'" onclick="S.sigOpen=S.sigOpen==='+i+'?null:'+i+';render()">';
+      h+='<span class="sig-emoji">'+sig.emoji+'</span>';
+      h+='<div class="sig-content">';
+      h+='<div class="sig-nom">'+esc(sig.nom)+'</div>';
+      h+='<div class="sig-etat '+ec+'">'+(sig.etat==='ok'?'✓ Calme':sig.etat==='warn'?'⚠ Attention':'✗ Danger')+'</div>';
+      h+='<div class="sig-detail">'+esc(sig.detail)+'</div>';
+      h+='</div></div>';
+    });
+    h+='</div>';
+    h+='<div class="info info-em">💡 <strong>Principe universel :</strong> Un animal stressé dans un cabinet vétérinaire est NORMAL. Votre rôle est de réduire ce stress, pas de le nier ou de le forcer à disparaître.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='approche'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">👋 Protocole d\'approche en 5 étapes</div>';
+    h+='<div class="card-sub">Valable pour la majorité des animaux. S\'adapter selon la réaction.</div>';
+    APPROCHE_STEPS.forEach(function(r){
+      h+='<div class="approach-card">';
+      h+='<span class="app-num">'+r.n+'</span>';
+      h+='<div class="app-txt">';
+      h+='<strong>'+esc(r.titre)+'</strong>';
+      h+='<p>'+esc(r.desc)+'</p>';
+      h+='<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">';
+      h+='<span class="app-do do">✓ '+esc(r.do)+'</span>';
+      h+='<span class="app-do dont">✗ '+esc(r.dont)+'</span>';
+      h+='</div></div></div>';
+    });
+    h+='</div>';
+    h+='<div class="info info-ok">✓ <strong>Résultat attendu :</strong> Un animal qui consent à être examiné est moins stressé, la consultation est plus rapide, le risque de morsure est réduit, et le propriétaire fait confiance à votre cabinet.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='proprio'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">👤 Communiquer avec le propriétaire</div>';
+    h+='<div class="card-sub">4 situations délicates — et comment y répondre en tant qu\'ASV.</div>';
+    PROPRIO_CAS.forEach(function(cas){
+      h+='<div class="proprio-row">';
+      h+='<div class="proprio-situation">'+esc(cas.situation)+'</div>';
+      h+='<div class="proprio-reponse">'+cas.reponse+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+    h+='<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin:14px 0 10px">Annonce de mauvaises nouvelles — UC1</div>';
+    h+='<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:14px;margin-bottom:12px">';
+    [{etape:'1. Préparer', desc:'S\'assurer d\'un espace calme et privé. Ne jamais annoncer dans le couloir ou à la caisse.'},{etape:'2. Vérifier', desc:'Confirmer que c\'est bien le bon propriétaire. S\'assurer qu\'il n\'est pas seul si possible.'},{etape:'3. Laisser le vétérinaire parler', desc:'L\'ASV ne doit pas annoncer un diagnostic grave ou un décès — c\'est le rôle du vétérinaire.'},{etape:'4. Soutenir', desc:'Proposer un verre d\'eau, du temps, écouter sans jugement. Ne pas brusquer.'},{etape:'5. Orienter', desc:'Vers un soutien (association deuil animalier) si nécessaire. Noter dans le dossier.'}].forEach(function(e){
+      h += '<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+      h += '<span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--em);flex-shrink:0;min-width:100px">' + e.etape + '</span>';
+      h += '<span style="font-size:12px;color:var(--txt2)">' + e.desc + '</span>';
+      h += '</div>';
+    });
+    h += '</div>';
+    h+='<div class="info info-warn">⚠️ <strong>À retenir :</strong> Le propriétaire est le meilleur allié de l\'ASV. Le braquer ou le contredire frontalement augmente le stress global. Toujours reformuler, jamais contredire.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='quiz'){
+    var pct=Math.round(S.qIdx/QUIZ.length*100);
+    h+='<div class="fadeup">';
+    h+='<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-bottom:7px">';
+    h+='<span>Question '+(S.qIdx%QUIZ.length+1)+' / '+QUIZ.length+'</span>';
+    h+='<span style="color:var(--em)">'+(S.qTotal>0?Math.round(S.qScore/S.qTotal*100)+'%':'—')+'</span></div>';
+    h+='<div class="progress-wrap" style="margin-bottom:14px"><div class="progress-bar" style="width:'+pct+'%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>';
+    h+='<div class="card em"><div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--txt)">'+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt,i){
+      var cls='';if(S.qShown){if(i===q.rep)cls='correct';else if(i===S.qSel)cls='wrong';}
+      h+='<div class="quiz-opt '+cls+'" onclick="'+(S.qShown?'':'selQ('+i+')')+'">';
+      h+='<span style="font-family:var(--mono);font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span>';
+      h+='<span>'+esc(opt)+'</span></div>';
+    });
+    if(S.qShown){
+      h+='<div class="quiz-expl">'+q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h+='<button class="btn-p btn-full" style="margin-top:12px" onclick="nxtQ()">Question suivante →</button>';
+    }
+    h+='</div>';
+    h+='<button class="btn-g btn-full" onclick="rstQ()" style="margin-top:8px">↺ Recommencer</button>';
+    h+='</div>';
+
+  } else if(S.onglet==='ia'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">🤖 Analyse IA · Communication</div>';
+    h+='<div class="card-sub">Décrivez une situation — l\'IA vous guide comme un formateur comportementaliste.</div>';
+    h+='<textarea id="ia-q" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(96,144,224,.12);border-radius:8px;color:var(--txt);padding:11px;font-size:13px;font-family:var(--sans);outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Un chat reste tapi dans son transport et refuse d\'en sortir. Comment l\'aborder ? Ou : Le propriétaire pleure pendant la consultation de son vieux chien, comment gérer ?"></textarea>';
+    h+='<button class="btn-p btn-full" onclick="runIA()">🐾 Analyser cette situation →</button>';
+    if(S.loading){h+='<div class="dots" style="margin-top:14px"><span></span><span></span><span></span><div class="dots-msg">Analyse en cours...</div></div>';}
+    if(!S.loading&&S.analyse){h+='<div class="analysis fadeup" style="margin-top:14px">'+md(S.analyse)+'</div>';}
+    h+='<hr class="div">';
+    if(!S.apiKeySaved){
+      h+='<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>';
+      h+='<div class="apikey-row"><input type="password" placeholder="sk-ant-api03-..." value="'+esc(S.apiKey)+'" oninput="S.apiKey=this.value">';
+      h+='<button onclick="svKey()">Sauver</button></div></div>';
+    } else {
+      h+='<div style="color:var(--green);font-family:var(--mono);font-size:11px">// configured ✓</div>';
+    }
+    h+='</div></div>';
+  }
+
+  if(S.view!=='welcome'){
+    h+='<div style="display:flex;gap:8px;margin-top:10px">';
+    h+='<button class="btn-g" onclick="go(\'welcome\')" style="color:var(--em)">← Accueil</button>';
+    h+='<a href="index.html" style="flex:1;display:block"><button class="btn-g btn-full">⌂ PraxisVeto</button></a>';
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setO(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function selQ(i){if(S.qShown)return;S.qSel=i;S.qShown=true;S.qTotal++;if(i===QUIZ[S.qIdx%QUIZ.length].rep)S.qScore++;render();}
+function nxtQ(){S.qIdx++;S.qSel=null;S.qShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function rstQ(){S.qIdx=0;S.qScore=0;S.qTotal=0;S.qSel=null;S.qShown=false;render();}
+function svKey(){localStorage.setItem('simcomm_key',S.apiKey);S.apiKeySaved=true;render();}
+
+async function runIA(){
+  var el=document.getElementById('ia-q');
+  if(!el||!el.value.trim())return;
+  S.loading=true;S.analyse='';render();
+  try{
+    var headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:'Tu es formateur ASV expert en comportement animal et communication en cabinet veterinaire. Situation : '+el.value+'\n\nReponds en 3 paragraphes. Tutoie l\'etudiant(e). Explique le langage corporel en jeu. Donne des gestes concrets. Utilise **gras** pour les points cles.'}]})});
+    var data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content&&data.content.find(function(b){return b.type==='text';})?data.content.find(function(b){return b.type==='text';}).text:'';
+  }catch(e){S.analyse='**Erreur**\n\n'+e.message;}
+  S.loading=false;render();
+}
+render();
+</script>
+
+<!-- Bouton accueil fixe -->
+<a class="home-btn-fixed" href="index.html">⌂ PraxisVeto</a>
+
+
+<!-- Références légales : CAFASV UC1 · Code rural L.241-1 · Convention Collective Nationale vétérinaire -->
+</body>
+</html>

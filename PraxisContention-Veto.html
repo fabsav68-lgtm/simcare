@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisContention · PraxisVeto ASV</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Karla:wght@300;400;500;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0d08;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#d8e8d0;--txt2:#4a6840;--em:#78d840;--em2:#50a820;
+  --amber:#e8a030;--red:#e84040;--blue:#40a8e0;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 40% at 20% 0%,rgba(232,64,64,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 80% 90%,rgba(232,160,48,.04) 0%,transparent 50%)}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+.site-header{padding:40px 22px 24px;text-align:center;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(232,64,64,.08);
+  border:1px solid rgba(232,64,64,.22);color:var(--red);padding:4px 16px;border-radius:20px;
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-family:var(--head);font-size:clamp(26px,5vw,48px);font-weight:800;
+  letter-spacing:-2px;line-height:1;margin-bottom:8px}
+.site-header h1 span{color:var(--red)}
+.site-header p{color:var(--txt2);font-size:12px;font-family:var(--mono);letter-spacing:1px}
+.tabs{display:flex;gap:3px;padding:0 0 18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:all .15s;font-family:var(--mono);letter-spacing:1px;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt);background:rgba(232,64,64,.06)}
+.tab.active{background:rgba(232,64,64,.12);border-color:rgba(232,64,64,.4);color:var(--red)}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:22px;
+  margin-bottom:12px;position:relative;z-index:1}
+.card.em{border-top:2px solid var(--red)}
+.card-title{font-family:var(--head);font-size:15px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px;line-height:1.65}
+
+/* Signaux */
+.signal-card{border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;
+  transition:all .18s;border-left:3px solid transparent;background:rgba(0,0,0,.2);
+  -webkit-tap-highlight-color:transparent}
+.signal-card.open{border-left-color:var(--red)}
+.signal-header{display:flex;align-items:center;gap:10px}
+.signal-icon{font-size:24px;flex-shrink:0}
+.signal-nom{font-size:14px;font-weight:600}
+.signal-niveau{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:20px;
+  margin-left:auto;flex-shrink:0}
+.niveau-1{background:rgba(120,216,64,.1);color:var(--em);border:1px solid rgba(120,216,64,.2)}
+.niveau-2{background:rgba(232,160,48,.1);color:var(--amber);border:1px solid rgba(232,160,48,.2)}
+.niveau-3{background:rgba(232,64,64,.1);color:var(--red);border:1px solid rgba(232,64,64,.2)}
+.signal-body{display:none;margin-top:10px;padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.06);font-size:12px;color:var(--txt2);line-height:1.7}
+.signal-card.open .signal-body{display:block}
+
+/* Protocole steps */
+.proto-step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.04)}
+.proto-step:last-child{border-bottom:none}
+.proto-num{font-family:var(--head);font-size:18px;font-weight:800;color:var(--red);
+  flex-shrink:0;width:28px;line-height:1.2}
+.proto-txt{font-size:13px;line-height:1.65}
+.proto-txt strong{color:var(--txt)}
+
+/* Matériel */
+.materiel-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.mat-item{background:rgba(0,0,0,.2);border-radius:8px;padding:12px;
+  border:1.5px solid var(--bdr);transition:all .2s;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+.mat-item:hover{border-color:rgba(232,64,64,.3)}
+.mat-item.active{background:rgba(232,64,64,.06);border-color:rgba(232,64,64,.35)}
+.mat-icon{font-size:24px;display:block;margin-bottom:6px}
+.mat-nom{font-size:13px;font-weight:600;margin-bottom:3px}
+.mat-desc{font-size:11px;color:var(--txt2);line-height:1.5;display:none}
+.mat-item.active .mat-desc{display:block}
+
+/* CV légaux */
+.cv-card{border-radius:8px;padding:14px;margin-bottom:8px;
+  border-left:4px solid var(--amber);background:rgba(232,160,48,.05)}
+.cv-titre{font-family:var(--mono);font-size:11px;font-weight:700;
+  color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.cv-desc{font-size:13px;color:var(--txt2);line-height:1.65}
+.cv-desc strong{color:var(--txt)}
+
+/* Cas cliniques */
+.cas-card{background:rgba(0,0,0,.2);border-radius:10px;padding:16px;
+  margin-bottom:10px;border-left:3px solid var(--red)}
+.cas-titre{font-family:var(--head);font-size:14px;font-weight:700;
+  color:var(--red);margin-bottom:8px}
+.cas-contexte{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:10px;
+  background:rgba(0,0,0,.2);border-radius:6px;padding:10px}
+.cas-question{font-size:13px;font-weight:600;color:var(--txt);font-style:italic;margin-bottom:8px}
+.cas-reponse{background:rgba(232,64,64,.05);border:1px solid rgba(232,64,64,.15);
+  border-radius:6px;padding:10px;font-size:12px;color:var(--txt2);line-height:1.7;display:none}
+.cas-reponse.visible{display:block}
+.cas-reponse strong{color:var(--txt)}
+
+/* Quiz */
+.quiz-opt{padding:11px 14px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;font-size:13px;
+  margin-bottom:7px;transition:all .15s;display:flex;align-items:center;gap:10px;
+  -webkit-tap-highlight-color:transparent}
+.quiz-opt:hover{background:rgba(232,64,64,.06);color:var(--txt)}
+.quiz-opt.correct{background:rgba(120,216,64,.1);border-color:rgba(120,216,64,.4);color:var(--em)}
+.quiz-opt.wrong{background:rgba(232,64,64,.1);border-color:rgba(232,64,64,.4);color:var(--red)}
+.quiz-expl{background:rgba(232,64,64,.05);border:1px solid rgba(232,64,64,.15);
+  border-radius:8px;padding:11px 13px;margin-top:10px;font-size:12px;
+  color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+
+.info{border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em  {background:rgba(120,216,64,.06);border-left:3px solid rgba(120,216,64,.5);color:var(--em)}
+.info-warn{background:rgba(232,160,48,.06);border-left:3px solid rgba(232,160,48,.5);color:var(--amber)}
+.info-crit{background:rgba(232,64,64,.06);border-left:3px solid rgba(232,64,64,.5);color:var(--red)}
+.info-blue{background:rgba(64,168,224,.06);border-left:3px solid rgba(64,168,224,.5);color:var(--blue)}
+
+.btn-p{background:linear-gradient(135deg,#c03030,var(--red));border:none;border-radius:8px;
+  color:#fff;font-family:var(--head);font-size:13px;font-weight:700;padding:11px 22px;
+  cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-0.3px}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;
+  color:var(--txt2);font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:9px 16px;cursor:pointer;transition:all .15s}
+.btn-g:hover{background:rgba(232,64,64,.06);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:8px}.nav-row>*{flex:1}
+.progress-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .5s ease}
+.pts{display:flex;flex-direction:column;gap:10px;margin:16px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+.dots{text-align:center;padding:22px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);
+  margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:12px;margin-top:10px;font-style:italic}
+.analysis p{margin-bottom:13px;font-size:14px;line-height:1.85;color:#5a7850}
+.analysis strong{color:var(--txt)}
+.apikey-box{background:rgba(232,64,64,.04);border:1px solid rgba(232,64,64,.12);
+  border-radius:8px;padding:11px}
+.apikey-box p{font-size:12px;color:var(--txt2);margin-bottom:9px;line-height:1.6}
+.apikey-box a{color:var(--red)}
+.apikey-row{display:flex;gap:6px}
+.apikey-row input{flex:1;padding:8px 10px;font-size:11px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);
+  font-family:var(--mono);outline:none}
+.apikey-row input:focus{border-color:rgba(232,64,64,.3)}
+.apikey-row button{padding:8px 12px;border:none;border-radius:6px;background:#c03030;
+  color:#fff;font-weight:700;cursor:pointer;font-size:11px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.materiel-grid{grid-template-columns:1fr}}
+
+/* ── BOUTON ACCUEIL FIXE ── */
+.home-btn-fixed {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  background: rgba(10,13,8,.92);
+  border: 1.5px solid rgba(120,216,64,.3);
+  border-radius: 30px;
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #78d840;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.home-btn-fixed:hover {
+  background: rgba(120,216,64,.12);
+  border-color: rgba(120,216,64,.5);
+}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+var SIGNAUX = [
+  { id:'s1', icon:'👂', nom:'Oreilles plaquées', niveau:2,
+    desc:'Oreilles rabattues en arrière = peur ou agressivité défensive. Signal intermédiaire à ne pas ignorer. Adapter immédiatement l\'approche.' },
+  { id:'s2', icon:'🦷', nom:'Grognement', niveau:3,
+    desc:'Avertissement clair. Le grognement est une COMMUNICATION — ne jamais le punir. Stopper toute action, reculer lentement, laisser l\'animal se calmer. C\'est le dernier signal avant la morsure.' },
+  { id:'s3', icon:'👀', nom:'Regard fixe et dur', niveau:3,
+    desc:'Contact visuel intense et prolongé = défi ou menace. Ne pas maintenir le regard. Détourner les yeux et le corps légèrement de côté.' },
+  { id:'s4', icon:'💨', nom:'Halètement excessif', niveau:1,
+    desc:'Stress modéré. L\'animal est mal à l\'aise mais pas encore en phase agressive. Ralentir, parler doucement, laisser renifler.' },
+  { id:'s5', icon:'🐾', nom:'Corps rigide, queue basse', niveau:2,
+    desc:'Tension musculaire visible, queue entre les pattes ou rigide = état de stress élevé. Ne pas forcer le contact. Proposer une friandise à distance.' },
+  { id:'s6', icon:'😾', nom:'Chat : oreilles en arrière + dos arqué', niveau:3,
+    desc:'Position défensive maximale chez le chat. Risque de griffure ET morsure simultanées. Utiliser la cage de contention ou la serviette épaisse.' },
+  { id:'s7', icon:'🙈', nom:'Animal qui se cache ou fuit', niveau:1,
+    desc:'Peur sans agressivité directe. Ne pas forcer. Laisser l\'animal explorer à son rythme. La fuite peut se transformer en agressivité défensive si l\'animal est coincé.' },
+];
+
+// Note CAFASV UC1 : L'ASV identifie le niveau d'alerte et EN RÉFÈRE au vétérinaire.
+// Elle ne décide jamais seule de la contention forcée ou de la sédation.
+var ROLE_ASV_CONTENTION = [
+  {niveau:'VIGILANCE', asv:'Ralentir l\'approche, informer le vétérinaire, proposer un délai', veto:'Évalue et décide de la suite'},
+  {niveau:'ATTENTION', asv:'Stopper toute manipulation, préparer le matériel, alerter le vétérinaire', veto:'Décide : muselière, sédation ou report'},
+  {niveau:'DANGER', asv:'Sécuriser la zone, éloigner le propriétaire, ne pas manipuler', veto:'Décide de la sédation ou du report de consultation'},
+];
+
+var MATERIELS = [
+  { id:'museliere', icon:'😷', nom:'Muselière', desc:'Chien uniquement. Choisir la taille adaptée à la race — jamais trop serrée. Ne pas laisser plus de 15 min. Contre-indiquée si détresse respiratoire.' },
+  { id:'gants', icon:'🧤', nom:'Gants de contention', desc:'Cuir épais pour chat agressif. Attention : les gants réduisent la sensibilité et peuvent augmenter la force appliquée — utiliser avec précaution.' },
+  { id:'cage', icon:'🏠', nom:'Cage de contention', desc:'Pour le chat très agressif. Permet d\'examiner sans manipulation directe. L\'animal se calme souvent seul dans un espace confiné.' },
+  { id:'serviette', icon:'🧣', nom:'Serviette épaisse', desc:'Envelopper le chat pour limiter les griffures. Technique du "burrito". Simple, efficace, moins traumatisante qu\'une contention physique forcée.' },
+  { id:'elizabethan', icon:'🔵', nom:'Collerette elizabéthaine', desc:'Limite les morsures vers l\'avant. Utile lors des soins sur le corps. Peut augmenter le stress — à utiliser si nécessaire seulement.' },
+  { id:'sedatif', icon:'💊', nom:'Sédation chimique', desc:'Décision vétérinaire uniquement. Indiquée si contention physique impossible ou dangereuse. L\'ASV prépare le matériel sur prescription.' },
+];
+
+var CAS = [
+  { id:'rex', titre:'Rex — Berger Allemand, 4 ans, mordeur récidiviste',
+    contexte:'M. Dupont arrive avec Rex pour rappel vaccin. Rex a mordu le fils de 8 ans il y a 3 semaines, puis une voisine hier. Le propriétaire minimise : "il est joueur". Rex grogne dès l\'entrée, corps rigide.',
+    question:'Quelle est votre conduite en tant qu\'ASV ? Quelles obligations légales s\'appliquent ?',
+    reponse:'<strong>Immédiatement :</strong> Ne pas approcher Rex. Faire patienter M. Dupont en salle d\'attente isolée. Prévenir le vétérinaire avant tout contact avec l\'animal.\n\n<strong>Obligations légales :</strong> Rex a mordu 2 personnes → déclaration obligatoire. Le vétérinaire doit établir un CV1 (1ère visite) puis CV2 (J+8) et CV3 (J+15). Déclaration en mairie obligatoire. Le propriétaire ne peut pas refuser.\n\n<strong>Contention :</strong> Muselière obligatoire avant tout examen. Décision de sédation si Rex ne peut pas être approché en sécurité.' },
+  { id:'misty', titre:'Misty — Chatte persane, 6 ans, terreur du cabinet',
+    contexte:'Mme Martin apporte Misty pour stérilisation prévue. Dès l\'ouverture du transport, Misty siffle, dos arqué, griffes sorties. Elle a déjà griffé 2 ASV lors de consultations précédentes.',
+    question:'Comment préparez-vous la prise en charge de Misty ?',
+    reponse:'<strong>Préparation :</strong> Gants de contention + serviette épaisse prêts. Ne pas forcer l\'ouverture du transporteur — laisser Misty sortir seule ou démonter le dessus du transport.\n\n<strong>Technique burrito :</strong> Envelopper rapidement dans la serviette en couvrant la tête. Maintenir fermement sans écraser. Travailler vite et calmement.\n\n<strong>Alternative :</strong> Cage de contention pour l\'examen initial. Proposer au vétérinaire une prémédication anxiolytique pour les prochaines visites (Feliway, Zylkène).' },
+  { id:'kiki', titre:'Kiki — Perroquet gris du Gabon, morsures à répétition',
+    contexte:'Un perroquet est amené pour bilan annuel. L\'oiseau a déjà mordu sévèrement 2 personnes. Le propriétaire dit "il mord tout le monde sauf moi".',
+    question:'Quelles précautions spécifiques pour un NAC potentiellement dangereux ?',
+    reponse:'<strong>Spécificités NAC :</strong> Les oiseaux sont stressés par leur environnement inhabituel. Salle calme, lumière tamisée, pas de bruits brusques.\n\n<strong>Contention oiseau :</strong> Serviette fine (pas épaisse — risque d\'étouffement). Une main sur la nuque, une sur le corps. Ne jamais comprimer le thorax (respiration abdominale).\n\n<strong>Rôle du propriétaire :</strong> Le propriétaire peut aider à sortir l\'animal du transport — il est le seul en qui l\'animal a confiance. L\'ASV guide et supervise.' },
+];
+
+var QUIZ = [
+  { q:'Un chien grogne pendant la consultation. L\'ASV doit :',
+    opts:['Gronder le chien pour lui montrer qui commande','Stopper toute action et reculer lentement','Continuer rapidement pour en finir vite','Appeler le propriétaire pour tenir son chien'],
+    rep:1, expl:'Le grognement est une **communication**. Il dit "je suis mal à l\'aise, arrête". Stopper toute action et reculer lentement. Ne jamais punir un grognement — l\'animal qui ne grogne plus avant de mordre est plus dangereux.' },
+  { q:'Un chien a mordu une personne. Le vétérinaire doit établir :',
+    opts:['Un simple certificat de bonne santé','Les certificats vétérinaires CV1, CV2, CV3 sur 15 jours','Une déclaration d\'accident de travail','Rien si le propriétaire ne porte pas plainte'],
+    rep:1, expl:'**CV1 (J0) + CV2 (J+8) + CV3 (J+15)** sont obligatoires par la loi pour tout animal mordeur, qu\'il soit vacciné ou non. C\'est une mesure de surveillance antirabique. Le vétérinaire et le propriétaire sont tous deux obligés.' },
+  { q:'Pour contenir un chat très agressif, la technique la plus adaptée est :',
+    opts:['Le maintenir fermement par la peau du cou uniquement','L\'envelopper dans une serviette épaisse (technique burrito)','Utiliser des gants de contention et forcer','Demander au propriétaire de le tenir'],
+    rep:1, expl:'La **technique burrito** (serviette épaisse enveloppant le corps et la tête) est la plus efficace et la moins traumatisante. Elle limite les griffures tout en rassurant l\'animal par la pression douce.' },
+  { q:'Un propriétaire refuse que son chien mordeur soit muselé. L\'ASV doit :',
+    opts:['Accepter et faire attention','Prévenir le vétérinaire qui expliquera les obligations légales','Refuser la consultation et renvoyer le client','Appeler la police'],
+    rep:1, expl:'L\'ASV **prévient le vétérinaire** qui a l\'autorité pour expliquer les obligations légales. Un animal mordeur avec antécédents peut légalement être refusé si la sécurité de l\'équipe n\'est pas garantie.' },
+  { q:'Les gants de contention pour chat :',
+    opts:['Garantissent une protection totale contre les morsures','Réduisent la sensibilité et peuvent augmenter la force appliquée','Sont obligatoires pour tout chat','Remplacent toujours la technique burrito'],
+    rep:1, expl:'Les gants **réduisent la sensibilité tactile** — risque d\'appuyer trop fort sans s\'en rendre compte. Ils ne protègent pas des morsures profondes. La technique burrito reste souvent préférable.' },
+  { q:'Face à un animal qui fuit et se cache, l\'ASV doit :',
+    opts:['Attraper rapidement l\'animal avant qu\'il ne se blesse','Laisser l\'animal explorer à son rythme sans forcer','Fermer toutes les issues et encercler l\'animal','Demander au propriétaire de le rattraper'],
+    rep:1, expl:'Un animal qui **fuit** communique sa peur. Forcer le contact peut déclencher une agressivité défensive. Laisser l\'animal se calmer, proposer des friandises à distance, laisser renifler la main sans imposer le contact.' },
+];
+
+// État
+var S = {
+  view:'welcome', onglet:'signaux', signalOpen:null, matOpen:null, casShown:{},
+  qIdx:0, qSel:null, qShown:false, qScore:0, qTotal:0,
+  analyse:'', loading:false,
+  apiKey:localStorage.getItem('simcont_key')||'',
+  apiKeySaved:!!localStorage.getItem('simcont_key'),
+};
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function md(t){
+  return t.split('\n\n').filter(function(p){return p.trim();}).map(function(para){
+    var parts=para.split(/\*\*([^*]+)\*\*/g);
+    var inner=parts.map(function(p,i){return i%2===1?'<strong>'+esc(p)+'</strong>':esc(p);}).join('');
+    return '<p>'+inner+'</p>';
+  }).join('');
+}
+
+function render(){
+  var h='';
+  var q=QUIZ[S.qIdx%QUIZ.length];
+
+  if(S.view!=='welcome'){
+    h+='<div class="site-header"><div class="badge">⚠️ PraxisVeto · Contention · Sécurité</div>';
+    h+='<h1>Sim<span>Contention</span></h1>';
+    h+='<p>// Gestion animal hostile · Protocoles · Obligations légales</p></div>';
+    h+='<div class="tabs">';
+    [{id:'signaux',l:'⚠️ Signaux'},{id:'protocole',l:'📋 Protocole'},{id:'materiel',l:'🧤 Matériel'},
+     {id:'legal',l:'⚖️ Légal'},{id:'cas',l:'🏥 Cas'},{id:'quiz',l:'🎯 Quiz'},{id:'ia',l:'🤖 IA'}
+    ].forEach(function(t){
+      h+='<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+t.l+'</button>';
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="site-header" style="padding-top:44px"><div class="badge">⚠️ PraxisVeto · Contention · Sécurité</div>';
+    h+='<h1>Sim<span>Contention</span></h1></div>';
+  }
+
+  h+='<div class="wrap">';
+
+  if(S.view==='welcome'){
+    h+='<div class="card em fadeup"><div style="text-align:center;padding:8px 0 18px">';
+    h+='<div style="font-size:52px;margin-bottom:14px">⚠️</div>';
+    h+='<p style="color:var(--txt2);font-size:14px;line-height:1.85;max-width:460px;margin:0 auto">';
+    h+='Un animal hostile au cabinet — chien qui grogne, chat qui crache, NAC qui mord — c\'est la situation la plus fréquente et la plus risquée pour l\'ASV. PraxisContention vous prépare à agir avec méthode.';
+    h+='</p>';
+    h+='<div class="pts">';
+    h+='<div class="pt"><span class="pt-i">⚠️</span><span class="pt-t"><strong>Signaux d\'alerte</strong> — reconnaître les 7 signes avant-coureurs</span></div>';
+    h+='<div class="pt"><span class="pt-i">📋</span><span class="pt-t"><strong>Protocole de contention</strong> — les étapes dans l\'ordre</span></div>';
+    h+='<div class="pt"><span class="pt-i">🧤</span><span class="pt-t"><strong>Matériel</strong> — quel outil pour quelle situation</span></div>';
+    h+='<div class="pt"><span class="pt-i">⚖️</span><span class="pt-t"><strong>Obligations légales</strong> — CV1/CV2/CV3, déclaration mairie</span></div>';
+    h+='<div class="pt"><span class="pt-i">🏥</span><span class="pt-t"><strong>3 cas cliniques</strong> — chien mordeur, chat agressif, NAC</span></div>';
+    h+='</div>';
+    h+='<button class="btn-p btn-full" onclick="go(\'main\')">Commencer →</button>';
+    h+='</div></div>';
+
+  } else if(S.onglet==='signaux'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--red)">⚠️ Signaux d\'alerte à reconnaître</div>';
+    h+='<div class="card-sub">Avant toute morsure, l\'animal communique. L\'ASV doit lire ces signaux.</div>';
+    SIGNAUX.forEach(function(s){
+      h+='<div class="signal-card '+(S.signalOpen===s.id?'open':'')+'" onclick="S.signalOpen=S.signalOpen===s.id?null:\''+s.id+'\';render()">';
+      h+='<div class="signal-header">';
+      h+='<span class="signal-icon">'+s.icon+'</span>';
+      h+='<span class="signal-nom">'+esc(s.nom)+'</span>';
+      h+='<span class="signal-niveau niveau-'+s.niveau+'">Niveau '+s.niveau+'</span>';
+      h+='</div>';
+      h+='<div class="signal-body">'+esc(s.desc)+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+    h+='<div class="info info-crit">🚨 <strong>Règle d\'or :</strong> Ne jamais punir un grognement. Un animal qui ne grogne plus avant de mordre est plus dangereux qu\'un animal qui grogne.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='protocole'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--red)">📋 Protocole de contention — dans l\'ordre</div>';
+    h+='<div class="card-sub">Face à un animal hostile, chaque étape compte. Ne pas brûler les étapes.</div>';
+    [{n:'1',t:'Observer avant d\'agir',d:'Prendre 30 secondes pour évaluer le niveau d\'alerte. Lire le langage corporel. Ne pas s\'approcher immédiatement.'},
+     {n:'2',t:'Prévenir le vétérinaire',d:'Toujours signaler un animal potentiellement dangereux avant de commencer. C\'est le vétérinaire qui décide de la stratégie.'},
+     {n:'3',t:'Isoler l\'animal si possible',d:'Salle d\'attente séparée, box calme. Réduire les stimuli (bruit, autres animaux, enfants).'},
+     {n:'4',t:'Préparer le matériel',d:'Muselière adaptée, gants, serviette, cage de contention. Tout à portée de main AVANT d\'approcher.'},
+     {n:'5',t:'Approche calme et latérale',d:'Ne jamais approcher de face. Corps de côté, regard fuyant, voix douce et posée. Laisser renifler la main fermée.'},
+     {n:'6',t:'Contention minimale',d:'Utiliser la force minimale nécessaire. Une contention excessive augmente le stress et le risque de morsure.'},
+     {n:'7',t:'Reporter si nécessaire',d:'Si l\'animal est trop stressé ou dangereux, reporter la consultation. Mieux vaut revenir que de blesser l\'animal ou l\'équipe.'},
+    ].forEach(function(r){
+      h+='<div class="proto-step">';
+      h+='<span class="proto-num">'+r.n+'</span>';
+      h+='<div class="proto-txt"><strong>'+esc(r.t)+'</strong><br>'+esc(r.d)+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+    h+='<div class="info info-warn">⚠️ <strong>Rappel :</strong> L\'ASV a le droit de refuser une contention dangereuse. La sécurité de l\'équipe prime toujours.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='materiel'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--red)">🧤 Matériel de contention</div>';
+    h+='<div class="card-sub">Cliquez sur chaque équipement pour voir les indications et contre-indications.</div>';
+    h+='<div class="materiel-grid">';
+    MATERIELS.forEach(function(m){
+      var active=S.matOpen===m.id;
+      h+='<div class="mat-item '+(active?'active':'')+'" onclick="S.matOpen=S.matOpen===\''+m.id+'\'?null:\''+m.id+'\';render()">';
+      h+='<span class="mat-icon">'+m.icon+'</span>';
+      h+='<div class="mat-nom">'+esc(m.nom)+'</div>';
+      h+='<div class="mat-desc">'+esc(m.desc)+'</div>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+    h+='<div class="info info-em">💡 <strong>Principe général :</strong> Le meilleur matériel est celui qui rassure l\'animal autant qu\'il protège l\'ASV. Une contention douce et rapide vaut mieux qu\'une contention forcée et prolongée.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='legal'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--red)">⚖️ Obligations légales — Animal mordeur</div>';
+    h+='<div class="card-sub">⚠️ Contenu à valider par votre référent vétérinaire · Loi du 20 juin 2008</div>';
+    h+='<div class="info info-crit" style="margin-bottom:16px">🚨 Ces informations sont à des fins pédagogiques. Toujours vérifier la réglementation en vigueur avec le vétérinaire responsable.</div>';
+    [{code:'CV1',titre:'1ère visite — Jour J',
+      desc:'Établi le jour de la morsure ou au plus tôt. Évaluation de l\'état de santé de l\'animal. L\'animal est remis au propriétaire sous conditions. <strong>Déclaration en mairie obligatoire.</strong>'},
+     {code:'CV2',titre:'2ème visite — J + 8',
+      desc:'Contrôle de l\'état de santé de l\'animal. Vérification que l\'animal est toujours vivant et surveille sa santé. <strong>Document remis au propriétaire.</strong>'},
+     {code:'CV3',titre:'3ème visite — J + 15',
+      desc:'Visite finale. Si l\'animal est toujours en bonne santé, le médecin de la victime peut confirmer l\'absence de risque rabique. <strong>Clôture de la procédure.</strong>'},
+    ].forEach(function(cv){
+      h+='<div class="cv-card">';
+      h+='<div class="cv-titre">'+esc(cv.code)+' · '+esc(cv.titre)+'</div>';
+      h+='<div class="cv-desc">'+cv.desc.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h+='</div>';
+    });
+    h+='<div class="info info-warn" style="margin-top:10px">📋 <strong>Rôle de l\'ASV :</strong> Préparer les documents, rappeler les rendez-vous CV2 et CV3, s\'assurer que le propriétaire comprend ses obligations. Le vétérinaire signe les certificats.</div>';
+    h+='<div class="info info-blue">ℹ️ <strong>Catégories de chiens :</strong> Les chiens de catégorie 1 et 2 sont soumis à des obligations supplémentaires (déclaration en mairie, assurance, muselière obligatoire en public). L\'ASV vérifie le statut à l\'accueil.</div>';
+    h+='</div></div>';
+
+  } else if(S.onglet==='cas'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--red)">🏥 Cas cliniques</div>';
+    h+='<div class="card-sub">3 situations réelles · Réfléchissez avant de voir la réponse.</div>';
+    CAS.forEach(function(cas){
+      var shown=S.casShown[cas.id];
+      h+='<div class="cas-card">';
+      h+='<div class="cas-titre">'+esc(cas.titre)+'</div>';
+      h+='<div class="cas-contexte">'+esc(cas.contexte)+'</div>';
+      h+='<div class="cas-question">'+esc(cas.question)+'</div>';
+      h+='<button class="btn-g btn-full" style="margin-bottom:8px;color:var(--red);border-color:rgba(232,64,64,.2)" onclick="toggleCas(\''+cas.id+'\')">'+(shown?'▲ Masquer':'▼ Voir la réponse')+'</button>';
+      h+='<div class="cas-reponse'+(shown?' visible':'')+'">';
+      h+=cas.reponse.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'<br><br>');
+      h+='</div></div>';
+    });
+    h+='</div></div>';
+
+  } else if(S.onglet==='quiz'){
+    var pct=Math.round(S.qIdx/QUIZ.length*100);
+    h+='<div class="fadeup">';
+    h+='<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-bottom:7px">';
+    h+='<span>Question '+(S.qIdx%QUIZ.length+1)+' / '+QUIZ.length+'</span>';
+    h+='<span style="color:var(--red)">'+(S.qTotal>0?Math.round(S.qScore/S.qTotal*100)+'%':'—')+'</span></div>';
+    h+='<div class="progress-wrap" style="margin-bottom:14px"><div class="progress-bar" style="width:'+pct+'%;background:linear-gradient(90deg,#c03030,var(--red))"></div></div>';
+    h+='<div class="card em"><div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--txt)">'+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt,i){
+      var cls='';
+      if(S.qShown){if(i===q.rep)cls='correct';else if(i===S.qSel)cls='wrong';}
+      h+='<div class="quiz-opt '+cls+'" onclick="'+(S.qShown?'':'selQ('+i+')')+'">';
+      h+='<span style="font-family:var(--mono);font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span>';
+      h+='<span>'+esc(opt)+'</span></div>';
+    });
+    if(S.qShown){
+      h+='<div class="quiz-expl">'+q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h+='<button class="btn-p btn-full" style="margin-top:12px" onclick="nxtQ()">Question suivante →</button>';
+    }
+    h+='</div>';
+    h+='<button class="btn-g btn-full" onclick="rstQ()" style="margin-top:8px;color:var(--em)">↺ Recommencer</button>';
+    h+='</div>';
+
+  } else if(S.onglet==='ia'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--red)">🤖 Analyse IA · Contention</div>';
+    h+='<div class="card-sub">Décrivez une situation difficile — l\'IA vous guide comme un formateur ASV.</div>';
+    h+='<textarea id="ia-q" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(232,64,64,.12);border-radius:8px;color:var(--txt);padding:11px;font-size:13px;font-family:var(--sans);outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Un chien grogne dès que je m\'approche pour poser la muselière. Comment faire ? Ou : Le propriétaire refuse que son chien mordeur soit muselé, que faire ?"></textarea>';
+    h+='<button class="btn-p btn-full" onclick="runIA()">⚠️ Analyser cette situation →</button>';
+    if(S.loading){h+='<div class="dots" style="margin-top:14px"><span></span><span></span><span></span><div class="dots-msg">Analyse en cours...</div></div>';}
+    if(!S.loading&&S.analyse){h+='<div class="analysis fadeup" style="margin-top:14px">'+md(S.analyse)+'</div>';}
+    h+='<hr class="div">';
+    if(!S.apiKeySaved){
+      h+='<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>';
+      h+='<div class="apikey-row"><input type="password" placeholder="sk-ant-api03-..." value="'+esc(S.apiKey)+'" oninput="S.apiKey=this.value">';
+      h+='<button onclick="svKey()">Sauver</button></div></div>';
+    } else {
+      h+='<div style="color:var(--em);font-family:var(--mono);font-size:11px">// configured ✓</div>';
+    }
+    h+='</div></div>';
+  }
+
+  if(S.view!=='welcome'){
+    h+='<div style="display:flex;gap:8px;margin-top:10px">';
+    h+='<button class="btn-g" onclick="go(\'welcome\')" style="color:var(--red);border-color:rgba(232,64,64,.2)">← Accueil</button>';
+    h+='<a href="index.html" style="flex:1;display:block"><button class="btn-g btn-full">⌂ PraxisVeto</button></a>';
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setO(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function toggleCas(id){if(S.casShown[id]){delete S.casShown[id];}else{S.casShown[id]=true;}render();}
+function selQ(i){if(S.qShown)return;S.qSel=i;S.qShown=true;S.qTotal++;if(i===QUIZ[S.qIdx%QUIZ.length].rep)S.qScore++;render();}
+function nxtQ(){S.qIdx++;S.qSel=null;S.qShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function rstQ(){S.qIdx=0;S.qScore=0;S.qTotal=0;S.qSel=null;S.qShown=false;render();}
+function svKey(){localStorage.setItem('simcont_key',S.apiKey);S.apiKeySaved=true;render();}
+
+async function runIA(){
+  var el=document.getElementById('ia-q');
+  if(!el||!el.value.trim())return;
+  S.loading=true;S.analyse='';render();
+  try{
+    var headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:'Tu es formateur ASV expert en comportement animal et contention veterinaire. Situation : '+el.value+'\n\nReponds en 3 paragraphes. Tutoie l\'etudiant(e). Cite le protocole etape par etape. Mentionne le role de l\'ASV vs le veterinaire. Utilise **gras** pour les points cles.'}]})});
+    var data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content&&data.content.find(function(b){return b.type==='text';})?data.content.find(function(b){return b.type==='text';}).text:'';
+  }catch(e){S.analyse='**Erreur**\n\n'+e.message;}
+  S.loading=false;render();
+}
+
+render();
+</script>
+
+<!-- Bouton accueil fixe -->
+<a class="home-btn-fixed" href="index.html">⌂ PraxisVeto</a>
+
+
+<!-- Références légales : Arrêté du 21 avril 1997 · Code rural L.211-11 · Loi 2008 chiens dangereux -->
+</body>
+</html>

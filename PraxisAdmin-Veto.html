@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisAdmin · UC2 CAFASV · PraxisVeto</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Karla:wght@300;400;500;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#d0e0f0;--txt2:#3a5070;--em:#4090e0;--em2:#2060b0;
+  --amber:#e8a030;--red:#e84040;--em3:#60b0f8;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 20% 0%,rgba(64,144,224,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 80% 90%,rgba(96,176,248,.04) 0%,transparent 50%);
+  background-image:
+    repeating-linear-gradient(0deg,rgba(64,144,224,.015) 0px,rgba(64,144,224,.015) 1px,transparent 1px,transparent 60px),
+    repeating-linear-gradient(90deg,rgba(64,144,224,.015) 0px,rgba(64,144,224,.015) 1px,transparent 1px,transparent 60px)}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+.site-header{padding:40px 22px 24px;text-align:center;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(64,144,224,.08);border:1px solid rgba(64,144,224,.22);color:var(--em3);padding:4px 16px;border-radius:20px;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-family:var(--head);font-size:clamp(26px,5vw,48px);font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:8px}
+.site-header h1 span{color:var(--em3)}
+.site-header p{color:var(--txt2);font-size:12px;font-family:var(--mono);letter-spacing:1px}
+.tabs{display:flex;gap:3px;padding:0 0 18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--mono);letter-spacing:1px;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt);background:rgba(64,144,224,.06)}
+.tab.active{background:rgba(64,144,224,.12);border-color:rgba(64,144,224,.4);color:var(--em3)}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:12px;position:relative;z-index:1}
+.card.em{border-top:2px solid var(--em3)}
+.card-title{font-family:var(--head);font-size:15px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px;line-height:1.65}
+.item-card{border-radius:8px;padding:14px;margin-bottom:8px;border:1.5px solid var(--bdr);background:rgba(0,0,0,.2);cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent}
+.item-card:hover{background:rgba(0,0,0,.3)}
+.item-card.open{border-color:rgba(64,144,224,.35)}
+.item-header{display:flex;align-items:center;gap:12px}
+.item-icon{font-size:22px;flex-shrink:0}
+.item-title{font-size:14px;font-weight:600}
+.item-body{font-size:12px;color:var(--txt2);line-height:1.7;display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+.item-card.open .item-body{display:block}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase}
+.tag-em{background:rgba(64,144,224,.1);color:var(--em3);border:1px solid rgba(64,144,224,.25)}
+.tag-warn{background:rgba(232,160,48,.1);color:var(--amber);border:1px solid rgba(232,160,48,.25)}
+.tag-red{background:rgba(232,64,64,.1);color:var(--red);border:1px solid rgba(232,64,64,.25)}
+.scenario-box{background:rgba(0,0,0,.25);border-radius:10px;padding:18px;margin-bottom:10px;border-left:3px solid var(--em3)}
+.scenario-titre{font-family:var(--head);font-size:14px;font-weight:700;color:var(--em3);margin-bottom:8px}
+.scenario-ctx{font-size:13px;color:var(--txt2);line-height:1.75;margin-bottom:12px;background:rgba(0,0,0,.2);border-radius:6px;padding:12px}
+.scenario-q{font-size:13px;font-weight:600;color:var(--txt);font-style:italic;margin-bottom:8px}
+.scenario-rep{background:rgba(64,144,224,.06);border:1px solid rgba(64,144,224,.15);border-radius:8px;padding:12px;font-size:12px;color:var(--txt2);line-height:1.7;display:none}
+.scenario-rep.visible{display:block}
+.scenario-rep strong{color:var(--txt)}
+.quiz-opt{padding:11px 14px;border-radius:8px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;font-size:13px;margin-bottom:7px;transition:all .15s;display:flex;align-items:center;gap:10px;-webkit-tap-highlight-color:transparent}
+.quiz-opt:hover{background:rgba(64,144,224,.06);color:var(--txt)}
+.quiz-opt.correct{background:rgba(64,200,120,.1);border-color:rgba(64,200,120,.4);color:#40c878}
+.quiz-opt.wrong{background:rgba(232,64,64,.1);border-color:rgba(232,64,64,.4);color:var(--red)}
+.quiz-expl{background:rgba(64,144,224,.05);border:1px solid rgba(64,144,224,.15);border-radius:8px;padding:11px 13px;margin-top:10px;font-size:12px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+.info{border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em  {background:rgba(64,144,224,.06);border-left:3px solid rgba(64,144,224,.5);color:var(--em3)}
+.info-warn{background:rgba(232,160,48,.06);border-left:3px solid rgba(232,160,48,.5);color:var(--amber)}
+.info-red {background:rgba(232,64,64,.06);border-left:3px solid rgba(232,64,64,.5);color:var(--red)}
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em3));border:none;border-radius:8px;color:#fff;font-family:var(--head);font-size:13px;font-weight:700;padding:11px 22px;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-0.3px}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;color:var(--txt2);font-family:var(--sans);font-size:12px;font-weight:600;padding:9px 16px;cursor:pointer;transition:all .15s}
+.btn-g:hover{background:rgba(64,144,224,.06);color:var(--txt)}
+.btn-full{width:100%}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.progress-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .5s ease}
+.dots{text-align:center;padding:22px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--em3);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:12px;margin-top:10px;font-style:italic}
+.analysis p{margin-bottom:13px;font-size:14px;line-height:1.85;color:#4060a0}
+.analysis strong{color:var(--txt)}
+.apikey-box{background:rgba(64,144,224,.04);border:1px solid rgba(64,144,224,.12);border-radius:8px;padding:11px}
+.apikey-box p{font-size:12px;color:var(--txt2);margin-bottom:9px;line-height:1.6}
+.apikey-box a{color:var(--em3)}
+.apikey-row{display:flex;gap:6px}
+.apikey-row input{flex:1;padding:8px 10px;font-size:11px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);font-family:var(--mono);outline:none}
+.apikey-row input:focus{border-color:rgba(64,144,224,.3)}
+.apikey-row button{padding:8px 12px;border:none;border-radius:6px;background:var(--em2);color:#fff;font-weight:700;cursor:pointer;font-size:11px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
+.home-btn-fixed{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999;background:rgba(8,12,16,.92);border:1.5px solid rgba(64,144,224,.3);border-radius:30px;padding:10px 22px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--em3);cursor:pointer;text-decoration:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,.5);transition:all .2s;white-space:nowrap}
+.home-btn-fixed:hover{background:rgba(64,144,224,.12)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES CAFASV UC2
+// ═══════════════════════════════════════
+
+var DOSSIER_ELEMENTS = [
+  {id:'d1', icon:'📋', titre:'Fiche d\'identification animal',
+   tag:'OBLIGATOIRE', tagCls:'tag-em',
+   desc:'Espèce, race, sexe, date de naissance, robe/couleur, numéro d\'identification (puce ou tatouage). Le numéro de puce (15 chiffres) est obligatoire depuis 2012 pour les chiens et chats.',
+   asv:'Saisir et vérifier les données à chaque consultation. Signaler toute discordance au vétérinaire.'},
+  {id:'d2', icon:'👤', titre:'Fiche propriétaire',
+   tag:'OBLIGATOIRE', tagCls:'tag-em',
+   desc:'Nom, prénom, adresse, téléphone, email. Consentement RGPD à recueillir. Informations à mettre à jour à chaque consultation.',
+   asv:'Vérifier les coordonnées à chaque visite. Proposer la mise à jour si changement.'},
+  {id:'d3', icon:'💉', titre:'Carnet de vaccination',
+   tag:'IMPORTANT', tagCls:'tag-warn',
+   desc:'Date des vaccins, produits utilisés (lot, date péremption), prochain rappel. En France : rage obligatoire si l\'animal voyage à l\'étranger. Chien : CHPL recommandé. Chat : typhus, coryza.',
+   asv:'Saisir les données de vaccination après l\'acte du vétérinaire. Générer les rappels automatiques si logiciel.'},
+  {id:'d4', icon:'📄', titre:'Ordonnances et prescriptions',
+   tag:'CONFIDENTIEL', tagCls:'tag-red',
+   desc:'Toute prescription médicale doit être établie par le vétérinaire. L\'ordonnance doit mentionner : identification animal, médicament, posologie, durée, signature vétérinaire.',
+   asv:'Archiver les ordonnances au dossier. Préparer les médicaments selon la prescription. Ne jamais délivrer sans ordonnance valide.'},
+  {id:'d5', icon:'🏥', titre:'Historique des consultations',
+   tag:'IMPORTANT', tagCls:'tag-warn',
+   desc:'Motif de consultation, actes réalisés, résultats d\'examens, hospitalisations, chirurgies. Traçabilité obligatoire.',
+   asv:'Compléter le dossier sous dictée ou après la consultation. Vérifier l\'exhaustivité des informations saisies.'},
+  {id:'d6', icon:'💰', titre:'Facturation',
+   tag:'UC2', tagCls:'tag-em',
+   desc:'Actes, médicaments, hospitalisations. Réductions éventuelles. TVA applicable selon les actes. Conservation 10 ans obligatoire.',
+   asv:'Éditer la facture, encaisser le paiement, émettre le reçu, tracer dans le logiciel.'},
+];
+
+var CAISSE_STEPS = [
+  {n:'1', titre:'Ouverture de caisse', desc:'Vérifier le fond de caisse (monnaie disponible). Notifier si manque. Signer le registre d\'ouverture.'},
+  {n:'2', titre:'Encaissement', desc:'Vérifier le montant sur la facture. Indiquer le total au client. Rendre la monnaie exacte. Proposer reçu.'},
+  {n:'3', titre:'Modes de paiement', desc:'Espèces, CB, chèque (à l\'ordre de la clinique), virement, tiers payant assurance animale. Jamais de crédit informel.'},
+  {n:'4', titre:'Gestion des impayés', desc:'Signaler immédiatement au vétérinaire ou responsable. Ne jamais décider seul d\'un arrangement. Tracer dans le dossier.'},
+  {n:'5', titre:'Clôture de caisse', desc:'Compter la caisse. Comparer avec les encaissements enregistrés. Signaler toute différence. Signer le registre de clôture.'},
+];
+
+var STOCKS_ZONES = [
+  {zone:'Médicaments prescription', icon:'💊', temp:'T° ambiante 15-25°C', contrainte:'Armoire fermée à clé — accès vétérinaire uniquement', controle:'Date péremption mensuelle'},
+  {zone:'Médicaments OTC (sans ordonnance)', icon:'🧴', temp:'T° ambiante', contrainte:'Accessible ASV — selon liste validée vétérinaire', controle:'Rotation FIFO obligatoire'},
+  {zone:'Vaccins et produits thermosensibles', icon:'🧊', temp:'Réfrigérateur 2-8°C', contrainte:'Relevé T° quotidien obligatoire — alarme si rupture', controle:'À chaque ouverture du frigo'},
+  {zone:'Matériel chirurgical stérile', icon:'🔬', temp:'T° ambiante sèche', contrainte:'Intégrité emballage vérifiée avant emploi', controle:'À chaque utilisation'},
+  {zone:'Produits désinfectants', icon:'🧽', temp:'Local ventilé, hors gel', contrainte:'Fiches sécurité (FDS) accessibles — EPI obligatoires', controle:'Étiquetage obligatoire'},
+  {zone:'Déchets DASRI', icon:'⚠️', temp:'Zone dédiée fermée', contrainte:'Conteneurs DASRI homologués — enlèvement tracé', controle:'À chaque remplissage'},
+];
+
+var OUTILS_LOGICIEL = [
+  {icon:'📅', nom:'Gestion des rendez-vous', desc:'Planifier selon le type de consultation (urgence, routine, vaccination). Optimiser le planning du vétérinaire. Gérer les rappels automatiques.'},
+  {icon:'🐾', nom:'Dossier patient numérique', desc:'Créer, mettre à jour, archiver. Liaisons entre propriétaire et animaux. Accès sécurisé selon profil utilisateur.'},
+  {icon:'📊', nom:'Statistiques et reporting', desc:'Suivi des actes par période, CA, stocks. Tableaux de bord pour le vétérinaire responsable.'},
+  {icon:'📧', nom:'Communication client', desc:'Rappels de vaccins, résultats d\'analyses, devis. Respect du RGPD pour les emails automatiques.'},
+];
+
+var CAS_ADMIN = [
+  {id:'ca1',
+   titre:'Mme Dubois — Erreur dans le dossier',
+   contexte:'Mme Dubois appelle : elle vient de recevoir un rappel de vaccination pour son chat "Minou" décédé il y a 6 mois. Elle est agacée et demande à être retirée des listes.',
+   question:'Quelle est votre démarche immédiate ?',
+   reponse:'**S\'excuser sincèrement** pour la gêne occasionnée. **Prendre note** du décès dans le dossier (date, cause si connue). **Notifier au vétérinaire** pour validation de la clôture du dossier. **Supprimer les rappels automatiques** pour cet animal. Proposer à Mme Dubois de conserver ses coordonnées pour ses futurs animaux. **RGPD** : si elle demande la suppression de ses données, en informer le responsable de la clinique.'},
+  {id:'ca2',
+   titre:'Stock de vaccins — Rupture de température',
+   contexte:'En arrivant le matin, vous constatez que la température du réfrigérateur à vaccins affiche 10°C (au lieu de 2-8°C). L\'alarme s\'est déclenchée à 23h47.',
+   question:'Quelle est votre conduite à tenir ?',
+   reponse:'**Ne jamais utiliser** les vaccins exposés sans avis vétérinaire — leur efficacité est compromise. **Alerter immédiatement** le vétérinaire. **Relever** la durée de dépassement (depuis 23h47). **Isoler** les vaccins concernés (ne pas jeter sans validation). **Contacter** le fournisseur pour évaluation. **Tracer** l\'incident dans le registre de contrôle des T°. **Vérifier** la cause (panne, porte mal fermée, sonde défaillante).'},
+];
+
+var QUIZ_ADMIN = [
+  {q:'L\'ordonnance vétérinaire doit obligatoirement mentionner :',
+   opts:['Nom du vétérinaire uniquement','Identification de l\'animal, médicament, posologie, durée, signature du vétérinaire','Nom du propriétaire et numéro de téléphone','Date d\'achat de l\'animal'],rep:1,
+   expl:'L\'ordonnance doit comporter : **identification de l\'animal** (espèce, nom, numéro d\'identification), **médicament** (DCI ou nom commercial), **posologie**, **durée du traitement**, **date**, **signature du vétérinaire**. L\'ASV ne peut pas délivrer de médicament sans ordonnance valide.'},
+  {q:'Les vaccins doivent être conservés à une température de :',
+   opts:['0 à 4°C','2 à 8°C','8 à 15°C','15 à 25°C'],rep:1,
+   expl:'Les vaccins sont des produits thermosensibles qui doivent être conservés entre **2 et 8°C**. Un enregistrement quotidien de la température du réfrigérateur est obligatoire. Tout écart doit être signalé et tracé immédiatement.'},
+  {q:'En cas de paiement insuffisant, l\'ASV doit :',
+   opts:['Accepter et noter de payer plus tard','Refuser le service','Signaler immédiatement au vétérinaire et ne décider d\'aucun arrangement seule','Demander un chèque de garantie'],rep:2,
+   expl:'**Signaler immédiatement au vétérinaire ou au responsable**. L\'ASV ne décide jamais seule d\'un arrangement financier. Elle peut proposer de rappeler le client pour trouver une solution, mais la décision appartient au vétérinaire responsable.'},
+  {q:'La rotation FIFO en gestion des stocks signifie :',
+   opts:['First In Forever Out — conserver les anciens produits','First In First Out — utiliser en premier les produits les plus anciens','First Injection For Overdose','Federal Inventory For Operations'],rep:1,
+   expl:'**FIFO = First In First Out** : les produits achetés en premier sont utilisés en premier. Cette méthode garantit que les produits à péremption courte sont utilisés avant les produits plus récents, évitant les périmés en stock.'},
+  {q:'Un client demande à récupérer le dossier médical complet de son animal. L\'ASV doit :',
+   opts:['Refuser — le dossier est confidentiel','Remettre immédiatement le dossier','Informer le vétérinaire et suivre la procédure de la clinique','Détruire le dossier à sa demande'],rep:2,
+   expl:'**Informer le vétérinaire** et suivre la procédure de la clinique. Le propriétaire a des droits sur les données de son animal (RGPD), mais la remise du dossier doit passer par le responsable de traitement des données de la clinique (généralement le vétérinaire responsable).'},
+  {q:'La durée légale minimale de conservation des dossiers médicaux vétérinaires est de :',
+   opts:['3 ans','5 ans','10 ans','20 ans'],rep:2,
+   expl:'Les dossiers médicaux vétérinaires doivent être conservés **10 ans minimum**. Les factures : 10 ans (obligation comptable). Les ordonnances avec stupéfiants : 10 ans. Certaines pièces peuvent nécessiter une conservation plus longue selon le contexte.'},
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+var S = {
+  view:'welcome', onglet:'dossier', openItem:null, casShown:{},
+  qIdx:0, qSel:null, qShown:false, qScore:0, qTotal:0,
+  analyse:'', loading:false,
+  apiKey:localStorage.getItem('simadmin_key')||'',
+  apiKeySaved:!!localStorage.getItem('simadmin_key'),
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function md(t){return t.split('\n\n').filter(function(p){return p.trim();}).map(function(para){
+  var parts=para.split(/\*\*([^*]+)\*\*/g);
+  var inner=parts.map(function(p,i){return i%2===1?'<strong>'+esc(p)+'</strong>':esc(p);}).join('');
+  return '<p>'+inner+'</p>';}).join('');}
+
+function render(){
+  var h='';
+  var q=QUIZ_ADMIN[S.qIdx%QUIZ_ADMIN.length];
+
+  if(S.view!=='welcome'){
+    h+='<div class="site-header"><div class="badge">🐾 PraxisVeto · UC2 Gestion administrative · CAFASV</div>';
+    h+='<h1>Sim<span>Admin</span></h1>';
+    h+='<p>// Dossier patient · Caisse · Stocks · Logiciel · Référentiel ASV</p></div>';
+    h+='<div class="tabs">';
+    [{id:'dossier',l:'📋 Dossier'},{id:'caisse',l:'💰 Caisse'},{id:'stocks',l:'📦 Stocks'},
+     {id:'logiciel',l:'💻 Logiciel'},{id:'cas',l:'🏥 Cas'},{id:'quiz',l:'🎯 Quiz'},{id:'analyse',l:'🤖 IA'}
+    ].forEach(function(t){
+      h+='<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+ t.l+'</button>';
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="site-header" style="padding-top:44px"><div class="badge">🐾 PraxisVeto · UC2 Gestion administrative · CAFASV</div>';
+    h+='<h1>Sim<span>Admin</span></h1></div>';
+  }
+  h+='<div class="wrap">';
+
+  // ── WELCOME ────────────────────────────────────────────
+  if(S.view==='welcome'){
+    h+='<div class="card em fadeup"><div style="text-align:center;padding:8px 0 18px">';
+    h+='<div style="font-size:52px;margin-bottom:14px">📋</div>';
+    h+='<p style="color:var(--txt2);font-size:14px;line-height:1.85;max-width:460px;margin:0 auto">L\'ASV est le pivot administratif de la clinique vétérinaire. Un dossier mal tenu, un stock mal géré, une caisse mal tenue — c\'est le bon fonctionnement de toute la structure qui est compromis.</p>';
+    h+='<div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;text-align:left">';
+    h+='<div style="display:flex;gap:12px"><span style="font-size:18px">📋</span><span style="font-size:14px;color:var(--txt2);line-height:1.65"><strong style="color:var(--txt)">Dossier patient</strong> — éléments obligatoires, ordonnances, archivage, RGPD</span></div>';
+    h+='<div style="display:flex;gap:12px"><span style="font-size:18px">💰</span><span style="font-size:14px;color:var(--txt2);line-height:1.65"><strong style="color:var(--txt)">Caisse</strong> — encaissement, modes de paiement, gestion des impayés</span></div>';
+    h+='<div style="display:flex;gap:12px"><span style="font-size:18px">📦</span><span style="font-size:14px;color:var(--txt2);line-height:1.65"><strong style="color:var(--txt)">Stocks</strong> — médicaments, vaccins, chaîne du froid, FIFO</span></div>';
+    h+='<div style="display:flex;gap:12px"><span style="font-size:18px">💻</span><span style="font-size:14px;color:var(--txt2);line-height:1.65"><strong style="color:var(--txt)">Logiciel vétérinaire</strong> — rendez-vous, dossiers, facturation, rappels</span></div>';
+    h+='</div>';
+    h+='<button class="btn-p btn-full" onclick="go(\'main\')">Commencer →</button>';
+    h+='</div></div>';
+
+  // ── DOSSIER ────────────────────────────────────────────
+  } else if(S.onglet==='dossier'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em3)">📋 Le dossier patient — UC2 CAFASV</div>';
+    h+='<div class="card-sub">Compléter, tenir à jour et archiver le dossier est une compétence centrale de l\'ASV. Cliquez sur chaque élément pour les détails.</div>';
+    DOSSIER_ELEMENTS.forEach(function(el){
+      var open=S.openItem===el.id;
+      h+='<div class="item-card '+(open?'open':'')+'" onclick="S.openItem=S.openItem===\''+el.id+'\'?null:\''+el.id+'\';render()">';
+      h+='<div class="item-header"><span class="item-icon">'+el.icon+'</span>';
+      h+='<div style="flex:1"><div class="item-title">'+esc(el.titre)+'</div></div>';
+      h+='<span class="tag '+el.tagCls+'">'+esc(el.tag)+'</span></div>';
+      if(open){
+        h+='<div class="item-body">';
+        h+='<p style="margin-bottom:8px">'+esc(el.desc)+'</p>';
+        h+='<div class="info info-em">👩‍💼 <strong>Rôle ASV :</strong> '+esc(el.asv)+'</div>';
+        h+='</div>';
+      }
+      h+='</div>';
+    });
+    h+='<div class="info info-warn">🔒 <strong>RGPD en clinique vétérinaire :</strong> Les données des propriétaires sont soumises au RGPD (règlement UE 2016/679). Droit d\'accès, de rectification et de suppression à respecter. Conservation 10 ans minimum.</div>';
+    h+='</div></div>';
+
+  // ── CAISSE ─────────────────────────────────────────────
+  } else if(S.onglet==='caisse'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em3)">💰 Gestion de la caisse</div>';
+    h+='<div class="card-sub">UC2 CAFASV — Tenir la caisse avec rigueur. Chaque opération doit être tracée.</div>';
+    h+='<div style="margin-bottom:16px">';
+    CAISSE_STEPS.forEach(function(s){
+      h+='<div style="display:flex;gap:14px;padding:12px;border-radius:8px;background:rgba(0,0,0,.2);margin-bottom:8px;border-left:3px solid rgba(64,144,224,.4)">';
+      h+='<span style="font-family:var(--head);font-size:20px;font-weight:800;color:var(--em3);flex-shrink:0;width:24px">'+s.n+'</span>';
+      h+='<div><div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:3px">'+esc(s.titre)+'</div>';
+      h+='<div style="font-size:12px;color:var(--txt2);line-height:1.65">'+esc(s.desc)+'</div></div></div>';
+    });
+    h+='</div>';
+    h+='<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Modes de paiement courants</div>';
+    h+='<div class="grid2">';
+    [{icon:'💵',m:'Espèces',r:'Rendre monnaie — sécurité'},{icon:'💳',m:'Carte bancaire',r:'Terminal de paiement'},{icon:'📝',m:'Chèque',r:'À l\'ordre de la clinique'},{icon:'🏦',m:'Virement',r:'RIB à fournir'},{icon:'🐾',m:'Assurance animale',r:'Tiers payant selon contrat'},{icon:'🎫',m:'Bon de soin',r:'Vérifier validité'}].forEach(function(p){
+      h+='<div style="background:rgba(0,0,0,.2);border-radius:6px;padding:10px;display:flex;gap:8px;align-items:flex-start">';
+      h+='<span style="font-size:18px;flex-shrink:0">'+p.icon+'</span>';
+      h+='<div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+p.m+'</div>';
+      h+='<div style="font-size:11px;color:var(--txt2)">'+p.r+'</div></div></div>';
+    });
+    h+='</div>';
+    h+='<div class="info info-red" style="margin-top:12px">⛔ <strong>Interdit :</strong> Accorder un crédit informel ou décider seule d\'un arrangement financier. Toujours en référer au vétérinaire responsable.</div>';
+    h+='</div></div>';
+
+  // ── STOCKS ─────────────────────────────────────────────
+  } else if(S.onglet==='stocks'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em3)">📦 Gestion des stocks</div>';
+    h+='<div class="card-sub">UC2 CAFASV — Chaque zone de stockage a ses règles. La chaîne du froid et la traçabilité sont critiques.</div>';
+    STOCKS_ZONES.forEach(function(z,i){
+      h+='<div style="border-radius:8px;padding:14px;background:rgba(0,0,0,.2);margin-bottom:8px;border-left:3px solid rgba(64,144,224,.3)">';
+      h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">';
+      h+='<span style="font-size:20px">'+z.icon+'</span>';
+      h+='<div style="font-size:13px;font-weight:700;color:var(--em3)">'+esc(z.zone)+'</div></div>';
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">';
+      [{l:'T°',v:z.temp},{l:'Contrainte',v:z.contrainte},{l:'Contrôle',v:z.controle}].forEach(function(r){
+        h+='<div style="background:rgba(0,0,0,.2);border-radius:4px;padding:7px">';
+        h+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:3px">'+r.l+'</div>';
+        h+='<div style="font-size:11px;color:var(--txt);line-height:1.5">'+esc(r.v)+'</div></div>';
+      });
+      h+='</div></div>';
+    });
+    h+='<div class="info info-em" style="margin-top:10px">📦 <strong>Méthode FIFO :</strong> First In, First Out — les produits entrés en stock en premier sont utilisés en premier. Vérification systématique des dates de péremption à chaque réception et mensuelle pour tout le stock.</div>';
+    h+='<div class="info info-warn">📋 <strong>Registre des entrées/sorties :</strong> Chaque mouvement de stock médicamenteux doit être tracé (date, quantité, lot, vétérinaire responsable). Obligation réglementaire.</div>';
+    h+='</div></div>';
+
+  // ── LOGICIEL ───────────────────────────────────────────
+  } else if(S.onglet==='logiciel'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em3)">💻 Logiciel vétérinaire</div>';
+    h+='<div class="card-sub">UC2 CAFASV — Maîtriser les outils numériques de la clinique. Les principaux logiciels en France : Vétostar, CliniVet, Griffon, Hippovet, Vet-Office.</div>';
+    OUTILS_LOGICIEL.forEach(function(o){
+      h+='<div style="display:flex;gap:12px;padding:12px;border-radius:8px;background:rgba(0,0,0,.2);margin-bottom:8px;border-left:3px solid rgba(64,144,224,.3)">';
+      h+='<span style="font-size:22px;flex-shrink:0">'+o.icon+'</span>';
+      h+='<div><div style="font-size:13px;font-weight:600;color:var(--em3);margin-bottom:4px">'+esc(o.nom)+'</div>';
+      h+='<div style="font-size:12px;color:var(--txt2);line-height:1.65">'+esc(o.desc)+'</div></div></div>';
+    });
+    h+='<hr style="border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0">';
+    h+='<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Bonnes pratiques numériques</div>';
+    [{icon:'🔐',t:'Sécurité',d:'Mot de passe robuste — ne jamais partager son code d\'accès — déconnexion systématique'},{icon:'💾',t:'Sauvegardes',d:'Vérifier que les sauvegardes automatiques fonctionnent — signaler toute anomalie au responsable'},{icon:'🛡️',t:'RGPD',d:'Ne jamais envoyer de données patient par email non sécurisé — droits des propriétaires à respecter'},{icon:'🚫',t:'Usage personnel',d:'L\'ordinateur de la clinique est réservé à l\'usage professionnel. Réseaux sociaux et messagerie personnelle interdits sur poste de travail.'}].forEach(function(p){
+      h+='<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+      h+='<span style="font-size:16px;flex-shrink:0">'+p.icon+'</span>';
+      h+='<div><div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:2px">'+esc(p.t)+'</div>';
+      h+='<div style="font-size:12px;color:var(--txt2)">'+esc(p.d)+'</div></div></div>';
+    });
+    h+='</div></div>';
+
+  // ── CAS PRATIQUES ──────────────────────────────────────
+  } else if(S.onglet==='cas'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em3)">🏥 Cas pratiques administratifs</div>';
+    h+='<div class="card-sub">Situations réelles rencontrées en clinique. Rédigez votre réponse, puis découvrez la démarche attendue.</div>';
+    CAS_ADMIN.forEach(function(cas){
+      var shown=S.casShown[cas.id];
+      h+='<div class="scenario-box">';
+      h+='<div class="scenario-titre">'+esc(cas.titre)+'</div>';
+      h+='<div class="scenario-ctx">'+esc(cas.contexte)+'</div>';
+      h+='<div class="scenario-q">'+esc(cas.question)+'</div>';
+      h+='<textarea style="width:100%;min-height:60px;background:rgba(0,0,0,.4);border:1.5px solid rgba(64,144,224,.12);border-radius:6px;color:var(--txt);padding:10px;font-size:13px;font-family:var(--sans);outline:none;resize:vertical;line-height:1.6;margin-bottom:8px" placeholder="Votre démarche..."></textarea>';
+      h+='<button class="btn-g btn-full" style="color:var(--em3);border-color:rgba(64,144,224,.3)" onclick="S.casShown[\''+cas.id+'\']=!S.casShown[\''+cas.id+'\'];render()">'+
+        (shown?'▲ Masquer la correction':'▼ Voir la correction')+'</button>';
+      h+='<div class="scenario-rep'+(shown?' visible':'')+'">'+cas.reponse.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+
+  // ── QUIZ ───────────────────────────────────────────────
+  } else if(S.onglet==='quiz'){
+    var pct=Math.round(S.qIdx/QUIZ_ADMIN.length*100);
+    h+='<div class="fadeup">';
+    h+='<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-bottom:7px">';
+    h+='<span>Question '+(S.qIdx%QUIZ_ADMIN.length+1)+' / '+QUIZ_ADMIN.length+'</span>';
+    h+='<span style="color:var(--em3)">'+(S.qTotal>0?Math.round(S.qScore/S.qTotal*100)+'%':'—')+'</span></div>';
+    h+='<div class="progress-wrap" style="margin-bottom:14px"><div class="progress-bar" style="width:'+pct+'%;background:linear-gradient(90deg,var(--em2),var(--em3))"></div></div>';
+    h+='<div class="card em"><div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--txt)">'+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt,i){
+      var cls='';if(S.qShown){if(i===q.rep)cls='correct';else if(i===S.qSel)cls='wrong';}
+      h+='<div class="quiz-opt '+cls+'" onclick="'+(S.qShown?'':'selQ('+i+')')+'">';
+      h+='<span style="font-family:var(--mono);font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span>';
+      h+='<span>'+esc(opt)+'</span></div>';
+    });
+    if(S.qShown){
+      h+='<div class="quiz-expl">'+q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h+='<button class="btn-p btn-full" style="margin-top:12px" onclick="nxtQ()">Question suivante →</button>';
+    }
+    h+='</div>';
+    h+='<button class="btn-g btn-full" onclick="rstQ()" style="margin-top:8px;color:var(--em3)">↺ Recommencer</button>';
+    h+='</div>';
+
+  // ── ANALYSE IA ─────────────────────────────────────────
+  } else if(S.onglet==='analyse'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em3)">🤖 Analyse IA · Gestion administrative</div>';
+    h+='<div class="card-sub">Posez une question sur une situation administrative — l\'IA vous guide en tant que formateur ASV.</div>';
+    h+='<textarea id="ia-q" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(64,144,224,.12);border-radius:8px;color:var(--txt);padding:11px;font-size:13px;font-family:var(--sans);outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Un client veut récupérer les radiographies de son chien décédé. Que faire ? Ou : Comment gérer un stock de vaccins périmés ?"></textarea>';
+    h+='<button class="btn-p btn-full" onclick="runIA()">📋 Analyser cette situation →</button>';
+    if(S.loading){h+='<div class="dots" style="margin-top:14px"><span></span><span></span><span></span><div class="dots-msg">Analyse en cours...</div></div>';}
+    if(!S.loading&&S.analyse){h+='<div class="analysis fadeup" style="margin-top:14px">'+md(S.analyse)+'</div>';}
+    h+='<hr class="div">';
+    if(!S.apiKeySaved){
+      h+='<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>';
+      h+='<div class="apikey-row"><input type="password" placeholder="sk-ant-api03-..." value="'+esc(S.apiKey)+'" oninput="S.apiKey=this.value">';
+      h+='<button onclick="svKey()">Sauver</button></div></div>';
+    } else {h+='<div style="color:#40c878;font-family:var(--mono);font-size:11px">// configured ✓</div>';}
+    h+='</div></div>';
+  }
+
+  if(S.view!=='welcome'){
+    h+='<div style="margin-top:10px;display:flex;gap:8px">';
+    h+='<button class="btn-g" onclick="go(\'welcome\')" style="color:var(--em3);border-color:rgba(64,144,224,.2)">← Accueil</button>';
+    h+='<button class="btn-g" onclick="window.location.href=\'index.html\'">⌂ PraxisVeto</button>';
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setO(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function selQ(i){if(S.qShown)return;S.qSel=i;S.qShown=true;S.qTotal++;if(i===QUIZ_ADMIN[S.qIdx%QUIZ_ADMIN.length].rep)S.qScore++;render();}
+function nxtQ(){S.qIdx++;S.qSel=null;S.qShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function rstQ(){S.qIdx=0;S.qScore=0;S.qTotal=0;S.qSel=null;S.qShown=false;render();}
+function svKey(){localStorage.setItem('simadmin_key',S.apiKey);S.apiKeySaved=true;render();}
+
+async function runIA(){
+  var el=document.getElementById('ia-q');
+  if(!el||!el.value.trim())return;
+  S.loading=true;S.analyse='';render();
+  try{
+    var headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:'Tu es formateur ASV expert en gestion administrative de clinique veterinaire, referentiel CAFASV UC2. Question : '+el.value+'\n\nReponds en 3 parties :\n**Analyse de la situation** — identifier le probleme\n**Demarche de l\'ASV** — que faire concretement, dans quel ordre\n**Points de vigilance** — erreurs a eviter, references reglementaires\n\nTutoie l\'etudiante ASV. Cite les obligations legales (RGPD, Code rural, etc.). Distingue ce que fait l\'ASV vs ce qui releve du veterinaire. Utilise **gras** pour les points cles.'}]})});
+    var data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content&&data.content.find(function(b){return b.type==='text';})?data.content.find(function(b){return b.type==='text';}).text:'';
+  }catch(e){S.analyse='**Erreur**\n\n'+e.message;}
+  S.loading=false;render();
+}
+render();
+</script>
+
+<!-- Bouton accueil fixe -->
+<a class="home-btn-fixed" href="index.html">⌂ PraxisVeto</a>
+<!-- Références légales : CAFASV UC2 · Code rural L.5143-6 · RGPD UE 2016/679 · Code de commerce L.123-22 -->
+</body>
+</html>

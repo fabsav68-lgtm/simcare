@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisJuridique · PraxisVeto ASV</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Karla:wght@300;400;500;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a080e;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#e0d0f8;--txt2:#604880;--em:#c080f0;--em2:#8040c0;
+  --amber:#e8a030;--red:#e84040;--green:#50c870;--blue:#4090e0;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 40% at 20% 0%,rgba(192,128,240,.06) 0%,transparent 55%)}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+.site-header{padding:40px 22px 24px;text-align:center;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(192,128,240,.08);
+  border:1px solid rgba(192,128,240,.22);color:var(--em);padding:4px 16px;border-radius:20px;
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-family:var(--head);font-size:clamp(26px,5vw,48px);font-weight:800;
+  letter-spacing:-2px;line-height:1;margin-bottom:8px}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:12px;font-family:var(--mono);letter-spacing:1px}
+.tabs{display:flex;gap:3px;padding:0 0 18px;overflow-x:auto}
+.tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:all .15s;font-family:var(--mono);letter-spacing:1px;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt);background:rgba(192,128,240,.06)}
+.tab.active{background:rgba(192,128,240,.12);border-color:rgba(192,128,240,.4);color:var(--em)}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:22px;
+  margin-bottom:12px;position:relative;z-index:1}
+.card.em{border-top:2px solid var(--em)}
+.card-title{font-family:var(--head);font-size:15px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px;line-height:1.65}
+
+/* Timeline CV */
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;
+  width:2px;background:linear-gradient(to bottom,var(--em),rgba(192,128,240,.1))}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-dot{position:absolute;left:-22px;top:8px;width:16px;height:16px;
+  border-radius:50%;border:2px solid var(--em);background:var(--bg)}
+.tl-badge{font-family:var(--head);font-size:12px;font-weight:800;color:var(--em);
+  letter-spacing:-0.5px;margin-bottom:4px}
+.tl-jour{font-family:var(--mono);font-size:10px;color:var(--txt2);letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:6px}
+.tl-desc{font-size:13px;color:var(--txt2);line-height:1.7}
+.tl-desc strong{color:var(--txt)}
+.tl-alert{font-family:var(--mono);font-size:10px;font-weight:700;
+  color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-top:5px}
+
+/* Catégories chiens */
+.cat-card{border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;
+  transition:all .18s;-webkit-tap-highlight-color:transparent;border:1.5px solid var(--bdr)}
+.cat-card.open{border-color:rgba(192,128,240,.4);background:rgba(192,128,240,.05)}
+.cat-header{display:flex;align-items:center;gap:10px}
+.cat-num{font-family:var(--head);font-size:18px;font-weight:800;flex-shrink:0}
+.cat-nom{font-size:14px;font-weight:600}
+.cat-body{display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);
+  font-size:12px;color:var(--txt2);line-height:1.7}
+.cat-card.open .cat-body{display:block}
+
+/* Rôle ASV */
+.role-item{display:flex;gap:10px;padding:10px 12px;border-radius:6px;
+  margin-bottom:6px;background:rgba(0,0,0,.2)}
+.role-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.role-txt{font-size:13px;line-height:1.65}
+.role-txt strong{color:var(--em)}
+
+/* Cas pratiques */
+.cas-card{background:rgba(0,0,0,.2);border-radius:10px;padding:16px;
+  margin-bottom:10px;border-left:3px solid var(--em)}
+.cas-titre{font-family:var(--head);font-size:14px;font-weight:700;color:var(--em);margin-bottom:8px}
+.cas-contexte{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:10px;
+  background:rgba(0,0,0,.2);border-radius:6px;padding:10px}
+.cas-reponse{background:rgba(192,128,240,.05);border:1px solid rgba(192,128,240,.15);
+  border-radius:6px;padding:10px;font-size:12px;color:var(--txt2);line-height:1.7;display:none}
+.cas-reponse.visible{display:block}
+.cas-reponse strong{color:var(--txt)}
+
+.quiz-opt{padding:11px 14px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;font-size:13px;
+  margin-bottom:7px;transition:all .15s;display:flex;align-items:center;gap:10px;
+  -webkit-tap-highlight-color:transparent}
+.quiz-opt:hover{background:rgba(192,128,240,.06);color:var(--txt)}
+.quiz-opt.correct{background:rgba(80,200,112,.1);border-color:rgba(80,200,112,.4);color:var(--green)}
+.quiz-opt.wrong{background:rgba(232,64,64,.1);border-color:rgba(232,64,64,.4);color:var(--red)}
+.quiz-expl{background:rgba(192,128,240,.05);border:1px solid rgba(192,128,240,.15);
+  border-radius:8px;padding:11px 13px;margin-top:10px;font-size:12px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+.info{border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em  {background:rgba(192,128,240,.06);border-left:3px solid rgba(192,128,240,.5);color:var(--em)}
+.info-warn{background:rgba(232,160,48,.06);border-left:3px solid rgba(232,160,48,.5);color:var(--amber)}
+.info-crit{background:rgba(232,64,64,.06);border-left:3px solid rgba(232,64,64,.5);color:var(--red)}
+.info-ok  {background:rgba(80,200,112,.06);border-left:3px solid rgba(80,200,112,.5);color:var(--green)}
+.pilot-warn{background:rgba(232,160,48,.06);border:1.5px solid rgba(232,160,48,.2);
+  border-radius:8px;padding:12px 14px;margin-bottom:14px;
+  font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--amber)}
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:8px;
+  color:#fff;font-family:var(--head);font-size:13px;font-weight:700;padding:11px 22px;
+  cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-0.3px}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;
+  color:var(--txt2);font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:9px 16px;cursor:pointer;transition:all .15s}
+.btn-g:hover{background:rgba(192,128,240,.06);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:8px}.nav-row>*{flex:1}
+.progress-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .5s ease}
+.pts{display:flex;flex-direction:column;gap:10px;margin:16px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+.dots{text-align:center;padding:22px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--em);
+  margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:12px;margin-top:10px;font-style:italic}
+.analysis p{margin-bottom:13px;font-size:14px;line-height:1.85;color:#7050a0}
+.analysis strong{color:var(--txt)}
+.apikey-box{background:rgba(192,128,240,.04);border:1px solid rgba(192,128,240,.12);
+  border-radius:8px;padding:11px}
+.apikey-box p{font-size:12px;color:var(--txt2);margin-bottom:9px}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:6px}
+.apikey-row input{flex:1;padding:8px 10px;font-size:11px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);
+  font-family:var(--mono);outline:none}
+.apikey-row button{padding:8px 12px;border:none;border-radius:6px;background:var(--em2);
+  color:#fff;font-weight:700;cursor:pointer;font-size:11px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+
+/* ── BOUTON ACCUEIL FIXE ── */
+.home-btn-fixed {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  background: rgba(10,13,8,.92);
+  border: 1.5px solid rgba(120,216,64,.3);
+  border-radius: 30px;
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #78d840;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.home-btn-fixed:hover {
+  background: rgba(120,216,64,.12);
+  border-color: rgba(120,216,64,.5);
+}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var ACTES_DELEGUES = [
+  {cat:'✓ AUTORISÉ', col:'var(--em)', actes:[
+    'Mesure des constantes vitales (T°, FC, FR, poids)',
+    'Prélèvements sanguins sur délégation écrite du vétérinaire',
+    'Injections SC et IM sur délégation écrite',
+    'Pose de cathéter IV sur délégation écrite',
+    'Soins infirmiers de base (pansements, toilette de plaie)',
+    'Préparation et dispensation des médicaments prescrits',
+    'Aide à la contention pendant les actes vétérinaires',
+    'Monitoring anesthésique sur délégation',
+  ]},
+  {cat:'✗ INTERDIT', col:'var(--red)', actes:[
+    'Prescrire des médicaments (exclusivité vétérinaire — L.5143-6)',
+    'Poser un diagnostic',
+    'Pratiquer un acte chirurgical',
+    'Délivrer des médicaments sans ordonnance',
+    'Euthanasier un animal',
+    'Signer des documents officiels (CV1/CV2/CV3)',
+    'Donner des conseils médicaux sans supervision',
+  ]},
+];
+
+var CONFIDENTIALITE = [
+  {titre:'Secret professionnel', desc:'L\'ASV est tenue au secret professionnel. Les informations sur les animaux et leurs propriétaires ne peuvent être divulguées à des tiers sans accord.'},
+  {titre:'Accès au dossier', desc:'Seuls les personnels habilités de la clinique accèdent aux dossiers médicaux. Ne jamais communiquer d\'informations par téléphone sans vérifier l\'identité de l\'interlocuteur.'},
+  {titre:'RGPD en clinique vétérinaire', desc:'Les données des propriétaires (coordonnées, historique) sont soumises au RGPD. Droit d\'accès, de rectification et de suppression à respecter.'},
+  {titre:'Signalement de maltraitance', desc:'En cas de suspicion de maltraitance animale, l\'ASV en informe le vétérinaire qui peut saisir les autorités compétentes (DDPP, gendarmerie).'},
+];
+
+var CATEGORIES = [
+  { num:'1', couleur:'#e84040',
+    label:'Chiens de 1ère catégorie',
+    races:'Pit-bulls, Boerboels, American Staffordshire (non LOF)',
+    obligations:[
+      'Déclaration obligatoire en mairie',
+      'Muselière et laisse en public obligatoires',
+      'Assurance responsabilité civile obligatoire',
+      'Interdit aux mineurs, aux personnes sous tutelle',
+      'Stérilisation obligatoire',
+      'Détention interdite dans les logements HLM',
+    ],
+    acq:'Acquisition interdite depuis 1999',
+  },
+  { num:'2', couleur:'#e8a030',
+    label:'Chiens de 2ème catégorie',
+    races:'American Staffordshire LOF, Rottweiler LOF et non LOF, Tosa',
+    obligations:[
+      'Déclaration obligatoire en mairie',
+      'Muselière et laisse en public obligatoires',
+      'Assurance responsabilité civile obligatoire',
+      'Interdit aux mineurs de moins de 18 ans',
+      'Évaluation comportementale vétérinaire obligatoire',
+      'Formation propriétaire obligatoire',
+    ],
+    acq:'Peut être acquis mais avec obligations strictes',
+  },
+];
+
+var CAS = [
+  { id:'c1', titre:'Un chien mord un enfant dans la salle d\'attente',
+    contexte:'Pendant que vous gérez l\'accueil, un chien en laisse mord l\'enfant d\'une autre famille. L\'enfant a une plaie superficielle au bras. Le propriétaire dit "c\'est rien, il joue".',
+    reponse:'<strong>Immédiatement :</strong> Séparer les familles, soigner l\'enfant, prévenir le vétérinaire.\n\n<strong>Obligations légales :</strong> Tout chien ayant mordu doit faire l\'objet d\'une procédure CV1/CV2/CV3. La famille de l\'enfant doit être informée et conseillée de voir un médecin. Signalement au vétérinaire pour rédiger le CV1 le jour même.\n\n<strong>Déclaration en mairie :</strong> Le vétérinaire ou le propriétaire déclarent la morsure en mairie dans les 24h.' },
+  { id:'c2', titre:'Le propriétaire refuse le CV2 — "mon chien va bien"',
+    contexte:'M. Martin n\'est pas venu au rendez-vous CV2 (J+8). Il vous appelle pour dire que son chien va bien et que ce n\'est pas nécessaire.',
+    reponse:'<strong>Explication :</strong> "M. Martin, le certificat CV2 n\'est pas lié à l\'état de santé de votre chien — c\'est une obligation légale. Si vous ne venez pas, le vétérinaire est dans l\'obligation de signaler votre absence au maire et au médecin de la victime. Cela peut avoir des conséquences pour vous."\n\n<strong>Rôle ASV :</strong> Tracer l\'appel dans le dossier. Prévenir le vétérinaire. C\'est le vétérinaire qui décide de la suite (signalement).' },
+  { id:'c3', titre:'Chien de catégorie 2 sans muselière en consultation',
+    contexte:'Un Rottweiler arrive en consultation sans muselière. Le propriétaire dit qu\'il n\'en a pas besoin "il est adorable". C\'est un chien de catégorie 2.',
+    reponse:'<strong>Obligation légale :</strong> Les chiens de catégorie 2 doivent porter une muselière dans tous les lieux publics, y compris un cabinet vétérinaire.\n\n<strong>Réponse ASV :</strong> "La muselière est obligatoire pour votre chien en dehors de votre domicile — c\'est la loi, pas notre règle de cabinet. Nous avons une muselière adaptée si vous n\'en avez pas, ou nous pouvons reporter la consultation."\n\n<strong>Traçabilité :</strong> Noter dans le dossier que le chien est arrivé sans muselière.' },
+];
+
+var QUIZ = [
+  {q:'Après une morsure, le vétérinaire doit établir des certificats :',
+   opts:['CV1 seulement','CV1 et CV2 uniquement','CV1, CV2 et CV3 sur 15 jours','Aucun si le chien est vacciné contre la rage'],
+   rep:2,expl:'**CV1 (J0) + CV2 (J+8) + CV3 (J+15)** sont obligatoires pour TOUT animal mordeur, vacciné ou non. C\'est une mesure de surveillance antirabique prévue par la loi du 20 juin 2008.'},
+  {q:'Qui est obligé de déclarer une morsure à la mairie ?',
+   opts:['Le vétérinaire uniquement','Le médecin de la victime uniquement','Le propriétaire de l\'animal','Le propriétaire ET le vétérinaire peuvent le faire'],
+   rep:3,expl:'**Le propriétaire ET le vétérinaire** sont tous deux tenus de déclarer la morsure en mairie. En pratique, le vétérinaire guide le propriétaire dans cette démarche.'},
+  {q:'Un chien de catégorie 2 doit obligatoirement porter une muselière :',
+   opts:['Uniquement en transport en commun','Dans tous les lieux publics, y compris chez le vétérinaire','Seulement s\'il a déjà mordu','Jamais — c\'est au vétérinaire de décider'],
+   rep:1,expl:'Les chiens de catégorie 2 doivent porter une muselière dans **tous les lieux publics** — la voie publique, les commerces, ET les cabinets vétérinaires. L\'ASV peut refuser la consultation si l\'animal arrive sans muselière.'},
+  {q:'Le CV1 doit être établi :',
+   opts:['Dans les 48h suivant la morsure','Le jour de la morsure ou au plus tôt','Dans les 7 jours','Le jour du CV2 seulement'],
+   rep:1,expl:'Le **CV1 doit être établi le jour de la morsure** ou au plus tôt. Il ne peut pas être antidaté. C\'est pourquoi le vétérinaire doit être prévenu immédiatement en cas de morsure, même si l\'animal n\'est pas son patient habituel.'},
+  {q:'Si le propriétaire refuse de revenir pour le CV2, l\'ASV doit :',
+   opts:['Accepter et fermer le dossier','Prévenir le vétérinaire qui décidera de la suite','Appeler la police directement','Contacter la victime'],
+   rep:1,expl:'L\'ASV **prévient le vétérinaire** — c\'est lui qui a la responsabilité légale. Le vétérinaire peut être contraint de signaler l\'absence au maire et au médecin de la victime. L\'ASV trace l\'appel dans le dossier.'},
+];
+
+var S={
+  view:'welcome',onglet:'cv',catOpen:null,casShown:{},
+  qIdx:0,qSel:null,qShown:false,qScore:0,qTotal:0,
+  analyse:'',loading:false,
+  apiKey:localStorage.getItem('simjur_key')||'',
+  apiKeySaved:!!localStorage.getItem('simjur_key'),
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function md(t){return t.split('\n\n').filter(function(p){return p.trim();}).map(function(para){
+  var parts=para.split(/\*\*([^*]+)\*\*/g);
+  var inner=parts.map(function(p,i){return i%2===1?'<strong>'+esc(p)+'</strong>':esc(p);}).join('');
+  return '<p>'+inner+'</p>';}).join('');}
+
+function render(){
+  var h='';
+  var q=QUIZ[S.qIdx%QUIZ.length];
+
+  if(S.view!=='welcome'){
+    h+='<div class="site-header"><div class="badge">🐾 PraxisVeto · UC1 · UC2 · UC4 · CAFASV</div>';
+    h+='<h1>Sim<span>Juridique</span></h1>';
+    h+='<p>// CV1 · CV2 · CV3 · Catégories · Rôle ASV</p></div>';
+    h+='<div class="tabs">';
+    [{id:'cv',l:'⚖️ CV1/2/3'},{id:'categories',l:'🐕 Catégories'},{id:'role',l:'👤 Rôle ASV'},
+     {id:'cas',l:'🏥 Cas'},{id:'quiz',l:'🎯 Quiz'},{id:'ia',l:'🤖 IA'}
+    ].forEach(function(t){
+      h+='<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+t.l+'</button>';
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="site-header" style="padding-top:44px"><div class="badge">⚖️ PraxisVeto · Juridique · Obligations légales</div>';
+    h+='<h1>Sim<span>Juridique</span></h1></div>';
+  }
+  h+='<div class="wrap">';
+
+  if(S.view==='welcome'){
+    h+='<div class="card em fadeup"><div style="text-align:center;padding:8px 0 18px">';
+    h+='<div style="font-size:52px;margin-bottom:14px">⚖️</div>';
+    h+='<p style="color:var(--txt2);font-size:14px;line-height:1.85;max-width:460px;margin:0 auto">';
+    h+='Un animal mord — en salle d\'attente, pendant un soin, chez un propriétaire. L\'ASV doit connaître les obligations légales précises pour protéger l\'équipe, la victime, et le cabinet.';
+    h+='</p>';
+    h+='<div class="pts">';
+    h+='<div class="pt"><span class="pt-i">⚖️</span><span class="pt-t"><strong>CV1/CV2/CV3</strong> — la procédure complète animal mordeur sur 15 jours</span></div>';
+    h+='<div class="pt"><span class="pt-i">🐕</span><span class="pt-t"><strong>Catégories 1 et 2</strong> — races concernées et obligations spécifiques</span></div>';
+    h+='<div class="pt"><span class="pt-i">👤</span><span class="pt-t"><strong>Rôle de l\'ASV</strong> — ce qu\'il peut et doit faire vs le vétérinaire</span></div>';
+    h+='<div class="pt"><span class="pt-i">🏥</span><span class="pt-t"><strong>3 cas pratiques</strong> — situations réelles et conduites à tenir</span></div>';
+    h+='</div>';
+    h+='<button class="btn-p btn-full" onclick="go(\'main\')">Commencer →</button>';
+    h+='</div></div>';
+
+  } else if(S.onglet==='cv'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">⚖️ Procédure animal mordeur</div>';
+    h+='<div class="card-sub">Loi du 20 juin 2008 · Article L211-14-2 du Code Rural</div>';
+    h+='<div class="pilot-warn">⚠️ Contenu pédagogique à valider par votre référent vétérinaire · Vérifier la réglementation en vigueur</div>';
+    h+='<div class="timeline">';
+    [{code:'CV1',jour:'Jour J — le jour même',col:'#c080f0',
+      desc:'Le vétérinaire examine l\'animal et établit le <strong>1er certificat</strong>. L\'animal est remis au propriétaire. <strong>Déclaration en mairie obligatoire dans les 24h.</strong> Le médecin de la victime est informé.',
+      alert:'Ne peut pas être antidaté'},
+     {code:'CV2',jour:'Jour J + 8',col:'#9060c0',
+      desc:'Le propriétaire revient avec l\'animal. Le vétérinaire vérifie que l\'animal est en bonne santé et toujours vivant. <strong>Absence du propriétaire = signalement obligatoire au maire.</strong>',
+      alert:'Rendez-vous à ne pas manquer'},
+     {code:'CV3',jour:'Jour J + 15',col:'#6040a0',
+      desc:'Visite finale. Si l\'animal est sain, le médecin de la victime peut confirmer l\'absence de risque rabique et lever les précautions. <strong>Clôture de la procédure.</strong>',
+      alert:'Fin de la surveillance antirabique'},
+    ].forEach(function(cv){
+      h+='<div class="tl-item">';
+      h+='<div class="tl-dot"></div>';
+      h+='<div class="tl-badge" style="color:'+cv.col+'">'+esc(cv.code)+'</div>';
+      h+='<div class="tl-jour">'+esc(cv.jour)+'</div>';
+      h+='<div class="tl-desc">'+cv.desc+'</div>';
+      h+='<div class="tl-alert">⚠ '+esc(cv.alert)+'</div>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+    h+='<div class="info info-em">ℹ️ <strong>Pourquoi 15 jours ?</strong> C\'est la période d\'incubation maximale de la rage. Si l\'animal est vivant et en bonne santé à J+15, il n\'était pas en phase de transmission rabique au moment de la morsure.</div>';
+    h+='<div class="info info-crit">🚨 <strong>Même si le chien est vacciné contre la rage</strong>, la procédure CV1/CV2/CV3 est obligatoire. La vaccination ne dispense pas de la surveillance.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='categories'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">🐕 Chiens dangereux — Catégories</div>';
+    h+='<div class="card-sub">⚠️ À valider avec votre référent vétérinaire · Loi du 6 janvier 1999</div>';
+    CATEGORIES.forEach(function(cat){
+      var open=S.catOpen===cat.num;
+      h+='<div class="cat-card '+(open?'open':'')+'" onclick="S.catOpen=S.catOpen===\''+cat.num+'\'?null:\''+cat.num+'\';render()">';
+      h+='<div class="cat-header">';
+      h+='<span class="cat-num" style="color:'+cat.couleur+'">Cat. '+cat.num+'</span>';
+      h+='<div><div class="cat-nom">'+esc(cat.label)+'</div>';
+      h+='<div style="font-size:11px;color:var(--txt2);font-style:italic">'+esc(cat.races)+'</div></div>';
+      h+='</div>';
+      h+='<div class="cat-body">';
+      cat.obligations.forEach(function(ob){
+        h+='<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12px"><span style="color:'+cat.couleur+';flex-shrink:0">→</span>'+esc(ob)+'</div>';
+      });
+      h+='<div style="margin-top:8px;font-family:var(--mono);font-size:10px;color:'+cat.couleur+';letter-spacing:1px">'+esc(cat.acq)+'</div>';
+      h+='</div></div>';
+    });
+    h+='</div>';
+    h+='<div class="info info-warn">⚠️ <strong>Rôle ASV à l\'accueil :</strong> Vérifier le statut du chien à la prise de rendez-vous. Un chien de catégorie 1 ou 2 doit arriver avec muselière et attestation d\'assurance.</div>';
+    h+='</div>';
+
+  } else if(S.onglet==='role'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">👤 Rôle de l\'ASV — Ce que vous faites</div>';
+    h+='<div class="card-sub">L\'ASV n\'est pas le vétérinaire — mais son rôle est essentiel dans la procédure légale.</div>';
+    h+='<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--em);margin-bottom:10px">Ce que l\'ASV FAIT</div>';
+    [{i:'📞',t:'Informer le propriétaire de ses obligations légales',d:'L\'ASV explique la procédure CV1/CV2/CV3 avec les mots simples. "Votre chien a mordu — le vétérinaire va établir des certificats obligatoires sur 15 jours."'},
+     {i:'📅',t:'Planifier et rappeler les rendez-vous CV2 et CV3',d:'L\'ASV gère l\'agenda, envoie les rappels, note dans le dossier. C\'est souvent lui qui rappelle le propriétaire défaillant.'},
+     {i:'📋',t:'Tracer tout dans le dossier patient',d:'Date et heure de la morsure, identité de la victime, déclaration en mairie faite ou non. Traçabilité essentielle en cas de litige.'},
+     {i:'🔍',t:'Vérifier le statut de l\'animal à l\'accueil',d:'Catégorie 1 ou 2 ? Vaccin rage à jour ? Muselière ? Attestation assurance ? Ces vérifications se font à l\'inscription.'},
+    ].forEach(function(r){
+      h+='<div class="role-item"><span class="role-icon">'+r.i+'</span>';
+      h+='<div class="role-txt"><strong>'+esc(r.t)+'</strong><br>'+esc(r.d)+'</div></div>';
+    });
+    h+='<hr style="border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0">';
+    h+='<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px">Ce que l\'ASV NE FAIT PAS</div>';
+    [{i:'✗',t:'Signer ou rédiger les certificats CV',d:'C\'est une responsabilité vétérinaire exclusive.'},
+     {i:'✗',t:'Décider seul de reporter ou d\'annuler la consultation',d:'Toujours en référer au vétérinaire.'},
+     {i:'✗',t:'Promettre à la victime qu\'il n\'y a pas de risque rabique',d:'Seul le médecin traitant de la victime peut le confirmer après le CV3.'},
+    ].forEach(function(r){
+      h+='<div class="role-item" style="border-left:2px solid var(--red)"><span class="role-icon" style="color:var(--red)">'+r.i+'</span>';
+      h+='<div class="role-txt"><strong style="color:var(--red)">'+esc(r.t)+'</strong><br>'+esc(r.d)+'</div></div>';
+    });
+    h+='</div></div>';
+
+  } else if(S.onglet==='cas'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">🏥 Cas pratiques</div>';
+    h+='<div class="card-sub">3 situations réelles · Réfléchissez avant de voir la réponse.</div>';
+    CAS.forEach(function(cas){
+      var shown=S.casShown[cas.id];
+      h+='<div class="cas-card">';
+      h+='<div class="cas-titre">'+esc(cas.titre)+'</div>';
+      h+='<div class="cas-contexte">'+esc(cas.contexte)+'</div>';
+      h+='<button class="btn-g btn-full" style="margin-bottom:8px;color:var(--em);border-color:rgba(192,128,240,.2)" onclick="toggleCas(\''+cas.id+'\')">'+(shown?'▲ Masquer':'▼ Voir la réponse')+'</button>';
+      h+='<div class="cas-reponse'+(shown?' visible':'')+'">';
+      h+=cas.reponse.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'<br><br>');
+      h+='</div></div>';
+    });
+    h+='</div></div>';
+
+  } else if(S.onglet==='quiz'){
+    var pct=Math.round(S.qIdx/QUIZ.length*100);
+    h+='<div class="fadeup">';
+    h+='<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-bottom:7px">';
+    h+='<span>Question '+(S.qIdx%QUIZ.length+1)+' / '+QUIZ.length+'</span>';
+    h+='<span style="color:var(--em)">'+(S.qTotal>0?Math.round(S.qScore/S.qTotal*100)+'%':'—')+'</span></div>';
+    h+='<div class="progress-wrap" style="margin-bottom:14px"><div class="progress-bar" style="width:'+pct+'%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>';
+    h+='<div class="card em"><div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--txt)">'+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt,i){
+      var cls='';if(S.qShown){if(i===q.rep)cls='correct';else if(i===S.qSel)cls='wrong';}
+      h+='<div class="quiz-opt '+cls+'" onclick="'+(S.qShown?'':'selQ('+i+')')+'">';
+      h+='<span style="font-family:var(--mono);font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span>';
+      h+='<span>'+esc(opt)+'</span></div>';
+    });
+    if(S.qShown){
+      h+='<div class="quiz-expl">'+q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h+='<button class="btn-p btn-full" style="margin-top:12px" onclick="nxtQ()">Question suivante →</button>';
+    }
+    h+='</div>';
+    h+='<button class="btn-g btn-full" onclick="rstQ()" style="margin-top:8px">↺ Recommencer</button>';
+    h+='</div>';
+
+  } else if(S.onglet==='ia'){
+    h+='<div class="fadeup"><div class="card em">';
+    h+='<div class="card-title" style="color:var(--em)">🤖 Analyse IA · Juridique</div>';
+    h+='<div class="card-sub">Posez une question sur les obligations légales — l\'IA vous guide.</div>';
+    h+='<textarea id="ia-q" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(192,128,240,.12);border-radius:8px;color:var(--txt);padding:11px;font-size:13px;font-family:var(--sans);outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Un chien a mordu un livreur devant notre cabinet — qui doit déclarer ? Ou : Comment expliquer la procédure CV1/CV2/CV3 à un propriétaire ?"></textarea>';
+    h+='<button class="btn-p btn-full" onclick="runIA()">⚖️ Analyser cette situation →</button>';
+    if(S.loading){h+='<div class="dots" style="margin-top:14px"><span></span><span></span><span></span><div class="dots-msg">Analyse en cours...</div></div>';}
+    if(!S.loading&&S.analyse){h+='<div class="analysis fadeup" style="margin-top:14px">'+md(S.analyse)+'</div>';}
+    h+='<hr class="div">';
+    if(!S.apiKeySaved){
+      h+='<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>';
+      h+='<div class="apikey-row"><input type="password" placeholder="sk-ant-api03-..." value="'+esc(S.apiKey)+'" oninput="S.apiKey=this.value">';
+      h+='<button onclick="svKey()">Sauver</button></div></div>';
+    } else {
+      h+='<div style="color:var(--green);font-family:var(--mono);font-size:11px">// configured ✓</div>';
+    }
+    h+='</div></div>';
+  }
+
+  if(S.view!=='welcome'){
+    h+='<div style="display:flex;gap:8px;margin-top:10px">';
+    h+='<button class="btn-g" onclick="go(\'welcome\')" style="color:var(--em)">← Accueil</button>';
+    h+='<a href="index.html" style="flex:1;display:block"><button class="btn-g btn-full">⌂ PraxisVeto</button></a>';
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById('app').innerHTML=h;
+}
+
+function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
+function setO(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function toggleCas(id){if(S.casShown[id]){delete S.casShown[id];}else{S.casShown[id]=true;}render();}
+function selQ(i){if(S.qShown)return;S.qSel=i;S.qShown=true;S.qTotal++;if(i===QUIZ[S.qIdx%QUIZ.length].rep)S.qScore++;render();}
+function nxtQ(){S.qIdx++;S.qSel=null;S.qShown=false;render();window.scrollTo({top:0,behavior:'smooth'});}
+function rstQ(){S.qIdx=0;S.qScore=0;S.qTotal=0;S.qSel=null;S.qShown=false;render();}
+function svKey(){localStorage.setItem('simjur_key',S.apiKey);S.apiKeySaved=true;render();}
+
+async function runIA(){
+  var el=document.getElementById('ia-q');
+  if(!el||!el.value.trim())return;
+  S.loading=true;S.analyse='';render();
+  try{
+    var headers={'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey;headers['anthropic-version']='2023-06-01';}
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:'Tu es formateur ASV expert en droit veterinaire et obligations legales en France. Question : '+el.value+'\n\nReponds en 3 paragraphes. Tutoie l\'etudiant(e). Cite les textes de loi pertinents. Distingue le role de l\'ASV et du veterinaire. Utilise **gras** pour les points cles. Rappelle que ce contenu est a verifier avec le veterinaire responsable.'}]})});
+    var data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    S.analyse=data.content&&data.content.find(function(b){return b.type==='text';})?data.content.find(function(b){return b.type==='text';}).text:'';
+  }catch(e){S.analyse='**Erreur**\n\n'+e.message;}
+  S.loading=false;render();
+}
+render();
+</script>
+
+<!-- Bouton accueil fixe -->
+<a class="home-btn-fixed" href="index.html">⌂ PraxisVeto</a>
+
+</body>
+</html>

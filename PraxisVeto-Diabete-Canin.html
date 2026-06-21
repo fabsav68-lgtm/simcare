@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisVeto · Diabète Canin · Pilote ASV</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Karla:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:    #0a0d08;
+  --bg2:   #121810;
+  --card:  rgba(255,255,255,.04);
+  --bdr:   rgba(255,255,255,.08);
+  --txt:   #d8e8d0;
+  --txt2:  #4a6840;
+  --txt3:  #243818;
+  --em:    #78d840;
+  --em2:   #50a820;
+  --amber: #e8a030;
+  --red:   #e84040;
+  --blue:  #40a8e0;
+  --mono:  'Fira Mono', monospace;
+  --sans:  'Karla', sans-serif;
+  --head:  'Unbounded', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--txt);
+  min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 40% at 20% 0%,rgba(120,216,64,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 80% 90%,rgba(64,168,224,.04) 0%,transparent 50%);
+  background-image:
+    repeating-linear-gradient(0deg,rgba(120,216,64,.02) 0px,rgba(120,216,64,.02) 1px,transparent 1px,transparent 60px),
+    repeating-linear-gradient(90deg,rgba(120,216,64,.02) 0px,rgba(120,216,64,.02) 1px,transparent 1px,transparent 60px);
+}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+.site-header{padding:40px 22px 24px;text-align:center;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(120,216,64,.08);border:1px solid rgba(120,216,64,.22);
+  color:var(--em);padding:4px 16px;border-radius:20px;
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+}
+.site-header h1{
+  font-family:var(--head);font-size:clamp(28px,5vw,52px);
+  font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:8px;
+}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:12px;font-family:var(--mono);letter-spacing:1px}
+.steps{display:flex;justify-content:center;align-items:center;gap:6px;padding:0 0 20px;flex-wrap:wrap}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;border:2px solid var(--bdr);background:rgba(255,255,255,.02);
+  color:var(--txt2);font-family:var(--mono);transition:all .2s;
+}
+.step-dot.active{background:rgba(120,216,64,.12);border-color:var(--em);color:var(--em)}
+.step-dot.done{background:var(--em2);border-color:var(--em2);color:#0a0d08}
+.step-lbl{font-size:11px;color:var(--txt2);transition:color .2s}
+.step-lbl.active{color:var(--txt)}
+.step-line{width:12px;height:1px;background:var(--bdr)}
+.tabs{display:flex;gap:3px;padding:0 0 18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{
+  padding:7px 14px;border-radius:20px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);font-size:11px;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--mono);
+  letter-spacing:1px;-webkit-tap-highlight-color:transparent;
+}
+.tab:hover{color:var(--txt);background:rgba(120,216,64,.06)}
+.tab.active{background:rgba(120,216,64,.12);border-color:rgba(120,216,64,.4);color:var(--em)}
+.card{
+  background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;
+  padding:22px;margin-bottom:12px;position:relative;z-index:1;
+}
+.card.em{border-top:2px solid var(--em)}
+.card-title{font-family:var(--head);font-size:15px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px;line-height:1.65}
+
+/* Profil animal */
+.profil-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.profil-btn{
+  padding:14px 8px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);cursor:pointer;text-align:center;
+  transition:all .2s;-webkit-tap-highlight-color:transparent;
+}
+.profil-btn:hover{background:rgba(120,216,64,.06)}
+.profil-btn.active{background:rgba(120,216,64,.1);border-color:rgba(120,216,64,.4)}
+.profil-icon{font-size:28px;display:block;margin-bottom:6px}
+.profil-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--txt2)}
+.profil-btn.active .profil-label{color:var(--em)}
+
+/* Constantes */
+.cst-row{
+  display:grid;grid-template-columns:1fr auto auto;align-items:center;
+  gap:12px;padding:10px 12px;border-radius:6px;margin-bottom:6px;
+  background:rgba(0,0,0,.2);border-left:3px solid transparent;
+}
+.cst-nom{font-size:13px;font-weight:600}
+.cst-val{font-family:var(--mono);font-size:14px;font-weight:700}
+.cst-zone{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  padding:3px 10px;border-radius:20px;
+}
+.zone-ok  {background:rgba(120,216,64,.12);color:var(--em);border:1px solid rgba(120,216,64,.25)}
+.zone-warn{background:rgba(232,160,48,.12);color:var(--amber);border:1px solid rgba(232,160,48,.25)}
+.zone-crit{background:rgba(232,64,64,.12);color:var(--red);border:1px solid rgba(232,64,64,.25)}
+
+/* Slider */
+.lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.lbl{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2)}
+.lbl-val{font-family:var(--mono);color:var(--em);font-size:15px;font-weight:600}
+input[type=range]{
+  width:100%;-webkit-appearance:none;height:8px;border-radius:4px;
+  background:rgba(255,255,255,.1);outline:none;cursor:pointer;margin-top:4px;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:28px;height:28px;border-radius:50%;
+  background:var(--em);cursor:pointer;border:2px solid rgba(255,255,255,.2);
+  box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .15s;
+}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15)}
+.range-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--txt2);
+  margin-top:4px;font-family:var(--mono)}
+
+/* Gauge glycémie */
+.gauge-bar{
+  height:32px;border-radius:16px;overflow:hidden;margin:10px 0 6px;
+  background:linear-gradient(90deg,
+    #7a1a1a 0%,#e84040 12%,
+    #e87040 20%,#78d840 28%,
+    #78d840 55%,#e8a030 68%,
+    #e84040 82%,#7a1a1a 100%);
+  position:relative;
+}
+.gauge-needle{
+  position:absolute;top:0;bottom:0;width:3px;background:#fff;
+  border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.6);
+  transition:left .6s cubic-bezier(.34,1.56,.64,1);transform:translateX(-50%);
+}
+.gauge-zones{display:flex;justify-content:space-between;font-size:9px;
+  font-family:var(--mono);color:var(--txt2)}
+.gauge-val-big{
+  font-family:var(--head);font-size:48px;font-weight:800;
+  line-height:1;letter-spacing:-2px;text-align:center;
+}
+.gauge-zone-lbl{font-family:var(--mono);font-size:12px;font-weight:700;
+  text-align:center;margin-top:4px}
+
+/* Insulines */
+.ins-card{
+  border-radius:8px;padding:14px;margin-bottom:8px;
+  border:1.5px solid var(--bdr);background:rgba(0,0,0,.2);
+  cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;
+}
+.ins-card:hover{background:rgba(0,0,0,.3)}
+.ins-card.active{border-color:rgba(120,216,64,.4);background:rgba(120,216,64,.06)}
+.ins-nom{font-size:14px;font-weight:600;margin-bottom:3px}
+.ins-detail{font-family:var(--mono);font-size:10px;color:var(--txt2);letter-spacing:.5px}
+.ins-tag{
+  display:inline-block;padding:2px 8px;border-radius:20px;
+  font-family:var(--mono);font-size:9px;letter-spacing:1px;
+  background:rgba(120,216,64,.1);color:var(--em);border:1px solid rgba(120,216,64,.2);
+  margin-left:auto;flex-shrink:0;
+}
+
+/* Signes cliniques */
+.signe{
+  display:flex;gap:10px;align-items:flex-start;padding:10px 12px;
+  border-radius:6px;margin-bottom:6px;background:rgba(0,0,0,.2);
+  border-left:3px solid var(--em);
+}
+.signe-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.signe-txt{font-size:13px;line-height:1.6}
+.signe-txt strong{color:var(--em)}
+
+/* Quiz */
+.quiz-opt{
+  padding:11px 14px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;
+  font-size:13px;margin-bottom:7px;transition:all .15s;
+  display:flex;align-items:center;gap:10px;-webkit-tap-highlight-color:transparent;
+}
+.quiz-opt:hover{background:rgba(120,216,64,.06);color:var(--txt)}
+.quiz-opt.correct{background:rgba(120,216,64,.1);border-color:rgba(120,216,64,.4);color:var(--em)}
+.quiz-opt.wrong{background:rgba(232,64,64,.1);border-color:rgba(232,64,64,.4);color:var(--red)}
+.quiz-expl{background:rgba(120,216,64,.05);border:1px solid rgba(120,216,64,.15);
+  border-radius:8px;padding:11px 13px;margin-top:10px;font-size:12px;
+  color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+
+/* Info */
+.info{border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em  {background:rgba(120,216,64,.06);border-left:3px solid rgba(120,216,64,.5);color:var(--em)}
+.info-warn{background:rgba(232,160,48,.06);border-left:3px solid rgba(232,160,48,.5);color:var(--amber)}
+.info-crit{background:rgba(232,64,64,.06);border-left:3px solid rgba(232,64,64,.5);color:var(--red)}
+.info-blue{background:rgba(64,168,224,.06);border-left:3px solid rgba(64,168,224,.5);color:var(--blue)}
+
+/* Boutons */
+.btn-p{
+  background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:8px;
+  color:#0a0d08;font-family:var(--head);font-size:13px;font-weight:700;
+  padding:11px 22px;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-0.3px;
+}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{
+  background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;
+  color:var(--txt2);font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:9px 16px;cursor:pointer;transition:all .15s;
+}
+.btn-g:hover{background:rgba(120,216,64,.06);color:var(--txt)}
+.btn-full{width:100%}
+.nav-row{display:flex;gap:8px}
+.nav-row>*{flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.col8{display:flex;flex-direction:column;gap:8px}
+.stat{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;padding:12px;text-align:center}
+.stat-v{font-family:var(--head);font-size:22px;font-weight:800;color:var(--em);display:block}
+.stat-l{font-size:9px;color:var(--txt2);text-transform:uppercase;
+  letter-spacing:1.5px;font-family:var(--mono);display:block;margin-top:3px}
+.progress-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .5s ease}
+.dots{text-align:center;padding:22px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:12px;margin-top:10px;font-style:italic}
+.analysis p{margin-bottom:13px;font-size:14px;line-height:1.85;color:#5a7850}
+.analysis strong{color:var(--txt)}
+.pts{display:flex;flex-direction:column;gap:10px;margin:16px 0;text-align:left}
+.pt{display:flex;gap:12px;align-items:flex-start}
+.pt-i{font-size:18px;flex-shrink:0;margin-top:2px}
+.pt-t{font-size:14px;color:var(--txt2);line-height:1.65}
+.pt-t strong{color:var(--txt)}
+.pilot-banner{
+  background:rgba(120,216,64,.06);border:1.5px solid rgba(120,216,64,.2);
+  border-radius:8px;padding:10px 14px;margin-bottom:14px;
+  font-family:var(--mono);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--em);text-align:center;
+}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
+.apikey-box{background:rgba(120,216,64,.04);border:1px solid rgba(120,216,64,.12);
+  border-radius:8px;padding:11px}
+.apikey-box p{font-size:12px;color:var(--txt2);margin-bottom:9px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:6px}
+.apikey-row input{flex:1;padding:8px 10px;font-size:11px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);
+  font-family:var(--mono);outline:none}
+.apikey-row input:focus{border-color:rgba(120,216,64,.3)}
+.apikey-row button{padding:8px 12px;border:none;border-radius:6px;background:var(--em2);
+  color:#0a0d08;font-weight:700;cursor:pointer;font-size:11px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.profil-grid{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+
+/* ── BOUTON ACCUEIL FIXE ── */
+.home-btn-fixed {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  background: rgba(10,13,8,.92);
+  border: 1.5px solid rgba(120,216,64,.3);
+  border-radius: 30px;
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #78d840;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.home-btn-fixed:hover {
+  background: rgba(120,216,64,.12);
+  border-color: rgba(120,216,64,.5);
+}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES CLINIQUES VÉTÉRINAIRES
+// ═══════════════════════════════════════
+var RACES_PREDISPOSEES = ['Caniche','Teckel','Pinscher','Cairn Terrier','West Highland Terrier','Labrador','Beagle','Samoyède'];
+
+var PATIENTS = [
+  { id:'rocky', nom:'Rocky', race:'Labrador', sexe:'M', age:8, poids:32, icone:'🦮',
+    couleur:'#e8a030', diabete:'type1',
+    desc:'Labrador mâle castré, 8 ans. Polyurie-polydipsie depuis 3 semaines. Perte de poids malgré appétit conservé.' },
+  { id:'bella', nom:'Bella', race:'Caniche', sexe:'F', age:10, poids:8, icone:'🐩',
+    couleur:'#78d840', diabete:'type2',
+    desc:'Caniche femelle non stérilisée, 10 ans. Race prédisposée. Découverte fortuite lors d\'un bilan annuel.' },
+  { id:'max', nom:'Max', race:'Teckel', sexe:'M', age:7, poids:10, icone:'🐕',
+    couleur:'#40a8e0', diabete:'cortico',
+    desc:'Teckel mâle, 7 ans. Sous corticoïdes depuis 4 semaines pour une dermatite. Glycémie élevée à la surveillance.' },
+];
+
+var INSULINES_VETO = [
+  { id:'caninsulin', nom:'Caninsulin® (vétérinaire)', molecule:'Insuline zinc porcine',
+    onset:30, peak:5, duree:14, freq:'1-2x/jour', icone:'💉',
+    info:'Seule insuline vétérinaire spécifique chien. Composition 35% rapide + 65% lente. Référence en France.',
+    risque:'Hypoglycémie 4-8h après injection. Surveiller l\'activité physique.' },
+  { id:'caninsulin2', nom:'Caninsulin® ×2/jour', molecule:'Insuline zinc porcine',
+    onset:30, peak:4, duree:12, freq:'2x/jour (12h)', icone:'💉',
+    info:'Protocole biquotidien si instabilité avec une injection. Meilleure couverture des 24h.',
+    risque:'Synchroniser strictement avec les repas. Risque hypoglycémie nocturne.' },
+  { id:'glargine', nom:'Lantus® (usage humain hors AMM)', molecule:'Glargine',
+    onset:120, peak:0, duree:24, freq:'1x/jour', icone:'🌙',
+    info:'Utilisée hors AMM vétérinaire. Action plate sans pic marqué. Préférable chez le chat.',
+    risque:'Moins efficace que Caninsulin chez le chien. Usage exceptionnel.' },
+];
+
+var SIGNES_CLINIQUES = [
+  { id:'polyurie', label:'Polyurie / Polydipsie', icone:'💧', desc:'Le chien boit et urine beaucoup — premier signe. Les reins éliminent le glucose en excès.', alerte:false },
+  { id:'polyphagie', label:'Polyphagie avec amaigrissement', icone:'🦴', desc:'Mange plus mais maigrit — le glucose n\'entre pas dans les cellules, le corps catabolise les réserves.', alerte:false },
+  { id:'cataracte', label:'Opacification du cristallin', icone:'👁️', desc:'Cataracte diabétique — complication fréquente chez le chien (rare chez le chat). Apparition rapide.', alerte:false },
+  { id:'hypo', label:'Hypoglycémie post-insuline', icone:'⚠️', desc:'Tremblements, faiblesse, désorientation, convulsions. Urgence — sucre immédiatement si conscient.', alerte:true },
+  { id:'cetoacidose', label:'Acidocétose diabétique', icone:'🚨', desc:'Odeur acétonique de l\'haleine, vomissements, prostration, déshydratation. Urgence vitale — hospitalisation.', alerte:true },
+  { id:'infection', label:'Infections récurrentes', icone:'🦠', desc:'Urinaires, cutanées, buccales — l\'hyperglycémie favorise la prolifération bactérienne.', alerte:false },
+];
+
+var QUIZ = [
+  { id:'q1', q:"La glycémie normale à jeun chez le chien est de :",
+    opts:["0,4 - 0,6 g/L","0,7 - 1,2 g/L","1,5 - 2,0 g/L","2,0 - 3,0 g/L"], rep:1,
+    expl:"La glycémie normale à jeun chez le chien est **0,7 - 1,2 g/L** (70-120 mg/dL). En dessous de 0,6 g/L : hypoglycémie. Au-dessus de 1,4 g/L à jeun : hyperglycémie pathologique. Ces valeurs sont légèrement différentes de l'humain (0,7-1,1 g/L)." },
+  { id:'q2', q:"L'insuline vétérinaire de référence chez le chien en France est :",
+    opts:["Lantus® (glargine humaine)","NovoRapid® (analogue rapide)","Caninsulin® (insuline zinc porcine)","Insulatard® (NPH)"], rep:2,
+    expl:"**Caninsulin®** est la seule insuline avec AMM vétérinaire chien en France. Composée de 35% insuline amorphe (rapide) + 65% insuline cristalline (lente) porcine. L'insuline porcine est structurellement très proche de l'insuline canine." },
+  { id:'q3', q:"Quel acte l'ASV peut-elle réaliser en insulinothérapie canine ?",
+    opts:["Décider de la dose d'insuline","Préparer la seringue et réaliser l'injection sur délégation vétérinaire","Modifier le protocole sans consultation","Prescrire le Caninsulin®"], rep:1,
+    expl:"L'ASV peut **préparer la seringue et réaliser l'injection sous-cutanée sur délégation explicite du vétérinaire**. Elle ne peut jamais décider de la dose ni modifier le protocole seule. La prescription appartient exclusivement au vétérinaire (Code rural L.5143-6)." },
+  { id:'q4', q:"En cas d'hypoglycémie sévère chez un chien conscient, l'ASV doit EN PREMIER :",
+    opts:["Injecter du glucagon IM sans appeler","Frotter du sucre ou du miel sur les gencives et appeler le vétérinaire","Attendre que le chien récupère seul","Donner de l'eau sucrée"],rep:1,
+    expl:"**Frotter du sucre ou du miel sur les gencives** = geste immédiat si le chien est conscient. Puis appeler le vétérinaire. Ne jamais donner per os si inconscient (fausse route). Le glucagon IM est un acte médical réservé au vétérinaire." },
+  { id:'q5', q:"Le diabète canin touche plus fréquemment :",
+    opts:["Les mâles jeunes de grande race","Les femelles entières entre 6 et 10 ans","Les chiots de moins de 2 ans","Les mâles castrés de petite race"], rep:1,
+    expl:"Le diabète canin touche **2 à 3 fois plus les femelles entières**. Les hormones reproductives (progestérone) induisent une résistance à l'insuline. La stérilisation est fortement recommandée chez les chiennes diabétiques pour stabiliser l'équilibre glycémique." },
+  { id:'q6', q:"Une odeur d'acétone dans l'haleine d'un chien diabétique évoque :",
+    opts:["Un simple déséquilibre glycémique bénin","Une acidocétose diabétique — urgence vitale","Un problème dentaire","Un surdosage en insuline"],rep:1,
+    expl:"**Acidocétose diabétique = urgence vitale**. Sans insuline suffisante, le corps brûle les graisses en produisant des corps cétoniques (acétone). Signes : haleine fruitée, vomissements, prostration, déshydratation. L'ASV doit alerter immédiatement le vétérinaire." },
+];;
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+var SK = 'praxisveto';
+function load(){ try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch(e){ return {}; } }
+function sav(d){ try{ localStorage.setItem(SK,JSON.stringify(d)); }catch(e){} }
+var ST = load();
+
+var S = {
+  view: 'welcome',
+  onglet: 'patient',
+  patient: PATIENTS[0],
+  glycemie: 2.8,
+  insuline: 'caninsulin',
+  dose: 0.5,
+  qIdx: 0, qSel: null, qShown: false, qScore: 0, qTotal: 0,
+  analyse: '', loading: false, showKey: false,
+  apiKey: localStorage.getItem('praxisveto_key') || '',
+  apiKeySaved: !!localStorage.getItem('praxisveto_key'),
+};
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function md(t){
+  return t.split('\n\n').filter(function(p){ return p.trim(); }).map(function(para){
+    var parts = para.split(/\*\*([^*]+)\*\*/g);
+    var inner = parts.map(function(p,i){ return i%2===1 ? '<strong>'+esc(p)+'</strong>' : esc(p); }).join('');
+    return '<p>'+inner+'</p>';
+  }).join('');
+}
+
+function zoneGlycemie(g){
+  if(g < 0.6)  return { label:'Hypoglycémie sévère', col:'var(--red)',  cls:'zone-crit' };
+  if(g < 0.7)  return { label:'Hypoglycémie',        col:'var(--amber)',cls:'zone-warn' };
+  if(g <= 1.2) return { label:'Normal',               col:'var(--em)',  cls:'zone-ok'   };
+  if(g <= 2.0) return { label:'Hyperglycémie légère', col:'var(--amber)',cls:'zone-warn' };
+  if(g <= 3.5) return { label:'Hyperglycémie',        col:'var(--amber)',cls:'zone-warn' };
+  return             { label:'Hyperglycémie sévère', col:'var(--red)',  cls:'zone-crit' };
+}
+
+function gaugePos(g){
+  return Math.min(96, Math.max(4,
+    g < 0.7  ? (g/0.7)*20 :
+    g < 1.2  ? 20 + (g-0.7)/0.5*20 :
+    g < 3.5  ? 40 + (g-1.2)/2.3*35 :
+    75 + (g-3.5)/2.5*21
+  ));
+}
+
+function insulineInfo(){ return INSULINES_VETO.find(function(i){ return i.id === S.insuline; }) || INSULINES_VETO[0]; }
+
+// ═══════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════
+function render(){
+  var h = '';
+  var z = zoneGlycemie(S.glycemie);
+  var ins = insulineInfo();
+  var q = QUIZ[S.qIdx % QUIZ.length];
+
+  if(S.view !== 'welcome'){
+    h += '<div class="site-header">';
+    h += '<div class="badge">🐾 PraxisVeto · Pilote ASV · Diabète canin</div>';
+    h += '<h1>Sim<span>Veto</span></h1>';
+    h += '<p>// Auxiliaire de Santé Vétérinaire · Glycémie · Insulinothérapie canine</p>';
+    h += '</div>';
+    h += '<div class="tabs">';
+    [{id:'patient',l:'🐾 Patient'},{id:'glycemie',l:'🩸 Glycémie'},{id:'insuline',l:'💉 Insuline'},
+     {id:'signes',l:'🔍 Signes cliniques'},{id:'quiz',l:'🎯 Quiz'},{id:'analyse',l:'🤖 Analyse IA'}
+    ].forEach(function(t){
+      h += '<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+t.l+'</button>';
+    });
+    h += '</div>';
+  } else {
+    h += '<div class="site-header" style="padding-top:44px">';
+    h += '<div class="badge">🐾 PraxisVeto · Pilote ASV · Diabète canin</div>';
+    h += '<h1>Sim<span>Veto</span></h1>';
+    h += '</div>';
+  }
+
+  h += '<div class="wrap">';
+
+  // ── WELCOME ────────────────────────────────────────────
+  if(S.view === 'welcome'){
+    h += '<div class="pilot-banner">🧪 Version pilote · En collaboration avec votre référent vétérinaire</div>';
+    h += '<div class="card em fadeup">';
+    h += '<div style="text-align:center;padding:8px 0 18px">';
+    h += '<div style="font-size:52px;margin-bottom:14px">🐾</div>';
+    h += '<p style="color:var(--txt2);font-size:14px;line-height:1.85;max-width:460px;margin:0 auto">';
+    h += 'Administrer de l\'insuline à un chien diabétique sans comprendre ce que signifie une glycémie à <strong style="color:var(--txt)">2,8 g/L chez Rocky, Labrador de 8 ans</strong>, c\'est agir dans l\'obscurité. PraxisVeto allume la lumière.';
+    h += '</p>';
+    h += '<div class="pts">';
+    h += '<div class="pt"><span class="pt-i">🐾</span><span class="pt-t"><strong>Patient animal</strong> — race, âge, poids, type de diabète : chaque paramètre modifie la prise en charge</span></div>';
+    h += '<div class="pt"><span class="pt-i">🩸</span><span class="pt-t"><strong>Glycémie canine</strong> — normes spécifiques, signification physiologique, zones d\'alerte</span></div>';
+    h += '<div class="pt"><span class="pt-i">💉</span><span class="pt-t"><strong>Insulinothérapie vétérinaire</strong> — Caninsulin®, doses, protocoles, surveillance</span></div>';
+    h += '<div class="pt"><span class="pt-i">🔍</span><span class="pt-t"><strong>Signes cliniques</strong> — reconnaître l\'hypoglycémie et l\'acidocétose en urgence</span></div>';
+    h += '</div>';
+    h += '<button class="btn-p btn-full" onclick="go(\'main\')">Commencer avec Rocky →</button>';
+    h += '</div></div>';
+
+  // ── PATIENT ────────────────────────────────────────────
+  } else if(S.onglet === 'patient'){
+    h += '<div class="fadeup">';
+    h += '<div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">🐾 Choisir votre patient</div>';
+    h += '<div class="card-sub">3 cas cliniques · Chaque patient a ses spécificités de prise en charge.</div>';
+    h += '<div class="col8" style="margin-bottom:16px">';
+    PATIENTS.forEach(function(p){
+      var active = S.patient.id === p.id;
+      h += '<div class="ins-card '+(active?'active':'')+'" onclick="S.patient=PATIENTS.find(function(x){return x.id===\''+p.id+'\';});render()">';
+      h += '<div style="display:flex;align-items:center;gap:12px">';
+      h += '<span style="font-size:32px">'+p.icone+'</span>';
+      h += '<div style="flex:1">';
+      h += '<div class="ins-nom" style="color:'+(active?'var(--em)':'var(--txt)')+'">'+esc(p.nom)+' · '+esc(p.race)+'</div>';
+      h += '<div class="ins-detail">'+p.sexe==='M'?'Mâle':'Femelle'+' · '+p.age+' ans · '+p.poids+' kg</div>';
+      h += '</div>';
+      if(active) h += '<span class="ins-tag">Sélectionné</span>';
+      h += '</div>';
+      h += '<div style="font-size:12px;color:var(--txt2);margin-top:8px;line-height:1.6;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)">'+esc(p.desc)+'</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+    // Fiche récapitulative patient actif
+    var p = S.patient;
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:16px;border-left:3px solid '+p.couleur+'">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Fiche patient</div>';
+    h += '<div class="grid2">';
+    [['Nom', p.nom], ['Race', p.race], ['Sexe', p.sexe==='M'?'Mâle':'Femelle'],
+     ['Âge', p.age+' ans'], ['Poids', p.poids+' kg'],
+     ['Diabète', p.diabete==='type1'?'Type 1 insulinopénique':p.diabete==='type2'?'Type 2 insulinorésistant':'Cortico-induit']
+    ].forEach(function(r){
+      h += '<div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px 10px">';
+      h += '<div style="font-family:var(--mono);font-size:9px;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px">'+r[0]+'</div>';
+      h += '<div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(String(r[1]))+'</div>';
+      h += '</div>';
+    });
+    h += '</div></div>';
+
+    // Spécificités de la race
+    if(RACES_PREDISPOSEES.includes(p.race)){
+      h += '<div class="info info-warn" style="margin-top:10px">⚠️ <strong>Race prédisposée :</strong> '+esc(p.race)+' fait partie des races à risque élevé de diabète canin. Surveillance glycémique recommandée dès 6 ans.</div>';
+    }
+    h += '</div>';
+    h += '<button class="btn-p btn-full" style="margin-top:8px" onclick="setO(\'glycemie\')">Voir sa glycémie →</button>';
+    h += '</div>';
+
+  // ── GLYCÉMIE ───────────────────────────────────────────
+  } else if(S.onglet === 'glycemie'){
+    h += '<div class="fadeup">';
+    h += '<div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">🩸 Glycémie de '+esc(S.patient.nom)+'</div>';
+    h += '<div class="card-sub">Normes canines : 0,7-1,2 g/L à jeun. Différentes des normes humaines.</div>';
+
+    // Slider glycémie
+    h += '<div class="lbl-row"><label class="lbl">Glycémie capillaire mesurée</label>';
+    h += '<span class="lbl-val" style="color:'+z.col+'">'+S.glycemie.toFixed(1)+' g/L</span></div>';
+    h += '<input type="range" min="0.3" max="5.0" step="0.1" value="'+S.glycemie+'" oninput="S.glycemie=+this.value;render()">';
+    h += '<div class="range-lbl"><span>0,3</span><span style="color:var(--em)">Normal 0,7-1,2</span><span>5,0 g/L</span></div>';
+
+    // Jauge
+    h += '<div style="margin:16px 0">';
+    h += '<div class="gauge-val-big" style="color:'+z.col+'">'+S.glycemie.toFixed(1)+'</div>';
+    h += '<div class="gauge-zone-lbl" style="color:'+z.col+'">'+esc(z.label)+'</div>';
+    h += '<div class="gauge-bar" style="margin-top:10px"><div class="gauge-needle" style="left:'+gaugePos(S.glycemie)+'%"></div></div>';
+    h += '<div class="gauge-zones"><span style="color:var(--red)">Hypo</span><span style="color:var(--em)">Normal</span><span style="color:var(--amber)">Hyper</span><span style="color:var(--red)">Sévère</span></div>';
+    h += '</div>';
+
+    // Comparaison humain/chien
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:14px;margin-bottom:12px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Normes comparées</div>';
+    h += '<div class="grid2">';
+    h += '<div style="text-align:center;padding:10px;background:rgba(120,216,64,.06);border-radius:6px;border:1px solid rgba(120,216,64,.15)">';
+    h += '<div style="font-size:10px;font-family:var(--mono);color:var(--txt2);margin-bottom:5px">🐾 CHIEN</div>';
+    h += '<div style="font-family:var(--head);font-size:18px;font-weight:800;color:var(--em)">0,7–1,2 g/L</div>';
+    h += '<div style="font-size:11px;color:var(--txt2);margin-top:3px">à jeun</div>';
+    h += '</div>';
+    h += '<div style="text-align:center;padding:10px;background:rgba(64,168,224,.06);border-radius:6px;border:1px solid rgba(64,168,224,.15)">';
+    h += '<div style="font-size:10px;font-family:var(--mono);color:var(--txt2);margin-bottom:5px">🧑 HUMAIN</div>';
+    h += '<div style="font-family:var(--head);font-size:18px;font-weight:800;color:var(--blue)">0,7–1,1 g/L</div>';
+    h += '<div style="font-size:11px;color:var(--txt2);margin-top:3px">à jeun</div>';
+    h += '</div>';
+    h += '</div></div>';
+
+    // Contexte patient
+    h += '<div class="info info-em" style="margin-bottom:8px">💡 Pour '+esc(S.patient.nom)+' ('+S.patient.poids+' kg, '+S.patient.age+' ans) : '+
+      (S.glycemie < 0.7 ? 'URGENCE — hypoglycémie sévère. Sucre ou miel sur les gencives immédiatement. Appeler le vétérinaire.' :
+       S.glycemie <= 1.2 ? 'Glycémie dans les normes canines. Insulinothérapie bien équilibrée.' :
+       S.glycemie <= 2.5 ? 'Hyperglycémie modérée. Contrôle de l\'insulinothérapie recommandé.' :
+       'Hyperglycémie importante. Révision urgente de la dose d\'insuline avec le vétérinaire.')+
+    '</div>';
+
+    if(S.glycemie > 3.0){
+      h += '<div class="info info-warn">⚠️ À cette valeur, surveiller les signes d\'acidocétose : haleine fruitée/acétonique, vomissements, prostration. Urgence vétérinaire si ces signes apparaissent.</div>';
+    }
+
+    h += '</div>';
+    h += '<div class="nav-row"><button class="btn-g" onclick="setO(\'patient\')">← Patient</button>';
+    h += '<button class="btn-p" onclick="setO(\'insuline\')">Insulinothérapie →</button></div>';
+    h += '</div>';
+
+  // ── INSULINE ───────────────────────────────────────────
+  } else if(S.onglet === 'insuline'){
+    h += '<div class="fadeup">';
+    h += '<div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">💉 Insulinothérapie de '+esc(S.patient.nom)+'</div>';
+    h += '<div class="card-sub">Caninsulin® est la seule insuline avec AMM vétérinaire chien en France. Toujours associer à un repas.</div>';
+
+    // Choix insuline
+    h += '<div class="col8" style="margin-bottom:16px">';
+    INSULINES_VETO.forEach(function(ins){
+      var active = S.insuline === ins.id;
+      h += '<div class="ins-card '+(active?'active':'')+'" onclick="S.insuline=\''+ins.id+'\';render()">';
+      h += '<div style="display:flex;align-items:center;gap:10px">';
+      h += '<span style="font-size:22px">'+ins.icone+'</span>';
+      h += '<div style="flex:1">';
+      h += '<div class="ins-nom" style="color:'+(active?'var(--em)':'var(--txt)')+'">'+esc(ins.nom)+'</div>';
+      h += '<div class="ins-detail">'+esc(ins.molecule)+' · Durée : '+ins.duree+'h · '+esc(ins.freq)+'</div>';
+      h += '</div>';
+      h += '</div>';
+      if(active){
+        h += '<div style="font-size:12px;color:var(--txt2);margin-top:8px;line-height:1.6;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)">'+esc(ins.info)+'</div>';
+        h += '<div class="info info-warn" style="margin-top:8px;font-size:11px">⚠️ '+esc(ins.risque)+'</div>';
+      }
+      h += '</div>';
+    });
+    h += '</div>';
+
+    // Dose
+    var doseReco = Math.round(S.patient.poids * 0.5 * 10) / 10;
+    h += '<div style="margin-bottom:16px">';
+    h += '<div class="lbl-row"><label class="lbl">Dose prescrite</label>';
+    h += '<span class="lbl-val">'+S.dose.toFixed(1)+' UI/kg</span></div>';
+    h += '<input type="range" min="0.1" max="1.5" step="0.1" value="'+S.dose+'" oninput="S.dose=+this.value;render()">';
+    h += '<div class="range-lbl"><span>0,1</span><span style="color:var(--em)">Départ 0,5 UI/kg</span><span>1,5 UI/kg</span></div>';
+    h += '<div style="margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--em)">';
+    h += 'Dose calculée pour '+esc(S.patient.nom)+' ('+S.patient.poids+' kg) : <strong>'+Math.round(S.dose * S.patient.poids * 10)/10+' UI</strong> par injection';
+    h += '</div></div>';
+
+    // Protocole
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:14px;margin-bottom:10px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Protocole d\'injection</div>';
+    [{label:'Site d\'injection', val:'Face latérale du thorax (meilleure absorption)'},{label:'Timing', val:'Après le repas · Jamais à jeun'},{label:'Conservation', val:'Réfrigérateur 2-8°C · Ne pas congeler · Agiter doucement'},{label:'Matériel', val:'Seringue à insuline U-40 avec Caninsulin®'},{label:'Suivi glycémique', val:'Courbe de glycémie hospitalière à J+7'}
+    ].forEach(function(r){
+      h += '<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+      h += '<span style="font-family:var(--mono);font-size:11px;color:var(--em);flex-shrink:0;width:140px">'+esc(r.label)+'</span>';
+      h += '<span style="font-size:12px;color:var(--txt2)">'+esc(r.val)+'</span>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+    h += '<div class="info info-crit">🚨 <strong>Règle absolue :</strong> Ne JAMAIS injecter de l\'insuline si le chien n\'a pas mangé. Risque d\'hypoglycémie sévère.</div>';
+    h += '</div>';
+    h += '<div class="nav-row"><button class="btn-g" onclick="setO(\'glycemie\')">← Glycémie</button>';
+    h += '<button class="btn-p" onclick="setO(\'signes\')">Signes cliniques →</button></div>';
+    h += '</div>';
+
+  // ── SIGNES CLINIQUES ───────────────────────────────────
+  } else if(S.onglet === 'signes'){
+    h += '<div class="fadeup">';
+    h += '<div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">🔍 Reconnaître et surveiller</div>';
+    h += '<div class="card-sub">Les signes que l\'ASV doit connaître — du plus fréquent au plus urgent.</div>';
+    SIGNES_CLINIQUES.forEach(function(s){
+      h += '<div class="signe" style="border-left-color:'+(s.alerte?'var(--red)':'var(--em)')+'">';
+      h += '<span class="signe-icon">'+s.icone+'</span>';
+      h += '<div><div class="signe-txt"><strong>'+esc(s.label)+'</strong></div>';
+      h += '<div class="signe-txt" style="margin-top:3px">'+esc(s.desc)+'</div>';
+      if(s.alerte) h += '<div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-top:5px">⚠ URGENCE VÉTÉRINAIRE</div>';
+      h += '</div></div>';
+    });
+    h += '<hr class="div">';
+    h += '<div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Protocole hypoglycémie</div>';
+    [{n:'1',t:'Chien conscient',a:'Frotter miel ou sucre sur les gencives · Appeler le vétérinaire'},{n:'2',t:'Chien inconscient',a:'NE PAS donner per os · Sérum glucosé IV par le vétérinaire · Position de sécurité'},{n:'3',t:'Chien convulsif',a:'Éloigner les objets · Protéger la tête · Appeler en urgence · Ne pas introduire les doigts dans la gueule'}
+    ].forEach(function(r){
+      h += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+      h += '<span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--amber);flex-shrink:0;width:20px">'+r.n+'</span>';
+      h += '<div><div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:2px">'+esc(r.t)+'</div>';
+      h += '<div style="font-size:12px;color:var(--txt2)">'+esc(r.a)+'</div></div></div>';
+    });
+    h += '</div></div>';
+
+  // ── QUIZ ───────────────────────────────────────────────
+  } else if(S.onglet === 'role'){
+    h += '<div class="fadeup"><div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">👩‍⚕️ Rôle de l\'ASV — UC4 Assistance aux soins</div>';
+    h += '<div class="card-sub">CAFASV · Ce que l\'ASV fait, ce qu\'elle ne peut pas faire, et quand appeler le vétérinaire.</div>';
+    
+    // Tableau ASV vs Vétérinaire
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Périmètre de compétences en insulinothérapie canine</div>';
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;overflow:hidden;margin-bottom:14px">';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,.06)">';
+    h += '<div style="padding:10px 12px;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--em)">✓ ASV PEUT</div>';
+    h += '<div style="padding:10px 12px;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red)">✗ ASV NE PEUT PAS</div>';
+    h += '</div>';
+    [
+      ["Mesurer la glycémie capillaire", "Décider de la dose d'insuline"],
+      ["Préparer la seringue selon prescription", "Modifier le protocole seul(e)"],
+      ["Réaliser l'injection SC sur délégation", "Prescrire le Caninsulin®"],
+      ["Surveiller les signes cliniques", "Interpréter les résultats sans le véto"],
+      ["Éduquer le propriétaire (sur instruction)", "Autoriser la sortie d'un animal"],
+      ["Signaler toute anomalie au vétérinaire", "Stopper un traitement en cours"],
+    ].forEach(function(row){
+      h += '<div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,.04)">';
+      h += '<div style="padding:9px 12px;font-size:12px;color:var(--em);border-right:1px solid rgba(255,255,255,.04)">✓ ' + row[0] + '</div>';
+      h += '<div style="padding:9px 12px;font-size:12px;color:var(--red)">✗ ' + row[1] + '</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+    
+    h += '<div class="info info-em">📋 <strong>Référence réglementaire :</strong> Code rural et de la pêche maritime, art. L.5143-6. Seul le vétérinaire peut prescrire des médicaments vétérinaires. L\'ASV agit sous sa responsabilité et dans le cadre défini par lui.</div>';
+    h += '<div class="info info-warn">⚠️ <strong>Délégation :</strong> L\'injection d\'insuline SC par l\'ASV n\'est possible que sur délégation EXPLICITE et ÉCRITE du vétérinaire, avec une prescription en cours de validité et après formation spécifique.</div>';
+    
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin:14px 0 10px">Quand appeler le vétérinaire EN URGENCE</div>';
+    [
+      {s:"⚠️", t:"Glycémie < 0,6 g/L", d:"Hypoglycémie sévère — ne jamais attendre"},
+      {s:"🚨", t:"Glycémie > 4,0 g/L + vomissements", d:"Suspicion acidocétose — urgence vitale"},
+      {s:"😵", t:"Animal inconscient ou convulsif", d:"Appel immédiat — ne pas manipuler seul"},
+      {s:"💧", t:"Polyurie-polydipsie brutale", d:"Déséquilibre glycémique aigu"},
+    ].forEach(function(u){
+      h += '<div style="display:flex;gap:12px;padding:10px;border-radius:6px;background:rgba(0,0,0,.2);margin-bottom:6px;border-left:3px solid rgba(232,64,64,.4)">';
+      h += '<span style="font-size:18px;flex-shrink:0">' + u.s + '</span>';
+      h += '<div><div style="font-size:13px;font-weight:600;color:var(--txt)">' + u.t + '</div>';
+      h += '<div style="font-size:12px;color:var(--txt2)">' + u.d + '</div></div></div>';
+    });
+    h += '</div></div>';
+
+  } else if(S.onglet === 'quiz'){
+    var pct = Math.round(S.qIdx / QUIZ.length * 100);
+    h += '<div class="fadeup">';
+    h += '<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-bottom:7px">';
+    h += '<span>Question '+(S.qIdx%QUIZ.length+1)+' / '+QUIZ.length+'</span>';
+    h += '<span style="color:var(--em)">'+(S.qTotal>0?Math.round(S.qScore/S.qTotal*100)+'%':'—')+'</span></div>';
+    h += '<div class="progress-wrap" style="margin-bottom:14px"><div class="progress-bar" style="width:'+pct+'%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>';
+    h += '<div class="card em"><div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--txt)">'+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt,i){
+      var cls='';
+      if(S.qShown){if(i===q.rep)cls='correct';else if(i===S.qSel)cls='wrong';}
+      h += '<div class="quiz-opt '+cls+'" onclick="'+(S.qShown?'':'selQ('+i+')')+'">';
+      h += '<span style="font-family:var(--mono);font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span>';
+      h += '<span>'+esc(opt)+'</span></div>';
+    });
+    if(S.qShown){
+      h += '<div class="quiz-expl">'+q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h += '<button class="btn-p btn-full" style="margin-top:12px" onclick="nxtQ()">Question suivante →</button>';
+    }
+    h += '</div>';
+    h += '<button class="btn-g btn-full" onclick="rstQ()" style="margin-top:8px;color:var(--em)">↺ Recommencer</button>';
+    h += '</div>';
+
+  // ── ANALYSE IA ─────────────────────────────────────────
+  } else if(S.onglet === 'analyse'){
+    h += '<div class="fadeup">';
+    h += '<div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">🤖 Analyse IA · Cas de '+esc(S.patient.nom)+'</div>';
+    h += '<div class="card-sub">Posez une question sur ce cas clinique — l\'IA répond en tant que formateur ASV.</div>';
+    h += '<textarea id="ia-q" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(120,216,64,.12);border-radius:8px;color:var(--txt);padding:11px;font-size:13px;font-family:var(--sans);outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Rocky a une glycémie à 0,5 g/L ce matin et tremble. Que faire ? Ou : Comment préparer et injecter le Caninsulin® ? Ou : Quels signes surveillez-vous après l\'injection ?"></textarea>';
+    h += '<button class="btn-p btn-full" onclick="runIA()">🐾 Analyser ce cas →</button>';
+    if(S.loading){h += '<div class="dots" style="margin-top:14px"><span></span><span></span><span></span><div class="dots-msg">Analyse vétérinaire en cours...</div></div>';}
+    if(!S.loading && S.analyse){h += '<div class="analysis fadeup" style="margin-top:14px">'+md(S.analyse)+'</div>';}
+    h += '<hr class="div">';
+    if(!S.apiKeySaved){
+      h += '<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>';
+      h += '<div class="apikey-row"><input type="password" placeholder="sk-ant-api03-..." value="'+esc(S.apiKey)+'" oninput="S.apiKey=this.value">';
+      h += '<button onclick="svKey()">Sauver</button></div></div>';
+    } else {
+      h += '<div style="color:var(--em);font-family:var(--mono);font-size:11px">// configured ✓</div>';
+    }
+    h += '</div>';
+
+    // Premium box
+    h += '<div style="background:rgba(0,0,0,.3);border:1.5px solid rgba(120,216,64,.12);border-radius:12px;padding:22px;margin-bottom:12px">';
+    h += '<div style="text-align:center;margin-bottom:14px"><div style="font-size:28px;margin-bottom:8px">🔒</div>';
+    h += '<div style="font-family:var(--head);font-size:15px;font-weight:700;color:var(--txt);margin-bottom:4px">Analyse IA — Accès Premium</div>';
+    h += '<div style="font-size:12px;color:var(--txt2)">Patient, glycémie, insuline, signes cliniques et quiz sont entièrement gratuits</div></div>';
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">';
+    [{w:'Module seul',p:'4,99€',d:'à vie'},{w:'Suite PraxisVeto',p:'12,99€',d:'tous modules',em:true},{w:'École ASV',p:'Devis',d:'sur mesure'}].forEach(function(t){
+      h += '<div style="border:1.5px solid '+(t.em?'rgba(120,216,64,.4)':'var(--bdr)')+';border-radius:8px;padding:12px;text-align:center;background:'+(t.em?'rgba(120,216,64,.07)':'rgba(255,255,255,.02)')+'">';
+      h += '<div style="font-family:var(--mono);font-size:9px;color:'+(t.em?'var(--em)':'var(--txt2)')+';margin-bottom:7px">'+t.w+'</div>';
+      h += '<div style="font-family:var(--head);font-size:18px;font-weight:800;color:var(--txt)">'+t.p+'</div>';
+      h += '<div style="font-size:10px;color:var(--txt2);margin-top:4px">'+t.d+'</div></div>';
+    });
+    h += '</div>';
+    h += '<div style="text-align:center"><a href="mailto:contact@praxiscare.fr" style="display:inline-block;padding:11px 24px;border-radius:8px;background:linear-gradient(135deg,var(--em2),var(--em));color:#0a0d08;font-weight:700;font-size:13px;text-decoration:none">Obtenir l\'accès →</a></div>';
+    h += '</div>';
+  }
+
+  if(S.view !== 'welcome'){
+    h += '<div style="margin-top:10px"><button class="btn-g" onclick="go(\'welcome\')" style="color:var(--em);border-color:rgba(120,216,64,.2)">← Accueil PraxisVeto</button></div>';
+  }
+
+  h += '</div>';
+  document.getElementById('app').innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){ S.view=v; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setO(o){ S.onglet=o; S.analyse=''; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function selQ(i){
+  if(S.qShown) return;
+  S.qSel=i; S.qShown=true; S.qTotal++;
+  if(i===QUIZ[S.qIdx%QUIZ.length].rep) S.qScore++;
+  render();
+}
+function nxtQ(){ S.qIdx++; S.qSel=null; S.qShown=false; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function rstQ(){ S.qIdx=0; S.qScore=0; S.qTotal=0; S.qSel=null; S.qShown=false; render(); }
+function svKey(){ localStorage.setItem('praxisveto_key',S.apiKey); S.apiKeySaved=true; render(); }
+
+async function runIA(){
+  var el = document.getElementById('ia-q');
+  if(!el || !el.value.trim()) return;
+  S.loading=true; S.analyse=''; render();
+  try{
+    var headers = {'Content-Type':'application/json'};
+    if(S.apiKey){ headers['x-api-key']=S.apiKey; headers['anthropic-version']='2023-06-01'; }
+    var p = S.patient;
+    var res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers,
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:900,
+        messages:[{role:'user', content:
+          'Tu es un formateur pour auxiliaires de sante veterinaire (ASV), expert en diabetologie veterinaire canine.\n\n'+
+          'Patient : '+p.nom+', '+p.race+', '+p.sexe+', '+p.age+' ans, '+p.poids+' kg. Diabete '+p.diabete+'.\n'+
+          'Glycemie actuelle : '+S.glycemie.toFixed(1)+' g/L. Insuline : '+insulineInfo().nom+'. Dose : '+S.dose+' UI/kg.\n\n'+
+          'Question ASV : '+el.value+'\n\n'+
+          'Reponds en 3 paragraphes pratiques. Tutoie l\'etudiant(e). '+
+          'Cite des references veterinaires specifiques chien. '+
+          'Mentionne le role de l\'ASV vs celui du veterinaire. '+
+          'Utilise **gras** pour les points cles.'
+        }]
+      })
+    });
+    var data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse = data.content && data.content.find(function(b){ return b.type==='text'; }) ?
+      data.content.find(function(b){ return b.type==='text'; }).text : '';
+  } catch(e){
+    S.analyse = '**Erreur**\n\n'+e.message;
+  }
+  S.loading=false; render();
+}
+
+render();
+</script>
+
+<!-- Bouton accueil fixe -->
+<a class="home-btn-fixed" href="index.html">⌂ PraxisVeto</a>
+
+</body>
+</html>

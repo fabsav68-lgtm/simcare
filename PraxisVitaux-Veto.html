@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisVitaux · UC4 CAFASV · PraxisVeto</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Karla:wght@300;400;500;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c10;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#d0d8f0;--txt2:#384060;--em:#60a8f8;--em2:#2060c0;
+  --amber:#e8a030;--red:#e84040;--green:#40c878;--violet:#a060e8;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px;overflow-x:hidden;position:relative}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 20% 0%,rgba(96,168,248,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 80% 90%,rgba(64,200,120,.04) 0%,transparent 50%);
+  background-image:
+    repeating-linear-gradient(0deg,rgba(96,168,248,.015) 0px,rgba(96,168,248,.015) 1px,transparent 1px,transparent 60px),
+    repeating-linear-gradient(90deg,rgba(96,168,248,.015) 0px,rgba(96,168,248,.015) 1px,transparent 1px,transparent 60px)}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+.site-header{padding:40px 22px 24px;text-align:center;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(96,168,248,.08);border:1px solid rgba(96,168,248,.22);color:var(--em);padding:4px 16px;border-radius:20px;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-family:var(--head);font-size:clamp(26px,5vw,48px);font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:8px}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:12px;font-family:var(--mono);letter-spacing:1px}
+.tabs{display:flex;gap:3px;padding:0 0 18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--mono);letter-spacing:1px;-webkit-tap-highlight-color:transparent}
+.tab:hover{color:var(--txt);background:rgba(96,168,248,.06)}
+.tab.active{background:rgba(96,168,248,.12);border-color:rgba(96,168,248,.4);color:var(--em)}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:12px;position:relative;z-index:1}
+.card.em{border-top:2px solid var(--em)}
+.card-title{font-family:var(--head);font-size:15px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px;line-height:1.65}
+
+/* Espèce selector */
+.espece-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.espece-btn{padding:14px 8px;border-radius:10px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.espece-btn:hover{background:rgba(96,168,248,.06)}
+.espece-btn.active{background:rgba(96,168,248,.1);border-color:rgba(96,168,248,.4)}
+.espece-icon{font-size:26px;display:block;margin-bottom:5px}
+.espece-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2)}
+.espece-btn.active .espece-label{color:var(--em)}
+
+/* Constantes display */
+.cst-card{background:rgba(0,0,0,.25);border-radius:10px;padding:0;overflow:hidden;margin-bottom:10px}
+.cst-header{background:rgba(96,168,248,.08);border-bottom:1px solid rgba(96,168,248,.15);padding:12px 16px;display:flex;align-items:center;gap:10px}
+.cst-icon{font-size:20px}
+.cst-nom{font-size:14px;font-weight:700;color:var(--em)}
+.cst-methode{font-family:var(--mono);font-size:10px;color:var(--txt2);margin-left:auto;letter-spacing:1px}
+.cst-body{padding:12px 16px}
+.cst-values{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.cst-val{background:rgba(0,0,0,.2);border-radius:6px;padding:10px;text-align:center}
+.cst-val-num{font-family:var(--head);font-size:18px;font-weight:800;display:block;line-height:1}
+.cst-val-lbl{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);display:block;margin-top:3px}
+.cst-alerte{font-size:11px;line-height:1.6;padding:8px 10px;border-radius:6px;margin-top:6px}
+.cst-technique{font-size:12px;color:var(--txt2);line-height:1.7;padding:10px 14px;background:rgba(0,0,0,.15);border-top:1px solid rgba(255,255,255,.05)}
+
+/* Slider glycémie interactif */
+.gauge-bar{height:28px;border-radius:14px;overflow:hidden;margin:8px 0;
+  background:linear-gradient(90deg,#7a1a1a 0%,#e84040 12%,#e8a030 20%,#40c878 28%,#40c878 55%,#e8a030 68%,#e84040 82%,#7a1a1a 100%);
+  position:relative}
+.gauge-needle{position:absolute;top:0;bottom:0;width:3px;background:#fff;
+  border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.6);
+  transition:left .4s cubic-bezier(.34,1.56,.64,1);transform:translateX(-50%)}
+.gauge-zones{display:flex;justify-content:space-between;font-size:9px;font-family:var(--mono);color:var(--txt2);margin-top:4px}
+
+/* Technique steps */
+.tech-step{display:flex;gap:12px;padding:10px;border-radius:8px;background:rgba(0,0,0,.2);margin-bottom:6px;border-left:3px solid rgba(96,168,248,.4)}
+.tech-num{font-family:var(--head);font-size:16px;font-weight:800;color:var(--em);flex-shrink:0;width:22px}
+.tech-titre{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:2px}
+.tech-desc{font-size:12px;color:var(--txt2);line-height:1.6}
+
+/* Quiz */
+.quiz-opt{padding:11px 14px;border-radius:8px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt2);cursor:pointer;font-size:13px;margin-bottom:7px;transition:all .15s;display:flex;align-items:center;gap:10px;-webkit-tap-highlight-color:transparent}
+.quiz-opt:hover{background:rgba(96,168,248,.06);color:var(--txt)}
+.quiz-opt.correct{background:rgba(64,200,120,.1);border-color:rgba(64,200,120,.4);color:var(--green)}
+.quiz-opt.wrong{background:rgba(232,64,64,.1);border-color:rgba(232,64,64,.4);color:var(--red)}
+.quiz-expl{background:rgba(96,168,248,.05);border:1px solid rgba(96,168,248,.15);border-radius:8px;padding:11px 13px;margin-top:10px;font-size:12px;color:var(--txt2);line-height:1.7}
+.quiz-expl strong{color:var(--txt)}
+
+.info{border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em  {background:rgba(96,168,248,.06);border-left:3px solid rgba(96,168,248,.5);color:var(--em)}
+.info-warn{background:rgba(232,160,48,.06);border-left:3px solid rgba(232,160,48,.5);color:var(--amber)}
+.info-red {background:rgba(232,64,64,.06);border-left:3px solid rgba(232,64,64,.5);color:var(--red)}
+.info-green{background:rgba(64,200,120,.06);border-left:3px solid rgba(64,200,120,.5);color:var(--green)}
+.info-violet{background:rgba(160,96,232,.06);border-left:3px solid rgba(160,96,232,.5);color:var(--violet)}
+
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:8px;color:#fff;font-family:var(--head);font-size:13px;font-weight:700;padding:11px 22px;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-0.3px}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;color:var(--txt2);font-family:var(--sans);font-size:12px;font-weight:600;padding:9px 16px;cursor:pointer;transition:all .15s}
+.btn-g:hover{background:rgba(96,168,248,.06);color:var(--txt)}
+.btn-full{width:100%}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.progress-wrap{background:rgba(255,255,255,.06);border-radius:100px;height:7px;overflow:hidden;margin:6px 0}
+.progress-bar{height:100%;border-radius:100px;transition:width .5s ease}
+.dots{text-align:center;padding:22px 0}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--em);margin:0 3px;animation:dotB 1.4s ease-in-out infinite both}
+.dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+.dots-msg{color:var(--txt2);font-size:12px;margin-top:10px;font-style:italic}
+.analysis p{margin-bottom:13px;font-size:14px;line-height:1.85;color:#4060a0}
+.analysis strong{color:var(--txt)}
+.apikey-box{background:rgba(96,168,248,.04);border:1px solid rgba(96,168,248,.12);border-radius:8px;padding:11px}
+.apikey-box p{font-size:12px;color:var(--txt2);margin-bottom:9px;line-height:1.6}
+.apikey-box a{color:var(--em)}
+.apikey-row{display:flex;gap:6px}
+.apikey-row input{flex:1;padding:8px 10px;font-size:11px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:6px;color:var(--txt);font-family:var(--mono);outline:none}
+.apikey-row input:focus{border-color:rgba(96,168,248,.3)}
+.apikey-row button{padding:8px 12px;border:none;border-radius:6px;background:var(--em2);color:#fff;font-weight:700;cursor:pointer;font-size:11px}
+hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
+.home-btn-fixed{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999;background:rgba(10,12,16,.92);border:1.5px solid rgba(96,168,248,.3);border-radius:30px;padding:10px 22px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--em);cursor:pointer;text-decoration:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,.5);transition:all .2s;white-space:nowrap}
+.home-btn-fixed:hover{background:rgba(96,168,248,.12)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.espece-grid{grid-template-columns:1fr 1fr}.cst-values{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES UC4 — CONSTANTES VITALES
+//  Sources : Temavet, ASVinfos, MonVet, papotagesduneasv, Alforme
+//  CAFASV UC4 : "Assister le vétérinaire en soins et en chirurgie"
+// ═══════════════════════════════════════
+
+var ESPECES = [
+  {id:'chien', label:'Chien', icon:'🐕', col:'#60a8f8'},
+  {id:'chat',  label:'Chat',  icon:'🐈', col:'#e8a030'},
+  {id:'lapin', label:'Lapin', icon:'🐇', col:'#40c878'},
+  {id:'nac',   label:'NAC',   icon:'🐾', col:'#a060e8'},
+];
+
+var CONSTANTES = {
+  chien: {
+    nom:'Chien', icon:'🐕',
+    fc:   {min:60,  max:140, unit:'bpm',  alerte_bas:50,  alerte_haut:160, label:'Fréquence cardiaque'},
+    fr:   {min:10,  max:30,  unit:'/min', alerte_bas:8,   alerte_haut:40,  label:'Fréquence respiratoire'},
+    temp: {min:37.5,max:39.2,unit:'°C',  alerte_bas:37.0,alerte_haut:39.5,label:'Température rectale'},
+    pas:  {min:100, max:150, unit:'mmHg', alerte_bas:90,  alerte_haut:160, label:'PA systolique'},
+    trc:  {min:0,   max:2,   unit:'sec',  alerte_bas:0,   alerte_haut:2,   label:'TRC (muqueuses)'},
+    notes:[
+      'Les grands chiens ont une FC plus basse (60-90) que les petits chiens (90-140)',
+      'FC et FR augmentent significativement avec le stress — mesurer au calme',
+      'Chiot < 6 semaines : FC 200-250 bpm, FR 15-35/min, T° 35.5-37.5°C',
+      'Température : voie rectale de référence — voie auriculaire acceptable en dépistage',
+    ],
+    urgences:[
+      {signe:'FC > 180 bpm + faiblesse', signif:'Choc ou arythmie — urgence'},
+      {signe:'T° > 40°C', signif:'Fièvre sévère ou coup de chaleur'},
+      {signe:'T° < 37°C', signif:'Hypothermie — réchauffer progressivement'},
+      {signe:'FR > 40/min au repos', signif:'Détresse respiratoire — O₂ immédiat'},
+      {signe:'TRC > 2 sec + muqueuses pâles', signif:'Choc circulatoire — urgence vitale'},
+    ],
+    technique_fc:'Stéthoscope côté gauche (5ème espace intercostal) OU palpation artère fémorale face interne cuisse. Compter 15 sec × 4 ou 30 sec × 2.',
+    technique_fr:'Observer les mouvements thoraciques de loin, animal au repos. Compter 1 minute complète. Ne pas toucher l\'animal.',
+    technique_temp:'Thermomètre rectal numérique. Animal en décubitus latéral ou debout. Lubrifiant. Thermomètre à 2-3 cm dans le rectum. Maintenir 30-60 sec.',
+    technique_trc:'Appuyer 2 secondes sur la gencive au-dessus des incisives. Zone blanchie doit se recolorer < 2 secondes. Muqueuses roses humides = normal.',
+  },
+  chat: {
+    nom:'Chat', icon:'🐈',
+    fc:   {min:120, max:200, unit:'bpm',  alerte_bas:100, alerte_haut:220, label:'Fréquence cardiaque'},
+    fr:   {min:15,  max:35,  unit:'/min', alerte_bas:12,  alerte_haut:40,  label:'Fréquence respiratoire'},
+    temp: {min:38.0,max:39.2,unit:'°C',  alerte_bas:37.5,alerte_haut:39.5,label:'Température rectale'},
+    pas:  {min:100, max:150, unit:'mmHg', alerte_bas:90,  alerte_haut:160, label:'PA systolique'},
+    trc:  {min:0,   max:2,   unit:'sec',  alerte_bas:0,   alerte_haut:2,   label:'TRC (muqueuses)'},
+    notes:[
+      'Le chat en stress à la clinique peut avoir une FC et une T° artificiellement élevées (syndrome du manteau blanc)',
+      'Chaton < 4 semaines : FC 180-200 bpm — incapable de thermorégulation seul',
+      'Ronronnement n\'exclut pas la douleur — le chat ronronne aussi quand il souffre',
+      'Un chat qui respire la bouche ouverte = signe de détresse respiratoire grave',
+    ],
+    urgences:[
+      {signe:'Respiration bouche ouverte', signif:'Détresse respiratoire — urgence absolue'},
+      {signe:'FC > 240 bpm + faiblesse', signif:'Tachycardie sévère ou cardiomyopathie'},
+      {signe:'T° > 39.5°C', signif:'Fièvre — rechercher cause infectieuse'},
+      {signe:'Paralysie des membres postérieurs', signif:'Thrombus aortique — urgence'},
+      {signe:'Arrêt alimentaire > 24h', signif:'Risque lipidose hépatique — urgence'},
+    ],
+    technique_fc:'Stéthoscope côté gauche pointe du cœur. Chat posé sur la table ou tenu. Artère fémorale en alternative. Attention : le stress augmente beaucoup la FC du chat.',
+    technique_fr:'De loin, sans toucher l\'animal, observer les flancs. Compter 1 minute. Un chat stressé peut avoir 40-50/min — tenir compte du contexte.',
+    technique_temp:'Comme le chien — voie rectale. Le chat résiste souvent. Utiliser une contention douce. Thermomètre lubrifié, insertion 2 cm. Résultats souvent faussés par le stress.',
+    technique_trc:'Gencive au-dessus des canines. Chez le chat, accès plus difficile. Muqueuses roses humides = normal. Muqueuses ictériques (jaunes) → urgence hépatique.',
+  },
+  lapin: {
+    nom:'Lapin', icon:'🐇',
+    fc:   {min:130, max:325, unit:'bpm',  alerte_bas:120, alerte_haut:350, label:'Fréquence cardiaque'},
+    fr:   {min:30,  max:60,  unit:'/min', alerte_bas:25,  alerte_haut:70,  label:'Fréquence respiratoire'},
+    temp: {min:38.0,max:39.5,unit:'°C',  alerte_bas:37.5,alerte_haut:40.0,label:'Température rectale'},
+    pas:  {min:90,  max:130, unit:'mmHg', alerte_bas:80,  alerte_haut:140, label:'PA systolique'},
+    trc:  {min:0,   max:2,   unit:'sec',  alerte_bas:0,   alerte_haut:2,   label:'TRC (muqueuses)'},
+    notes:[
+      'Le lapin est une PROIE — il dissimule sa douleur et sa maladie jusqu\'au stade avancé',
+      'Arrêt du transit (iléus) = URGENCE — le lapin ne doit jamais rester > 12h sans manger ni déféquer',
+      'Le lapin ne vomit pas — toute ingestion toxique ne peut pas être éliminée naturellement',
+      'Contention : jamais les pattes dans le vide — fracture vertébrale possible par simple sursaut',
+      'Respiration normale : nasale exclusivement. Bouche ouverte = urgence vitale.',
+    ],
+    urgences:[
+      {signe:'Arrêt alimentaire > 12h', signif:'Iléus débutant — urgence vétérinaire'},
+      {signe:'Tête penchée', signif:'Torticolis — Encephalitozoon cuniculi ou otite interne'},
+      {signe:'T° > 40°C ou < 37.5°C', signif:'Fièvre ou hypothermie — urgence'},
+      {signe:'Dyspnée (flancs qui bougent fort)', signif:'Urgence respiratoire'},
+      {signe:'Paralysie ou parésie des membres', signif:'Fracture vertébrale ou atteinte neurologique'},
+    ],
+    technique_fc:'Stéthoscope côté gauche, lapin en décubitus dorsal ou tenu sur les bras. La FC est très rapide — compter 15 sec × 4. Artère auriculaire visible.',
+    technique_fr:'Observer les flancs et les naseaux au repos. Le lapin ne respire que par le nez normalement. Tout signe de respiration buccale = détresse.',
+    technique_temp:'Thermomètre rectal, animal tenu ferme mais sans comprimer le thorax. Insertion 2 cm. Le lapin peut donner des coups de pattes — attention aux fractures.',
+    technique_trc:'Gencive, comme chez chien/chat. Plus difficile chez le lapin — contention nécessaire. Muqueuses de la conjonctive également observables.',
+  },
+  nac: {
+    nom:'NAC (rongeurs / furet)', icon:'🐾',
+    fc:   {min:200, max:400, unit:'bpm',  alerte_bas:180, alerte_haut:450, label:'FC (variable selon espèce)'},
+    fr:   {min:40,  max:100, unit:'/min', alerte_bas:35,  alerte_haut:120, label:'FR (variable selon espèce)'},
+    temp: {min:37.0,max:39.5,unit:'°C',  alerte_bas:36.5,alerte_haut:40.0,label:'T° (variable selon espèce)'},
+    pas:  {min:80,  max:120, unit:'mmHg', alerte_bas:70,  alerte_haut:130, label:'PA (mesure difficile)'},
+    trc:  {min:0,   max:2,   unit:'sec',  alerte_bas:0,   alerte_haut:2,   label:'TRC (muqueuses)'},
+    notes:[
+      'Cochon d\'Inde : T° 37.5-39.5°C · FC 200-350 bpm · FR 40-100/min — sensible au stress thermique',
+      'Furet : T° 38-39.5°C · FC 180-250 bpm · FR 30-40/min — hypoglycémie fréquente',
+      'Rat : T° 37-38.5°C · FC 250-450 bpm · FR 70-115/min',
+      'Chinchilla : T° 36-38°C · FC 100-150 bpm — très sensible à la chaleur (> 25°C dangereux)',
+      'Les NAC dissimulent la maladie jusqu\'au stade avancé — tout signe clinique est potentiellement urgent',
+    ],
+    urgences:[
+      {signe:'Arrêt alimentaire chez tout NAC', signif:'Urgence — les petits animaux se dégradent vite'},
+      {signe:'Furet : faiblesse, ptyalisme, tremblements', signif:'Hypoglycémie — sucre immédiat, urgence'},
+      {signe:'Cochon d\'Inde : rigidité musculaire, convulsions', signif:'Hypocalcémie ou intoxication'},
+      {signe:'Oiseau : plumes ébouriffées, yeux fermés', signif:'Animal très malade — urgence'},
+      {signe:'T° > 40°C chez chinchilla/cochon d\'Inde', signif:'Coup de chaleur — refroidissement progressif'},
+    ],
+    technique_fc:'Très difficile sur les petits rongeurs. Stéthoscope pédiatrique ou néonatal. Auscultation thoracique brève, animal peu manipulé pour éviter le stress.',
+    technique_fr:'Observation visuelle des mouvements thoraciques. Chez le furet : comme le chat. Chez les rongeurs : difficile à compter, évaluation qualitative (dyspnée oui/non).',
+    technique_temp:'Thermomètre rectal fin. Insertion minimale. Contention extrêmement douce. Risque de fracture sur les très petits animaux. Température axillaire acceptable en alternative.',
+    technique_trc:'Cochon d\'Inde et lapin : gencive. Furet : gencive. Rongeurs < 100g : mesure très difficile — évaluer la coloration globale des muqueuses.',
+  },
+};
+
+// Techniques de mesure détaillées
+var TECHNIQUES = [
+  {id:'stethoscope', icon:'🩺', titre:'Auscultation au stéthoscope',
+   desc:'Mesure de la FC et détection des souffles cardiaques, bruits pulmonaires anormaux.',
+   steps:[
+     {n:'1',t:'Préparation',d:'Stéthoscope à température ambiante. Animal calme si possible. Environnement silencieux.'},
+     {n:'2',t:'Placement',d:'Pointe du cœur : côté gauche, 5ème espace intercostal, juste derrière le coude. Pression légère.'},
+     {n:'3',t:'Mesure',d:'Compter les battements 15 ou 30 secondes. Multiplier par 4 ou 2. Noter le rythme (régulier/irrégulier).'},
+     {n:'4',t:'Poumons',d:'Faire glisser vers l\'arrière : bruits vésiculaires normaux bilatéraux. Crépitements, sibilances = anomalie.'},
+     {n:'5',t:'Traçabilité',d:'Noter FC, rythme, souffles éventuels dans la feuille de soins.'},
+   ]},
+  {id:'thermometre', icon:'🌡️', titre:'Prise de température rectale',
+   desc:'Mesure de référence de la température centrale. Voie rectale obligatoire si valeur anormale à confirmer.',
+   steps:[
+     {n:'1',t:'Matériel',d:'Thermomètre numérique + lubrifiant (vaseline ou gel). Gants si nécessaire.'},
+     {n:'2',t:'Contention',d:'Animal en décubitus latéral ou debout tenu. Queue relevée. Ne jamais forcer si résistance importante.'},
+     {n:'3',t:'Insertion',d:'Thermomètre lubrifié. Chien/chat : 3-4 cm. Lapin : 2 cm. Furet : 1-2 cm. Rongeurs : 1 cm maxi.'},
+     {n:'4',t:'Attente',d:'Maintenir en place selon indication du thermomètre (signal sonore). Ne pas lâcher l\'animal.'},
+     {n:'5',t:'Lecture et nettoyage',d:'Lire et noter la valeur. Nettoyage et désinfection du thermomètre avant réutilisation.'},
+   ]},
+  {id:'trc', icon:'👄', titre:'Temps de Recoloration Capillaire (TRC)',
+   desc:'Indicateur de la perfusion tissulaire périphérique. Rapide et informatif.',
+   steps:[
+     {n:'1',t:'Site',d:'Gencive rostrale (au-dessus des incisives ou canines). Conjonctive en alternative.'},
+     {n:'2',t:'Technique',d:'Appuyer fermement 2 secondes avec le pouce sur la gencive. La zone blanchit.'},
+     {n:'3',t:'Chronométrer',d:'Relâcher et compter le temps de recoloration en secondes.'},
+     {n:'4',t:'Interprétation',d:'< 2 sec = normal · 2-3 sec = perfusion limite · > 3 sec = choc circulatoire'},
+     {n:'5',t:'Couleur des muqueuses',d:'Rose humide = normal · Pâle = anémie/choc · Jaune (ictère) = hépatique · Bleu (cyanose) = urgence O₂'},
+   ]},
+  {id:'pa', icon:'🩸', titre:'Pression artérielle (PA)',
+   desc:'Mesure indirecte non invasive par méthode Doppler ou oscillométrique. Réservée aux situations cliniques sur indication vétérinaire.',
+   steps:[
+     {n:'1',t:'Matériel',d:'Brassard de taille adaptée (largeur = 40% de la circonférence du membre). Doppler ou oscillomètre vétérinaire.'},
+     {n:'2',t:'Site',d:'Membre thoracique (métatarse, métacarpe) ou base de queue. Raser le poil si Doppler.'},
+     {n:'3',t:'Protocole',d:'Animal en décubitus latéral, au calme. 5-10 min d\'acclimatation. Minimum 5 mesures, rejeter la 1ère.'},
+     {n:'4',t:'Valeurs normales',d:'PAS : 100-150 mmHg (chien/chat). > 160 mmHg = risque modéré. > 180 mmHg = hypertension sévère.'},
+     {n:'5',t:'Traçabilité',d:'Noter PAS, PAD, fréquence, site de mesure, condition de l\'animal (calme/stressé).'},
+   ]},
+];
+
+// Tableau comparatif espèces
+var TABLEAU_COMPARATIF = [
+  {param:'FC (bpm)',      chien:'60-140',   chat:'120-200',  lapin:'130-325', nac:'200-400'},
+  {param:'FR (/min)',     chien:'10-30',    chat:'15-35',    lapin:'30-60',   nac:'40-100'},
+  {param:'T° (°C)',       chien:'37.5-39.2',chat:'38-39.2',  lapin:'38-39.5', nac:'37-39.5'},
+  {param:'PAS (mmHg)',    chien:'100-150',  chat:'100-150',  lapin:'90-130',  nac:'80-120'},
+  {param:'TRC',          chien:'< 2 sec',  chat:'< 2 sec',  lapin:'< 2 sec', nac:'< 2 sec'},
+  {param:'Poids adulte', chien:'3-80 kg',  chat:'3-6 kg',   lapin:'1-8 kg',  nac:'0.02-2 kg'},
+];
+
+// Quiz UC4
+var QUIZ_UC4 = [
+  {q:'La fréquence cardiaque normale au repos chez un chat adulte est de :',
+   opts:['60-100 bpm','80-140 bpm','120-200 bpm','200-300 bpm'],rep:2,
+   expl:'La FC normale du **chat adulte** est de **120-200 bpm**, soit beaucoup plus élevée que chez l\'humain ou le chien. Un chat stressé à la clinique peut atteindre 240 bpm — tenir compte du contexte. Le chaton < 4 semaines peut avoir une FC jusqu\'à 250 bpm.'},
+  {q:'Quel est le principal signe d\'urgence vitale chez un lapin en bonne santé ?',
+   opts:['Arrêt alimentaire > 12h','FC > 300 bpm','T° > 38,5°C','Oreilles droites'],rep:0,
+   expl:'L\'**arrêt alimentaire chez le lapin doit être considéré comme une urgence dès 12h**. Le transit digestif du lapin est en mouvement permanent — l\'iléus (arrêt du transit) peut être fatal en quelques heures. Le lapin ne vomit pas et ne peut pas éliminer les toxines naturellement.'},
+  {q:'Le TRC (Temps de Recoloration Capillaire) normal chez le chien est de :',
+   opts:['< 1 seconde','< 2 secondes','2-4 secondes','> 4 secondes'],rep:1,
+   expl:'Le TRC normal est **inférieur à 2 secondes**. Au-delà : perfusion périphérique insuffisante, signe de choc circulatoire. La technique : appuyer 2 secondes sur la gencive, relâcher, chronométrer. Évaluer aussi la couleur des muqueuses (rose humide = normal).'},
+  {q:'Comment mesure-t-on correctement la fréquence respiratoire d\'un animal ?',
+   opts:[
+     'En touchant le thorax avec la main',
+     'En observant les mouvements des flancs de loin, animal au repos, sur 1 minute',
+     'En plaçant un miroir devant les narines',
+     'En comptant pendant 10 secondes × 6'
+   ],rep:1,
+   expl:'La FR se mesure **en observant de loin** (sans toucher l\'animal) les mouvements des flancs ou de la cage thoracique, **animal au repos**, pendant **1 minute complète**. Toucher l\'animal le stresserait et fausserait la mesure. Compter 10 sec × 6 est moins précis pour les fréquences irrégulières.'},
+  {q:'La prise de température chez un animal doit se faire par voie :',
+   opts:['Orale','Axillaire','Rectale (voie de référence)','Auriculaire uniquement'],rep:2,
+   expl:'La **voie rectale est la voie de référence** pour la température centrale. Elle donne la valeur la plus fiable. La voie auriculaire est acceptable pour le dépistage mais moins précise. La voie axillaire sous-estime systématiquement la température centrale de 0.5 à 1°C.'},
+  {q:'Un chien présente des muqueuses pâles et un TRC de 3 secondes. Que signifie ce tableau ?',
+   opts:[
+     'L\'animal a froid — le réchauffer',
+     'Signe possible de choc circulatoire — alerter le vétérinaire immédiatement',
+     'Réaction normale au stress de la consultation',
+     'Animal anémié — donner du fer'
+   ],rep:1,
+   expl:'**Muqueuses pâles + TRC > 2 secondes = choc circulatoire possible**. C\'est une urgence vitale. L\'ASV doit **alerter immédiatement le vétérinaire** et ne surtout pas minimiser. Ce tableau peut signer un choc hémorragique, septique ou cardiogénique. Jamais de "c\'est probablement le stress".'},
+];
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+var S = {
+  view:'welcome', onglet:'constantes', espece:'chien',
+  techOpen:null,
+  qIdx:0, qSel:null, qShown:false, qScore:0, qTotal:0,
+  analyse:'', loading:false,
+  apiKey:localStorage.getItem('simvitaux_key')||'',
+  apiKeySaved:!!localStorage.getItem('simvitaux_key'),
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function md(t){return t.split('\n\n').filter(function(p){return p.trim();}).map(function(para){
+  var parts=para.split(/\*\*([^*]+)\*\*/g);
+  var inner=parts.map(function(p,i){return i%2===1?'<strong>'+esc(p)+'</strong>':esc(p);}).join('');
+  return '<p>'+inner+'</p>';}).join('');}
+
+function zoneColor(val, min, max, alertMin, alertMax){
+  if(val < alertMin || val > alertMax) return 'var(--red)';
+  if(val < min || val > max) return 'var(--amber)';
+  return 'var(--green)';
+}
+
+function render(){
+  var h='';
+  var esp = CONSTANTES[S.espece];
+  var q = QUIZ_UC4[S.qIdx % QUIZ_UC4.length];
+
+  if(S.view !== 'welcome'){
+    h += '<div class="site-header"><div class="badge">🐾 PraxisVeto · UC4 Assistance aux soins · CAFASV</div>';
+    h += '<h1>Sim<span>Vitaux</span></h1>';
+    h += '<p>// Constantes vitales par espèce · Techniques de mesure · Signes d\'alerte · RNCP40344</p></div>';
+    h += '<div class="tabs">';
+    [{id:'constantes',l:'📊 Constantes'},{id:'techniques',l:'🩺 Techniques'},{id:'tableau',l:'📋 Tableau'},{id:'urgences',l:'🚨 Urgences'},{id:'quiz',l:'🎯 Quiz'},{id:'analyse',l:'🤖 IA'}].forEach(function(t){
+      h += '<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+ t.l+'</button>';
+    });
+    h += '</div>';
+  } else {
+    h += '<div class="site-header" style="padding-top:44px"><div class="badge">🐾 PraxisVeto · UC4 Assistance aux soins · CAFASV</div>';
+    h += '<h1>Sim<span>Vitaux</span></h1></div>';
+  }
+  h += '<div class="wrap">';
+
+  // ── WELCOME ────────────────────────────────────────────
+  if(S.view === 'welcome'){
+    h += '<div class="card em fadeup"><div style="text-align:center;padding:8px 0 18px">';
+    h += '<div style="font-size:52px;margin-bottom:14px">📊</div>';
+    h += '<p style="color:var(--txt2);font-size:14px;line-height:1.85;max-width:460px;margin:0 auto">Les constantes vitales sont le premier langage de l\'animal. Les mesurer correctement et les interpréter, c\'est la compétence centrale de l\'ASV en salle de soins — avant toute décision du vétérinaire.</p>';
+    h += '<div style="display:flex;flex-direction:column;gap:10px;margin:16px 0;text-align:left">';
+    [{i:'📊',t:'Constantes par espèce',d:'Chien, chat, lapin, NAC — valeurs normales, alertes, particularités de mesure'},
+     {i:'🩺',t:'Techniques de mesure',d:'Stéthoscope, thermomètre, TRC, pression artérielle — protocoles étape par étape'},
+     {i:'🚨',t:'Signes d\'urgence',d:'Reconnaître un tableau clinique grave et alerter le vétérinaire sans délai'},
+     {i:'📋',t:'Tableau comparatif',d:'Toutes les espèces côte à côte — fiche mémo de référence'},
+    ].forEach(function(p){
+      h += '<div style="display:flex;gap:12px"><span style="font-size:18px">'+p.i+'</span>';
+      h += '<span style="font-size:14px;color:var(--txt2);line-height:1.65"><strong style="color:var(--txt)">'+p.t+'</strong> — '+p.d+'</span></div>';
+    });
+    h += '</div>';
+    h += '<button class="btn-p btn-full" onclick="go(\'main\')">Commencer →</button>';
+    h += '</div></div>';
+
+  // ── CONSTANTES ─────────────────────────────────────────
+  } else if(S.onglet === 'constantes'){
+    h += '<div class="fadeup">';
+    h += '<div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">📊 Constantes vitales — UC4 CAFASV</div>';
+    h += '<div class="card-sub">Sélectionnez une espèce pour voir ses valeurs normales et les signes d\'alerte.</div>';
+
+    // Sélecteur espèce
+    h += '<div class="espece-grid">';
+    ESPECES.forEach(function(e){
+      h += '<div class="espece-btn '+(S.espece===e.id?'active':'')+'" onclick="S.espece=\''+e.id+'\';render()">';
+      h += '<span class="espece-icon">'+e.icon+'</span>';
+      h += '<div class="espece-label">'+e.label+'</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+    // Constantes de l'espèce sélectionnée
+    var c = esp;
+    [{key:'fc',icon:'❤️'},{key:'fr',icon:'🫁'},{key:'temp',icon:'🌡️'},{key:'trc',icon:'👄'}].forEach(function(item){
+      var cv = c[item.key];
+      if(!cv) return;
+      var midVal = (cv.min + cv.max) / 2;
+      h += '<div class="cst-card">';
+      h += '<div class="cst-header">';
+      h += '<span class="cst-icon">'+item.icon+'</span>';
+      h += '<div class="cst-nom">'+esc(cv.label)+'</div>';
+      h += '<div class="cst-methode">'+esc(c['technique_'+item.key]?'Voir technique':'Mesure')+'</div>';
+      h += '</div><div class="cst-body">';
+      h += '<div class="cst-values">';
+      h += '<div class="cst-val"><span class="cst-val-num" style="color:var(--red)">'+cv.alerte_bas+'</span><span class="cst-val-lbl">Alerte basse</span></div>';
+      h += '<div class="cst-val" style="background:rgba(64,200,120,.1);border:1px solid rgba(64,200,120,.2)"><span class="cst-val-num" style="color:var(--green)">'+cv.min+'–'+cv.max+'</span><span class="cst-val-lbl" style="color:var(--green)">Normal</span></div>';
+      h += '<div class="cst-val"><span class="cst-val-num" style="color:var(--red)">'+cv.alerte_haut+'</span><span class="cst-val-lbl">Alerte haute</span></div>';
+      h += '</div>';
+      if(c['technique_'+item.key]){
+        h += '<div class="cst-technique">💡 '+esc(c['technique_'+item.key])+'</div>';
+      }
+      h += '</div></div>';
+    });
+
+    // Notes spécifiques espèce
+    if(c.notes && c.notes.length){
+      h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:14px;margin-top:8px">';
+      h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:8px">Points clés — '+esc(c.nom)+'</div>';
+      c.notes.forEach(function(n){
+        h += '<div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+        h += '<span style="color:var(--em);flex-shrink:0">·</span>';
+        h += '<span style="font-size:12px;color:var(--txt2)">'+esc(n)+'</span></div>';
+      });
+      h += '</div>';
+    }
+    h += '</div></div>';
+
+  // ── TECHNIQUES ─────────────────────────────────────────
+  } else if(S.onglet === 'techniques'){
+    h += '<div class="fadeup"><div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">🩺 Techniques de mesure — UC4 CAFASV</div>';
+    h += '<div class="card-sub">Protocoles étape par étape. L\'ASV réalise ces mesures sous responsabilité du vétérinaire et en reporte les résultats dans la feuille de soins.</div>';
+    TECHNIQUES.forEach(function(t){
+      var open = S.techOpen === t.id;
+      h += '<div style="border-radius:8px;border:1.5px solid '+(open?'rgba(96,168,248,.4)':'var(--bdr)')+';background:rgba(0,0,0,.2);margin-bottom:8px;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="S.techOpen=S.techOpen===\''+t.id+'\'?null:\''+t.id+'\';render()">';
+      h += '<div style="display:flex;align-items:center;gap:12px;padding:14px 16px">';
+      h += '<span style="font-size:22px;flex-shrink:0">'+t.icon+'</span>';
+      h += '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:'+(open?'var(--em)':'var(--txt)')+'">'+esc(t.titre)+'</div>';
+      h += '<div style="font-size:12px;color:var(--txt2)">'+esc(t.desc)+'</div></div>';
+      h += '<span style="font-family:var(--mono);font-size:11px;color:var(--txt2)">'+( open?'▲':'▼')+'</span></div>';
+      if(open){
+        h += '<div style="padding:0 14px 14px">';
+        t.steps.forEach(function(s){
+          h += '<div class="tech-step">';
+          h += '<span class="tech-num">'+s.n+'</span>';
+          h += '<div><div class="tech-titre">'+esc(s.t)+'</div><div class="tech-desc">'+esc(s.d)+'</div></div></div>';
+        });
+        h += '</div>';
+      }
+      h += '</div>';
+    });
+    h += '<div class="info info-em" style="margin-top:8px">📋 <strong>Traçabilité UC4 :</strong> Chaque mesure doit être notée dans la feuille de soins de l\'animal avec : heure, valeur, nom de l\'ASV. En cas de valeur anormale → alerter le vétérinaire immédiatement et noter son avis.</div>';
+    h += '</div></div>';
+
+  // ── TABLEAU ─────────────────────────────────────────────
+  } else if(S.onglet === 'tableau'){
+    h += '<div class="fadeup"><div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">📋 Tableau comparatif — Toutes espèces</div>';
+    h += '<div class="card-sub">Fiche mémo à imprimer · Les valeurs sont des intervalles de référence adultes au repos.</div>';
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;overflow:hidden;margin-bottom:12px">';
+    // Header
+    h += '<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;background:rgba(96,168,248,.1);border-bottom:1px solid rgba(255,255,255,.08)">';
+    ['Paramètre','🐕 Chien','🐈 Chat','🐇 Lapin','🐾 NAC'].forEach(function(t){
+      h += '<div style="padding:10px 8px;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--em);font-weight:700">'+t+'</div>';
+    });
+    h += '</div>';
+    TABLEAU_COMPARATIF.forEach(function(row, i){
+      h += '<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;border-bottom:1px solid rgba(255,255,255,.04);background:'+(i%2===0?'rgba(0,0,0,.1)':'transparent')+'">';
+      h += '<div style="padding:10px 8px;font-size:12px;font-weight:600;color:var(--txt)">'+esc(row.param)+'</div>';
+      [row.chien, row.chat, row.lapin, row.nac].forEach(function(val){
+        h += '<div style="padding:10px 8px;font-family:var(--mono);font-size:11px;color:var(--txt2)">'+esc(val)+'</div>';
+      });
+      h += '</div>';
+    });
+    h += '</div>';
+    h += '<div class="info info-warn">⚠️ <strong>Important :</strong> Ces valeurs sont des intervalles adultes au repos. Le stress de la clinique peut augmenter FC, FR et T° de 20-30%. Toujours interpréter dans le contexte clinique global, sous l\'autorité du vétérinaire.</div>';
+    h += '<div class="info info-violet">🐾 <strong>NAC :</strong> Les valeurs varient beaucoup selon l\'espèce exacte. En cas de doute : consulter le vétérinaire NAC. Les données de référence pour les espèces exotiques sont moins standardisées qu\'en médecine canine et féline.</div>';
+    h += '</div></div>';
+
+  // ── URGENCES ───────────────────────────────────────────
+  } else if(S.onglet === 'urgences'){
+    h += '<div class="fadeup"><div class="card em">';
+    h += '<div class="card-title" style="color:var(--red)">🚨 Signes d\'urgence — Alerter le vétérinaire</div>';
+    h += '<div class="card-sub">UC4 CAFASV · L\'ASV ne prend pas de décision médicale. Elle observe, mesure, signale. Ce tableau l\'aide à ne pas sous-estimer une situation critique.</div>';
+    h += '<div class="info info-red" style="margin-bottom:14px">🚨 <strong>Règle UC4 :</strong> Tout signe d\'urgence ci-dessous = alerter le vétérinaire IMMÉDIATEMENT, ne pas attendre la fin de son acte en cours si le tableau est grave.</div>';
+
+    // Sélecteur espèce pour les urgences
+    h += '<div class="espece-grid" style="margin-bottom:14px">';
+    ESPECES.forEach(function(e){
+      h += '<div class="espece-btn '+(S.espece===e.id?'active':'')+'" onclick="S.espece=\''+e.id+'\';render()">';
+      h += '<span class="espece-icon">'+e.icon+'</span>';
+      h += '<div class="espece-label">'+e.label+'</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+    esp.urgences.forEach(function(u){
+      h += '<div style="display:flex;gap:12px;padding:12px;border-radius:8px;background:rgba(232,64,64,.06);margin-bottom:6px;border-left:3px solid rgba(232,64,64,.5)">';
+      h += '<span style="font-size:18px;flex-shrink:0">⚠️</span>';
+      h += '<div><div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:3px">'+esc(u.signe)+'</div>';
+      h += '<div style="font-size:12px;color:var(--txt2)">'+esc(u.signif)+'</div></div></div>';
+    });
+
+    // Conduite générale
+    h += '<hr style="border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Conduite ASV devant une urgence</div>';
+    [{n:'1',t:'Observer et ne pas minimiser',d:'Un animal peut décompenser rapidement. Toute anomalie mérite d\'être signalée.'},{n:'2',t:'Alerter le vétérinaire',d:'Interrompre si nécessaire. Dire clairement : "J\'ai un animal qui m\'inquiète — FC à [X], TRC à [Y]."'},{n:'3',t:'Ne pas intervenir médicalement',d:'Mettre l\'animal en sécurité, au calme, oxygène si disponible et indiqué. Attendre le vétérinaire.'},{n:'4',t:'Préparer le matériel',d:'Voie veineuse, monitoring, O₂ selon indication vétérinaire. Prévenir l\'équipe.'},{n:'5',t:'Tracer',d:'Heure de l\'observation, valeurs mesurées, heure d\'alerte du vétérinaire — dans la feuille de soins.'},
+    ].forEach(function(s){
+      h += '<div class="tech-step"><span class="tech-num">'+s.n+'</span>';
+      h += '<div><div class="tech-titre">'+esc(s.t)+'</div><div class="tech-desc">'+esc(s.d)+'</div></div></div>';
+    });
+    h += '</div></div>';
+
+  // ── QUIZ ───────────────────────────────────────────────
+  } else if(S.onglet === 'quiz'){
+    var pct = Math.round(S.qIdx / QUIZ_UC4.length * 100);
+    h += '<div class="fadeup">';
+    h += '<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-bottom:7px">';
+    h += '<span>Question '+(S.qIdx%QUIZ_UC4.length+1)+' / '+QUIZ_UC4.length+'</span>';
+    h += '<span style="color:var(--em)">'+(S.qTotal>0?Math.round(S.qScore/S.qTotal*100)+'%':'—')+'</span></div>';
+    h += '<div class="progress-wrap" style="margin-bottom:14px"><div class="progress-bar" style="width:'+pct+'%;background:linear-gradient(90deg,var(--em2),var(--em))"></div></div>';
+    h += '<div class="card em"><div style="font-size:clamp(14px,2.5vw,17px);font-weight:600;line-height:1.5;margin-bottom:16px;color:var(--txt)">'+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt,i){
+      var cls=''; if(S.qShown){if(i===q.rep)cls='correct'; else if(i===S.qSel)cls='wrong';}
+      h += '<div class="quiz-opt '+cls+'" onclick="'+(S.qShown?'':'selQ('+i+')')+'">';
+      h += '<span style="font-family:var(--mono);font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span>';
+      h += '<span>'+esc(opt)+'</span></div>';
+    });
+    if(S.qShown){
+      h += '<div class="quiz-expl">'+q.expl.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+      h += '<button class="btn-p btn-full" style="margin-top:12px" onclick="nxtQ()">Question suivante →</button>';
+    }
+    h += '</div>';
+    h += '<button class="btn-g btn-full" onclick="rstQ()" style="margin-top:8px;color:var(--em)">↺ Recommencer</button>';
+    h += '</div>';
+
+  // ── ANALYSE IA ─────────────────────────────────────────
+  } else if(S.onglet === 'analyse'){
+    h += '<div class="fadeup"><div class="card em">';
+    h += '<div class="card-title" style="color:var(--em)">🤖 Analyse IA · Constantes vitales UC4</div>';
+    h += '<div class="card-sub">Posez une question sur les constantes ou une situation clinique — l\'IA vous guide en tant que formateur CAFASV UC4.</div>';
+    h += '<textarea id="ia-q" style="width:100%;min-height:80px;background:rgba(0,0,0,.4);border:1.5px solid rgba(96,168,248,.12);border-radius:8px;color:var(--txt);padding:11px;font-size:13px;font-family:var(--sans);outline:none;resize:vertical;line-height:1.6;margin-bottom:10px" placeholder="Ex: Un chat arrive avec une FC à 240 bpm et des muqueuses pâles. Quelle est ma conduite ? Ou : Quelle est la différence entre TRC et évaluation des muqueuses ?"></textarea>';
+    h += '<button class="btn-p btn-full" onclick="runIA()">📊 Analyser cette situation →</button>';
+    if(S.loading){h += '<div class="dots" style="margin-top:14px"><span></span><span></span><span></span><div class="dots-msg">Analyse en cours...</div></div>';}
+    if(!S.loading && S.analyse){h += '<div class="analysis fadeup" style="margin-top:14px">'+md(S.analyse)+'</div>';}
+    h += '<hr class="div">';
+    if(!S.apiKeySaved){
+      h += '<div class="apikey-box"><p>Clé API Anthropic. <a href="https://console.anthropic.com/" target="_blank">Obtenir →</a></p>';
+      h += '<div class="apikey-row"><input type="password" placeholder="sk-ant-api03-..." value="'+esc(S.apiKey)+'" oninput="S.apiKey=this.value">';
+      h += '<button onclick="svKey()">Sauver</button></div></div>';
+    } else {h += '<div style="color:var(--green);font-family:var(--mono);font-size:11px">// configured ✓</div>';}
+    h += '</div></div>';
+  }
+
+  if(S.view !== 'welcome'){
+    h += '<div style="margin-top:10px;display:flex;gap:8px">';
+    h += '<button class="btn-g" onclick="go(\'welcome\')" style="color:var(--em);border-color:rgba(96,168,248,.2)">← Accueil</button>';
+    h += '<button class="btn-g" onclick="window.location.href=\'index.html\'">⌂ PraxisVeto</button>';
+    h += '</div>';
+  }
+  h += '</div>';
+  document.getElementById('app').innerHTML = h;
+}
+
+function go(v){S.view=v; render(); window.scrollTo({top:0,behavior:'smooth'});}
+function setO(o){S.onglet=o; S.analyse=''; render(); window.scrollTo({top:0,behavior:'smooth'});}
+function selQ(i){if(S.qShown)return; S.qSel=i; S.qShown=true; S.qTotal++; if(i===QUIZ_UC4[S.qIdx%QUIZ_UC4.length].rep)S.qScore++; render();}
+function nxtQ(){S.qIdx++; S.qSel=null; S.qShown=false; render(); window.scrollTo({top:0,behavior:'smooth'});}
+function rstQ(){S.qIdx=0; S.qScore=0; S.qTotal=0; S.qSel=null; S.qShown=false; render();}
+function svKey(){localStorage.setItem('simvitaux_key',S.apiKey); S.apiKeySaved=true; render();}
+
+async function runIA(){
+  var el = document.getElementById('ia-q');
+  if(!el || !el.value.trim()) return;
+  S.loading=true; S.analyse=''; render();
+  try{
+    var headers = {'Content-Type':'application/json'};
+    if(S.apiKey){headers['x-api-key']=S.apiKey; headers['anthropic-version']='2023-06-01';}
+    var res = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:'Tu es formateur CAFASV expert en UC4 "Assister le veterinaire en soins et en chirurgie" (RNCP40344), specialiste des constantes vitales veterinaires. Question posee par une etudiante ASV : '+el.value+'\n\nAnalyse en 3 parties :\n**Interpretation clinique** — que signifient ces valeurs / ce tableau clinique\n**Conduite ASV** — que faire concretement, dans quel ordre\n**Perimetre UC4** — ce que fait l\'ASV vs ce que decide le veterinaire\n\nTutoie l\'etudiante. Donne les valeurs normales de reference. Cite les competences UC4 CAFASV concernees. Utilise **gras** pour les points cles.'}]})});
+    var data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    S.analyse = data.content && data.content.find(function(b){return b.type==='text';}) ?
+      data.content.find(function(b){return b.type==='text';}).text : '';
+  }catch(e){S.analyse = '**Erreur**\n\n'+e.message;}
+  S.loading=false; render();
+}
+render();
+</script>
+
+<!-- Bouton accueil fixe -->
+<a class="home-btn-fixed" href="index.html">⌂ PraxisVeto</a>
+<!-- Références : CAFASV UC4 · RNCP40344 · Temavet constantes vitales · MonVet · ASVinfos · Alforme premiers secours -->
+</body>
+</html>

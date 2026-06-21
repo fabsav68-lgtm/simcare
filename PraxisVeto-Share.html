@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisVeto · Partager avec votre référent</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Karla:wght@300;400;500;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- QR Code library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#0a0d08;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#d8e8d0;--txt2:#4a6840;--em:#78d840;--em2:#50a820;
+  --amber:#e8a030;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--txt);
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(120,216,64,.07) 0%,transparent 55%);
+  background-image:
+    repeating-linear-gradient(0deg,rgba(120,216,64,.02) 0px,rgba(120,216,64,.02) 1px,transparent 1px,transparent 60px),
+    repeating-linear-gradient(90deg,rgba(120,216,64,.02) 0px,rgba(120,216,64,.02) 1px,transparent 1px,transparent 60px);
+}
+
+.container{
+  max-width:480px;width:100%;
+  position:relative;z-index:1;
+}
+
+/* Logo */
+.logo{
+  font-family:var(--head);font-size:42px;font-weight:800;
+  letter-spacing:-2px;text-align:center;margin-bottom:6px;
+}
+.logo span{color:var(--em)}
+.logo-sub{
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--txt2);
+  text-align:center;margin-bottom:32px;
+}
+
+/* Card principale */
+.card{
+  background:var(--card);border:1.5px solid rgba(120,216,64,.2);
+  border-radius:16px;padding:28px;margin-bottom:14px;
+}
+
+/* QR Code */
+.qr-wrap{
+  background:#ffffff;border-radius:12px;padding:16px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;width:fit-content;
+}
+#qrcode canvas, #qrcode img{display:block;}
+
+.qr-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--txt2);
+  text-align:center;margin-bottom:16px;
+}
+
+/* URL */
+.url-box{
+  background:rgba(0,0,0,.3);border:1px solid rgba(120,216,64,.15);
+  border-radius:8px;padding:12px 14px;
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:14px;cursor:pointer;transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.url-box:hover{background:rgba(120,216,64,.06)}
+.url-txt{
+  font-family:var(--mono);font-size:12px;color:var(--em);
+  flex:1;word-break:break-all;line-height:1.5;
+}
+.url-copy{
+  font-family:var(--mono);font-size:10px;color:var(--txt2);
+  flex-shrink:0;letter-spacing:1px;text-transform:uppercase;
+  padding:4px 10px;border-radius:4px;border:1px solid var(--bdr);
+  background:rgba(255,255,255,.03);transition:all .2s;
+}
+.url-box:hover .url-copy{color:var(--em);border-color:rgba(120,216,64,.3)}
+
+/* Boutons d'action */
+.actions{display:flex;flex-direction:column;gap:8px}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px 20px;border-radius:10px;
+  font-family:var(--head);font-size:13px;font-weight:700;
+  letter-spacing:-0.3px;cursor:pointer;transition:all .2s;
+  text-decoration:none;border:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-em{
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  color:#0a0d08;
+}
+.btn-em:hover{opacity:.9;transform:translateY(-1px)}
+.btn-outline{
+  background:rgba(255,255,255,.03);
+  border:1.5px solid rgba(120,216,64,.25);
+  color:var(--em);
+}
+.btn-outline:hover{background:rgba(120,216,64,.08)}
+.btn-grey{
+  background:rgba(255,255,255,.03);
+  border:1.5px solid var(--bdr);
+  color:var(--txt2);
+}
+.btn-grey:hover{background:rgba(255,255,255,.07);color:var(--txt)}
+
+/* Message validateur */
+.message-box{
+  background:rgba(120,216,64,.05);
+  border:1px solid rgba(120,216,64,.15);
+  border-radius:10px;padding:18px;
+  margin-bottom:14px;
+}
+.message-title{
+  font-family:var(--head);font-size:13px;font-weight:700;
+  color:var(--em);margin-bottom:8px;
+}
+.message-body{
+  font-size:13px;color:var(--txt2);line-height:1.75;
+}
+.message-body strong{color:var(--txt)}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:rgba(120,216,64,.15);border:1px solid rgba(120,216,64,.3);
+  border-radius:30px;padding:10px 22px;
+  font-family:var(--mono);font-size:11px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--em);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+  white-space:nowrap;z-index:100;
+}
+.toast.show{opacity:1}
+
+/* Modules list */
+.modules-list{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;
+}
+.mod-item{
+  background:rgba(0,0,0,.2);border-radius:8px;padding:10px;
+  border-left:2px solid var(--em);
+}
+.mod-icon{font-size:16px;display:block;margin-bottom:4px}
+.mod-name{font-size:12px;font-weight:600;color:var(--em)}
+.mod-desc{font-size:11px;color:var(--txt2);margin-top:2px;line-height:1.4}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fadeup{animation:fadeUp .4s ease forwards}
+</style>
+</head>
+<body>
+
+<div class="container fadeup">
+
+  <!-- Logo -->
+  <div class="logo">Sim<span>Veto</span></div>
+  <div class="logo-sub">Suite pédagogique ASV · Version pilote</div>
+
+  <!-- Card QR -->
+  <div class="card">
+    <div class="qr-label">Scanner pour accéder à PraxisVeto</div>
+    <div class="qr-wrap">
+      <div id="qrcode"></div>
+    </div>
+
+    <!-- URL cliquable -->
+    <div class="url-box" onclick="copyURL()">
+      <div class="url-txt">fabsav68-lgtm.github.io/praxisveto</div>
+      <div class="url-copy" id="copy-btn">Copier</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <a class="btn btn-em" href="mailto:?subject=PraxisVeto%20%E2%80%94%20Application%20p%C3%A9dagogique%20ASV&body=Bonjour%2C%0A%0AJe%20vous%20invite%20%C3%A0%20d%C3%A9couvrir%20praxisveto%2C%20une%20suite%20p%C3%A9dagogique%20pour%20Auxiliaires%20de%20Sant%C3%A9%20V%C3%A9t%C3%A9rinaire.%0A%0AAcces%20direct%20%3A%20https%3A%2F%2Ffabsav68-lgtm.github.io%2Fpraxisveto%0A%0AL%27application%20fonctionne%20sur%20iPhone%20et%20Android%2C%20sans%20installation%20depuis%20un%20store.%0A%0A4%20modules%20disponibles%20en%20version%20pilote%20%3A%0A-%20PraxisGlyco%20Canin%20%E2%80%94%20Diab%C3%A8te%20du%20chien%0A-%20PraxisContention%20%E2%80%94%20Animal%20hostile%2C%20CV1%2FCV2%2FCV3%0A-%20PraxisComm%20%E2%80%94%20Communication%20et%20approche%20animale%0A-%20PraxisJuridique%20%E2%80%94%20Droit%20v%C3%A9t%C3%A9rinaire%20et%20r%C3%B4le%20ASV%0A%0AMerci%20pour%20votre%20retour%20sur%20le%20contenu%20clinique.%0A%0ACordialement">
+        📧 Envoyer par email
+      </a>
+      <button class="btn btn-outline" onclick="share()">
+        📤 Partager le lien
+      </button>
+      <a class="btn btn-grey" href="index.html">
+        ← Retour à PraxisVeto
+      </a>
+    </div>
+  </div>
+
+  <!-- Message pour le référent -->
+  <div class="message-box">
+    <div class="message-title">📋 Message pour votre référent vétérinaire</div>
+    <div class="message-body">
+      Bonjour,<br><br>
+      Je vous transmets le lien vers <strong>PraxisVeto</strong>, une application pédagogique pour ASV en cours de développement.<br><br>
+      <strong>4 modules à valider :</strong>
+      <div class="modules-list">
+        <div class="mod-item">
+          <span class="mod-icon">🩸</span>
+          <div class="mod-name">PraxisGlyco Canin</div>
+          <div class="mod-desc">Diabète · Insulinothérapie</div>
+        </div>
+        <div class="mod-item">
+          <span class="mod-icon">⚠️</span>
+          <div class="mod-name">PraxisContention</div>
+          <div class="mod-desc">Animal hostile · CV1/CV2/CV3</div>
+        </div>
+        <div class="mod-item">
+          <span class="mod-icon">🤝</span>
+          <div class="mod-name">PraxisComm</div>
+          <div class="mod-desc">Approche · Langage corporel</div>
+        </div>
+        <div class="mod-item">
+          <span class="mod-icon">⚖️</span>
+          <div class="mod-name">PraxisJuridique</div>
+          <div class="mod-desc">Droit vétérinaire · Rôle ASV</div>
+        </div>
+      </div>
+      <br>
+      <strong>Ce que j'attends de vous :</strong> vérifier l'exactitude clinique et réglementaire du contenu. Merci pour votre retour.
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">✓ Lien copié !</div>
+
+<script>
+var URL_praxisveto = 'https://fabsav68-lgtm.github.io/praxisveto';
+
+// Générer le QR code
+new QRCode(document.getElementById('qrcode'), {
+  text: URL_praxisveto,
+  width: 200,
+  height: 200,
+  colorDark: '#000000',
+  colorLight: '#ffffff',
+  correctLevel: QRCode.CorrectLevel.H
+});
+
+// Copier l'URL
+function copyURL() {
+  navigator.clipboard.writeText(URL_praxisveto).then(function() {
+    showToast('✓ Lien copié !');
+    document.getElementById('copy-btn').textContent = '✓ Copié';
+    setTimeout(function() {
+      document.getElementById('copy-btn').textContent = 'Copier';
+    }, 2000);
+  }).catch(function() {
+    // Fallback pour les navigateurs sans clipboard API
+    var el = document.createElement('textarea');
+    el.value = URL_praxisveto;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast('✓ Lien copié !');
+  });
+}
+
+// Partager via Web Share API (natif iPhone)
+function share() {
+  if (navigator.share) {
+    navigator.share({
+      title: 'PraxisVeto · Application pédagogique ASV',
+      text: 'Découvrez PraxisVeto, une suite pédagogique pour Auxiliaires de Santé Vétérinaire. Version pilote — 4 modules disponibles.',
+      url: URL_praxisveto
+    });
+  } else {
+    copyURL();
+  }
+}
+
+// Toast
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+</script>
+
+</body>
+</html>
