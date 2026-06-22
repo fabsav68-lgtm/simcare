@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisCare · Tableau de bord formateur</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Karla:wght@300;400;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04090f;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#e8edf2;--txt2:#2a3a45;--em:#38bdf8;--em2:#0d6a94;
+  --amber:#e8a030;--red:#e84040;--green:#40c878;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:60px}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 20% 0%,rgba(56,189,248,.07) 0%,transparent 55%)}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+header{padding:32px 18px 24px;text-align:center;border-bottom:1px solid var(--bdr);margin-bottom:24px}
+.logo{font-family:var(--head);font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:4px}
+.logo span{color:var(--em)}
+.badge{display:inline-block;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.22);color:var(--em);padding:4px 14px;border-radius:20px;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:8px}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:20px;margin-bottom:12px}
+.card.em{border-top:2px solid var(--em)}
+.card-title{font-family:var(--head);font-size:14px;font-weight:700;letter-spacing:-0.5px;color:var(--em);margin-bottom:4px}
+.card-sub{color:var(--txt2);font-size:12px;margin-bottom:16px}
+
+/* KPI grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:rgba(0,0,0,.2);border-radius:8px;padding:14px;text-align:center}
+.kpi-val{font-family:var(--head);font-size:28px;font-weight:800;display:block;color:var(--em)}
+.kpi-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);display:block;margin-top:3px}
+
+/* Barre module */
+.mod-bar{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.mod-name{font-size:13px;font-weight:600;color:var(--txt);min-width:140px;flex-shrink:0}
+.bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--em2),var(--em));transition:width .5s ease}
+.bar-count{font-family:var(--mono);font-size:11px;color:var(--txt2);min-width:30px;text-align:right;flex-shrink:0}
+
+/* Stars display */
+.stars-display{display:flex;gap:3px;font-size:14px}
+.star-filled{opacity:1}
+.star-empty{opacity:.2}
+
+/* Feedback item */
+.fb-item{background:rgba(0,0,0,.2);border-radius:8px;padding:12px 14px;margin-bottom:8px;border-left:3px solid rgba(56,189,248,.3)}
+.fb-meta{font-family:var(--mono);font-size:10px;color:var(--txt2);margin-bottom:6px;display:flex;flex-wrap:wrap;gap:8px}
+.fb-note{font-size:12px;margin-bottom:4px}
+.fb-comment{font-size:13px;color:var(--txt);line-height:1.6;font-style:italic}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-family:var(--mono);letter-spacing:1px;background:rgba(56,189,248,.1);color:var(--em);border:1px solid rgba(56,189,248,.2);margin:2px}
+
+/* Auth */
+.auth-wrap{text-align:center;padding:60px 20px}
+.auth-title{font-family:var(--head);font-size:22px;font-weight:800;letter-spacing:-1px;color:var(--em);margin-bottom:8px}
+.auth-sub{color:var(--txt2);font-size:13px;margin-bottom:24px}
+.auth-input{width:100%;max-width:280px;padding:12px 16px;font-size:16px;font-family:var(--mono);letter-spacing:2px;text-align:center;background:rgba(0,0,0,.3);border:2px solid rgba(56,189,248,.2);border-radius:8px;color:var(--txt);outline:none;-webkit-appearance:none}
+.auth-input:focus{border-color:rgba(56,189,248,.6)}
+.auth-btn{display:block;margin:14px auto 0;padding:12px 28px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--em2),var(--em));color:#04090f;font-family:var(--head);font-size:13px;font-weight:700;cursor:pointer}
+
+/* Boutons */
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;color:var(--txt2);font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;transition:all .15s}
+.btn-g:hover{background:rgba(56,189,248,.06);color:var(--txt)}
+.btn-danger{background:rgba(232,64,64,.08);border:1.5px solid rgba(232,64,64,.2);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.info{border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-warn{background:rgba(232,160,48,.06);border-left:3px solid rgba(232,160,48,.5);color:var(--amber)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="auth-screen">
+  <div class="auth-wrap fadeup">
+    <div class="auth-title">🔐 Accès formateur</div>
+    <div class="auth-sub">Saisissez votre code formateur pour accéder au tableau de bord</div>
+    <input type="password" class="auth-input" id="auth-input" placeholder="Code formateur" onkeydown="if(event.key==='Enter')authCheck()">
+    <button class="auth-btn" onclick="authCheck()">Accéder →</button>
+    <div style="color:var(--red);font-size:12px;margin-top:12px;display:none" id="auth-err">Code incorrect</div>
+  </div>
+</div>
+
+<div id="dashboard" style="display:none">
+<header>
+  <div class="logo">Praxis<span>Care</span></div>
+  <div style="font-family:var(--mono);font-size:11px;color:var(--txt2);margin-top:4px">Tableau de bord formateur</div>
+  <div class="badge">🎓 Accès restreint · MedExpert</div>
+</header>
+
+<div class="wrap fadeup">
+
+  <!-- KPI GÉNÉRAUX -->
+  <div class="card em" id="card-kpi">
+    <div class="card-title">📊 Statistiques générales</div>
+    <div class="card-sub" id="last-update">Données locales · </div>
+    <div class="kpi-grid" id="kpi-grid">
+      <div class="kpi"><span class="kpi-val" id="kpi-connexions">0</span><span class="kpi-lbl">Connexions</span></div>
+      <div class="kpi"><span class="kpi-val" id="kpi-feedbacks">0</span><span class="kpi-lbl">Feedbacks</span></div>
+      <div class="kpi"><span class="kpi-val" id="kpi-note">—</span><span class="kpi-lbl">Note moy.</span></div>
+    </div>
+  </div>
+
+  <!-- CONNEXIONS PAR PROMO -->
+  <div class="card" id="card-promo">
+    <div class="card-title">👥 Connexions par promotion</div>
+    <div class="card-sub">Nombre de sessions par année</div>
+    <div id="promo-bars"></div>
+  </div>
+
+  <!-- MODULES LES PLUS CONSULTÉS -->
+  <div class="card" id="card-modules">
+    <div class="card-title">📚 Modules les plus utilisés</div>
+    <div class="card-sub">Classement par nombre de feedbacks reçus</div>
+    <div id="module-bars"></div>
+  </div>
+
+  <!-- FEEDBACKS DÉTAILLÉS -->
+  <div class="card" id="card-feedbacks">
+    <div class="card-title">💬 Feedbacks étudiants</div>
+    <div class="card-sub" id="fb-count-label">Aucun feedback pour le moment</div>
+    <div id="feedbacks-list"></div>
+  </div>
+
+  <!-- INFO TECHNIQUE -->
+  <div class="info info-warn">
+    ⚠️ <strong>Stockage local :</strong> Les données sont actuellement sauvegardées dans le navigateur de chaque étudiant (localStorage). Pour collecter les feedbacks de tous les étudiants dans une base centralisée, une connexion Supabase sera nécessaire dans une prochaine version.
+  </div>
+
+  <div class="row">
+    <button class="btn-g" onclick="exportCSV()">📥 Exporter en CSV</button>
+    <button class="btn-g" onclick="location.reload()">↺ Actualiser</button>
+    <button class="btn-danger" onclick="resetData()">🗑️ Effacer toutes les données</button>
+  </div>
+  <div style="margin-top:8px">
+    <a href="acces.html" style="font-family:var(--mono);font-size:11px;color:var(--txt2);text-decoration:none">← Retour à l'accueil PraxisCare</a>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ── Code formateur ──
+var CODE_ADMIN = 'PRAXIS-FORM-01';
+
+function authCheck(){
+  var v = document.getElementById('auth-input').value.trim().toUpperCase();
+  if(v === CODE_ADMIN){
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    chargerStats();
+  } else {
+    document.getElementById('auth-err').style.display = 'block';
+  }
+}
+
+document.getElementById('auth-input').addEventListener('keydown', function(e){
+  if(e.key==='Enter') authCheck();
+});
+
+// ── Charger et afficher les stats ──
+function chargerStats(){
+  var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
+  var connexions = stats.connexions || [];
+  var feedbacks = stats.feedbacks || [];
+
+  // KPI
+  document.getElementById('kpi-connexions').textContent = connexions.length;
+  document.getElementById('kpi-feedbacks').textContent = feedbacks.length;
+  var notes = feedbacks.filter(function(f){return f.note > 0;}).map(function(f){return f.note;});
+  var moyNote = notes.length ? (notes.reduce(function(a,b){return a+b;},0)/notes.length).toFixed(1) : '—';
+  document.getElementById('kpi-note').textContent = moyNote + (notes.length ? '/5' : '');
+  document.getElementById('last-update').textContent = 'Mis à jour le ' + new Date().toLocaleDateString('fr-FR') + ' à ' + new Date().toLocaleTimeString('fr-FR');
+
+  // Connexions par promo
+  var promos = {};
+  connexions.forEach(function(c){
+    promos[c.promo] = (promos[c.promo] || 0) + 1;
+  });
+  var maxPromo = Math.max.apply(null, Object.values(promos).concat([1]));
+  var promoBars = document.getElementById('promo-bars');
+  promoBars.innerHTML = '';
+  if(Object.keys(promos).length === 0){
+    promoBars.innerHTML = '<div style="color:var(--txt2);font-size:13px">Aucune connexion enregistrée</div>';
+  } else {
+    Object.entries(promos).sort(function(a,b){return b[1]-a[1];}).forEach(function(entry){
+      promoBars.innerHTML += '<div class="mod-bar">' +
+        '<div class="mod-name">'+entry[0]+'</div>' +
+        '<div class="bar-wrap"><div class="bar-fill" style="width:'+Math.round(entry[1]/maxPromo*100)+'%"></div></div>' +
+        '<div class="bar-count">'+entry[1]+'</div></div>';
+    });
+  }
+
+  // Modules par feedbacks
+  var mods = {};
+  feedbacks.forEach(function(f){
+    mods[f.module] = (mods[f.module] || 0) + 1;
+  });
+  var maxMod = Math.max.apply(null, Object.values(mods).concat([1]));
+  var modBars = document.getElementById('module-bars');
+  modBars.innerHTML = '';
+  if(Object.keys(mods).length === 0){
+    modBars.innerHTML = '<div style="color:var(--txt2);font-size:13px">Aucun feedback reçu</div>';
+  } else {
+    Object.entries(mods).sort(function(a,b){return b[1]-a[1];}).forEach(function(entry){
+      modBars.innerHTML += '<div class="mod-bar">' +
+        '<div class="mod-name">'+entry[0]+'</div>' +
+        '<div class="bar-wrap"><div class="bar-fill" style="width:'+Math.round(entry[1]/maxMod*100)+'%"></div></div>' +
+        '<div class="bar-count">'+entry[1]+'</div></div>';
+    });
+  }
+
+  // Feedbacks détaillés
+  var fbList = document.getElementById('feedbacks-list');
+  fbList.innerHTML = '';
+  document.getElementById('fb-count-label').textContent = feedbacks.length + ' feedback(s) reçu(s)';
+
+  if(feedbacks.length === 0){
+    fbList.innerHTML = '<div style="color:var(--txt2);font-size:13px">Aucun feedback pour le moment</div>';
+  } else {
+    feedbacks.slice().reverse().forEach(function(fb){
+      var stars = '';
+      for(var i=1;i<=5;i++) stars += '<span class="' + (i<=fb.note?'star-filled':'star-empty') + '">⭐</span>';
+      var aides = (fb.aide||[]).map(function(a){return '<span class="tag">'+a+'</span>';}).join('');
+      fbList.innerHTML +=
+        '<div class="fb-item">' +
+        '<div class="fb-meta">' +
+          '<span>'+fb.date+'</span>' +
+          '<span>'+fb.heure+'</span>' +
+          '<span style="color:var(--em)">'+fb.promo+'</span>' +
+          '<span>'+fb.module+'</span>' +
+        '</div>' +
+        '<div class="fb-note stars-display">'+stars+'</div>' +
+        (fb.aide&&fb.aide.length ? '<div style="margin:5px 0">'+aides+'</div>' : '') +
+        (fb.difficulte ? '<div style="margin:4px 0"><span class="tag" style="background:rgba(232,160,48,.1);color:var(--amber);border-color:rgba(232,160,48,.2)">'+fb.difficulte+'</span></div>' : '') +
+        (fb.commentaire ? '<div class="fb-comment">"'+fb.commentaire+'"</div>' : '') +
+        '</div>';
+    });
+  }
+}
+
+// ── Export CSV ──
+function exportCSV(){
+  var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
+  var feedbacks = stats.feedbacks || [];
+  if(feedbacks.length === 0){ alert('Aucun feedback à exporter'); return; }
+  var csv = 'Date,Heure,Promo,Code,Module,Note,Ce qui a aidé,Difficulté,Commentaire\n';
+  feedbacks.forEach(function(fb){
+    csv += [
+      fb.date, fb.heure, fb.promo, fb.code, fb.module, fb.note,
+      (fb.aide||[]).join(' | '), fb.difficulte || '',
+      '"'+(fb.commentaire||'').replace(/"/g,'""')+'"'
+    ].join(',') + '\n';
+  });
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'praxiscare-feedbacks-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+}
+
+// ── Reset ──
+function resetData(){
+  if(confirm('Effacer TOUTES les données de stats et feedbacks ? Cette action est irréversible.')){
+    localStorage.removeItem('praxiscare_stats');
+    location.reload();
+  }
+}
+</script>
+</body>
+</html>

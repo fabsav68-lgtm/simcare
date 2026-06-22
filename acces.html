@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisCare · Accès</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Karla:wght@300;400;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04090f;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
+  --txt:#e8edf2;--txt2:#2a3a45;--em:#38bdf8;--em2:#0d6a94;
+  --red:#e84040;--green:#40c878;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--txt);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:24px;position:relative;overflow:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%,rgba(56,189,248,.08) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 100%,rgba(13,106,148,.05) 0%,transparent 50%);
+  background-image:
+    repeating-linear-gradient(0deg,rgba(56,189,248,.015) 0px,rgba(56,189,248,.015) 1px,transparent 1px,transparent 60px),
+    repeating-linear-gradient(90deg,rgba(56,189,248,.015) 0px,rgba(56,189,248,.015) 1px,transparent 1px,transparent 60px);
+}
+
+.container{
+  max-width:420px;width:100%;
+  position:relative;z-index:1;
+  text-align:center;
+}
+
+.logo{
+  font-family:var(--head);font-size:42px;font-weight:800;
+  letter-spacing:-2px;margin-bottom:6px;
+}
+.logo span{color:var(--em)}
+.logo-sub{
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--txt2);margin-bottom:40px;display:block;
+}
+
+.card{
+  background:var(--card);border:1.5px solid var(--bdr);
+  border-radius:16px;padding:32px 28px;margin-bottom:16px;
+  border-top:2px solid var(--em);
+}
+
+.card-title{
+  font-family:var(--head);font-size:16px;font-weight:700;
+  letter-spacing:-0.5px;margin-bottom:6px;color:var(--em);
+}
+.card-sub{
+  font-size:13px;color:var(--txt2);margin-bottom:24px;line-height:1.65;
+}
+
+/* Input code */
+.code-input-wrap{position:relative;margin-bottom:16px}
+.code-input{
+  width:100%;padding:16px 18px;
+  font-family:var(--mono);font-size:18px;letter-spacing:3px;
+  text-transform:uppercase;text-align:center;
+  background:rgba(0,0,0,.3);
+  border:2px solid rgba(56,189,248,.2);
+  border-radius:10px;color:var(--txt);
+  outline:none;transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.code-input:focus{border-color:rgba(56,189,248,.6)}
+.code-input::placeholder{
+  color:rgba(255,255,255,.15);letter-spacing:2px;font-size:13px;
+}
+.code-input.error{border-color:var(--red);animation:shake .3s ease}
+.code-input.success{border-color:var(--green)}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-8px)}
+  75%{transform:translateX(8px)}
+}
+
+.msg-error{
+  color:var(--red);font-size:12px;font-family:var(--mono);
+  letter-spacing:1px;margin-bottom:12px;display:none;
+}
+.msg-error.show{display:block}
+
+.btn{
+  width:100%;padding:14px;border-radius:10px;
+  font-family:var(--head);font-size:14px;font-weight:700;
+  letter-spacing:-0.3px;cursor:pointer;border:none;
+  background:linear-gradient(135deg,var(--em2),var(--em));
+  color:#04090f;transition:opacity .2s,transform .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover{opacity:.9;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* Success state */
+.success-wrap{display:none;text-align:center;padding:20px 0}
+.success-icon{font-size:48px;display:block;margin-bottom:14px}
+.success-title{
+  font-family:var(--head);font-size:20px;font-weight:800;
+  color:var(--green);letter-spacing:-1px;margin-bottom:8px;
+}
+.success-sub{font-size:13px;color:var(--txt2);line-height:1.6}
+.success-bar{
+  height:4px;background:rgba(64,200,120,.2);border-radius:2px;
+  margin-top:20px;overflow:hidden;
+}
+.success-bar-fill{
+  height:100%;width:0;background:var(--green);border-radius:2px;
+  transition:width 2s linear;
+}
+
+/* Format aide */
+.format-hint{
+  font-family:var(--mono);font-size:11px;color:var(--txt2);
+  letter-spacing:1px;margin-top:12px;
+}
+.format-hint span{color:var(--em)}
+
+/* Footer */
+.footer-txt{
+  font-family:var(--mono);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--txt2);
+  position:fixed;bottom:20px;left:0;right:0;text-align:center;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fadeup{animation:fadeUp .4s ease forwards}
+</style>
+</head>
+<body>
+<div class="container fadeup">
+
+  <div class="logo">Praxis<span>Care</span></div>
+  <span class="logo-sub">Suite pédagogique IFSI · Accès sécurisé</span>
+
+  <div class="card" id="card-login">
+    <div class="card-title">🔐 Code d'accès</div>
+    <div class="card-sub">Saisissez le code fourni par votre formateur pour accéder aux 20 modules pédagogiques.</div>
+
+    <div class="code-input-wrap">
+      <input
+        type="text"
+        class="code-input"
+        id="code-input"
+        placeholder="PRAXIS-A2-000"
+        maxlength="14"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        oninput="formatCode(this)"
+        onkeydown="if(event.key==='Enter') valider()"
+      />
+    </div>
+
+    <div class="msg-error" id="msg-error">
+      ⚠️ Code invalide — vérifiez avec votre formateur
+    </div>
+
+    <button class="btn" id="btn-valider" onclick="valider()">
+      Accéder à PraxisCare →
+    </button>
+
+    <div class="format-hint">
+      Format : <span>PRAXIS-A1-001</span> · <span>PRAXIS-A2-001</span> · <span>PRAXIS-A3-001</span>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="card" id="card-success" style="display:none">
+    <div class="success-wrap" style="display:block">
+      <span class="success-icon">✅</span>
+      <div class="success-title">Accès accordé</div>
+      <div class="success-sub" id="success-msg">Bienvenue ! Redirection vers PraxisCare...</div>
+      <div class="success-bar">
+        <div class="success-bar-fill" id="success-bar-fill"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-txt">PraxisCare · Référentiel IDE 2026 · MedExpert</div>
+
+<script>
+// ═══════════════════════════════════════
+//  CODES D'ACCÈS
+//  Format : PRAXIS-[A1/A2/A3]-[001-099]
+//  Modifier cette liste selon les promotions
+// ═══════════════════════════════════════
+var CODES_VALIDES = {
+  // Promotion 1ère année
+  'PRAXIS-A1-001': {promo:'1ère année', nom:'Étudiant 1-1'},
+  'PRAXIS-A1-002': {promo:'1ère année', nom:'Étudiant 1-2'},
+  'PRAXIS-A1-003': {promo:'1ère année', nom:'Étudiant 1-3'},
+  'PRAXIS-A1-004': {promo:'1ère année', nom:'Étudiant 1-4'},
+  'PRAXIS-A1-005': {promo:'1ère année', nom:'Étudiant 1-5'},
+  'PRAXIS-A1-006': {promo:'1ère année', nom:'Étudiant 1-6'},
+  'PRAXIS-A1-007': {promo:'1ère année', nom:'Étudiant 1-7'},
+  'PRAXIS-A1-008': {promo:'1ère année', nom:'Étudiant 1-8'},
+  'PRAXIS-A1-009': {promo:'1ère année', nom:'Étudiant 1-9'},
+  'PRAXIS-A1-010': {promo:'1ère année', nom:'Étudiant 1-10'},
+  // Promotion 2ème année
+  'PRAXIS-A2-001': {promo:'2ème année', nom:'Étudiant 2-1'},
+  'PRAXIS-A2-002': {promo:'2ème année', nom:'Étudiant 2-2'},
+  'PRAXIS-A2-003': {promo:'2ème année', nom:'Étudiant 2-3'},
+  'PRAXIS-A2-004': {promo:'2ème année', nom:'Étudiant 2-4'},
+  'PRAXIS-A2-005': {promo:'2ème année', nom:'Étudiant 2-5'},
+  'PRAXIS-A2-006': {promo:'2ème année', nom:'Étudiant 2-6'},
+  'PRAXIS-A2-007': {promo:'2ème année', nom:'Étudiant 2-7'},
+  'PRAXIS-A2-008': {promo:'2ème année', nom:'Étudiant 2-8'},
+  'PRAXIS-A2-009': {promo:'2ème année', nom:'Étudiant 2-9'},
+  'PRAXIS-A2-010': {promo:'2ème année', nom:'Étudiant 2-10'},
+  // Promotion 3ème année
+  'PRAXIS-A3-001': {promo:'3ème année', nom:'Étudiant 3-1'},
+  'PRAXIS-A3-002': {promo:'3ème année', nom:'Étudiant 3-2'},
+  'PRAXIS-A3-003': {promo:'3ème année', nom:'Étudiant 3-3'},
+  'PRAXIS-A3-004': {promo:'3ème année', nom:'Étudiant 3-4'},
+  'PRAXIS-A3-005': {promo:'3ème année', nom:'Étudiant 3-5'},
+  'PRAXIS-A3-006': {promo:'3ème année', nom:'Étudiant 3-6'},
+  'PRAXIS-A3-007': {promo:'3ème année', nom:'Étudiant 3-7'},
+  'PRAXIS-A3-008': {promo:'3ème année', nom:'Étudiant 3-8'},
+  'PRAXIS-A3-009': {promo:'3ème année', nom:'Étudiant 3-9'},
+  'PRAXIS-A3-010': {promo:'3ème année', nom:'Étudiant 3-10'},
+  // Code formateur
+  'PRAXIS-FORM-01': {promo:'Formateur', nom:'Formateur MedExpert'},
+};
+
+// ── Vérifier session existante ──
+window.onload = function(){
+  var session = sessionStorage.getItem('praxiscare_code');
+  if(session && CODES_VALIDES[session]){
+    window.location.replace('index.html');
+  }
+};
+
+// ── Formater la saisie ──
+function formatCode(input){
+  var v = input.value.toUpperCase().replace(/[^A-Z0-9-]/g,'');
+  input.value = v;
+  input.classList.remove('error');
+  document.getElementById('msg-error').classList.remove('show');
+}
+
+// ── Valider le code ──
+function valider(){
+  var input = document.getElementById('code-input');
+  var code = input.value.trim().toUpperCase();
+  var btn = document.getElementById('btn-valider');
+
+  if(!code){
+    input.classList.add('error');
+    document.getElementById('msg-error').classList.add('show');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Vérification...';
+
+  setTimeout(function(){
+    if(CODES_VALIDES[code]){
+      // Code valide
+      var info = CODES_VALIDES[code];
+      sessionStorage.setItem('praxiscare_code', code);
+      sessionStorage.setItem('praxiscare_promo', info.promo);
+
+      // Enregistrer la connexion dans localStorage (stats)
+      var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
+      var today = new Date().toISOString().split('T')[0];
+      if(!stats.connexions) stats.connexions = [];
+      stats.connexions.push({
+        code: code,
+        promo: info.promo,
+        date: today,
+        heure: new Date().toLocaleTimeString('fr-FR'),
+      });
+      localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
+
+      // Afficher succès
+      input.classList.add('success');
+      document.getElementById('card-login').style.display = 'none';
+      document.getElementById('card-success').style.display = 'block';
+      document.getElementById('success-msg').textContent =
+        'Bienvenue, ' + info.promo + ' ! Redirection en cours...';
+
+      // Barre de progression
+      setTimeout(function(){
+        document.getElementById('success-bar-fill').style.width = '100%';
+      }, 50);
+
+      // Redirection
+      setTimeout(function(){
+        window.location.replace('index.html');
+      }, 2100);
+
+    } else {
+      // Code invalide
+      input.classList.add('error');
+      document.getElementById('msg-error').classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Accéder à PraxisCare →';
+      input.select();
+    }
+  }, 600);
+}
+</script>
+</body>
+</html>

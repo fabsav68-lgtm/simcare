@@ -98,6 +98,22 @@ footer{
   font-size:11px;color:#2a3a45;font-family:monospace;
 }
 </style>
+<script>
+// Vérification session PraxisCare
+(function(){
+  var CODES = ['PRAXIS-A1-001','PRAXIS-A1-002','PRAXIS-A1-003','PRAXIS-A1-004','PRAXIS-A1-005',
+    'PRAXIS-A1-006','PRAXIS-A1-007','PRAXIS-A1-008','PRAXIS-A1-009','PRAXIS-A1-010',
+    'PRAXIS-A2-001','PRAXIS-A2-002','PRAXIS-A2-003','PRAXIS-A2-004','PRAXIS-A2-005',
+    'PRAXIS-A2-006','PRAXIS-A2-007','PRAXIS-A2-008','PRAXIS-A2-009','PRAXIS-A2-010',
+    'PRAXIS-A3-001','PRAXIS-A3-002','PRAXIS-A3-003','PRAXIS-A3-004','PRAXIS-A3-005',
+    'PRAXIS-A3-006','PRAXIS-A3-007','PRAXIS-A3-008','PRAXIS-A3-009','PRAXIS-A3-010',
+    'PRAXIS-FORM-01'];
+  var code = sessionStorage.getItem('praxiscare_code');
+  if(!code || CODES.indexOf(code) === -1){
+    window.location.replace('acces.html');
+  }
+})();
+</script>
 </head>
 <body>
 
@@ -315,14 +331,28 @@ footer{
   <footer>
     Formateur certifié PRAP 2S · BCI · contact@praxiscare.fr<br>
     Référentiel IDE 2026 · Arrêté du 20 février 2026
+  <br><a href="stats-formateur.html" style="color:rgba(255,255,255,.1);font-size:10px;text-decoration:none">· accès formateur ·</a>
   </footer>
 </div>
 
+<script src="praxiscare-feedback.js"></script>
 <script>
+// Tracking ouverture module
+function trackModule(nom){
+  var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
+  if(!stats.modules) stats.modules = {};
+  stats.modules[nom] = (stats.modules[nom] || 0) + 1;
+  localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
+}
+
 function ouvrirModule(fichier){
   const frame = document.getElementById('module-frame');
   const btnRetour = document.getElementById('btn-retour');
   const home = document.getElementById('home');
+
+  // Tracker le module ouvert
+  var nomModule = fichier.replace('.html','').replace(/-IFSI$/,'').replace(/Praxis/,'Praxis');
+  trackModule(nomModule);
 
   frame.src = fichier;
   frame.style.display = 'block';
