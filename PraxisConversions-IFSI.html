@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisConversions · PraxisCare IFSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Karla:wght@300;400;600&family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06090d;--bg2:#0a0f16;--card:rgba(255,255,255,.035);--bdr:rgba(255,255,255,.07);
+  --txt:#dde4ec;--txt2:#304050;--txt3:#506070;
+  --em:#f0c040;--em2:#b08000;--em3:#ffd060;
+  --blue:#38bdf8;--green:#40c878;--red:#e84040;--violet:#a060e8;
+  --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px;overflow-x:hidden}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 50% 40% at 15% 0%,rgba(240,192,64,.06) 0%,transparent 55%),
+    radial-gradient(ellipse 35% 30% at 85% 100%,rgba(56,189,248,.04) 0%,transparent 50%);
+  background-image:
+    repeating-linear-gradient(0deg,rgba(240,192,64,.012) 0,rgba(240,192,64,.012) 1px,transparent 1px,transparent 80px),
+    repeating-linear-gradient(90deg,rgba(240,192,64,.012) 0,rgba(240,192,64,.012) 1px,transparent 1px,transparent 80px);
+}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
+
+/* ── HEADER ── */
+.site-header{padding:36px 18px 20px;text-align:center;position:relative;z-index:1;border-bottom:1px solid var(--bdr);margin-bottom:20px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.22);color:var(--em3);padding:4px 14px;border-radius:20px;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.site-header h1{font-family:var(--head);font-size:clamp(24px,5vw,44px);font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:6px}
+.site-header h1 span{color:var(--em3)}
+.site-header p{color:var(--txt2);font-size:11px;font-family:var(--mono);letter-spacing:1.5px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;padding:0 0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:7px 15px;border-radius:20px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);color:var(--txt2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--mono);letter-spacing:1px;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.tab:hover{color:var(--txt);background:rgba(240,192,64,.06)}
+.tab.active{background:rgba(240,192,64,.12);border-color:rgba(240,192,64,.4);color:var(--em3)}
+
+/* ── CONVERTER CARD ── */
+.conv-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;padding:22px;margin-bottom:12px;position:relative;z-index:1}
+.conv-card.em{border-top:2px solid var(--em)}
+.conv-title{font-family:var(--head);font-size:14px;font-weight:700;letter-spacing:-0.5px;color:var(--em3);margin-bottom:3px}
+.conv-sub{color:var(--txt2);font-size:12px;margin-bottom:18px;line-height:1.6}
+
+/* ── INPUT ROW ── */
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.conv-input{
+  flex:1;min-width:80px;padding:13px 14px;
+  font-family:var(--mono);font-size:20px;font-weight:700;
+  background:rgba(0,0,0,.35);border:2px solid rgba(240,192,64,.15);
+  border-radius:10px;color:var(--em3);outline:none;
+  transition:border-color .2s;-webkit-appearance:none;
+  text-align:center;
+}
+.conv-input:focus{border-color:rgba(240,192,64,.5)}
+.conv-input::placeholder{color:rgba(255,255,255,.1);font-size:14px}
+.conv-select{
+  flex:1;min-width:100px;padding:13px 12px;
+  font-family:var(--mono);font-size:13px;
+  background:rgba(0,0,0,.35);border:2px solid var(--bdr);
+  border-radius:10px;color:var(--txt);outline:none;
+  -webkit-appearance:none;appearance:none;
+  cursor:pointer;transition:border-color .2s;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23304050'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
+}
+.conv-select:focus{border-color:rgba(240,192,64,.3)}
+.arrow-btn{
+  padding:13px 18px;border-radius:10px;border:none;
+  background:rgba(240,192,64,.1);border:1.5px solid rgba(240,192,64,.25);
+  color:var(--em3);font-size:18px;cursor:pointer;
+  transition:all .15s;-webkit-tap-highlight-color:transparent;flex-shrink:0;
+}
+.arrow-btn:hover{background:rgba(240,192,64,.2)}
+
+/* ── RESULT ── */
+.result-box{
+  background:rgba(240,192,64,.06);border:1.5px solid rgba(240,192,64,.15);
+  border-radius:10px;padding:16px 18px;margin-top:8px;
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+}
+.result-num{font-family:var(--head);font-size:clamp(24px,5vw,36px);font-weight:800;color:var(--em3);letter-spacing:-1px}
+.result-unit{font-family:var(--mono);font-size:14px;color:var(--txt2)}
+.result-hint{font-size:12px;color:var(--txt2);margin-top:4px;line-height:1.6;font-style:italic}
+.result-empty{color:var(--txt2);font-size:13px;font-style:italic}
+
+/* ── CALCULATRICE DOSE ── */
+.dose-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.dose-field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:6px}
+.dose-input{
+  width:100%;padding:12px 14px;
+  font-family:var(--mono);font-size:18px;font-weight:700;
+  background:rgba(0,0,0,.35);border:2px solid var(--bdr);
+  border-radius:10px;color:var(--txt);outline:none;
+  transition:border-color .2s;-webkit-appearance:none;text-align:center;
+}
+.dose-input:focus{border-color:rgba(240,192,64,.4)}
+
+/* ── TABLE NORMES ── */
+.normes-table{width:100%;border-collapse:separate;border-spacing:0;margin-bottom:10px}
+.normes-table th{padding:8px 10px;font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);background:rgba(0,0,0,.2);text-align:left}
+.normes-table th:first-child{border-radius:6px 0 0 0}
+.normes-table th:last-child{border-radius:0 6px 0 0}
+.normes-table td{padding:9px 10px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04)}
+.normes-table tr:last-child td{border-bottom:none}
+.normes-table tr:nth-child(even) td{background:rgba(0,0,0,.1)}
+.norm-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--em3)}
+.norm-lbl{color:var(--txt2);font-size:11px}
+
+/* ── INFOS / TAGS ── */
+.info{border-radius:8px;padding:10px 13px;font-size:12px;line-height:1.75;margin-bottom:10px}
+.info-em{background:rgba(240,192,64,.06);border-left:3px solid rgba(240,192,64,.5);color:var(--em3)}
+.info-blue{background:rgba(56,189,248,.06);border-left:3px solid rgba(56,189,248,.5);color:var(--blue)}
+.info-warn{background:rgba(232,160,48,.06);border-left:3px solid rgba(232,160,48,.5);color:#e8a030}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-family:var(--mono);font-size:10px;letter-spacing:1px;background:rgba(240,192,64,.08);color:var(--em3);border:1px solid rgba(240,192,64,.2);margin:2px}
+
+/* ── BOUTONS ── */
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:8px;color:#06090d;font-family:var(--head);font-size:13px;font-weight:700;padding:12px 22px;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-0.3px;-webkit-tap-highlight-color:transparent}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-g{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:8px;color:var(--txt2);font-size:12px;font-weight:600;padding:9px 16px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.btn-g:hover{background:rgba(240,192,64,.06);color:var(--txt)}
+.btn-full{width:100%}
+
+/* ── HOME BTN ── */
+.home-btn-fixed{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999;background:rgba(6,9,13,.92);border:1.5px solid rgba(240,192,64,.3);border-radius:30px;padding:10px 22px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--em3);cursor:pointer;text-decoration:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,.5);transition:all .2s;white-space:nowrap}
+.home-btn-fixed:hover{background:rgba(240,192,64,.12)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fadeup{animation:fadeUp .35s ease forwards}
+@media(max-width:480px){.dose-grid{grid-template-columns:1fr}.input-row{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<div class="site-header">
+  <div class="badge">⚗️ PraxisCare · Conversions cliniques · IFSI</div>
+  <h1>Praxis<span>Conversions</span></h1>
+  <p>// Masses · Volumes · Débits · Doses · Températures · Pressions</p>
+</div>
+
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div id="content" class="fadeup"></div>
+</div>
+
+<a class="home-btn-fixed" href="index.html">⌂ PraxisCare</a>
+
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES DE CONVERSION
+// ═══════════════════════════════════════
+
+var ONGLETS = [
+  {id:'masse',    l:'⚖️ Masse'},
+  {id:'volume',   l:'💧 Volume'},
+  {id:'debit',    l:'🩸 Débit perf.'},
+  {id:'dose',     l:'💊 Dose/kg'},
+  {id:'temp',     l:'🌡️ Température'},
+  {id:'pression', l:'❤️ Pression'},
+  {id:'longueur', l:'📏 Longueur'},
+  {id:'imc',      l:'⚖️ IMC / Poids'},
+  {id:'temps',    l:'⏱️ Temps'},
+  {id:'conc',     l:'🧪 Concentrations'},
+  {id:'bio',      l:'🩸 Biologie'},
+  {id:'diurese',  l:'💧 Diurèse'},
+  {id:'normes',   l:'📋 Normes'},
+];
+
+// Unités de masse
+var MASSE_UNITES = ['kg','g','mg','µg (mcg)','ng'];
+var MASSE_VALS   = [1, 1e3, 1e6, 1e9, 1e12]; // en mg comme base
+
+// Unités de volume
+var VOL_UNITES = ['L','dL','mL','µL','gouttes (gtt)','UI'];
+var VOL_VALS   = [1000, 100, 1, 0.001, 1/20, 1]; // en mL (1 gtt = 1/20 mL standard)
+
+// Pressions
+var PRESS_UNITES = ['mmHg','kPa','cmH₂O','bar','atm'];
+var PRESS_VALS   = [1, 0.133322, 1.35951, 0.00133322, 0.00131579]; // en mmHg
+
+
+// ═══════════════════════════════════════
+//  EXEMPLES CONCRETS PAR UNITÉ
+//  Sources validées : Wikipedia, Futura Sciences, Walter Learning IFSI
+// ═══════════════════════════════════════
+var EXEMPLES = {
+  masse: [
+    {val:'1 kg',   ex:'Un paquet de sucre standard · Un nouveau-né prématuré de 28 SA'},
+    {val:'500 g',  ex:'Un steak de bœuf · La dose de NaCl dans 1L de sérum physio = 9 g'},
+    {val:'1 g',    ex:'Un trombone 📎 (agrafe à papier, pas l\'instrument !) · La dose de paracétamol dans un comprimé adulte'},
+    {val:'500 mg', ex:'Un demi-comprimé de paracétamol adulte · Un grain de riz'},
+    {val:'1 mg',   ex:'Un grain de sel fin · Dose d'un comprimé d'acide folique'},
+    {val:'1 µg',   ex:'Un grain de poussière visible · Dose de fentanyl dans une perfusion'},
+    {val:'1 ng',   ex:'Invisible à l'œil nu · Seuil de dosage de certains médicaments plasmatiques'},
+  ],
+  volume: [
+    {val:'1 L',    ex:'Une grande bouteille d'eau · Volume de sang pompé par le cœur en 12 battements'},
+    {val:'500 mL', ex:'Une demi-bouteille d'eau · Volume d'un flacon de NaCl 0.9% standard'},
+    {val:'100 mL', ex:'Un petit verre à shot · Volume d'un flacon d'antibiotique IV dilué'},
+    {val:'20 mL',  ex:'Une cuillère à soupe = environ 15 mL · Volume d'une seringue standard'},
+    {val:'5 mL',   ex:'Une cuillère à café · Volume d'une petite ampoule IV'},
+    {val:'1 mL',   ex:'20 gouttes de perfuseur standard · Volume d'une seringue d'insuline 100 UI'},
+    {val:'0,05 mL',ex:'1 goutte de perfuseur (macro) · Volume d'une larme'},
+    {val:'1 µL',   ex:'Un dixième de millimètre cube · Volume prélevé par un glucomètre capillaire'},
+  ],
+  pression: [
+    {val:'120 mmHg', ex:'Pression artérielle systolique normale d'un adulte sain'},
+    {val:'80 mmHg',  ex:'Pression artérielle diastolique normale d'un adulte sain'},
+    {val:'25 mmHg',  ex:'Pression artérielle pulmonaire systolique normale'},
+    {val:'10 cmH₂O', ex:'Pression veineuse centrale (PVC) normale · Pression d'un soufflage doux'},
+    {val:'760 mmHg', ex:'Pression atmosphérique au niveau de la mer'},
+    {val:'1 kPa',    ex:'≈ 7.5 mmHg · Pression d'un souffle léger sur la peau'},
+  ],
+  temperature: [
+    {val:'36.8°C',  ex:'Température moyenne d'un adulte sain au réveil (voie rectale)'},
+    {val:'38.5°C',  ex:'Fièvre modérée · Antalgique généralement recommandé au-delà'},
+    {val:'40°C',    ex:'Fièvre élevée → risque convulsions chez l'enfant · Urgence'},
+    {val:'35°C',    ex:'Hypothermie débutante · Frissons intenses'},
+    {val:'32°C',    ex:'Hypothermie modérée · Risque de troubles du rythme cardiaque'},
+    {val:'42°C',    ex:'Hyperthermie maligne → urgence vitale absolue'},
+    {val:'0°C',     ex:'Point de congélation de l'eau · Température des produits congelés'},
+    {val:'100°C',   ex:'Ébullition de l\'eau au niveau de la mer (1 atm, 760 mmHg) · À 2000 m d\'altitude, l\'eau bout à ~93°C · L\'autoclave stérilise à 121-134°C sous pression'},
+  ],
+  masse_quotidien: [
+    {val:'Comprimé paracétamol 1g', ex:'= 1 000 mg = 1 000 000 µg'},
+    {val:'Ampoule morphine 10 mg/mL', ex:'= 10 000 µg/mL · Attention : confusion mg/µg = ×1000 d'erreur'},
+    {val:'Fentanyl 50 µg/mL', ex:'= 0.05 mg/mL · Toujours exprimer en µg en pratique'},
+    {val:'Digoxine 0.25 mg', ex:'= 250 µg · Marge thérapeutique étroite — pesée précise obligatoire'},
+  ],
+};
+
+function renderExemples(type){
+  var data = EXEMPLES[type];
+  if(!data) return '';
+  var h = '<div style="background:rgba(240,192,64,.04);border:1px solid rgba(240,192,64,.1);border-radius:10px;padding:14px;margin-top:12px">';
+  h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--em3);margin-bottom:10px;opacity:.7">💡 Repères concrets</div>';
+  data.forEach(function(e){
+    h += '<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+    h += '<span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--em3);min-width:90px;flex-shrink:0">'+e.val+'</span>';
+    h += '<span style="font-size:12px;color:var(--txt2);line-height:1.5">'+e.ex+'</span></div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+
+// ── LONGUEUR ──
+var LONG_UNITES = ['m','cm','mm','µm','pouces (in)','pieds (ft)'];
+var LONG_VALS   = [1000, 10, 1, 0.001, 25.4, 304.8]; // en mm
+
+// ── TEMPS ──
+var TEMPS_UNITES = ['jours','heures','minutes','secondes'];
+var TEMPS_VALS   = [86400, 3600, 60, 1]; // en secondes
+
+// ── CONCENTRATIONS ──
+// Préréglées : NaCl, Glucose, etc.
+var SOLUTIONS = [
+  {nom:'NaCl 0,9% (sérum physio)',  gL:9,   mmolL:154,  pct:0.9,  note:'Solution isotonique de référence · 1 L apporte 9g de NaCl'},
+  {nom:'NaCl 0,45% (demi-isotonique)', gL:4.5, mmolL:77, pct:0.45, note:'Utilisé en pédiatrie et réhydratation'},
+  {nom:'NaCl 3% (hypertonique)',    gL:30,  mmolL:513,  pct:3,    note:'Urgences hyponatrémie sévère — perfusion lente'},
+  {nom:'Glucose 5% (G5)',           gL:50,  mmolL:277,  pct:5,    note:'Solution isotonique · 200 kcal/L'},
+  {nom:'Glucose 10% (G10)',         gL:100, mmolL:555,  pct:10,   note:'400 kcal/L · Voie centrale conseillée'},
+  {nom:'Glucose 30% (G30)',         gL:300, mmolL:1666, pct:30,   note:'1200 kcal/L · Urgence hypoglycémie · Voie centrale obligatoire'},
+  {nom:'Glucose 50% (G50)',         gL:500, mmolL:2776, pct:50,   note:'2000 kcal/L · Urgence hypoglycémie coma · Voie centrale'},
+  {nom:'Ringer Lactate',            gL:null,mmolL:null, pct:null, note:'Na⁺ 130 · K⁺ 5 · Ca²⁺ 2 · Cl⁻ 109 · Lactate 28 mmol/L · Chirurgie, brûlés'},
+];
+
+// ── BIOLOGIE : mmol/L ↔ mg/dL ↔ g/L ──
+var BIO_PARAMS = [
+  {nom:'Glycémie',          mmolL_to_mgdL:18.02, mmolL_to_gL:0.18,
+   normale:'3.9-6.1 mmol/L = 0.70-1.10 g/L = 70-110 mg/dL',
+   alerte:'< 3.3 mmol/L = hypoglycémie · > 11 mmol/L = hyperglycémie sévère',
+   note:'Facteur ×18 pour mmol/L → mg/dL · Glucomètres FR en g/L, USA en mg/dL'},
+  {nom:'Cholestérol total', mmolL_to_mgdL:38.67, mmolL_to_gL:0.387,
+   normale:'< 5.2 mmol/L = < 2.0 g/L = < 200 mg/dL',
+   alerte:'> 6.2 mmol/L = hypercholestérolémie franche',
+   note:'LDL < 1.0 g/L si haut risque CV · HDL > 0.4 g/L'},
+  {nom:'Créatinine',        mmolL_to_mgdL:11.31, mmolL_to_gL:0.113,
+   normale:'M : 60-110 µmol/L · F : 45-90 µmol/L',
+   alerte:'> 130 µmol/L = insuffisance rénale probable',
+   note:'Attention : µmol/L (pas mmol/L) · Calculer DFG avec formule CKD-EPI'},
+  {nom:'Urée',              mmolL_to_mgdL:6.006, mmolL_to_gL:0.06,
+   normale:'2.5-7.5 mmol/L = 0.15-0.45 g/L = 15-45 mg/dL',
+   alerte:'> 20 mmol/L = insuffisance rénale sévère',
+   note:'Augmente en cas de déshydratation, hémorragie digestive, IRC'},
+  {nom:'Sodium (Na⁺)',      mmolL_to_mgdL:2.3,   mmolL_to_gL:0.023,
+   normale:'135-145 mmol/L',
+   alerte:'< 130 = hyponatrémie · > 150 = hypernatrémie',
+   note:'1 mmol/L = 23 mg/L · Surveiller avec perfusion NaCl'},
+  {nom:'Potassium (K⁺)',    mmolL_to_mgdL:3.91,  mmolL_to_gL:0.039,
+   normale:'3.5-5.0 mmol/L',
+   alerte:'< 3.0 = hypokaliémie grave · > 5.5 = hyperkaliémie',
+   note:'Jamais injecter K⁺ pur IV · Risque arrêt cardiaque'},
+];
+
+// ── EXEMPLES LONGUEUR ──
+var EXEMPLES_LONG = [
+  {val:'1 m',    ex:'Hauteur d'un plan de travail de cuisine · Distance de sécurité lit-barrière'},
+  {val:'10 cm',  ex:'Profondeur d'insertion d'une sonde nasogastrique dans le nez · Largeur d'un pansement standard'},
+  {val:'5 cm',   ex:'Longueur d'une cicatrice d'appendicectomie cœlioscopique'},
+  {val:'1 cm',   ex:'Épaisseur d'un doigt · Profondeur d'injection IM glutéale'},
+  {val:'5 mm',   ex:'Diamètre d'un trocart de cœliochirurgie · Épaisseur d'un comprimé'},
+  {val:'1 mm',   ex:'Épaisseur d'une aiguille IV 18G = 1,2 mm · Épaisseur d'un cheveu = 0,06 mm'},
+  {val:'1 µm',   ex:'Taille d'une bactérie (1-10 µm) · Filtre de stérilisation = 0,22 µm'},
+  {val:'1 pouce',ex:'= 2,54 cm · Taille des divers cathéters et sondes en littérature anglo-saxonne'},
+];
+
+// ── EXEMPLES TEMPS ──
+var EXEMPLES_TEMPS = [
+  {val:'1 seconde',  ex:'1 battement cardiaque au repos (FC 60 bpm) · Temps d'injection IV rapide minimum'},
+  {val:'30 min',     ex:'Demi-vie de la pénicilline G · Durée min d'une antibiothérapie IV'},
+  {val:'1 heure',    ex:'Durée de perfusion d'un antibiotique standard · 1 cycle de surveillance des constantes'},
+  {val:'6 heures',   ex:'Durée d'action du paracétamol · Intervalle entre deux prises'},
+  {val:'24 heures',  ex:'Renouvellement d'un pansement standard · Durée d'une perfusion de nutrition parentérale'},
+  {val:'40 heures',  ex:'Demi-vie de la warfarine (Coumadine®) · Pourquoi l'INR met du temps à se stabiliser'},
+];
+
+// ── EXEMPLES IMC ──
+var IMC_INTERPOL = [
+  {min:0,   max:16.5, lbl:'Dénutrition sévère', col:'#e84040'},
+  {min:16.5,max:18.5, lbl:'Maigreur',           col:'#e8a030'},
+  {min:18.5,max:25,   lbl:'Poids normal ✓',      col:'#40c878'},
+  {min:25,  max:30,   lbl:'Surpoids',            col:'#e8a030'},
+  {min:30,  max:35,   lbl:'Obésité modérée',     col:'#e84040'},
+  {min:35,  max:40,   lbl:'Obésité sévère',      col:'#e84040'},
+  {min:40,  max:999,  lbl:'Obésité morbide',     col:'#b02020'},
+];
+
+// Normes cliniques par profil
+var NORMES = {
+  pa: {
+    titre:'Pression artérielle',
+    unit:'mmHg',
+    cols:['Profil','PAS normale','PAD normale','Seuil alerte'],
+    rows:[
+      ['Homme adulte','120-129','70-84','> 140/90'],
+      ['Femme adulte','115-125','70-84','> 140/90'],
+      ['Femme enceinte','< 130','< 85','> 140/90 (urgence)'],
+      ['Enfant 1-5 ans','80-110','50-75','> 110/75'],
+      ['Enfant 6-12 ans','85-120','55-80','> 120/80'],
+      ['Adolescent','95-130','60-85','> 130/85'],
+      ['> 75 ans','< 150','< 90','> 160/95 (adapt.)'],
+    ]
+  },
+  fc: {
+    titre:'Fréquence cardiaque',
+    unit:'bpm',
+    cols:['Profil','Normale repos','Bradycardie','Tachycardie'],
+    rows:[
+      ['Adulte','60-100','< 60','> 100'],
+      ['Sportif entraîné','40-60','< 40','> 100'],
+      ['Femme enceinte','70-110','< 60','> 110'],
+      ['Nouveau-né','120-160','< 100','> 160'],
+      ['Nourrisson 1-12m','100-150','< 90','> 150'],
+      ['Enfant 1-5 ans','80-120','< 70','> 130'],
+      ['Enfant 6-12 ans','70-110','< 60','> 115'],
+      ['> 75 ans','55-90','< 50','> 100'],
+    ]
+  },
+  fr: {
+    titre:'Fréquence respiratoire',
+    unit:'/min',
+    cols:['Profil','Normale','Bradypnée','Tachypnée'],
+    rows:[
+      ['Adulte','12-20','< 12','> 20'],
+      ['Femme enceinte','14-22','< 12','> 22'],
+      ['Nouveau-né','30-60','< 30','> 60'],
+      ['Nourrisson 1-12m','25-40','< 20','> 40'],
+      ['Enfant 1-5 ans','20-30','< 16','> 30'],
+      ['Enfant 6-12 ans','16-24','< 14','> 25'],
+      ['> 75 ans','14-22','< 12','> 22'],
+    ]
+  },
+  spo2: {
+    titre:'SpO₂ — Saturation en O₂',
+    unit:'%',
+    cols:['Profil','Normale','Vigilance','Urgence'],
+    rows:[
+      ['Adulte sain','95-100','92-94','< 92'],
+      ['BPCO connue','88-94','85-88','< 85'],
+      ['Femme enceinte','95-100','93-94','< 93'],
+      ['Nouveau-né','95-100','90-94','< 90'],
+      ['Enfant','95-100','92-94','< 92'],
+      ['> 75 ans','94-99','91-93','< 91'],
+    ]
+  },
+  temp: {
+    titre:'Température corporelle',
+    unit:'°C',
+    cols:['Profil','Normale','Hypothermie','Fièvre'],
+    rows:[
+      ['Adulte (rectale)','36.5-37.8','< 35','> 38.3'],
+      ['Adulte (axillaire)','36.0-37.2','< 34.5','> 37.8'],
+      ['Femme enceinte','36.5-38.0','< 35.5','> 38.0'],
+      ['Nouveau-né','36.5-37.5','< 36.0','> 37.5'],
+      ['Nourrisson','36.5-37.8','< 36.0','> 38.0'],
+      ['Enfant','36.5-37.8','< 36.0','> 38.0'],
+      ['> 75 ans','35.8-37.2','< 35.0','> 37.8'],
+    ]
+  },
+  glycemie: {
+    titre:'Glycémie capillaire',
+    unit:'g/L',
+    cols:['Profil','À jeun','Post-prandiale 2h','Alerte'],
+    rows:[
+      ['Adulte sain','0.70-1.10','< 1.40','> 1.80 ou < 0.60'],
+      ['Diabète T1/T2 traité','0.80-1.30','< 1.60','> 2.00 ou < 0.70'],
+      ['Femme enceinte','0.60-0.95','< 1.20','> 1.20 2h post'],
+      ['Nouveau-né','0.40-1.00','—','< 0.40 urgence'],
+      ['Enfant','0.70-1.10','< 1.40','< 0.60 urgence'],
+      ['> 75 ans (adapt.)','0.80-1.40','< 1.80','> 3.00 ou < 0.60'],
+    ]
+  },
+};
+
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+var S = {
+  onglet: 'masse',
+  masseVal:'', masseFrom:0, masseTo:2,
+  volVal:'', volFrom:2, volTo:0,
+  debitVol:'', debitH:'1', debitGtt:'20',
+  doseConc:'', dosePoids:'', doseMgKg:'',
+  tempVal:'', tempFrom:'C',
+  pressVal:'', pressFrom:0, pressTo:0,
+  normeKey:'pa',
+  longVal:'', longFrom:1, longTo:0,
+  tempsVal:'', tempsFrom:2, tempsTo:1,
+  imcPoids:'', imcTaille:'',
+  concSol:0, concFrom:'pct', concTo:'gL',
+  bioParam:0, bioVal:'', bioFrom:'mmolL',
+  diuresePoids:'', diureseH:'1',
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmt(n){
+  if(n === null || n === undefined || isNaN(n)) return null;
+  if(Math.abs(n) >= 1000000) return n.toExponential(4);
+  if(Math.abs(n) >= 100)  return parseFloat(n.toFixed(2)).toString();
+  if(Math.abs(n) >= 1)    return parseFloat(n.toFixed(4)).toString();
+  if(Math.abs(n) >= 0.001) return parseFloat(n.toFixed(6)).toString();
+  return n.toExponential(4);
+}
+
+// ── HELPER EXEMPLES GENERIQUE ──
+function renderExemples2(data){
+  if(!data || !data.length) return '';
+  var h = '<div style="background:rgba(240,192,64,.04);border:1px solid rgba(240,192,64,.1);border-radius:10px;padding:14px;margin-top:12px">';
+  h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--em3);margin-bottom:10px;opacity:.7">💡 Repères concrets</div>';
+  data.forEach(function(e){
+    h += '<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+    h += '<span style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--em3);min-width:90px;flex-shrink:0">'+e.val+'</span>';
+    h += '<span style="font-size:12px;color:var(--txt2);line-height:1.5">'+e.ex+'</span></div>';
+  });
+  return h + '</div>';
+}
+
+
+
+// ── IMC ──
+function initIMC(){
+  var p = document.getElementById('imc-poids');
+  var t = document.getElementById('imc-taille');
+  var pt = document.getElementById('pi-taille');
+  var ps = document.getElementById('pi-sexe');
+  var sp = document.getElementById('sc-poids');
+  var st = document.getElementById('sc-taille');
+  if(p) p.addEventListener('input', calcIMC);
+  if(t) t.addEventListener('input', calcIMC);
+  if(pt) pt.addEventListener('input', calcPI);
+  if(ps) ps.addEventListener('change', calcPI);
+  if(sp) sp.addEventListener('input', calcSC);
+  if(st) st.addEventListener('input', calcSC);
+}
+
+function calcIMC(){
+  var p = parseFloat(document.getElementById('imc-poids').value);
+  var t = parseFloat(document.getElementById('imc-taille').value);
+  var el = document.getElementById('imc-result');
+  if(isNaN(p)||isNaN(t)||t<=0){el.innerHTML='<span class="result-empty">Saisissez poids et taille →</span>';return;}
+  var tM = t/100;
+  var imc = p/(tM*tM);
+  var interp = IMC_INTERPOL.find(function(i){return imc>=i.min && imc<i.max;})||IMC_INTERPOL[IMC_INTERPOL.length-1];
+  el.innerHTML='<span class="result-num">'+imc.toFixed(1)+'</span><span class="result-unit">kg/m²</span><div class="result-hint" style="color:'+interp.col+';margin-top:6px;font-weight:600">'+interp.lbl+'</div><div class="result-hint">'+p+' kg ÷ ('+tM.toFixed(2)+' m)² = '+imc.toFixed(2)+'</div>';
+}
+
+function calcPI(){
+  var t = parseFloat(document.getElementById('pi-taille').value);
+  var sexe = document.getElementById('pi-sexe').value;
+  var el = document.getElementById('pi-result');
+  if(isNaN(t)||t<100){el.innerHTML='<span class="result-empty">Saisissez la taille →</span>';return;}
+  var pi = sexe==='H' ? t-100-(t-150)/4 : t-100-(t-150)/2.5;
+  var fourchette = [Math.round(pi*0.9), Math.round(pi*1.1)];
+  el.innerHTML='<span class="result-num">'+pi.toFixed(1)+'</span><span class="result-unit">kg</span><div class="result-hint">Fourchette acceptable : '+fourchette[0]+'-'+fourchette[1]+' kg · Formule Lorentz '+sexe+'</div>';
+}
+
+function calcSC(){
+  var p = parseFloat(document.getElementById('sc-poids').value);
+  var t = parseFloat(document.getElementById('sc-taille').value);
+  var el = document.getElementById('sc-result');
+  if(isNaN(p)||isNaN(t)){el.innerHTML='<span class="result-empty">Saisissez poids et taille →</span>';return;}
+  var sc = Math.sqrt((p*t)/3600);
+  el.innerHTML='<span class="result-num">'+sc.toFixed(2)+'</span><span class="result-unit">m²</span><div class="result-hint">√('+p+' × '+t+' ÷ 3600) · Mosteller · Utilisé pour les chimiothérapies</div>';
+}
+
+// ── BIOLOGIE ──
+function initBio(){
+  var v = document.getElementById('bio-val');
+  var f = document.getElementById('bio-from');
+  if(v){ v.addEventListener('input', calcBio); }
+  if(f){ f.addEventListener('change', function(){ S.bioFrom=this.value; calcBio(); }); }
+}
+
+function calcBio(){
+  var v = parseFloat(document.getElementById('bio-val').value);
+  var el = document.getElementById('bio-result');
+  if(isNaN(v)){el.innerHTML='<span class="result-empty">Saisissez une valeur →</span>';return;}
+  var bp = BIO_PARAMS[S.bioParam];
+  var mmol, mgdL, gL;
+  if(S.bioFrom==='mmolL'){ mmol=v; mgdL=v*bp.mmolL_to_mgdL; gL=v*bp.mmolL_to_gL; }
+  else if(S.bioFrom==='mgdL'){ mgdL=v; mmol=v/bp.mmolL_to_mgdL; gL=v/bp.mmolL_to_mgdL*bp.mmolL_to_gL; }
+  else { gL=v; mmol=v/bp.mmolL_to_gL; mgdL=mmol*bp.mmolL_to_mgdL; }
+  el.innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%">'+
+    '<div style="text-align:center"><span style="font-family:var(--mono);font-size:18px;font-weight:800;color:var(--em3);display:block">'+fmt(Math.round(mmol*100)/100)+'</span><span style="font-size:10px;color:var(--txt2);font-family:var(--mono)">mmol/L</span></div>'+
+    '<div style="text-align:center"><span style="font-family:var(--mono);font-size:18px;font-weight:800;color:var(--em3);display:block">'+fmt(Math.round(mgdL*10)/10)+'</span><span style="font-size:10px;color:var(--txt2);font-family:var(--mono)">mg/dL</span></div>'+
+    '<div style="text-align:center"><span style="font-family:var(--mono);font-size:18px;font-weight:800;color:var(--em3);display:block">'+fmt(Math.round(gL*1000)/1000)+'</span><span style="font-size:10px;color:var(--txt2);font-family:var(--mono)">g/L</span></div>'+
+    '</div>';
+}
+
+// ── DIURÈSE ──
+function initDiurese(){
+  var p = document.getElementById('di-poids');
+  var v = document.getElementById('di-vol');
+  if(p) p.addEventListener('input', calcDiurese);
+  if(v) v.addEventListener('input', calcDiurese);
+}
+
+function calcDiurese(){
+  var p = parseFloat(document.getElementById('di-poids').value);
+  var v = parseFloat(document.getElementById('di-vol').value);
+  var h = parseFloat(S.diureseH);
+  var el = document.getElementById('di-result');
+  if(isNaN(p)||isNaN(v)){el.innerHTML='<span class="result-empty">Saisissez le poids et le volume →</span>';return;}
+  var mlkgH = v / (p * h);
+  var mlH = v / h;
+  var interp, col;
+  if(mlkgH < 0.1){ interp='🔴 Anurie — urgence rénale'; col='var(--red)'; }
+  else if(mlkgH < 0.5){ interp='🟠 Oligurie — alerter le médecin'; col='var(--amber)'; }
+  else if(mlkgH <= 1){ interp='✅ Diurèse normale'; col='var(--green)'; }
+  else if(mlkgH <= 3){ interp='🟡 Polyurie légère'; col='var(--amber)'; }
+  else { interp='🔴 Polyurie franche — évaluer'; col='var(--amber)'; }
+  el.innerHTML=
+    '<div style="flex-direction:column;gap:6px;width:100%">'+
+    '<div><span class="result-num">'+mlkgH.toFixed(2)+'</span><span class="result-unit"> mL/kg/h</span></div>'+
+    '<div><span style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--txt)">'+mlH.toFixed(0)+'</span><span class="result-unit"> mL/h</span></div>'+
+    '<div class="result-hint" style="color:'+col+';font-weight:600;margin-top:4px">'+interp+'</div>'+
+    '</div>';
+}
+
+
+
+function renderConverterCustom(type, unites, val, fromIdx, toIdx){
+  var h = '';
+  h += '<div class="input-row">';
+  h += '<input type="number" class="conv-input" placeholder="0" value="'+esc(val||'')+'" oninput="S.'+type+'Val=this.value;updateConv'+type.charAt(0).toUpperCase()+type.slice(1)+'()" step="any" min="0">';
+  h += '<select class="conv-select" onchange="S.'+type+'From=parseInt(this.value);updateConv'+type.charAt(0).toUpperCase()+type.slice(1)+'()">';
+  unites.forEach(function(u,i){ h += '<option value="'+i+'"'+(i===fromIdx?' selected':'')+'>'+u+'</option>'; });
+  h += '</select></div>';
+  h += '<div style="text-align:center;color:var(--txt2);font-size:20px;margin:4px 0">↕</div>';
+  h += '<div class="input-row">';
+  h += '<div class="result-box" id="conv-'+type+'-result" style="flex:1"><span class="result-empty">Saisissez une valeur →</span></div>';
+  h += '<select class="conv-select" onchange="S.'+type+'To=parseInt(this.value);updateConv'+type.charAt(0).toUpperCase()+type.slice(1)+'()">';
+  unites.forEach(function(u,i){ h += '<option value="'+i+'"'+(i===toIdx?' selected':'')+'>'+u+'</option>'; });
+  h += '</select></div>';
+  return h;
+}
+
+function updateConvLong(){
+  var val = parseFloat(S.longVal);
+  var el = document.getElementById('conv-long-result');
+  if(!el||isNaN(val)){if(el)el.innerHTML='<span class="result-empty">Saisissez une valeur →</span>';return;}
+  var base = val * LONG_VALS[S.longFrom];
+  var result = base / LONG_VALS[S.longTo];
+  el.innerHTML='<span class="result-num">'+fmt(result)+'</span><span class="result-unit">'+LONG_UNITES[S.longTo]+'</span>';
+}
+
+function updateConvTemps(){
+  var val = parseFloat(S.tempsVal);
+  var el = document.getElementById('conv-temps-result');
+  if(!el||isNaN(val)){if(el)el.innerHTML='<span class="result-empty">Saisissez une valeur →</span>';return;}
+  var base = val * TEMPS_VALS[S.tempsFrom];
+  var result = base / TEMPS_VALS[S.tempsTo];
+  el.innerHTML='<span class="result-num">'+fmt(result)+'</span><span class="result-unit">'+TEMPS_UNITES[S.tempsTo]+'</span>';
+}
+// ── RENDER ──
+function render(){
+  // Tabs
+  var tH = '';
+  ONGLETS.forEach(function(t){
+    tH += '<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setO(\''+t.id+'\')">'+ t.l+'</button>';
+  });
+  document.getElementById('tabs').innerHTML = tH;
+
+  // Content
+  var h = '';
+
+  if(S.onglet==='masse'){
+    h += convCard('⚖️ Conversions de masse',
+      'Grammes, milligrammes, microgrammes — essentiel pour les calculs de dosages.',
+      renderConverter('masse', MASSE_UNITES, S.masseVal, S.masseFrom, S.masseTo, MASSE_VALS));
+    h += renderExemples('masse');
+    h += renderExemples('masse_quotidien');
+    h += '<div class="info info-em">💡 <strong>Astuce clinique :</strong> 1 g = 1 000 mg = 1 000 000 µg. En oncologie et pédiatrie, les doses en µg/kg sont fréquentes — ne jamais confondre mg et µg, l\'écart est × 1 000.</div>';
+    h += refTable([
+      ['1 g','= 1 000 mg'],['1 mg','= 1 000 µg'],['1 µg','= 1 000 ng'],
+      ['1 kg','= 1 000 g'],['0,5 g','= 500 mg'],['0,25 mg','= 250 µg'],
+    ]);
+
+  } else if(S.onglet==='volume'){
+    h += convCard('💧 Conversions de volume',
+      'Litres, millilitres, gouttes — pour les perfusions, les prescriptions et les préparations.',
+      renderConverter('vol', VOL_UNITES, S.volVal, S.volFrom, S.volTo, VOL_VALS));
+    h += renderExemples('volume');
+    h += '<div class="info info-em">💡 <strong>Rappel :</strong> 1 L = 10 dL = 1 000 mL. Le facteur gouttes standard est 20 gtt/mL (macrogouttes). Les microgouttes = 60 gtt/mL. Toujours vérifier le type de perfuseur.</div>';
+    h += refTable([
+      ['1 L','= 1 000 mL'],['1 dL','= 100 mL'],['1 mL','= 20 gtt (macro)'],
+      ['1 mL','= 60 gtt (micro)'],['500 mL','= 0,5 L'],['250 mL','= 25 cL'],
+    ]);
+
+  } else if(S.onglet==='debit'){
+    h += '<div class="conv-card em">';
+    h += '<div class="conv-title">🩸 Débit de perfusion</div>';
+    h += '<div class="conv-sub">Convertir mL/h en gouttes/min et inversement. Saisir le volume, la durée et le facteur gouttes.</div>';
+
+    h += '<div class="dose-grid">';
+    // Volume
+    h += '<div class="dose-field"><label>Volume total (mL)</label>';
+    h += '<input type="number" class="dose-input" placeholder="500" value="'+esc(S.debitVol)+'" oninput="S.debitVol=this.value;renderDebit()" min="0" style="color:var(--em3)"></div>';
+    // Durée
+    h += '<div class="dose-field"><label>Durée (heures)</label>';
+    h += '<input type="number" class="dose-input" placeholder="8" value="'+esc(S.debitH)+'" oninput="S.debitH=this.value;renderDebit()" min="0" step="0.5" style="color:var(--em3)"></div>';
+    h += '</div>';
+
+    // Facteur gouttes
+    h += '<div style="margin-bottom:12px"><label style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);display:block;margin-bottom:8px">Facteur gouttes</label>';
+    h += '<div style="display:flex;gap:8px">';
+    [{v:'20',l:'20 gtt/mL (macro)'},{v:'60',l:'60 gtt/mL (micro)'},{v:'15',l:'15 gtt/mL (pédiatrie)'}].forEach(function(g){
+      h += '<div style="flex:1;padding:9px 8px;border-radius:8px;border:1.5px solid '+(S.debitGtt===g.v?'rgba(240,192,64,.4)':'var(--bdr)')+';background:'+(S.debitGtt===g.v?'rgba(240,192,64,.08)':'rgba(0,0,0,.2)')+';cursor:pointer;text-align:center;font-family:var(--mono);font-size:11px;color:'+(S.debitGtt===g.v?'var(--em3)':'var(--txt2)')+'" onclick="S.debitGtt=\''+g.v+'\';renderDebit()">'+g.l+'</div>';
+    });
+    h += '</div></div>';
+
+    h += '<div id="debit-result"></div>';
+    h += '</div>';
+    h += '<div class="info info-blue">📋 <strong>Formule :</strong> Débit (gtt/min) = Volume (mL) × Facteur ÷ Durée (min). Débit (mL/h) = Volume ÷ Durée (h).</div>';
+    h += refTable([
+      ['500 mL / 8h','= 62.5 mL/h = 21 gtt/min (macro)'],
+      ['1000 mL / 12h','= 83.3 mL/h = 28 gtt/min (macro)'],
+      ['250 mL / 4h','= 62.5 mL/h = 21 gtt/min (macro)'],
+      ['100 mL / 1h','= 100 mL/h = 33 gtt/min (macro)'],
+    ]);
+    setTimeout(renderDebit, 10);
+
+  } else if(S.onglet==='dose'){
+    h += '<div class="conv-card em">';
+    h += '<div class="conv-title">💊 Calcul de dose par poids</div>';
+    h += '<div class="conv-sub">Calculatrice dose/kg → dose totale → volume à prélever. Trois modes de calcul.</div>';
+
+    // Mode 1 : dose mg/kg → dose totale
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:16px;margin-bottom:10px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:12px">Mode 1 — Dose mg/kg → Dose totale</div>';
+    h += '<div class="dose-grid">';
+    h += '<div class="dose-field"><label>Poids patient (kg)</label><input type="number" class="dose-input" id="d-poids" placeholder="70" min="0.1" step="0.1" oninput="calcDose1()"></div>';
+    h += '<div class="dose-field"><label>Dose prescrite (mg/kg)</label><input type="number" class="dose-input" id="d-mgkg" placeholder="1.5" min="0" step="0.01" oninput="calcDose1()"></div>';
+    h += '</div>';
+    h += '<div class="result-box" id="dose1-result"><span class="result-empty">Saisissez poids et dose →</span></div>';
+    h += '</div>';
+
+    // Mode 2 : dose totale + concentration → volume
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:16px;margin-bottom:10px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:12px">Mode 2 — Dose totale + Concentration → Volume à prélever</div>';
+    h += '<div class="dose-grid">';
+    h += '<div class="dose-field"><label>Dose totale (mg)</label><input type="number" class="dose-input" id="d-total" placeholder="105" min="0" oninput="calcDose2()"></div>';
+    h += '<div class="dose-field"><label>Concentration (mg/mL)</label><input type="number" class="dose-input" id="d-conc" placeholder="10" min="0" step="0.01" oninput="calcDose2()"></div>';
+    h += '</div>';
+    h += '<div class="result-box" id="dose2-result"><span class="result-empty">Saisissez dose et concentration →</span></div>';
+    h += '</div>';
+
+    // Mode 3 : UI/kg (insuline, héparine)
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:16px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:12px">Mode 3 — UI/kg (insuline, héparine)</div>';
+    h += '<div class="dose-grid">';
+    h += '<div class="dose-field"><label>Poids patient (kg)</label><input type="number" class="dose-input" id="d-poidsUI" placeholder="70" min="0.1" step="0.1" oninput="calcDose3()"></div>';
+    h += '<div class="dose-field"><label>Dose (UI/kg)</label><input type="number" class="dose-input" id="d-uikg" placeholder="0.5" min="0" step="0.01" oninput="calcDose3()"></div>';
+    h += '</div>';
+    h += '<div class="result-box" id="dose3-result"><span class="result-empty">Saisissez poids et dose UI/kg →</span></div>';
+    h += '</div>';
+
+    h += '</div>';
+    h += '<div class="info info-warn">⚠️ <strong>Vérification obligatoire :</strong> Tout calcul de dose doit être vérifié par un second professionnel avant administration. L\'IDE est responsable du calcul ET de la vérification.</div>';
+
+  } else if(S.onglet==='temp'){
+    h += '<div class="conv-card em">';
+    h += '<div class="conv-title">🌡️ Conversion de température</div>';
+    h += '<div class="conv-sub">Celsius ↔ Fahrenheit ↔ Kelvin</div>';
+
+    h += '<div style="display:flex;gap:8px;margin-bottom:12px">';
+    [{id:'C',l:'°C Celsius'},{id:'F',l:'°F Fahrenheit'},{id:'K',l:'K Kelvin'}].forEach(function(u){
+      h += '<div style="flex:1;padding:10px;border-radius:8px;border:1.5px solid '+(S.tempFrom===u.id?'rgba(240,192,64,.4)':'var(--bdr)')+';background:'+(S.tempFrom===u.id?'rgba(240,192,64,.08)':'rgba(0,0,0,.2)')+';cursor:pointer;text-align:center;font-family:var(--mono);font-size:12px;color:'+(S.tempFrom===u.id?'var(--em3)':'var(--txt2)')+'" onclick="S.tempFrom=\''+u.id+'\';S.tempVal=\'\';render()">'+u.l+'</div>';
+    });
+    h += '</div>';
+
+    h += '<input type="number" class="conv-input" style="width:100%;margin-bottom:12px" placeholder="Saisissez une valeur..." value="'+esc(S.tempVal)+'" oninput="S.tempVal=this.value;renderTemp()" step="0.1">';
+    h += '<div id="temp-result"></div>';
+
+    h += '</div>';
+    h += refTable([
+      ['0°C','= 32°F = 273.15K (glace)'],
+      ['37°C','= 98.6°F (norme corps)'],
+      ['38.5°C','= 101.3°F (fièvre)'],
+      ['100°C','= 212°F (ébullition)'],
+    ]);
+    h += renderExemples('temperature');
+    setTimeout(renderTemp, 10);
+
+  } else if(S.onglet==='pression'){
+    h += convCard('❤️ Conversions de pression',
+      'mmHg, kPa, cmH₂O — pour la PA, la PVC, la ventilation.',
+      renderConverter('press', PRESS_UNITES, S.pressVal, S.pressFrom, S.pressTo, PRESS_VALS, true));
+    h += renderExemples('pression');
+    h += '<div class="info info-blue">💡 <strong>Repères :</strong> PA systolique normale ≈ 120 mmHg = 16 kPa. PVC normale : 5-12 cmH₂O. Pression de ventilation sécurisée : < 30 cmH₂O.</div>';
+    h += refTable([
+      ['120 mmHg','= 16 kPa = 163 cmH₂O (PAS normale)'],
+      ['80 mmHg','= 10.7 kPa = 109 cmH₂O (PAD normale)'],
+      ['1 kPa','= 7.5 mmHg = 10.2 cmH₂O'],
+      ['1 cmH₂O','= 0.74 mmHg = 0.098 kPa'],
+    ]);
+
+  } else if(S.onglet==='longueur'){
+    h += convCard('📏 Longueurs et dimensions',
+      'Millimètres, centimètres, mètres, pouces — indispensable pour les sondes, cathéters, plaies, tailles patient.',
+      renderConverterCustom('long', LONG_UNITES, S.longVal, S.longFrom, S.longTo));
+    h += renderExemples2(EXEMPLES_LONG);
+    h += refTable([
+      ['1 m','= 100 cm = 1 000 mm'],
+      ['1 pouce','= 2,54 cm (littérature anglo-saxonne)'],
+      ['Aiguille IM','= 40 mm de long · 21G = 0,8 mm Ø'],
+      ['Sonde urinaire CH14','= 4,7 mm de diamètre (Ø = CH ÷ 3)'],
+      ['Cathéter IV 18G','= 1,2 mm Ø · Vert'],
+    ]);
+
+  } else if(S.onglet==='imc'){
+    h += '<div class="conv-card em">';
+    h += '<div class="conv-title">⚖️ IMC · Poids idéal · Surface corporelle</div>';
+    h += '<div class="conv-sub">Calculatrices de référence pour les calculs de doses adaptées, la nutrition et l\'évaluation clinique.</div>';
+
+    // IMC
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:16px;margin-bottom:10px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:12px">Calcul IMC — Indice de Masse Corporelle</div>';
+    h += '<div class="dose-grid">';
+    h += '<div class="dose-field"><label>Poids (kg)</label><input type="number" class="dose-input" id="imc-poids" placeholder="70" min="1" step="0.1" oninput="calcIMC()"></div>';
+    h += '<div class="dose-field"><label>Taille (cm)</label><input type="number" class="dose-input" id="imc-taille" placeholder="170" min="50" step="1" oninput="calcIMC()"></div>';
+    h += '</div>';
+    h += '<div class="result-box" id="imc-result"><span class="result-empty">Saisissez poids et taille →</span></div>';
+    h += '</div>';
+
+    // Poids idéal Lorentz
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:16px;margin-bottom:10px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:12px">Poids idéal — Formule de Lorentz</div>';
+    h += '<div class="dose-grid">';
+    h += '<div class="dose-field"><label>Taille (cm)</label><input type="number" class="dose-input" id="pi-taille" placeholder="170" min="100" step="1" oninput="calcPI()"></div>';
+    h += '<div class="dose-field"><label>Sexe</label><select class="dose-input" id="pi-sexe" onchange="calcPI()" style="font-size:14px"><option value="H">Homme</option><option value="F">Femme</option></select></div>';
+    h += '</div>';
+    h += '<div class="result-box" id="pi-result"><span class="result-empty">Saisissez la taille →</span></div>';
+    h += '</div>';
+
+    // Surface corporelle Mosteller
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:16px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:12px">Surface corporelle — Formule de Mosteller (oncologie, pédiatrie)</div>';
+    h += '<div class="dose-grid">';
+    h += '<div class="dose-field"><label>Poids (kg)</label><input type="number" class="dose-input" id="sc-poids" placeholder="70" min="1" step="0.1" oninput="calcSC()"></div>';
+    h += '<div class="dose-field"><label>Taille (cm)</label><input type="number" class="dose-input" id="sc-taille" placeholder="170" min="50" step="1" oninput="calcSC()"></div>';
+    h += '</div>';
+    h += '<div class="result-box" id="sc-result"><span class="result-empty">Saisissez poids et taille →</span></div>';
+    h += '</div>';
+
+    h += '</div>';
+    h += '<div class="info info-em">💡 <strong>Usage clinique :</strong> Le poids idéal sert au calcul des doses de médicaments à marge étroite (aminosides, héparine). La surface corporelle (m²) est utilisée pour les chimiothérapies. L\'IMC oriente la prise en charge nutritionnelle.</div>';
+
+  } else if(S.onglet==='temps'){
+    h += convCard('⏱️ Conversions de temps',
+      'Secondes, minutes, heures, jours — pour les demi-vies médicamenteuses, durées de perfusion et intervalles de surveillance.',
+      renderConverterCustom('temps', TEMPS_UNITES, S.tempsVal, S.tempsFrom, S.tempsTo));
+    h += renderExemples2(EXEMPLES_TEMPS);
+    h += refTable([
+      ['30 min','= demi-vie pénicilline G · renouveler toutes les 4-6h'],
+      ['6h','= durée action paracétamol · intervalle entre 2 prises'],
+      ['24h','= renouvellement pansement standard'],
+      ['40h','= demi-vie warfarine · délai équilibre INR'],
+      ['72h','= durée d\'une cure standard d\'antibiotique IV'],
+    ]);
+
+  } else if(S.onglet==='conc'){
+    h += '<div class="conv-card em">';
+    h += '<div class="conv-title">🧪 Concentrations des solutions courantes</div>';
+    h += '<div class="conv-sub">Comprendre les équivalences % / g/L / mmol/L — les confusions ici causent des erreurs médicamenteuses graves.</div>';
+    h += '<div class="info info-red" style="margin-bottom:14px">🚨 <strong>Source d\'erreurs :</strong> NaCl 0,9% ≠ 9% · G5% ≠ 50 g/L de glucose. Toujours vérifier l\'étiquette et l\'unité.</div>';
+    SOLUTIONS.forEach(function(s){
+      h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:14px;margin-bottom:8px;border-left:3px solid rgba(240,192,64,.3)">';
+      h += '<div style="font-size:13px;font-weight:700;color:var(--em3);margin-bottom:8px">'+s.nom+'</div>';
+      if(s.gL !== null){
+        h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
+        h += '<div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px;text-align:center"><span style="font-family:var(--mono);font-size:16px;font-weight:800;color:var(--em3);display:block">'+s.pct+'%</span><span style="font-size:9px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase">Pourcentage</span></div>';
+        h += '<div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px;text-align:center"><span style="font-family:var(--mono);font-size:16px;font-weight:800;color:var(--em3);display:block">'+s.gL+' g/L</span><span style="font-size:9px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase">Grammes/litre</span></div>';
+        h += '<div style="background:rgba(0,0,0,.2);border-radius:6px;padding:8px;text-align:center"><span style="font-family:var(--mono);font-size:16px;font-weight:800;color:var(--em3);display:block">'+s.mmolL+'</span><span style="font-size:9px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase">mmol/L</span></div>';
+        h += '</div>';
+      }
+      h += '<div style="font-size:12px;color:var(--txt2)">'+s.note+'</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+  } else if(S.onglet==='bio'){
+    h += '<div class="conv-card em">';
+    h += '<div class="conv-title">🩸 Biologie — Conversions d\'unités</div>';
+    h += '<div class="conv-sub">mmol/L ↔ mg/dL ↔ g/L · Indispensable pour interpréter les résultats selon les labos (français vs anglo-saxons).</div>';
+    h += '<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px">';
+    BIO_PARAMS.forEach(function(p,i){
+      h += '<div style="padding:7px 13px;border-radius:20px;border:1.5px solid '+(S.bioParam===i?'rgba(240,192,64,.4)':'var(--bdr)')+';background:'+(S.bioParam===i?'rgba(240,192,64,.08)':'rgba(0,0,0,.2)')+';cursor:pointer;font-family:var(--mono);font-size:11px;color:'+(S.bioParam===i?'var(--em3)':'var(--txt2)')+';-webkit-tap-highlight-color:transparent" onclick="S.bioParam='+i+';render()">'+p.nom+'</div>';
+    });
+    h += '</div>';
+    var bp = BIO_PARAMS[S.bioParam];
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:16px;margin-bottom:10px">';
+    h += '<div class="dose-grid">';
+    h += '<div class="dose-field"><label>Valeur à convertir</label><input type="number" class="dose-input" id="bio-val" placeholder="5.5" step="0.01" oninput="calcBio()"></div>';
+    h += '<div class="dose-field"><label>Unité source</label><select class="dose-input" id="bio-from" onchange="S.bioFrom=this.value;calcBio()" style="font-size:13px">';
+    h += '<option value="mmolL">mmol/L</option><option value="mgdL">mg/dL</option><option value="gL">g/L</option>';
+    h += '</select></div></div>';
+    h += '<div class="result-box" id="bio-result"><span class="result-empty">Saisissez une valeur →</span></div>';
+    h += '</div>';
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:12px;margin-bottom:8px">';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:8px">Valeurs de référence — '+bp.nom+'</div>';
+    h += '<div style="font-size:13px;color:var(--green);margin-bottom:4px">✓ '+bp.normale+'</div>';
+    h += '<div style="font-size:12px;color:var(--red);margin-bottom:4px">⚠️ '+bp.alerte+'</div>';
+    h += '<div style="font-size:12px;color:var(--txt2)">'+bp.note+'</div>';
+    h += '</div>';
+    h += '</div>';
+    setTimeout(function(){ initBio(); }, 10);
+
+  } else if(S.onglet==='diurese'){
+    h += '<div class="conv-card em">';
+    h += '<div class="conv-title">💧 Surveillance de la diurèse</div>';
+    h += '<div class="conv-sub">Calculer la diurèse horaire et quotidienne selon le poids — indicateur de la fonction rénale.</div>';
+    h += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:16px;margin-bottom:10px">';
+    h += '<div class="dose-grid">';
+    h += '<div class="dose-field"><label>Poids patient (kg)</label><input type="number" class="dose-input" id="di-poids" placeholder="70" min="1" step="0.1" oninput="calcDiurese()"></div>';
+    h += '<div class="dose-field"><label>Volume urinaire mesuré (mL)</label><input type="number" class="dose-input" id="di-vol" placeholder="300" min="0" oninput="calcDiurese()"></div>';
+    h += '</div>';
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:8px">Durée de recueil</div>';
+    h += '<div style="display:flex;gap:8px;margin-bottom:12px">';
+    [{v:'1',l:'1 heure'},{v:'6',l:'6 heures'},{v:'24',l:'24 heures'}].forEach(function(t){
+      h += '<div style="flex:1;padding:9px 6px;border-radius:8px;border:1.5px solid '+(S.diureseH===t.v?'rgba(240,192,64,.4)':'var(--bdr)')+';background:'+(S.diureseH===t.v?'rgba(240,192,64,.08)':'rgba(0,0,0,.2)')+';cursor:pointer;text-align:center;font-family:var(--mono);font-size:11px;color:'+(S.diureseH===t.v?'var(--em3)':'var(--txt2)')+';-webkit-tap-highlight-color:transparent" onclick="S.diureseH=\''+t.v+'\';calcDiurese()">'+t.l+'</div>';
+    });
+    h += '</div>';
+    h += '<div class="result-box" id="di-result"><span class="result-empty">Saisissez le poids et le volume →</span></div>';
+    h += '</div>';
+    h += refTable([
+      ['Norme adulte','0,5-1 mL/kg/h = 35-70 mL/h pour 70 kg'],
+      ['Oligurie','< 0,5 mL/kg/h = < 35 mL/h pour 70 kg'],
+      ['Anurie','< 100 mL/24h = urgence rénale'],
+      ['Polyurie','> 3 L/24h = diabète insipide, diurétiques...'],
+      ['Nourrisson','2-4 mL/kg/h (besoins plus élevés)'],
+    ]);
+    h += '<div class="info info-warn">⚠️ <strong>Surveillance :</strong> La diurèse horaire est un indicateur précoce de choc ou d\'insuffisance rénale. Toute oligurie doit être signalée immédiatement.</div>';
+    h += '</div>';
+    setTimeout(function(){ initDiurese(); }, 10);
+
+  } else if(S.onglet==='normes'){
+    h += '<div class="conv-card em">';
+    h += '<div class="conv-title">📋 Normes par profil patient</div>';
+    h += '<div class="conv-sub">Valeurs de référence adaptées au profil — adulte, femme enceinte, enfant, personne âgée.</div>';
+
+    // Sélecteur de norme
+    h += '<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">';
+    Object.keys(NORMES).forEach(function(k){
+      h += '<div style="padding:7px 13px;border-radius:20px;border:1.5px solid '+(S.normeKey===k?'rgba(240,192,64,.4)':'var(--bdr)')+';background:'+(S.normeKey===k?'rgba(240,192,64,.08)':'rgba(0,0,0,.2)')+';cursor:pointer;font-family:var(--mono);font-size:11px;color:'+(S.normeKey===k?'var(--em3)':'var(--txt2)')+';-webkit-tap-highlight-color:transparent" onclick="S.normeKey=\''+k+'\';render()">'+NORMES[k].titre+'</div>';
+    });
+    h += '</div>';
+
+    var n = NORMES[S.normeKey];
+    h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">'+n.titre+' · '+n.unit+'</div>';
+    h += '<div style="overflow-x:auto"><table class="normes-table"><thead><tr>';
+    n.cols.forEach(function(c){h += '<th>'+c+'</th>';});
+    h += '</tr></thead><tbody>';
+    n.rows.forEach(function(row){
+      h += '<tr>';
+      row.forEach(function(cell, i){
+        h += i===0 ? '<td style="font-weight:600;color:var(--txt)">'+cell+'</td>'
+                   : '<td><span class="norm-val">'+cell+'</span></td>';
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '</div>';
+    h += '<div class="info info-warn">⚠️ Ces valeurs sont des références générales. Toujours interpréter dans le contexte clinique global du patient et selon les protocoles de l\'établissement.</div>';
+  }
+
+  document.getElementById('content').innerHTML = h;
+
+  // Init calculs si nécessaire
+  if(S.onglet==='dose') initDose();
+}
+
+// ── HELPERS RENDER ──
+function convCard(titre, sub, inner){
+  return '<div class="conv-card em"><div class="conv-title">'+titre+'</div><div class="conv-sub">'+sub+'</div>'+inner+'</div>';
+}
+
+function refTable(rows){
+  var h = '<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:12px 14px;margin-top:8px">';
+  h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Références rapides</div>';
+  rows.forEach(function(r){
+    h += '<div style="display:flex;gap:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+    h += '<span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--em3);min-width:110px;flex-shrink:0">'+r[0]+'</span>';
+    h += '<span style="font-size:12px;color:var(--txt2)">'+r[1]+'</span></div>';
+  });
+  return h + '</div>';
+}
+
+function renderConverter(type, unites, val, fromIdx, toIdx, vals, isPress){
+  var h = '';
+  h += '<div class="input-row">';
+  h += '<input type="number" class="conv-input" placeholder="0" value="'+esc(val)+'" oninput="S.'+type+'Val=this.value;updateConv(\''+type+'\')" step="any" min="0">';
+  h += '<select class="conv-select" onchange="S.'+type+'From=parseInt(this.value);updateConv(\''+type+'\')">';
+  unites.forEach(function(u,i){ h += '<option value="'+i+'"'+(i===fromIdx?' selected':'')+'>'+u+'</option>'; });
+  h += '</select></div>';
+  h += '<div style="text-align:center;color:var(--txt2);font-size:20px;margin:4px 0">↕</div>';
+  h += '<div class="input-row">';
+  h += '<div class="result-box" id="conv-'+type+'-result" style="flex:1"><span class="result-empty">Saisissez une valeur →</span></div>';
+  h += '<select class="conv-select" onchange="S.'+type+'To=parseInt(this.value);updateConv(\''+type+'\')">';
+  unites.forEach(function(u,i){ h += '<option value="'+i+'"'+(i===toIdx?' selected':'')+'>'+u+'</option>'; });
+  h += '</select></div>';
+  return h;
+}
+
+// ── CONVERSIONS ──
+function updateConv(type){
+  var val = parseFloat(type==='masse'?S.masseVal:type==='vol'?S.volVal:S.pressVal);
+  if(isNaN(val)){ document.getElementById('conv-'+type+'-result').innerHTML='<span class="result-empty">Saisissez une valeur →</span>'; return; }
+  var vals = type==='masse'?MASSE_VALS:type==='vol'?VOL_VALS:PRESS_VALS;
+  var unites = type==='masse'?MASSE_UNITES:type==='vol'?VOL_UNITES:PRESS_UNITES;
+  var from = type==='masse'?S.masseFrom:type==='vol'?S.volFrom:S.pressFrom;
+  var to   = type==='masse'?S.masseTo:type==='vol'?S.volTo:S.pressTo;
+  // Conversion via valeur de base
+  var inBase = val * vals[from];
+  var result = inBase / vals[to];
+  var el = document.getElementById('conv-'+type+'-result');
+  el.innerHTML = '<span class="result-num">'+fmt(result)+'</span><span class="result-unit">'+unites[to]+'</span>';
+}
+
+function renderDebit(){
+  var vol = parseFloat(S.debitVol);
+  var h = parseFloat(S.debitH);
+  var gtt = parseFloat(S.debitGtt);
+  var el = document.getElementById('debit-result');
+  if(!el) return;
+  if(isNaN(vol)||isNaN(h)||isNaN(gtt)||h<=0){
+    el.innerHTML = '<div class="result-box"><span class="result-empty">Saisissez volume et durée →</span></div>';
+    return;
+  }
+  var mlh = vol/h;
+  var gttMin = (vol*gtt)/(h*60);
+  el.innerHTML =
+    '<div class="result-box" style="flex-direction:column;align-items:flex-start;gap:6px">' +
+    '<div><span class="result-num">'+fmt(mlh)+'</span><span class="result-unit"> mL/h</span></div>' +
+    '<div><span class="result-num" style="font-size:22px">'+fmt(Math.round(gttMin*10)/10)+'</span><span class="result-unit"> gtt/min</span></div>' +
+    '<div class="result-hint">Soit environ <strong>'+Math.round(gttMin)+'</strong> gouttes par minute à régler</div>' +
+    '</div>';
+}
+
+function renderTemp(){
+  var v = parseFloat(S.tempVal);
+  var el = document.getElementById('temp-result');
+  if(!el) return;
+  if(isNaN(v)){ el.innerHTML='<div class="result-box"><span class="result-empty">Saisissez une température →</span></div>'; return; }
+  var celsius;
+  if(S.tempFrom==='C') celsius=v;
+  else if(S.tempFrom==='F') celsius=(v-32)*5/9;
+  else celsius=v-273.15;
+  var F = celsius*9/5+32;
+  var K = celsius+273.15;
+  var interpretation = celsius < 35 ? '❄️ Hypothermie' : celsius < 36.5 ? '🔵 Légèrement bas' : celsius <= 37.8 ? '✅ Normal' : celsius <= 38.5 ? '🟡 Fièvre légère' : celsius <= 39.5 ? '🟠 Fièvre modérée' : '🔴 Fièvre élevée';
+  el.innerHTML =
+    '<div class="result-box" style="flex-direction:column;align-items:flex-start;gap:6px">' +
+    '<div><span class="result-num" style="font-size:28px">'+fmt(Math.round(celsius*10)/10)+'</span><span class="result-unit">°C</span></div>' +
+    '<div style="display:flex;gap:14px;font-family:var(--mono);font-size:13px;color:var(--txt2)">' +
+    '<span><strong style="color:var(--txt)">'+fmt(Math.round(F*10)/10)+'</strong> °F</span>' +
+    '<span><strong style="color:var(--txt)">'+fmt(Math.round(K*10)/10)+'</strong> K</span>' +
+    '</div>' +
+    '<div class="result-hint">'+interpretation+'</div>' +
+    '</div>';
+}
+
+function initDose(){
+  // Les inputs existent dans le DOM après render
+  document.getElementById('d-poids').addEventListener('input', calcDose1);
+  document.getElementById('d-mgkg').addEventListener('input', calcDose1);
+  document.getElementById('d-total').addEventListener('input', calcDose2);
+  document.getElementById('d-conc').addEventListener('input', calcDose2);
+  document.getElementById('d-poidsUI').addEventListener('input', calcDose3);
+  document.getElementById('d-uikg').addEventListener('input', calcDose3);
+}
+
+function calcDose1(){
+  var p = parseFloat(document.getElementById('d-poids').value);
+  var d = parseFloat(document.getElementById('d-mgkg').value);
+  var el = document.getElementById('dose1-result');
+  if(isNaN(p)||isNaN(d)){el.innerHTML='<span class="result-empty">Saisissez poids et dose →</span>';return;}
+  var total = p*d;
+  el.innerHTML = '<span class="result-num">'+fmt(total)+'</span><span class="result-unit">mg au total</span><div class="result-hint" style="margin-top:8px">'+p+' kg × '+d+' mg/kg = <strong>'+fmt(total)+' mg</strong></div>';
+}
+
+function calcDose2(){
+  var t = parseFloat(document.getElementById('d-total').value);
+  var c = parseFloat(document.getElementById('d-conc').value);
+  var el = document.getElementById('dose2-result');
+  if(isNaN(t)||isNaN(c)||c===0){el.innerHTML='<span class="result-empty">Saisissez dose et concentration →</span>';return;}
+  var vol = t/c;
+  el.innerHTML = '<span class="result-num">'+fmt(Math.round(vol*100)/100)+'</span><span class="result-unit">mL à prélever</span><div class="result-hint" style="margin-top:8px">'+t+' mg ÷ '+c+' mg/mL = <strong>'+fmt(Math.round(vol*100)/100)+' mL</strong></div>';
+}
+
+function calcDose3(){
+  var p = parseFloat(document.getElementById('d-poidsUI').value);
+  var u = parseFloat(document.getElementById('d-uikg').value);
+  var el = document.getElementById('dose3-result');
+  if(isNaN(p)||isNaN(u)){el.innerHTML='<span class="result-empty">Saisissez poids et dose UI/kg →</span>';return;}
+  var total = p*u;
+  el.innerHTML = '<span class="result-num">'+fmt(Math.round(total*100)/100)+'</span><span class="result-unit">UI au total</span><div class="result-hint" style="margin-top:8px">'+p+' kg × '+u+' UI/kg = <strong>'+fmt(Math.round(total*100)/100)+' UI</strong></div>';
+}
+
+function setO(o){ S.onglet=o; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+render();
+</script>
+</body>
+</html>
