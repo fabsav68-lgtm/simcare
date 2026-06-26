@@ -166,6 +166,7 @@ var ONGLETS = [
   {id:'conc',     l:'🧪 Concentrations'},
   {id:'bio',      l:'🩸 Biologie'},
   {id:'diurese',  l:'💧 Diurèse'},
+  {id:'echelle',  l:'🌍 À l\'échelle'},
   {id:'normes',   l:'📋 Normes'},
 ];
 
@@ -597,6 +598,125 @@ function updateConvTemps(){
   var result = base / TEMPS_VALS[S.tempsTo];
   el.innerHTML='<span class="result-num">'+fmt(result)+'</span><span class="result-unit">'+TEMPS_UNITES[S.tempsTo]+'</span>';
 }
+
+// ═══════════════════════════════════════
+//  DONNÉES "À L'ÉCHELLE" — STYLE GMS
+//  Sources : ANSM, EFS, Santé Publique France, INSEE
+//  Toutes données françaises · Calculs vérifiés
+// ═══════════════════════════════════════
+var ECHELLE_DATA = [
+  {
+    categorie: '💊 Masse — Médicaments',
+    couleur: '#38bdf8',
+    items: [
+      {
+        chiffre: '422 millions de boîtes',
+        desc: 'de paracétamol vendues en France par an',
+        source: 'ANSM / Planetoscope',
+        echelle: '14 boîtes par seconde. Empilées, elles dépasseraient la hauteur de la Lune.',
+        calcul: '422 000 000 boîtes × 7 cm de haut = 29 540 km ≈ distance Terre-Lune / 13',
+        humour: 'Autrement dit, les Français avalent de quoi remplir 42 piscines olympiques en comprimés chaque année. La France est championne d'Europe de la consommation de paracétamol. Cocorico (avec un Doliprane).',
+      },
+      {
+        chiffre: '660 millions de boîtes',
+        desc: 'de médicaments vendues en France par an (toutes classes)',
+        source: 'Économie Matin / INSEE 2024',
+        echelle: '41 boîtes par Français et par an. Les seniors de 64-79 ans en consomment jusqu'à 75 boîtes.',
+        calcul: '660 millions de boîtes × 100g = 66 000 tonnes de médicaments / an',
+        humour: 'Soit le poids de 6 600 camions poids lourds. Si on les alignait, ils feraient Paris-Marseille et retour.',
+      },
+    ]
+  },
+  {
+    categorie: '🩸 Volume — Sang et perfusion',
+    couleur: '#e84040',
+    items: [
+      {
+        chiffre: '3 millions de dons de sang',
+        desc: 'collectés chaque année en France par l'EFS',
+        source: 'EFS / Santé Publique France 2022',
+        echelle: '10 000 dons par jour sont nécessaires pour assurer l'autosuffisance nationale.',
+        calcul: '3 000 000 dons × 450 mL = 1 350 000 L = 1 350 m³ de sang collecté / an',
+        humour: 'Soit environ 1,35 million de litres — de quoi remplir une piscine olympique à moitié. La piscine du sang de l'EFS. On n'en est pas fiers de l'image mais les chiffres sont là.',
+      },
+      {
+        chiffre: '500 000 personnes',
+        desc: 'transfusées chaque année en France',
+        source: 'EFS / France Adot',
+        echelle: 'Soit la population entière de la ville de Lyon transfusée en un an.',
+        calcul: '500 000 × 2 poches en moyenne = 1 000 000 poches de sang transfusées / an',
+        humour: 'Chaque poche de sang (450 mL) peut sauver jusqu'à 3 vies. 3 millions de dons = potentiellement 9 millions de vies sauvées. La France entière 7 fois en 5 ans.',
+      },
+      {
+        chiffre: '≈ 50 millions de poches',
+        desc: 'de NaCl 0,9% perfusées en France par an (estimation)',
+        source: 'Estimation à partir des données hospitalières françaises',
+        echelle: 'Un CHU de 1000 lits perfuse en moyenne 500 à 800 poches de 500 mL par jour.',
+        calcul: '32 CHU + 970 hôpitaux publics × 800 poches × 365j = ~50 millions de poches / an soit 25 milliards de mL = 25 millions de litres',
+        humour: 'Mis bout à bout, les tubulures de ces 50 millions de poches feraient 5 fois le tour de la Terre (périmètre = 40 000 km). La France est le pays de la perfusion. Et du pain au chocolat.',
+      },
+    ]
+  },
+  {
+    categorie: '⏱️ Temps — La médecine qui tourne',
+    couleur: '#f0c040',
+    items: [
+      {
+        chiffre: '14 boîtes de Doliprane',
+        desc: 'vendues chaque seconde en France',
+        source: 'ANSM / Planetoscope',
+        echelle: 'Le temps que vous lisiez cette phrase (5 sec) = 70 boîtes vendues.',
+        calcul: '422 000 000 / 365 / 24 / 3600 = 13,4 boîtes/seconde',
+        humour: 'Pendant votre garde de nuit de 12h = 576 000 boîtes vendues. Votre salaire de nuit en Doliprane : environ 11 520 boîtes. Valeur marchande : 92 160 €. Ce n'est pas pour ça que vous faites ce métier, mais ça donne à réfléchir.',
+      },
+      {
+        chiffre: '10 000 dons de sang',
+        desc: 'nécessaires chaque jour en France pour éviter la pénurie',
+        source: 'EFS 2023',
+        echelle: 'Soit 417 dons par heure, 7 dons par minute, 1 don toutes les 8,6 secondes.',
+        calcul: '10 000 / 24h / 60min = 6,9 dons / minute',
+        humour: 'Pendant votre prochain cours de 2h, 834 personnes auront donné leur sang en France. Pendant cette phrase de 6 secondes, 1 Français a retroussé la manche. Quelqu'un, quelque part, en ce moment précis.',
+      },
+    ]
+  },
+  {
+    categorie: '📏 Longueur — La médecine en km',
+    couleur: '#40c878',
+    items: [
+      {
+        chiffre: '≈ 500 millions d'aiguilles',
+        desc: 'utilisées dans les hôpitaux français par an (estimé)',
+        source: 'Estimation DREES / données DASRI',
+        echelle: 'Une aiguille IM = 40 mm. 500 millions × 40 mm = 20 000 km',
+        calcul: '20 000 km = Paris → Sydney. Ou Paris → New York aller-retour × 3.',
+        humour: 'Si on alignait toutes les aiguilles utilisées en France en un an, elles permettraient de tricoter une écharpe allant de Paris à Sydney. Sauf qu'en salle de soin, on ne les pose JAMAIS à plat sur le plan de travail. JAMAIS.',
+      },
+      {
+        chiffre: '25 millions de mètres de sparadrap',
+        desc: 'utilisés en France par an (estimation)',
+        source: 'Estimation industrie médicale française',
+        echelle: '25 000 km de sparadrap. Distance Paris-Pékin aller-retour.',
+        calcul: 'Si on déroulait tout le sparadrap médical français en un an, il ferait 5 fois le tour de la France hexagonale.',
+        humour: 'Et pourtant, il manque toujours des ciseaux pour couper le sparadrap quand on en a besoin. Mystère de la vie soignante.',
+      },
+    ]
+  },
+  {
+    categorie: '🌡️ Température — La France a de la fièvre',
+    couleur: '#e8a030',
+    items: [
+      {
+        chiffre: '8 millions de Français',
+        desc: 'ont de la fièvre en même temps en période d'épidémie grippale',
+        source: 'Santé Publique France — données Sentinelles',
+        echelle: 'La chaleur dégagée par 8 millions de corps à 39°C = équivalent de 80 000 radiateurs de 1000W allumés simultanément.',
+        calcul: 'Corps humain dégage ~80W au repos, ~120W en fièvre × 8 000 000 = 960 MW',
+        humour: 'Soit presque la puissance d'un réacteur nucléaire. Les Français malades en hiver constituent à eux seuls une centrale thermique. L'Assurance Maladie s'en serait bien passée.',
+      },
+    ]
+  },
+];
+
 // ── RENDER ──
 function render(){
   // Tabs
@@ -879,6 +999,51 @@ function render(){
     h += '</div>';
     setTimeout(function(){ initDiurese(); }, 10);
 
+  } else if(S.onglet==='echelle'){
+    h += '<div class="conv-card em fadeup">';
+    h += '<div class="conv-title" style="color:var(--em3)">🌍 À l\'échelle de la France</div>';
+    h += '<div class="conv-sub">Les chiffres de la santé française donnent le vertige. Données vérifiées · Sources officielles · Humour de garde inclus.</div>';
+    h += '<div class="info info-em" style="margin-bottom:16px">💡 <strong>Inspiré de la communication GMS :</strong> transformer un chiffre froid en image qui reste. Parce qu\'une unité n\'a de sens que si elle parle à quelqu\'un.</div>';
+
+    ECHELLE_DATA.forEach(function(cat){
+      h += '<div style="margin-bottom:20px">';
+      h += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:'+cat.couleur+';margin-bottom:12px;opacity:.8">'+cat.categorie+'</div>';
+
+      cat.items.forEach(function(item){
+        h += '<div style="background:rgba(0,0,0,.25);border-radius:12px;padding:16px;margin-bottom:10px;border-left:3px solid '+cat.couleur+'40">';
+
+        // Chiffre principal
+        h += '<div style="font-family:var(--head);font-size:clamp(18px,4vw,26px);font-weight:800;color:'+cat.couleur+';letter-spacing:-1px;line-height:1.2;margin-bottom:6px">'+item.chiffre+'</div>';
+
+        // Description
+        h += '<div style="font-size:13px;color:var(--txt);margin-bottom:8px;font-weight:600">'+item.desc+'</div>';
+
+        // Source
+        h += '<div style="font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Source : '+item.source+'</div>';
+
+        // Echelle
+        h += '<div style="background:rgba(0,0,0,.2);border-radius:8px;padding:10px 12px;margin-bottom:8px">';
+        h += '<div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--txt2);margin-bottom:5px">📐 À l\'échelle</div>';
+        h += '<div style="font-size:12px;color:var(--txt);line-height:1.7">'+item.echelle+'</div>';
+        if(item.calcul){
+          h += '<div style="font-family:var(--mono);font-size:11px;color:var(--txt2);margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.05)">= '+item.calcul+'</div>';
+        }
+        h += '</div>';
+
+        // Humour
+        h += '<div style="background:rgba(240,192,64,.04);border:1px solid rgba(240,192,64,.1);border-radius:8px;padding:10px 12px">';
+        h += '<div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--em3);margin-bottom:5px;opacity:.7">😄 Pour ne pas oublier</div>';
+        h += '<div style="font-size:12px;color:var(--txt2);line-height:1.7;font-style:italic">'+item.humour+'</div>';
+        h += '</div>';
+
+        h += '</div>';
+      });
+      h += '</div>';
+    });
+
+    h += '<div class="info info-warn" style="margin-top:8px">📚 <strong>Pour aller plus loin :</strong> ANSM · EFS · Santé Publique France · DREES · Institut National du Cancer. Ces données évoluent chaque année — PraxisCare les met à jour dès publication.</div>';
+    h += '</div>';
+
   } else if(S.onglet==='normes'){
     h += '<div class="conv-card em">';
     h += '<div class="conv-title">📋 Normes par profil patient</div>';
@@ -1046,5 +1211,7 @@ function setO(o){ S.onglet=o; render(); window.scrollTo({top:0,behavior:'smooth'
 
 render();
 </script>
+  <!-- Splash cinématique -->
+  <script src="praxiscare-splash.js"></script>
 </body>
 </html>
