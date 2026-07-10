@@ -82,12 +82,14 @@ const PASSWORD = "PraxisForm2026";
 
   const PASSWORD = "PraxisForm26";
 // Vérification automatique via URL
+window.addEventListener('load', function(){
 const urlParams = new URLSearchParams(window.location.search);
 if(urlParams.get('key') === PASSWORD){
 document.getElementById('auth').style.display = 'none';
 document.getElementById('main').style.display = 'block';
 loadData();
 }
+});
 
 function checkPwd(){
 const pwd = document.getElementById('pwd').value;
