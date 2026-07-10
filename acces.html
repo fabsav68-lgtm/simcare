@@ -283,6 +283,21 @@ function valider(){
         heure: new Date().toLocaleTimeString('fr-FR'),
       });
       localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
+fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+"apikey": "sb_publishable_nwWv04VucQKxMtdUzMmhiA_CaNaXFDQA",
+"Authorization": "Bearer sb_publishable_nwWv04VucQKxMtdUzMmhiA_CaNaXFDQA"
+},
+body: JSON.stringify({
+student_code: code,
+student_name: info.promo,
+app: "praxiscare",
+module: "login",
+session_id: code + "_" + Date.now()
+})
+});
 
       // Afficher succès
       input.classList.add('success');
