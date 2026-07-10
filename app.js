@@ -1,5 +1,5 @@
 const SUPABASE_URL="htpps://uhbbwtxmsomqhuvzvoxy.supabase.co";
-const SUPABASE_KEY="sb_publishable_nwWv04ucQKxMtdUzMmhiA_CaNaXFDQA";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyy;
 let state={screen:"login",user:null,mission:null,qIndex:0,selected:null,showFeedback:false,score:0,qStart:null,sim:null,simIndex:0,simScore:0};
 const now=()=>new Date().toISOString(),load=(k,f)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(f)),save=(k,d)=>localStorage.setItem(k,JSON.stringify(d));
 const events=()=>load("praxis_events",[]),profile=()=>load("praxis_profile",{xp:0,streak:1,buddyMode:"none",buddyName:"",passport:{Observer:50,Analyser:50,Prioriser:50,Décider:50,"Se professionnaliser":50}});
