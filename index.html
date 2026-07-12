@@ -430,6 +430,117 @@ if('serviceWorker' in navigator){
 if('caches' in window){
   caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
 }
+  / ══════════════════════════════════════════
+// POINT 1 — Fermeture automatique à la sortie
+// ══════════════════════════════════════════
+document.addEventListener('visibilitychange', function(){
+if(document.visibilityState === 'hidden'){
+// Envoyer le temps passé avant de fermer
+envoyerTempsModule();
+// Effacer la session
+sessionStorage.removeItem('praxiscare_code');
+sessionStorage.removeItem('praxiscare_promo');
+}
+});
+
+// ══════════════════════════════════════════
+// POINT 2 — Tracking temps passé par module
+// ══════════════════════════════════════════
+window._moduleStart = null;
+window._moduleNom = null;
+
+function envoyerTempsModule(){
+if(window._moduleStart && window._moduleNom){
+var tempsPasse = Date.now() - window._moduleStart;
+var codeEtudiant = sessionStorage.getItem('praxiscare_code');
+fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+"apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
+"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+},
+body: JSON.stringify({
+student_code: codeEtudiant,
+app: "praxiscare",
+module: window._moduleNom,
+step: "fermeture",
+time_spent_ms: tempsPasse,
+session_id: codeEtudiant + "_" + window._moduleStart
+})
+});
+window._moduleStart = null;
+window._moduleNom = null;
+}
+}
+
+// ══════════════════════════════════════════
+// POINT 3 — Mode Binôme avec gamification
+// ══════════════════════════════════════════
+var SUPABASE_URL = "https://uhbbwtxmsomqhuvzvoxy.supabase.co";
+var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY";
+
+// Lier un binôme
+function lierBinome(codeBinome){
+var monCode = sessionStorage.getItem('praxiscare_code');
+if(!monCode || !codeBinome) return;
+fetch(SUPABASE_URL + "/rest/v1/praxis", {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+"apikey": SUPABASE_KEY,
+"Authorization": "Bearer " + SUPABASE_KEY
+},
+body: JSON.stringify({
+student_code: monCode,
+app: "praxiscare",
+module: "binome",
+step: codeBinome,
+session_id: monCode + "_binome_" + Date.now()
+})
+}).then(function(){
+localStorage.setItem('praxiscare_binome', codeBinome);
+afficherNotifBinome("Binôme " + codeBinome + " lié ! 🎯");
+});
+}
+
+// Score binôme — modules ouverts en commun
+function scoreBinome(){
+var monCode = sessionStorage.getItem('praxiscare_code');
+var codeBinome = localStorage.getItem('praxiscare_binome');
+if(!monCode || !codeBinome) return;
+// Récupérer les modules de chacun et comparer
+fetch(SUPABASE_URL + "/rest/v1/praxis?student_code=in.(" + monCode + "," + codeBinome + ")&module=neq.login&module=neq.binome&select=student_code,module", {
+headers: {"apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY}
+}).then(function(r){ return r.json(); })
+.then(function(data){
+var moiMods = data.filter(function(d){ return d.student_code === monCode; }).map(function(d){ return d.module; });
+var biномMods = data.filter(function(d){ return d.student_code === codeBinome; }).map(function(d){ return d.module; });
+var communs = moiMods.filter(function(m){ return biномMods.includes(m); });
+var badge = communs.length >= 5 ? "🏆 Expert Binôme" : communs.length >= 3 ? "🥈 Binôme Actif" : communs.length >= 1 ? "🥉 Binôme Débutant" : "⭐ Binôme Inscrit";
+afficherScoreBinome(communs.length, badge);
+});
+}
+
+// Notification binôme
+function afficherNotifBinome(msg){
+var div = document.createElement('div');
+div.style.cssText = "position:fixed;top:20px;right:20px;background:#38bdf8;color:#04090f;padding:12px 20px;border-radius:10px;font-weight:700;z-index:9999;font-size:14px;";
+div.textContent = msg;
+document.body.appendChild(div);
+setTimeout(function(){ div.remove(); }, 3000);
+}
+
+// Afficher score binôme
+function afficherScoreBinome(nb, badge){
+var div = document.createElement('div');
+div.style.cssText = "position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#04090f;border:2px solid #38bdf8;color:#e8edf2;padding:14px 24px;border-radius:12px;font-weight:700;z-index:9999;font-size:13px;text-align:center;";
+div.innerHTML = badge + "<br><span style='color:#5a7080;font-size:11px'>" + nb + " modules en commun</span>";
+document.body.appendChild(div);
+setTimeout(function(){ div.remove(); }, 4000);
+}
+
+
 </script>
 </body>
 </html>
