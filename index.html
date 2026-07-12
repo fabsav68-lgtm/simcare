@@ -399,7 +399,9 @@ function retourAccueil(){
   const home = document.getElementById('home');
 
   frame.style.display = 'none';
-  frame.src = 'about:blank';
+  // Envoyer temps passé
+envoyerTempsModule();
+frame.src = 'about:blank';
   btnRetour.style.display = 'none';
   home.style.display = 'flex';
 }
