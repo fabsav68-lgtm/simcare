@@ -372,6 +372,8 @@ document.addEventListener('visibilitychange', function(){
 <script>
 // Tracking ouverture module
 function trackModule(nom){
+  window._moduleStart = Date.now();
+window._moduleNom = nomModule;
   var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
   if(!stats.modules) stats.modules = {};
   stats.modules[nom] = (stats.modules[nom] || 0) + 1;
