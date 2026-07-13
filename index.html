@@ -370,7 +370,8 @@ document.addEventListener('visibilitychange', function(){
 
 <script src="praxiscare-feedback.js"></script>
 <script>
-  
+  var _moduleStart = null;
+var _moduleNom = null;
 // Tracking ouverture module
 function trackModule(nom){
  var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
