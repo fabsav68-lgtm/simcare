@@ -372,14 +372,11 @@ document.addEventListener('visibilitychange', function(){
 <script>
 // Tracking ouverture module
 function trackModule(nom){
-  window._moduleStart = Date.now();
-window._moduleNom = nomModule;
-  var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
+ var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
   if(!stats.modules) stats.modules = {};
   stats.modules[nom] = (stats.modules[nom] || 0) + 1;
   localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
 }
-
 function ouvrirModule(fichier){
   const frame = document.getElementById('module-frame');
   const btnRetour = document.getElementById('btn-retour');
@@ -388,6 +385,8 @@ function ouvrirModule(fichier){
   // Tracker le module ouvert
   var nomModule = fichier.replace('.html','').replace(/-IFSI$/,'').replace(/Praxis/,'Praxis');
   trackModule(nomModule);
+   window._moduleStart = Date.now();
+  window._moduleNom = nomModule;
   // Envoi Supabase
 var codeEtudiant = sessionStorage.getItem('praxiscare_code');
 fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
