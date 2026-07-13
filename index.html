@@ -113,6 +113,13 @@ footer{
     window.location.replace('acces.html');
   }
 })();
+  // Fermeture automatique quand l'etudiant quitte l'app
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'hidden'){
+    sessionStorage.removeItem('praxiscare_code');
+    sessionStorage.removeItem('praxiscare_promo');
+  }
+});
 </script>
 </head>
 <body>
