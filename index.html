@@ -477,14 +477,14 @@ function envoyerTempsModule(){
       body: JSON.stringify({
         student_code: codeEtudiant,
         app: "praxiscare",
-        module: window._moduleNom,
+        module: _moduleNom,
         step: "fermeture",
         time_spent_ms: tempsPasse,
         session_id: codeEtudiant + "_" + window._moduleStart
       })
     });
-    window._moduleStart = null;
-    window._moduleNom = null;
+    _moduleStart = null;
+    _moduleNom = null;
   }
 }
 
