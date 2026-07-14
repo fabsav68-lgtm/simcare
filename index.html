@@ -456,12 +456,6 @@ if('serviceWorker' in navigator){
 if('caches' in window){
   caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
 }
-  window._moduleStart = null;
-window._moduleNom = null;
-
-function envoyerTempsModule(){
-  moduleStart = null;
-  moduleNom = null;
 
 function envoyerTempsModule(){
   if(_moduleStart && _moduleNom){
