@@ -498,6 +498,115 @@ function envoyerTempsModule(){
 
 // Fermeture automatique apres 5 minutes d inactivite
 var _inactivityTimer = null;
+  // BINOME
+var CODES_VALIDES = ['PRAXIS-A1-001','PRAXIS-A1-002','PRAXIS-A1-003','PRAXIS-A1-004','PRAXIS-A1-005',
+  'PRAXIS-A1-006','PRAXIS-A1-007','PRAXIS-A1-008','PRAXIS-A1-009','PRAXIS-A1-010',
+  'PRAXIS-A2-001','PRAXIS-A2-002','PRAXIS-A2-003','PRAXIS-A2-004','PRAXIS-A2-005',
+  'PRAXIS-A2-006','PRAXIS-A2-007','PRAXIS-A2-008','PRAXIS-A2-009','PRAXIS-A2-010',
+  'PRAXIS-A3-001','PRAXIS-A3-002','PRAXIS-A3-003','PRAXIS-A3-004','PRAXIS-A3-005',
+  'PRAXIS-A3-006','PRAXIS-A3-007','PRAXIS-A3-008','PRAXIS-A3-009','PRAXIS-A3-010'];
+
+function ouvrirBinome(){
+  var overlay = document.getElementById('binome-overlay');
+  overlay.style.display = 'flex';
+  var binomeActuel = localStorage.getItem('praxiscare_binome');
+  var el = document.getElementById('binome-actuel');
+  if(binomeActuel){
+    el.textContent = 'Binôme actuel : ' + binomeActuel;
+  } else {
+    el.textContent = 'Aucun binôme lié pour le moment';
+  }
+  document.getElementById('binome-score').style.display = 'none';
+  document.getElementById('binome-msg').textContent = '';
+}
+
+function fermerBinome(){
+  document.getElementById('binome-overlay').style.display = 'none';
+}
+
+function lierBinome(){
+  var monCode = sessionStorage.getItem('praxiscare_code');
+  var codeBinome = document.getElementById('binome-input').value.trim().toUpperCase();
+  var msg = document.getElementById('binome-msg');
+
+  if(!codeBinome){
+    msg.style.color = '#e84040';
+    msg.textContent = 'Entrez un code binôme.';
+    return;
+  }
+  if(codeBinome === monCode){
+    msg.style.color = '#e84040';
+    msg.textContent = 'Vous ne pouvez pas vous lier à vous-même !';
+    return;
+  }
+  if(CODES_VALIDES.indexOf(codeBinome) === -1){
+    msg.style.color = '#e84040';
+    msg.textContent = 'Ce code n\'est pas un abonné actif.';
+    return;
+  }
+
+  localStorage.setItem('praxiscare_binome', codeBinome);
+  fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+    },
+    body: JSON.stringify({
+      student_code: monCode,
+      app: "praxiscare",
+      module: "binome",
+      step: codeBinome,
+      session_id: monCode + "_binome_" + Date.now()
+    })
+  });
+
+  msg.style.color = '#40c878';
+  msg.textContent = 'Binôme ' + codeBinome + ' lié avec succès ! 🎯';
+  document.getElementById('binome-actuel').textContent = 'Binôme actuel : ' + codeBinome;
+}
+
+function voirScoreBinome(){
+  var monCode = sessionStorage.getItem('praxiscare_code');
+  var codeBinome = localStorage.getItem('praxiscare_binome');
+  var scoreDiv = document.getElementById('binome-score');
+  var msg = document.getElementById('binome-msg');
+
+  if(!codeBinome){
+    msg.style.color = '#e84040';
+    msg.textContent = 'Liez d\'abord un binôme.';
+    return;
+  }
+
+  msg.style.color = '#5a7080';
+  msg.textContent = 'Chargement du score...';
+
+  fetch(`https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis?student_code=in.(${monCode},${codeBinome})&step=eq.ouverture&select=student_code,module`, {
+    headers: {
+      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+    }
+  }).then(r=>r.json()).then(function(data){
+    var moiMods = data.filter(function(d){ return d.student_code === monCode; }).map(function(d){ return d.module; });
+    var biномMods = data.filter(function(d){ return d.student_code === codeBinome; }).map(function(d){ return d.module; });
+    var communs = moiMods.filter(function(m){ return biномMods.indexOf(m) !== -1; });
+    var unique = [...new Set(communs)];
+
+    var badge = unique.length >= 10 ? '🏆 Binôme Expert' :
+                unique.length >= 5  ? '🥈 Binôme Actif' :
+                unique.length >= 1  ? '🥉 Binôme Débutant' : '⭐ Binôme Inscrit';
+
+    scoreDiv.style.display = 'block';
+    scoreDiv.innerHTML =
+      '<div style="text-align:center;font-size:20px;margin-bottom:8px">' + badge + '</div>' +
+      '<div style="color:#5a7080;font-size:12px">Modules explorés en commun : <strong style="color:#38bdf8">' + unique.length + '</strong></div>' +
+      '<div style="color:#5a7080;font-size:12px;margin-top:4px">Votre binôme : <strong style="color:#a060ff">' + codeBinome + '</strong></div>' +
+      (unique.length > 0 ? '<div style="margin-top:8px;font-size:11px;color:#2a3a45">' + unique.join(', ') + '</div>' : '');
+
+    msg.textContent = '';
+  });
+}
 function resetInactivityTimer(){
   clearTimeout(_inactivityTimer);
   _inactivityTimer = setTimeout(function(){
