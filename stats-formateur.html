@@ -102,45 +102,109 @@ document.getElementById('pwdError').textContent = "Mot de passe incorrect.";
 }
 
 
-async function loadData(){
-const res = await fetch(`${SUPABASE_URL}/rest/v1/praxis?order=created_at.desc&limit=200`, {
-headers: {"apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`}
-});
-const data = await res.json();
-
-// Stats globales
-const logins = data.filter(r => r.module === 'login');
-const modules = data.filter(r => r.module !== 'login' && r.module);
-const students = [...new Set(data.filter(r=>r.student_code).map(r=>r.student_code))];
-
-document.getElementById('statLogins').textContent = logins.length;
-document.getElementById('statStudents').textContent = students.length;
-document.getElementById('statModules').textContent = modules.length;
-
-if(data[0]){
-const d = new Date(data[0].created_at);
-document.getElementById('statLast').textContent = d.toLocaleString('fr-FR');
+function msEnTemps(ms){
+  if(!ms) return '—';
+  var s = Math.round(ms/1000);
+  if(s < 60) return s + ' sec';
+  var m = Math.floor(s/60);
+  var sec = s % 60;
+  return m + ' min ' + sec + ' sec';
 }
 
-// Tableau activité récente
-const tbody = document.getElementById('tableBody');
-tbody.innerHTML = data.slice(0,50).map(r => {
-const d = new Date(r.created_at);
-const heure = d.toLocaleString('fr-FR');
-const action = r.module === 'login' ? '<span class="badge login-badge">Connexion</span>' : `<span class="badge">${r.step||'ouverture'}</span>`;
-return `<tr><td>${heure}</td><td>${r.student_code||'—'}</td><td>${r.module||'—'}</td><td>${action}</td></tr>`;
-}).join('');
+async function loadData(){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/praxis?order=created_at.desc&limit=200`, {
+    headers: {"apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`}
+  });
+  const data = await res.json();
 
-// Tableau étudiants
-const studMap = {};
-data.filter(r=>r.student_code).forEach(r=>{
-if(!studMap[r.student_code]) studMap[r.student_code] = {name: r.student_name, first: r.created_at, last: r.created_at};
-if(r.created_at < studMap[r.student_code].first) studMap[r.student_code].first = r.created_at;
-if(r.created_at > studMap[r.student_code].last) studMap[r.student_code].last = r.created_at;
-});
-document.getElementById('studentsBody').innerHTML = Object.entries(studMap).map(([code, info])=>{
-return `<tr><td>${code}</td><td>${info.name||'—'}</td><td>${new Date(info.first).toLocaleString('fr-FR')}</td><td>${new Date(info.last).toLocaleString('fr-FR')}</td></tr>`;
-}).join('');
+  // Stats globales
+  const logins = data.filter(r => r.module === 'login');
+  const ouvertures = data.filter(r => r.step === 'ouverture');
+  const fermetures = data.filter(r => r.step === 'fermeture' && r.time_spent_ms);
+  const students = [...new Set(data.filter(r=>r.student_code).map(r=>r.student_code))];
+  const tempsMoyen = fermetures.length ? Math.round(fermetures.reduce((a,r)=>a+(r.time_spent_ms||0),0)/fermetures.length) : 0;
+
+  document.getElementById('statLogins').textContent = logins.length;
+  document.getElementById('statStudents').textContent = students.length;
+  document.getElementById('statModules').textContent = ouvertures.length;
+  document.getElementById('statLast').textContent = data[0] ? new Date(data[0].created_at).toLocaleString('fr-FR') : '—';
+
+  // Ajouter stat temps moyen si l'élément existe
+  if(document.getElementById('statTemps')){
+    document.getElementById('statTemps').textContent = msEnTemps(tempsMoyen);
+  }
+
+  // Tableau activité récente
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = data.slice(0,50).map(r => {
+    const heure = new Date(r.created_at).toLocaleString('fr-FR');
+    var action = '—';
+    if(r.module === 'login') action = '<span class="badge login-badge">Connexion</span>';
+    else if(r.step === 'ouverture') action = '<span class="badge">Ouverture</span>';
+    else if(r.step === 'fermeture') action = '<span class="badge" style="background:rgba(64,200,120,.1);color:#40c878">Fermeture</span>';
+    var temps = r.time_spent_ms ? msEnTemps(r.time_spent_ms) : '—';
+    return `<tr>
+      <td>${heure}</td>
+      <td>${r.student_code||'—'}</td>
+      <td>${r.module||'—'}</td>
+      <td>${action}</td>
+      <td>${temps}</td>
+    </tr>`;
+  }).join('');
+
+  // Tableau étudiants
+  const studMap = {};
+  data.filter(r=>r.student_code).forEach(r=>{
+    if(!studMap[r.student_code]) studMap[r.student_code] = {
+      name: r.student_name,
+      first: r.created_at,
+      last: r.created_at,
+      connexions: 0,
+      modules: new Set(),
+      tempsTotal: 0
+    };
+    if(r.created_at < studMap[r.student_code].first) studMap[r.student_code].first = r.created_at;
+    if(r.created_at > studMap[r.student_code].last) studMap[r.student_code].last = r.created_at;
+    if(r.module === 'login') studMap[r.student_code].connexions++;
+    if(r.step === 'ouverture' && r.module) studMap[r.student_code].modules.add(r.module);
+    if(r.time_spent_ms) studMap[r.student_code].tempsTotal += r.time_spent_ms;
+  });
+
+  document.getElementById('studentsBody').innerHTML = Object.entries(studMap).map(([code, info])=>{
+    return `<tr>
+      <td>${code}</td>
+      <td>${info.name||'—'}</td>
+      <td>${info.connexions}</td>
+      <td>${info.modules.size}</td>
+      <td>${msEnTemps(info.tempsTotal)}</td>
+      <td>${new Date(info.first).toLocaleString('fr-FR')}</td>
+      <td>${new Date(info.last).toLocaleString('fr-FR')}</td>
+    </tr>`;
+  }).join('');
+
+  // Modules les plus ouverts
+  const modMap = {};
+  ouvertures.forEach(r=>{
+    if(!modMap[r.module]) modMap[r.module] = {ouvertures: 0, tempsTotal: 0, nb: 0};
+    modMap[r.module].ouvertures++;
+  });
+  fermetures.forEach(r=>{
+    if(modMap[r.module]){
+      modMap[r.module].tempsTotal += r.time_spent_ms||0;
+      modMap[r.module].nb++;
+    }
+  });
+
+  const sorted = Object.entries(modMap).sort((a,b)=>b[1].ouvertures-a[1].ouvertures);
+  document.getElementById('modulesBody').innerHTML = sorted.map(([mod, info])=>{
+    var moyTemps = info.nb ? Math.round(info.tempsTotal/info.nb) : 0;
+    return `<tr>
+      <td>${mod}</td>
+      <td>${info.ouvertures}</td>
+      <td>${msEnTemps(moyTemps)}</td>
+    </tr>`;
+  }).join('');
+}
 
 // Modules les plus ouverts
 const modMap = {};
