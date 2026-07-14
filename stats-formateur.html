@@ -32,47 +32,48 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <body>
 
 <div class="password-screen" id="auth">
-<h1>🔐 Accès Formateur</h1>
-<p class="sub">Dashboard PraxisCare</p>
-<input type="password" id="pwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()">
-<button class="btn" onclick="checkPwd()">Entrer</button>
-<p class="error" id="pwdError"></p>
+  <h1>🔐 Accès Formateur</h1>
+  <p class="sub">Dashboard PraxisCare</p>
+  <input type="password" id="pwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()">
+  <button class="btn" onclick="checkPwd()">Entrer</button>
+  <p class="error" id="pwdError"></p>
 </div>
 
 <div id="main">
-<h1>📊 Dashboard Formateur</h1>
-<p class="sub">PraxisCare · Données en temps réel <button class="refresh" onclick="loadData()">↻ Actualiser</button></p>
+  <h1>📊 Dashboard Formateur</h1>
+  <p class="sub">PraxisCare · Données en temps réel <button class="refresh" onclick="loadData()">↻ Actualiser</button></p>
 
-<div class="grid">
-<div class="card"><h3>Connexions</h3><strong id="statLogins">—</strong></div>
-<div class="card"><h3>Étudiants uniques</h3><strong id="statStudents">—</strong></div>
-<div class="card"><h3>Modules ouverts</h3><strong id="statModules">—</strong></div>
-<div class="card"><h3>Dernière activité</h3><strong id="statLast" style="font-size:14px;margin-top:4px">—</strong></div>
-</div>
+  <div class="grid">
+    <div class="card"><h3>Connexions</h3><strong id="statLogins">—</strong></div>
+    <div class="card"><h3>Étudiants uniques</h3><strong id="statStudents">—</strong></div>
+    <div class="card"><h3>Modules ouverts</h3><strong id="statModules">—</strong></div>
+    <div class="card"><h3>Temps moyen/module</h3><strong id="statTemps" style="font-size:16px;margin-top:4px">—</strong></div>
+    <div class="card"><h3>Dernière activité</h3><strong id="statLast" style="font-size:12px;margin-top:4px">—</strong></div>
+  </div>
 
-<div class="section">
-<h2>📋 Activité récente</h2>
-<table>
-<thead><tr><th>Date/Heure</th><th>Code étudiant</th><th>Module</th><th>Action</th></tr></thead>
-<tbody id="tableBody"></tbody>
-</table>
-</div>
+  <div class="section">
+    <h2>📋 Activité récente</h2>
+    <table>
+      <thead><tr><th>Date et heure</th><th>Code étudiant</th><th>Module consulté</th><th>Action</th><th>Temps passé</th></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
 
-<div class="section">
-<h2>👥 Étudiants connectés</h2>
-<table>
-<thead><tr><th>Code</th><th>Promo</th><th>Première connexion</th><th>Dernière activité</th></tr></thead>
-<tbody id="studentsBody"></tbody>
-</table>
-</div>
+  <div class="section">
+    <h2>👥 Suivi par étudiant</h2>
+    <table>
+      <thead><tr><th>Code étudiant</th><th>Promotion</th><th>Connexions</th><th>Modules vus</th><th>Temps total</th><th>1ère connexion</th><th>Dernière activité</th></tr></thead>
+      <tbody id="studentsBody"></tbody>
+    </table>
+  </div>
 
-<div class="section">
-<h2>📚 Modules les plus ouverts</h2>
-<table>
-<thead><tr><th>Module</th><th>Ouvertures</th></tr></thead>
-<tbody id="modulesBody"></tbody>
-</table>
-</div>
+  <div class="section">
+    <h2>📚 Modules les plus consultés</h2>
+    <table>
+      <thead><tr><th>Module</th><th>Nombre d'ouvertures</th><th>Temps moyen passé</th></tr></thead>
+      <tbody id="modulesBody"></tbody>
+    </table>
+  </div>
 </div>
 
 <script>
@@ -80,27 +81,25 @@ const SUPABASE_URL = "https://uhbbwtxmsomqhuvzvoxy.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY";
 const PASSWORD = "PraxisForm2026";
 
-// Vérification automatique via URL
 window.addEventListener('load', function(){
-const urlParams = new URLSearchParams(window.location.search);
-if(urlParams.get('key') === PASSWORD){
-document.getElementById('auth').style.display = 'none';
-document.getElementById('main').style.display = 'block';
-loadData();
-}
+  const urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.get('key') === PASSWORD){
+    document.getElementById('auth').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    loadData();
+  }
 });
 
 function checkPwd(){
-const pwd = document.getElementById('pwd').value;
-if(pwd === PASSWORD){
-document.getElementById('auth').style.display = 'none';
-document.getElementById('main').style.display = 'block';
-loadData();
-} else {
-document.getElementById('pwdError').textContent = "Mot de passe incorrect.";
+  const pwd = document.getElementById('pwd').value;
+  if(pwd === PASSWORD){
+    document.getElementById('auth').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('pwdError').textContent = "Mot de passe incorrect.";
+  }
 }
-}
-
 
 function msEnTemps(ms){
   if(!ms) return '—';
@@ -108,11 +107,11 @@ function msEnTemps(ms){
   if(s < 60) return s + ' sec';
   var m = Math.floor(s/60);
   var sec = s % 60;
-  return m + ' min ' + sec + ' sec';
+  return m + ' min ' + (sec > 0 ? sec + ' sec' : '');
 }
 
 async function loadData(){
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/praxis?order=created_at.desc&limit=200`, {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/praxis?order=created_at.desc&limit=500`, {
     headers: {"apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`}
   });
   const data = await res.json();
@@ -127,32 +126,26 @@ async function loadData(){
   document.getElementById('statLogins').textContent = logins.length;
   document.getElementById('statStudents').textContent = students.length;
   document.getElementById('statModules').textContent = ouvertures.length;
+  document.getElementById('statTemps').textContent = msEnTemps(tempsMoyen);
   document.getElementById('statLast').textContent = data[0] ? new Date(data[0].created_at).toLocaleString('fr-FR') : '—';
 
-  // Ajouter stat temps moyen si l'élément existe
-  if(document.getElementById('statTemps')){
-    document.getElementById('statTemps').textContent = msEnTemps(tempsMoyen);
-  }
-
   // Tableau activité récente
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = data.slice(0,50).map(r => {
+  document.getElementById('tableBody').innerHTML = data.slice(0,50).map(r => {
     const heure = new Date(r.created_at).toLocaleString('fr-FR');
     var action = '—';
     if(r.module === 'login') action = '<span class="badge login-badge">Connexion</span>';
     else if(r.step === 'ouverture') action = '<span class="badge">Ouverture</span>';
     else if(r.step === 'fermeture') action = '<span class="badge" style="background:rgba(64,200,120,.1);color:#40c878">Fermeture</span>';
-    var temps = r.time_spent_ms ? msEnTemps(r.time_spent_ms) : '—';
     return `<tr>
       <td>${heure}</td>
       <td>${r.student_code||'—'}</td>
       <td>${r.module||'—'}</td>
       <td>${action}</td>
-      <td>${temps}</td>
+      <td>${msEnTemps(r.time_spent_ms)}</td>
     </tr>`;
   }).join('');
 
-  // Tableau étudiants
+  // Tableau suivi par étudiant
   const studMap = {};
   data.filter(r=>r.student_code).forEach(r=>{
     if(!studMap[r.student_code]) studMap[r.student_code] = {
@@ -182,37 +175,29 @@ async function loadData(){
     </tr>`;
   }).join('');
 
-  // Modules les plus ouverts
+  // Tableau modules les plus consultés
   const modMap = {};
   ouvertures.forEach(r=>{
     if(!modMap[r.module]) modMap[r.module] = {ouvertures: 0, tempsTotal: 0, nb: 0};
     modMap[r.module].ouvertures++;
   });
   fermetures.forEach(r=>{
-    if(modMap[r.module]){
+    if(r.module && modMap[r.module]){
       modMap[r.module].tempsTotal += r.time_spent_ms||0;
       modMap[r.module].nb++;
     }
   });
 
-  const sorted = Object.entries(modMap).sort((a,b)=>b[1].ouvertures-a[1].ouvertures);
-  document.getElementById('modulesBody').innerHTML = sorted.map(([mod, info])=>{
-    var moyTemps = info.nb ? Math.round(info.tempsTotal/info.nb) : 0;
-    return `<tr>
-      <td>${mod}</td>
-      <td>${info.ouvertures}</td>
-      <td>${msEnTemps(moyTemps)}</td>
-    </tr>`;
-  }).join('');
-}
-
-// Modules les plus ouverts
-const modMap = {};
-modules.forEach(r=>{ modMap[r.module] = (modMap[r.module]||0)+1; });
-const sorted = Object.entries(modMap).sort((a,b)=>b[1]-a[1]);
-document.getElementById('modulesBody').innerHTML = sorted.map(([mod, count])=>{
-return `<tr><td>${mod}</td><td><strong>${count}</strong></td></tr>`;
-}).join('');
+  document.getElementById('modulesBody').innerHTML = Object.entries(modMap)
+    .sort((a,b)=>b[1].ouvertures-a[1].ouvertures)
+    .map(([mod, info])=>{
+      var moyTemps = info.nb ? Math.round(info.tempsTotal/info.nb) : 0;
+      return `<tr>
+        <td>${mod}</td>
+        <td>${info.ouvertures}</td>
+        <td>${msEnTemps(moyTemps)}</td>
+      </tr>`;
+    }).join('');
 }
 </script>
 </body>
