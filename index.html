@@ -464,8 +464,8 @@ function envoyerTempsModule(){
   moduleNom = null;
 
 function envoyerTempsModule(){
-  if(window._moduleStart && window._moduleNom){
-    var tempsPasse = Date.now() - window._moduleStart;
+  if(_moduleStart && _moduleNom){
+    var tempsPasse = Date.now() - _moduleStart;
     var codeEtudiant = sessionStorage.getItem('praxiscare_code');
     fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
       method: "POST",
@@ -480,7 +480,7 @@ function envoyerTempsModule(){
         module: _moduleNom,
         step: "fermeture",
         time_spent_ms: tempsPasse,
-        session_id: codeEtudiant + "_" + window._moduleStart
+        session_id: codeEtudiant + "_" + _moduleStart
       })
     });
     _moduleStart = null;
@@ -488,7 +488,7 @@ function envoyerTempsModule(){
   }
 }
 
-// Fermeture automatique apres 10 minutes d inactivite
+// Fermeture automatique apres 5 minutes d inactivite
 var _inactivityTimer = null;
 function resetInactivityTimer(){
   clearTimeout(_inactivityTimer);
