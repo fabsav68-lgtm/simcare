@@ -14,92 +14,32 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#04090f}
-
-/* ── ÉCRAN D'ACCUEIL ── */
-#home{
-  position:fixed;inset:0;
-  background:linear-gradient(160deg,#04090f 0%,#071220 55%,#04090f 100%);
-  color:#e8edf2;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  font-family:'Syne',system-ui,sans-serif;
-  display:flex;flex-direction:column;
-}
-
-/* ── IFRAME MODULE ── */
-#module-frame{
-  position:fixed;inset:0;
-  width:100%;height:100%;
-  border:none;
-  display:none;
-  background:#04090f;
-  z-index:100;
-}
-
-/* ── BOUTON RETOUR ── */
-#btn-retour{
-  position:fixed;top:env(safe-area-inset-top, 12px);left:16px;
-  z-index:200;display:none;
-  background:rgba(4,9,15,.9);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:20px;padding:8px 16px;
-  color:#e8edf2;font-size:14px;font-weight:600;
-  cursor:pointer;backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  font-family:system-ui,sans-serif;
-}
-
-/* ── STYLES HOME ── */
-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.07);
-  background:rgba(4,9,15,.9);position:sticky;top:0;z-index:10;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-}
+#home{position:fixed;inset:0;background:linear-gradient(160deg,#04090f 0%,#071220 55%,#04090f 100%);color:#e8edf2;overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:'Syne',system-ui,sans-serif;display:flex;flex-direction:column;}
+#module-frame{position:fixed;inset:0;width:100%;height:100%;border:none;display:none;background:#04090f;z-index:100;}
+#btn-retour{position:fixed;top:env(safe-area-inset-top, 12px);left:16px;z-index:200;display:none;background:rgba(4,9,15,.9);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:8px 16px;color:#e8edf2;font-size:14px;font-weight:600;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-family:system-ui,sans-serif;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(4,9,15,.9);position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
 .nav-logo{font-size:22px;font-weight:700;color:#f0f4f8;font-family:Georgia,serif}
 .nav-logo span{color:#38bdf8}
 .nav-tag{font-size:10px;letter-spacing:2px;color:#2a3a45;border:1px solid rgba(255,255,255,.07);padding:3px 10px;border-radius:20px;font-family:monospace}
-
 .hero{text-align:center;padding:48px 24px 36px}
 .hero-badge{display:inline-block;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:#38bdf8;padding:4px 14px;border-radius:20px;font-size:11px;letter-spacing:2px;font-family:monospace;margin-bottom:18px}
 .hero h1{font-family:Georgia,serif;font-size:clamp(36px,7vw,64px);font-weight:300;line-height:1.1;letter-spacing:-1px;margin-bottom:14px}
 .hero h1 em{font-style:italic;color:#38bdf8}
 .hero h1 strong{font-weight:700}
 .hero p{font-size:15px;color:#5a7080;line-height:1.75;max-width:440px;margin:0 auto}
-
-.modules-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:12px;padding:0 20px 40px;max-width:680px;margin:0 auto;width:100%;
-}
+.modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 40px;max-width:680px;margin:0 auto;width:100%;}
 @media(max-width:380px){.modules-grid{grid-template-columns:1fr}}
-
-.module-card{
-  border-radius:16px;padding:18px 16px;
-  border:1.5px solid rgba(255,255,255,.08);
-  background:rgba(255,255,255,.03);
-  display:flex;flex-direction:column;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .15s,opacity .15s;
-  user-select:none;-webkit-user-select:none;
-}
+.module-card{border-radius:16px;padding:18px 16px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);display:flex;flex-direction:column;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,opacity .15s;user-select:none;-webkit-user-select:none;}
 .module-card:active{transform:scale(.97);opacity:.85}
 .module-num{font-family:monospace;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.2);margin-bottom:10px}
 .module-icon{font-size:28px;margin-bottom:8px}
 .module-name{font-size:22px;font-weight:700;letter-spacing:-1px;margin-bottom:3px;line-height:1}
 .module-sub{font-size:11px;color:#5a7080;margin-bottom:8px}
 .module-desc{font-size:12px;color:#5a7080;line-height:1.6;flex:1;margin-bottom:12px}
-.module-btn{
-  display:block;text-align:center;padding:9px;border-radius:8px;
-  font-size:12px;font-weight:700;border:1.5px solid transparent;
-}
-
-footer{
-  border-top:1px solid rgba(255,255,255,.07);
-  padding:24px 20px;text-align:center;
-  font-size:11px;color:#2a3a45;font-family:monospace;
-}
+.module-btn{display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:700;border:1.5px solid transparent;}
+footer{border-top:1px solid rgba(255,255,255,.07);padding:24px 20px;text-align:center;font-size:11px;color:#2a3a45;font-family:monospace;}
 </style>
 <script>
-// Vérification session PraxisCare
 (function(){
   var CODES = ['PRAXIS-A1-001','PRAXIS-A1-002','PRAXIS-A1-003','PRAXIS-A1-004','PRAXIS-A1-005',
     'PRAXIS-A1-006','PRAXIS-A1-007','PRAXIS-A1-008','PRAXIS-A1-009','PRAXIS-A1-010',
@@ -113,7 +53,6 @@ footer{
     window.location.replace('acces.html');
   }
 })();
-  // Fermeture automatique quand l'etudiant quitte l'app
 document.addEventListener('visibilitychange', function(){
   if(document.visibilityState === 'hidden'){
     sessionStorage.removeItem('praxiscare_code');
@@ -122,353 +61,274 @@ document.addEventListener('visibilitychange', function(){
 });
 </script>
 </head>
-  <div id="binome-overlay" style="display:none;position:fixed;inset:0;background:rgba(4,9,15,.95);z-index:300;display:none;align-items:center;justify-content:center;">
+<body>
+
+<button id="btn-retour" onclick="retourAccueil()">PraxisCare</button>
+<iframe id="module-frame" src="" allowfullscreen></iframe>
+
+<div id="home">
+  <nav>
+    <div class="nav-logo">Sim<span>Care</span></div>
+    <div class="nav-tag">IFSI 2026</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-badge">Suite pedagogique - 23 modules</div>
+    <h1><em>L'intuition</em> <strong>clinique</strong><br>ne s'enseigne pas<br>par les formules</h1>
+    <p>Referentiel 2026 - Domaines A - B - C - D</p>
+  </div>
+
+  <div class="modules-grid">
+    <div class="module-card" onclick="ouvrirModule('PraxisO2-IFSI.html')" style="border-color:rgba(56,189,248,.2)">
+      <div class="module-num">MODULE 01</div>
+      <div class="module-icon">🫁</div>
+      <div class="module-name" style="color:#38bdf8">PraxisO2</div>
+      <div class="module-sub">Oxygenotherapie - B.3</div>
+      <div class="module-desc">FiO2, SpO2, volume courant - pour ce patient precis.</div>
+      <div class="module-btn" style="background:rgba(56,189,248,.1);color:#38bdf8;border-color:rgba(56,189,248,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisPerf-IFSI.html')" style="border-color:rgba(212,168,83,.2)">
+      <div class="module-num">MODULE 02</div>
+      <div class="module-icon">💉</div>
+      <div class="module-name" style="color:#d4a853">PraxisPerf</div>
+      <div class="module-sub">Perfusion IV - B.3</div>
+      <div class="module-desc">Comprendre ce que 125 mL/h represente pour ce patient.</div>
+      <div class="module-btn" style="background:rgba(212,168,83,.1);color:#d4a853;border-color:rgba(212,168,83,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisGluco-IFSI.html')" style="border-color:rgba(94,203,122,.2)">
+      <div class="module-num">MODULE 03</div>
+      <div class="module-icon">🩸</div>
+      <div class="module-name" style="color:#5ecb7a">PraxisGluco</div>
+      <div class="module-sub">Glycemie et Insuline - B.1 - B.3</div>
+      <div class="module-desc">Glycemie liee au profil patient et a la courbe insuline.</div>
+      <div class="module-btn" style="background:rgba(94,203,122,.1);color:#5ecb7a;border-color:rgba(94,203,122,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisContention-IFSI.html')" style="border-color:rgba(184,160,232,.2)">
+      <div class="module-num">MODULE 04</div>
+      <div class="module-icon">🩹</div>
+      <div class="module-name" style="color:#b8a0e8">PraxisContention</div>
+      <div class="module-sub">Contention veineuse - B.3</div>
+      <div class="module-desc">Mesures, classes, retour veineux - pour ce patient.</div>
+      <div class="module-btn" style="background:rgba(184,160,232,.1);color:#b8a0e8;border-color:rgba(184,160,232,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisAlmanach-IFSI.html')" style="border-color:rgba(192,57,43,.2)">
+      <div class="module-num">MODULE 05</div>
+      <div class="module-icon">📰</div>
+      <div class="module-name" style="color:#c0392b">PraxisAlmanach</div>
+      <div class="module-sub">Almanach du soignant - C.1</div>
+      <div class="module-desc">Actu sante, humour soignant, petites annonces nationales.</div>
+      <div class="module-btn" style="background:rgba(192,57,43,.1);color:#c0392b;border-color:rgba(192,57,43,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisDouleur-IFSI.html')" style="border-color:rgba(232,96,74,.2)">
+      <div class="module-num">MODULE 06</div>
+      <div class="module-icon">🌡️</div>
+      <div class="module-name" style="color:#e8604a">PraxisDouleur</div>
+      <div class="module-sub">Evaluation douleur - B.3 - A.1</div>
+      <div class="module-desc">EN, EVA, FLACC, DOLOPLUS-2 - bonne echelle pour ce profil.</div>
+      <div class="module-btn" style="background:rgba(232,96,74,.1);color:#e8604a;border-color:rgba(232,96,74,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisConstantes-IFSI.html')" style="border-color:rgba(64,176,248,.2)">
+      <div class="module-num">MODULE 07</div>
+      <div class="module-icon">📊</div>
+      <div class="module-name" style="color:#40b0f8">PraxisConstantes</div>
+      <div class="module-sub">Constantes vitales - B.1</div>
+      <div class="module-desc">FC, FR, PA, SpO2, NFS - normes adaptees a ce patient.</div>
+      <div class="module-btn" style="background:rgba(64,176,248,.1);color:#40b0f8;border-color:rgba(64,176,248,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisRevision-IFSI.html')" style="border-color:rgba(160,96,255,.2)">
+      <div class="module-num">MODULE 08</div>
+      <div class="module-icon">📚</div>
+      <div class="module-name" style="color:#a060ff">PraxisRevision</div>
+      <div class="module-sub">QCM - Cas cliniques - A-B-C-D</div>
+      <div class="module-desc">Entrainement actif pour les 3 annees IFSI.</div>
+      <div class="module-btn" style="background:rgba(160,96,255,.1);color:#a060ff;border-color:rgba(160,96,255,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisEnvironnement-IFSI.html')" style="border-color:rgba(126,203,80,.2)">
+      <div class="module-num">MODULE 09</div>
+      <div class="module-icon">🌿</div>
+      <div class="module-name" style="color:#7ecb50">PraxisEnvironnement</div>
+      <div class="module-sub">Sante environnementale - C.2</div>
+      <div class="module-desc">One Health, risques climatiques, eco-soins - UE C.2 pionnier.</div>
+      <div class="module-btn" style="background:rgba(126,203,80,.1);color:#7ecb50;border-color:rgba(126,203,80,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisConsultation-IFSI.html')" style="border-color:rgba(212,168,83,.2)">
+      <div class="module-num">MODULE 10</div>
+      <div class="module-icon">📋</div>
+      <div class="module-name" style="color:#d4a853">PraxisConsultation</div>
+      <div class="module-sub">Consultation IDE - A.1 - B.3</div>
+      <div class="module-desc">Anamnese, diagnostic infirmier, prescription encadree 2026.</div>
+      <div class="module-btn" style="background:rgba(212,168,83,.1);color:#d4a853;border-color:rgba(212,168,83,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisPsy-IFSI.html')" style="border-color:rgba(155,143,212,.2)">
+      <div class="module-num">MODULE 11</div>
+      <div class="module-icon">🧠</div>
+      <div class="module-name" style="color:#9b8fd4">PraxisPsy</div>
+      <div class="module-sub">Sante mentale - D.1</div>
+      <div class="module-desc">Troubles psychiques, crise suicidaire, urgences psy.</div>
+      <div class="module-btn" style="background:rgba(155,143,212,.1);color:#9b8fd4;border-color:rgba(155,143,212,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisPediatrie-IFSI.html')" style="border-color:rgba(76,184,232,.2)">
+      <div class="module-num">MODULE 12</div>
+      <div class="module-icon">👶</div>
+      <div class="module-name" style="color:#4cb8e8">PraxisPediatrie</div>
+      <div class="module-sub">Soins de l'enfant - B.3 - D.2</div>
+      <div class="module-desc">Normes par age, douleur pediatrique, protection de l'enfant.</div>
+      <div class="module-btn" style="background:rgba(76,184,232,.1);color:#4cb8e8;border-color:rgba(76,184,232,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisTACA-Theorie-IFSI.html')" style="border-color:rgba(88,166,255,.2)">
+      <div class="module-num">MODULE 13</div>
+      <div class="module-icon">📚</div>
+      <div class="module-name" style="color:#58a6ff">PraxisTACA Theorie</div>
+      <div class="module-sub">TACA - 70h/semestre - S1 a S6</div>
+      <div class="module-desc">420h de travail autonome en IFSI - planning et objectifs.</div>
+      <div class="module-btn" style="background:rgba(88,166,255,.1);color:#58a6ff;border-color:rgba(88,166,255,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisTACA-Stage-IFSI.html')" style="border-color:rgba(63,185,80,.2)">
+      <div class="module-num">MODULE 14</div>
+      <div class="module-icon">🏥</div>
+      <div class="module-name" style="color:#3fb950">PraxisTACA Stage</div>
+      <div class="module-sub">TACA - 5h/semaine - S1 a S6</div>
+      <div class="module-desc">Journal Gibbs, entretiens mi-stage et fin de stage.</div>
+      <div class="module-btn" style="background:rgba(63,185,80,.1);color:#3fb950;border-color:rgba(63,185,80,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisLead-IFSI.html')" style="border-color:rgba(240,160,48,.2)">
+      <div class="module-num">MODULE 15</div>
+      <div class="module-icon">⚡</div>
+      <div class="module-name" style="color:#f0a030">PraxisLead</div>
+      <div class="module-sub">Domaine D - Leadership - Inter-pro</div>
+      <div class="module-desc">SBAR, delegation IDE, coordination interprofessionnelle.</div>
+      <div class="module-btn" style="background:rgba(240,160,48,.1);color:#f0a030;border-color:rgba(240,160,48,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisPICO-IFSI.html')" style="border-color:rgba(0,200,160,.2)">
+      <div class="module-num">MODULE 16</div>
+      <div class="module-icon">🔬</div>
+      <div class="module-name" style="color:#00c8a0">PraxisPICO</div>
+      <div class="module-sub">E.1 - Recherche - Donnees probantes</div>
+      <div class="module-desc">PubMed, Cochrane, HAS - pratique fondee sur les preuves.</div>
+      <div class="module-btn" style="background:rgba(0,200,160,.1);color:#00c8a0;border-color:rgba(0,200,160,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisPrevention-IFSI.html')" style="border-color:rgba(232,168,64,.2)">
+      <div class="module-num">MODULE 17</div>
+      <div class="module-icon">🏡</div>
+      <div class="module-name" style="color:#e8a840">PraxisPrevention</div>
+      <div class="module-sub">C.1 - Domicile - Infirmier referent</div>
+      <div class="module-desc">Bilans aux ages cles, suivi ALD, ETP, vaccination sans ordonnance.</div>
+      <div class="module-btn" style="background:rgba(232,168,64,.1);color:#e8a840;border-color:rgba(232,168,64,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisNumerique-IFSI.html')" style="border-color:rgba(56,200,255,.2)">
+      <div class="module-num">MODULE 18</div>
+      <div class="module-icon">💻</div>
+      <div class="module-name" style="color:#38c8ff">PraxisNumerique</div>
+      <div class="module-sub">Numerique en sante - DPI - RGPD - IA</div>
+      <div class="module-desc">DPI interactif, telesurveillance, RGPD sante, IA clinique.</div>
+      <div class="module-btn" style="background:rgba(56,200,255,.1);color:#38c8ff;border-color:rgba(56,200,255,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisIPA-IFSI.html')" style="border-color:rgba(200,160,96,.2)">
+      <div class="module-num">MODULE 19</div>
+      <div class="module-icon">🎓</div>
+      <div class="module-name" style="color:#c8a060">PraxisIPA</div>
+      <div class="module-sub">Pratique avancee - 5 mentions - Master</div>
+      <div class="module-desc">Les 5 mentions IPA, comparatif IDE/IPA, formation master.</div>
+      <div class="module-btn" style="background:rgba(200,160,96,.1);color:#c8a060;border-color:rgba(200,160,96,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisUrgences-IFSI.html')" style="border-color:rgba(232,48,48,.2)">
+      <div class="module-num">MODULE 20</div>
+      <div class="module-icon">🚨</div>
+      <div class="module-name" style="color:#e83030">PraxisUrgences</div>
+      <div class="module-sub">Urgences - ABCDE - IDE seul</div>
+      <div class="module-desc">ABCDE, arret cardiaque, detresse respiratoire, choc, AVC.</div>
+      <div class="module-btn" style="background:rgba(232,48,48,.1);color:#e83030;border-color:rgba(232,48,48,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisConversions-IFSI.html')" style="border-color:rgba(240,192,64,.2);grid-column:span 2">
+      <div class="module-num">MODULE 21</div>
+      <div class="module-icon">⚗️</div>
+      <div class="module-name" style="color:#f0c040">PraxisConversions</div>
+      <div class="module-sub">Masse - Volume - Debit - Dose/kg - Temperature - Pression</div>
+      <div class="module-desc">Convertisseur clinique interactif + calculatrice dose/kg + normes par profil patient.</div>
+      <div class="module-btn" style="background:rgba(240,192,64,.1);color:#f0c040;border-color:rgba(240,192,64,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="ouvrirModule('PraxisTransfusion-IFSI.html')" style="border-color:rgba(220,80,80,.2)">
+      <div class="module-num">MODULE 22</div>
+      <div class="module-icon">🩸</div>
+      <div class="module-name" style="color:#dc5050">PraxisTransfusion</div>
+      <div class="module-sub">Transfusion - B.3 - Instruction DGS 2026</div>
+      <div class="module-desc">Instruction n 2026/97 du 19 juin 2026 - 5 etapes reglementaires.</div>
+      <div class="module-btn" style="background:rgba(220,80,80,.1);color:#dc5050;border-color:rgba(220,80,80,.3)">Ouvrir</div>
+    </div>
+    <div class="module-card" onclick="window.open('https://fabsav68-lgtm.github.io/praxis/','_blank')" style="border-color:rgba(160,96,255,.2);grid-column:span 2">
+      <div class="module-num">MODULE 23</div>
+      <div class="module-icon">🎯</div>
+      <div class="module-name" style="color:#a060ff">PraxisAcademy</div>
+      <div class="module-sub">QCM chronometres - UE 2.1 - 13 missions - 75 questions</div>
+      <div class="module-desc">Revisions actives par competences - atomes, ions, pH, eau, cellule, sang, muscles.</div>
+      <div class="module-btn" style="background:rgba(160,96,255,.1);color:#a060ff;border-color:rgba(160,96,255,.3)">Ouvrir</div>
+    </div>
+  </div>
+
+  <footer>
+    Formateur certifie PRAP 2S - BCI - contact@praxiscare.fr<br>
+    Referentiel IDE 2026 - Arrete du 20 fevrier 2026
+    <br><a href="stats-formateur.html" style="color:rgba(255,255,255,.1);font-size:10px;text-decoration:none">acces formateur</a>
+    <br><button onclick="ouvrirBinome()" style="background:none;border:none;color:rgba(56,189,248,.5);font-size:10px;cursor:pointer;font-family:monospace;margin-top:8px">Mon Binome</button>
+  </footer>
+</div>
+
+<!-- POPUP BINOME -->
+<div id="binome-overlay" style="display:none;position:fixed;inset:0;background:rgba(4,9,15,.95);z-index:300;align-items:center;justify-content:center;">
   <div style="background:#0d1821;border:1px solid rgba(56,189,248,.2);border-radius:16px;padding:24px;max-width:320px;width:90%;text-align:center">
-    <h2 style="color:#38bdf8;font-size:18px;margin-bottom:8px">👥 Mon Binôme</h2>
-    <p style="color:#5a7080;font-size:12px;margin-bottom:16px">Entrez le code de votre binôme. Les deux étudiants doivent être abonnés.</p>
+    <h2 style="color:#38bdf8;font-size:18px;margin-bottom:8px">Mon Binome</h2>
+    <p style="color:#5a7080;font-size:12px;margin-bottom:16px">Entrez le code de votre binome. Les deux etudiants doivent etre abonnes.</p>
     <div id="binome-actuel" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.15);border-radius:8px;padding:10px;margin-bottom:16px;font-size:13px;color:#38bdf8"></div>
     <input id="binome-input" placeholder="PRAXIS-A2-XXX" style="width:100%;padding:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8edf2;font-size:14px;text-align:center;text-transform:uppercase;margin-bottom:8px">
-    <button onclick="lierBinome()" style="width:100%;padding:10px;background:#38bdf8;color:#04090f;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin-bottom:8px">Lier ce binôme</button>
-    <button onclick="voirScoreBinome()" style="width:100%;padding:10px;background:rgba(160,96,255,.1);color:#a060ff;border:1px solid rgba(160,96,255,.2);border-radius:8px;font-weight:700;cursor:pointer;margin-bottom:8px">🏆 Voir notre score commun</button>
+    <button onclick="lierBinome()" style="width:100%;padding:10px;background:#38bdf8;color:#04090f;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin-bottom:8px">Lier ce binome</button>
+    <button onclick="voirScoreBinome()" style="width:100%;padding:10px;background:rgba(160,96,255,.1);color:#a060ff;border:1px solid rgba(160,96,255,.2);border-radius:8px;font-weight:700;cursor:pointer;margin-bottom:8px">Voir notre score commun</button>
     <div id="binome-msg" style="font-size:12px;margin-bottom:12px"></div>
     <div id="binome-score" style="display:none;background:rgba(255,255,255,.04);border-radius:8px;padding:12px;margin-bottom:12px;text-align:left"></div>
     <button onclick="fermerBinome()" style="background:none;border:1px solid rgba(255,255,255,.1);color:#5a7080;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:12px">Fermer</button>
   </div>
 </div>
-<body>
-
-<!-- Bouton retour flottant -->
-<button id="btn-retour" onclick="retourAccueil()">← PraxisCare</button>
-
-<!-- Iframe pour les modules -->
-<iframe id="module-frame" src="" allowfullscreen></iframe>
-
-<!-- Écran d'accueil -->
-<div id="home">
-  <nav>
-    <div class="nav-logo">Sim<span>Care</span></div>
-    <div class="nav-tag">IFSI · 2026</div>
-  </nav>
-
-  <div class="hero">
-    <div class="hero-badge">Suite pédagogique · 20 modules</div>
-    <h1><em>L'intuition</em> <strong>clinique</strong><br>ne s'enseigne pas<br>par les formules</h1>
-    <p>Référentiel 2026 · Domaines A · B · C · D</p>
-  </div>
-
-  <div class="modules-grid">
-
-    <div class="module-card" onclick="ouvrirModule('PraxisO2-IFSI.html')" style="border-color:rgba(56,189,248,.2)">
-      <div class="module-num">MODULE 01</div>
-      <div class="module-icon">🫁</div>
-      <div class="module-name" style="color:#38bdf8">PraxisO₂</div>
-      <div class="module-sub">Oxygénothérapie · B.3</div>
-      <div class="module-desc">FiO₂, SpO₂, volume courant — pour ce patient précis.</div>
-      <div class="module-btn" style="background:rgba(56,189,248,.1);color:#38bdf8;border-color:rgba(56,189,248,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisPerf-IFSI.html')" style="border-color:rgba(212,168,83,.2)">
-      <div class="module-num">MODULE 02</div>
-      <div class="module-icon">💉</div>
-      <div class="module-name" style="color:#d4a853">PraxisPerf</div>
-      <div class="module-sub">Perfusion IV · B.3</div>
-      <div class="module-desc">Comprendre ce que 125 mL/h représente pour ce patient.</div>
-      <div class="module-btn" style="background:rgba(212,168,83,.1);color:#d4a853;border-color:rgba(212,168,83,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisGluco-IFSI.html')" style="border-color:rgba(94,203,122,.2)">
-      <div class="module-num">MODULE 03</div>
-      <div class="module-icon">🩸</div>
-      <div class="module-name" style="color:#5ecb7a">PraxisGluco</div>
-      <div class="module-sub">Glycémie & Insuline · B.1 · B.3</div>
-      <div class="module-desc">Glycémie liée au profil patient et à la courbe insuline.</div>
-      <div class="module-btn" style="background:rgba(94,203,122,.1);color:#5ecb7a;border-color:rgba(94,203,122,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisContention-IFSI.html')" style="border-color:rgba(184,160,232,.2)">
-      <div class="module-num">MODULE 04</div>
-      <div class="module-icon">
-        <svg width="32" height="40" viewBox="0 0 90 110" fill="none">
-          <path d="M28 8 C26 8 22 10 21 18 L18 85 C17 92 20 100 26 104 C30 107 36 108 42 107 C52 106 60 101 62 95 C64 89 62 82 58 78 L54 72 L54 18 C54 10 50 8 48 8 Z" fill="rgba(184,160,232,0.75)"/>
-          <rect x="21" y="5" width="33" height="6" rx="3" fill="#b8a0e8"/>
-          <line x1="22" y1="22" x2="53" y2="22" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
-          <line x1="21" y1="32" x2="53" y2="32" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
-          <line x1="21" y1="43" x2="53" y2="43" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
-        </svg>
-      </div>
-      <div class="module-name" style="color:#b8a0e8">PraxisContention</div>
-      <div class="module-sub">Contention veineuse · B.3</div>
-      <div class="module-desc">Mesures, classes, retour veineux — pour ce patient.</div>
-      <div class="module-btn" style="background:rgba(184,160,232,.1);color:#b8a0e8;border-color:rgba(184,160,232,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisAlmanach-IFSI.html')" style="border-color:rgba(192,57,43,.2)">
-      <div class="module-num">MODULE 05</div>
-      <div class="module-icon">📰</div>
-      <div class="module-name" style="color:#c0392b">PraxisAlmanach</div>
-      <div class="module-sub">Almanach du soignant · C.1</div>
-      <div class="module-desc">Actu santé, humour soignant, petites annonces nationales.</div>
-      <div class="module-btn" style="background:rgba(192,57,43,.1);color:#c0392b;border-color:rgba(192,57,43,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisDouleur-IFSI.html')" style="border-color:rgba(232,96,74,.2)">
-      <div class="module-num">MODULE 06</div>
-      <div class="module-icon">🌡️</div>
-      <div class="module-name" style="color:#e8604a">PraxisDouleur</div>
-      <div class="module-sub">Évaluation douleur · B.3 · A.1</div>
-      <div class="module-desc">EN, EVA, FLACC, DOLOPLUS-2 — bonne échelle pour ce profil.</div>
-      <div class="module-btn" style="background:rgba(232,96,74,.1);color:#e8604a;border-color:rgba(232,96,74,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisConstantes-IFSI.html')" style="border-color:rgba(64,176,248,.2)">
-      <div class="module-num">MODULE 07</div>
-      <div class="module-icon">📊</div>
-      <div class="module-name" style="color:#40b0f8">PraxisConstantes</div>
-      <div class="module-sub">Constantes vitales · B.1</div>
-      <div class="module-desc">FC, FR, PA, SpO₂, NFS — normes adaptées à ce patient.</div>
-      <div class="module-btn" style="background:rgba(64,176,248,.1);color:#40b0f8;border-color:rgba(64,176,248,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisRevision-IFSI.html')" style="border-color:rgba(160,96,255,.2)">
-      <div class="module-num">MODULE 08</div>
-      <div class="module-icon">📚</div>
-      <div class="module-name" style="color:#a060ff">PraxisRévision</div>
-      <div class="module-sub">QCM · Cas cliniques · A·B·C·D</div>
-      <div class="module-desc">Entraînement actif pour les 3 années IFSI.</div>
-      <div class="module-btn" style="background:rgba(160,96,255,.1);color:#a060ff;border-color:rgba(160,96,255,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisEnvironnement-IFSI.html')" style="border-color:rgba(126,203,80,.2)">
-      <div class="module-num">MODULE 09</div>
-      <div class="module-icon">🌿</div>
-      <div class="module-name" style="color:#7ecb50">PraxisEnvironnement</div>
-      <div class="module-sub">Santé environnementale · C.2</div>
-      <div class="module-desc">One Health, risques climatiques, éco-soins — UE C.2 pionnier.</div>
-      <div class="module-btn" style="background:rgba(126,203,80,.1);color:#7ecb50;border-color:rgba(126,203,80,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisConsultation-IFSI.html')" style="border-color:rgba(212,168,83,.2)">
-      <div class="module-num">MODULE 10</div>
-      <div class="module-icon">📋</div>
-      <div class="module-name" style="color:#d4a853">PraxisConsultation</div>
-      <div class="module-sub">Consultation IDE · A.1 · B.3</div>
-      <div class="module-desc">Anamnèse, diagnostic infirmier, prescription encadrée 2026.</div>
-      <div class="module-btn" style="background:rgba(212,168,83,.1);color:#d4a853;border-color:rgba(212,168,83,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisPsy-IFSI.html')" style="border-color:rgba(155,143,212,.2)">
-      <div class="module-num">MODULE 11</div>
-      <div class="module-icon">🧠</div>
-      <div class="module-name" style="color:#9b8fd4">PraxisPsy</div>
-      <div class="module-sub">Santé mentale · D.1</div>
-      <div class="module-desc">Troubles psychiques, crise suicidaire, urgences psy — rôle IDE en psychiatrie.</div>
-      <div class="module-btn" style="background:rgba(155,143,212,.1);color:#9b8fd4;border-color:rgba(155,143,212,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisPediatrie-IFSI.html')" style="border-color:rgba(76,184,232,.2)">
-      <div class="module-num">MODULE 12</div>
-      <div class="module-icon">👶</div>
-      <div class="module-name" style="color:#4cb8e8">PraxisPédiatrie</div>
-      <div class="module-sub">Soins de l'enfant · B.3 · D.2</div>
-      <div class="module-desc">Normes par âge, douleur pédiatrique, protection de l'enfant, situations cliniques.</div>
-      <div class="module-btn" style="background:rgba(76,184,232,.1);color:#4cb8e8;border-color:rgba(76,184,232,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisTACA-Theorie-IFSI.html')" style="border-color:rgba(88,166,255,.2)">
-      <div class="module-num">MODULE 13</div>
-      <div class="module-icon">📚</div>
-      <div class="module-name" style="color:#58a6ff">PraxisTACA · Théorie</div>
-      <div class="module-sub">TACA · 70h/semestre · S1→S6</div>
-      <div class="module-desc">420h de travail autonome en IFSI — planning, objectifs et ressources en crescendo du S1 guidé au S6 expert.</div>
-      <div class="module-btn" style="background:rgba(88,166,255,.1);color:#58a6ff;border-color:rgba(88,166,255,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisTACA-Stage-IFSI.html')" style="border-color:rgba(63,185,80,.2)">
-      <div class="module-num">MODULE 14</div>
-      <div class="module-icon">🏥</div>
-      <div class="module-name" style="color:#3fb950">PraxisTACA · Stage</div>
-      <div class="module-sub">TACA · 5h/semaine · S1→S6</div>
-      <div class="module-desc">Journal réflexif Gibbs en crescendo, situations cliniques, préparation aux entretiens mi-stage et fin de stage.</div>
-      <div class="module-btn" style="background:rgba(63,185,80,.1);color:#3fb950;border-color:rgba(63,185,80,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisLead-IFSI.html')" style="border-color:rgba(240,160,48,.2)">
-      <div class="module-num">MODULE 15</div>
-      <div class="module-icon">⚡</div>
-      <div class="module-name" style="color:#f0a030">PraxisLead</div>
-      <div class="module-sub">Domaine D · Leadership · Inter-pro</div>
-      <div class="module-desc">Communication SBAR, délégation IDE, coordination interprofessionnelle — le pivot de l'équipe.</div>
-      <div class="module-btn" style="background:rgba(240,160,48,.1);color:#f0a030;border-color:rgba(240,160,48,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisPICO-IFSI.html')" style="border-color:rgba(0,200,160,.2)">
-      <div class="module-num">MODULE 16</div>
-      <div class="module-icon">🔬</div>
-      <div class="module-name" style="color:#00c8a0">PraxisPICO</div>
-      <div class="module-sub">E.1 · Recherche · Données probantes</div>
-      <div class="module-desc">PubMed, Cochrane, HAS — maîtriser la recherche documentaire et la pratique fondée sur les preuves.</div>
-      <div class="module-btn" style="background:rgba(0,200,160,.1);color:#00c8a0;border-color:rgba(0,200,160,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisPrevention-IFSI.html')" style="border-color:rgba(232,168,64,.2)">
-      <div class="module-num">MODULE 17</div>
-      <div class="module-icon">🏡</div>
-      <div class="module-name" style="color:#e8a840">PraxisPrévention</div>
-      <div class="module-sub">C.1 · Domicile · Infirmier référent</div>
-      <div class="module-desc">Bilans aux âges clés, suivi ALD, ETP, vaccination sans ordonnance, consultation IDE de prévention.</div>
-      <div class="module-btn" style="background:rgba(232,168,64,.1);color:#e8a840;border-color:rgba(232,168,64,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisNumerique-IFSI.html')" style="border-color:rgba(56,200,255,.2)">
-      <div class="module-num">MODULE 18</div>
-      <div class="module-icon">💻</div>
-      <div class="module-name" style="color:#38c8ff">PraxisNumérique</div>
-      <div class="module-sub">Numérique en santé · DPI · RGPD · IA</div>
-      <div class="module-desc">DPI interactif, télésurveillance connectée, RGPD santé, IA clinique, boîte à outils IDE numérique.</div>
-      <div class="module-btn" style="background:rgba(56,200,255,.1);color:#38c8ff;border-color:rgba(56,200,255,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisIPA-IFSI.html')" style="border-color:rgba(200,160,96,.2)">
-      <div class="module-num">MODULE 19</div>
-      <div class="module-icon">🎓</div>
-      <div class="module-name" style="color:#c8a060">PraxisIPA</div>
-      <div class="module-sub">Pratique avancée · 5 mentions · Master</div>
-      <div class="module-desc">Les 5 mentions IPA, comparatif IDE/IPA, formation master, parcours, simulation consultation avancée.</div>
-      <div class="module-btn" style="background:rgba(200,160,96,.1);color:#c8a060;border-color:rgba(200,160,96,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="ouvrirModule('PraxisUrgences-IFSI.html')" style="border-color:rgba(232,48,48,.2)">
-      <div class="module-num">MODULE 20</div>
-      <div class="module-icon">🚨</div>
-      <div class="module-name" style="color:#e83030">PraxisUrgences</div>
-      <div class="module-sub">Urgences · ABCDE · IDE seul</div>
-      <div class="module-desc">ABCDE, arrêt cardiaque, détresse respiratoire, choc, AVC, anaphylaxie — score NEWS2 interactif.</div>
-      <div class="module-btn" style="background:rgba(232,48,48,.1);color:#e83030;border-color:rgba(232,48,48,.3)">Ouvrir →</div>
-    </div>
-
-  
-    <div class="module-card" onclick="ouvrirModule('PraxisConversions-IFSI.html')" style="border-color:rgba(240,192,64,.2);grid-column:span 2">
-      <div class="module-num">MODULE 21</div>
-      <div class="module-icon">⚗️</div>
-      <div class="module-name" style="color:#f0c040">PraxisConversions</div>
-      <div class="module-sub">Masse · Volume · Débit · Dose/kg · Température · Pression</div>
-      <div class="module-desc">Convertisseur clinique interactif + calculatrice dose/kg + normes par profil patient (adulte, enfant, femme enceinte, personne âgée).</div>
-      <div class="module-btn" style="background:rgba(240,192,64,.1);color:#f0c040;border-color:rgba(240,192,64,.3)">Ouvrir →</div>
-    </div>
-<div class="module-card" onclick="ouvrirModule('PraxisTransfusion-IFSI.html')" style="border-color:rgba(220,80,80,.2)">
-      <div class="module-num">MODULE 22</div>
-      <div class="module-icon">🩸</div>
-      <div class="module-name" style="color:#dc5050">PraxisTransfusion</div>
-      <div class="module-sub">Transfusion · B.3 · Instruction DGS 2026</div>
-      <div class="module-desc">Instruction n°2026/97 du 19 juin 2026 - 5 étapes réglementaires, sécurité transfusionnelle.</div>
-      <div class="module-btn" style="background:rgba(220,80,80,.1);color:#dc5050;border-color:rgba(220,80,80,.3)">Ouvrir →</div>
-    </div>
-
-    <div class="module-card" onclick="window.open('https://fabsav68-lgtm.github.io/praxis/','_blank')" style="border-color:rgba(160,96,255,.2);grid-column:span 2">
-      <div class="module-num">MODULE 23</div>
-      <div class="module-icon">🎯</div>
-      <div class="module-name" style="color:#a060ff">PraxisAcademy</div>
-      <div class="module-sub">QCM chronométrés · UE 2.1 · 13 missions · 75 questions</div>
-      <div class="module-desc">Révisions actives par compétences - atomes, ions, pH, eau, cellule, sang, muscles. Entraînement aux QCM IFSI nouvelle génération.</div>
-      <div class="module-btn" style="background:rgba(160,96,255,.1);color:#a060ff;border-color:rgba(160,96,255,.3)">Ouvrir →</div>
-    </div>
-  </div>
-
-  <footer>
-    Formateur certifié PRAP 2S · BCI · contact@praxiscare.fr<br>
-    Référentiel IDE 2026 · Arrêté du 20 février 2026
-  <br><a href="stats-formateur.html" style="color:rgba(255,255,255,.1);font-size:10px;text-decoration:none">· accès formateur ·</a>
-  <br><button onclick="ouvrirBinome()" style="background:none;border:none;color:rgba(56,189,248,.5);font-size:10px;cursor:pointer;font-family:monospace;margin-top:8px">Mon Binöme</button>
-  </footer>
-</div>
 
 <script src="praxiscare-feedback.js"></script>
 <script>
-  var _moduleStart = null;
+var _moduleStart = null;
 var _moduleNom = null;
-// Tracking ouverture module
+
 function trackModule(nom){
- var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
+  var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
   if(!stats.modules) stats.modules = {};
   stats.modules[nom] = (stats.modules[nom] || 0) + 1;
   localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
 }
+
 function ouvrirModule(fichier){
-  const frame = document.getElementById('module-frame');
-  const btnRetour = document.getElementById('btn-retour');
-  const home = document.getElementById('home');
- // Tracker le module ouvert
+  var frame = document.getElementById('module-frame');
+  var btnRetour = document.getElementById('btn-retour');
+  var home = document.getElementById('home');
   var nomModule = fichier.replace('.html','').replace(/-IFSI$/,'').replace(/Praxis/,'Praxis');
   trackModule(nomModule);
-   _moduleStart = Date.now();
+  _moduleStart = Date.now();
   _moduleNom = nomModule;
-  // Envoi Supabase
-var codeEtudiant = sessionStorage.getItem('praxiscare_code');
-fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-"apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
-},
-body: JSON.stringify({
-student_code: codeEtudiant,
-app: "praxiscare",
-module: nomModule,
-step: "ouverture",
-session_id: codeEtudiant + "_" + Date.now()
-})
-});
-
+  var codeEtudiant = sessionStorage.getItem('praxiscare_code');
+  fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+    },
+    body: JSON.stringify({
+      student_code: codeEtudiant,
+      app: "praxiscare",
+      module: nomModule,
+      step: "ouverture",
+      session_id: codeEtudiant + "_" + Date.now()
+    })
+  });
   frame.src = fichier;
   frame.style.display = 'block';
   btnRetour.style.display = 'block';
   home.style.display = 'none';
   window.scrollTo(0,0);
-}
-
-function retourAccueil(){
-  const frame = document.getElementById('module-frame');
-  const btnRetour = document.getElementById('btn-retour');
-  const home = document.getElementById('home');
-
-  frame.style.display = 'none';
-  envoyerTempsModule();
-  frame.src = 'about:blank';
-  btnRetour.style.display = 'none';
-  home.style.display = 'flex';
-}
-
-// Intercepter la navigation depuis l'iframe
-window.addEventListener('message', function(e){
-  if(e.data && e.data.type === 'navigate'){
-    ouvrirModule(e.data.url);
-  }
-  if(e.data && e.data.type === 'retour'){
-    retourAccueil();
-  }
-});
-
-// Surveiller les changements d'URL dans l'iframe
-document.getElementById('module-frame').addEventListener('load', function(){
-  try {
-    const frameUrl = this.contentWindow.location.href;
-    const btnRetour = document.getElementById('btn-retour');
-    // Si l'iframe a navigué vers un module, afficher le bouton retour
-    if(frameUrl && frameUrl !== 'about:blank'){
-      btnRetour.style.display = 'block';
-    }
-  } catch(e){}
-});
-
-// Désactiver l'ancien service worker
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(regs => {
-    regs.forEach(reg => reg.unregister());
-  });
-}
-if('caches' in window){
-  caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
 }
 
 function envoyerTempsModule(){
@@ -496,9 +356,56 @@ function envoyerTempsModule(){
   }
 }
 
-// Fermeture automatique apres 5 minutes d inactivite
+function retourAccueil(){
+  var frame = document.getElementById('module-frame');
+  var btnRetour = document.getElementById('btn-retour');
+  var home = document.getElementById('home');
+  frame.style.display = 'none';
+  envoyerTempsModule();
+  frame.src = 'about:blank';
+  btnRetour.style.display = 'none';
+  home.style.display = 'flex';
+}
+
+window.addEventListener('message', function(e){
+  if(e.data && e.data.type === 'navigate') ouvrirModule(e.data.url);
+  if(e.data && e.data.type === 'retour') retourAccueil();
+});
+
+document.getElementById('module-frame').addEventListener('load', function(){
+  try {
+    var frameUrl = this.contentWindow.location.href;
+    if(frameUrl && frameUrl !== 'about:blank'){
+      document.getElementById('btn-retour').style.display = 'block';
+    }
+  } catch(e){}
+});
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(reg){ reg.unregister(); });
+  });
+}
+if('caches' in window){
+  caches.keys().then(function(keys){ keys.forEach(function(k){ caches.delete(k); }); });
+}
+
 var _inactivityTimer = null;
-  // BINOME
+function resetInactivityTimer(){
+  clearTimeout(_inactivityTimer);
+  _inactivityTimer = setTimeout(function(){
+    envoyerTempsModule();
+    sessionStorage.removeItem('praxiscare_code');
+    sessionStorage.removeItem('praxiscare_promo');
+    window.location.replace('acces.html');
+  }, 5 * 60 * 1000);
+}
+document.addEventListener('click', resetInactivityTimer);
+document.addEventListener('touchstart', resetInactivityTimer);
+document.addEventListener('keypress', resetInactivityTimer);
+resetInactivityTimer();
+
+// BINOME
 var CODES_VALIDES = ['PRAXIS-A1-001','PRAXIS-A1-002','PRAXIS-A1-003','PRAXIS-A1-004','PRAXIS-A1-005',
   'PRAXIS-A1-006','PRAXIS-A1-007','PRAXIS-A1-008','PRAXIS-A1-009','PRAXIS-A1-010',
   'PRAXIS-A2-001','PRAXIS-A2-002','PRAXIS-A2-003','PRAXIS-A2-004','PRAXIS-A2-005',
@@ -511,11 +418,7 @@ function ouvrirBinome(){
   overlay.style.display = 'flex';
   var binomeActuel = localStorage.getItem('praxiscare_binome');
   var el = document.getElementById('binome-actuel');
-  if(binomeActuel){
-    el.textContent = 'Binôme actuel : ' + binomeActuel;
-  } else {
-    el.textContent = 'Aucun binôme lié pour le moment';
-  }
+  el.textContent = binomeActuel ? 'Binome actuel : ' + binomeActuel : 'Aucun binome lie pour le moment';
   document.getElementById('binome-score').style.display = 'none';
   document.getElementById('binome-msg').textContent = '';
 }
@@ -528,23 +431,9 @@ function lierBinome(){
   var monCode = sessionStorage.getItem('praxiscare_code');
   var codeBinome = document.getElementById('binome-input').value.trim().toUpperCase();
   var msg = document.getElementById('binome-msg');
-
-  if(!codeBinome){
-    msg.style.color = '#e84040';
-    msg.textContent = 'Entrez un code binôme.';
-    return;
-  }
-  if(codeBinome === monCode){
-    msg.style.color = '#e84040';
-    msg.textContent = 'Vous ne pouvez pas vous lier à vous-même !';
-    return;
-  }
-  if(CODES_VALIDES.indexOf(codeBinome) === -1){
-    msg.style.color = '#e84040';
-    msg.textContent = 'Ce code n\'est pas un abonné actif.';
-    return;
-  }
-
+  if(!codeBinome){ msg.style.color='#e84040'; msg.textContent='Entrez un code binome.'; return; }
+  if(codeBinome === monCode){ msg.style.color='#e84040'; msg.textContent='Vous ne pouvez pas vous lier a vous-meme !'; return; }
+  if(CODES_VALIDES.indexOf(codeBinome) === -1){ msg.style.color='#e84040'; msg.textContent='Ce code n\'est pas un abonne actif.'; return; }
   localStorage.setItem('praxiscare_binome', codeBinome);
   fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
     method: "POST",
@@ -561,10 +450,9 @@ function lierBinome(){
       session_id: monCode + "_binome_" + Date.now()
     })
   });
-
-  msg.style.color = '#40c878';
-  msg.textContent = 'Binôme ' + codeBinome + ' lié avec succès ! 🎯';
-  document.getElementById('binome-actuel').textContent = 'Binôme actuel : ' + codeBinome;
+  msg.style.color='#40c878';
+  msg.textContent='Binome ' + codeBinome + ' lie avec succes !';
+  document.getElementById('binome-actuel').textContent = 'Binome actuel : ' + codeBinome;
 }
 
 function voirScoreBinome(){
@@ -572,54 +460,27 @@ function voirScoreBinome(){
   var codeBinome = localStorage.getItem('praxiscare_binome');
   var scoreDiv = document.getElementById('binome-score');
   var msg = document.getElementById('binome-msg');
-
-  if(!codeBinome){
-    msg.style.color = '#e84040';
-    msg.textContent = 'Liez d\'abord un binôme.';
-    return;
-  }
-
-  msg.style.color = '#5a7080';
-  msg.textContent = 'Chargement du score...';
-
-  fetch(`https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis?student_code=in.(${monCode},${codeBinome})&step=eq.ouverture&select=student_code,module`, {
+  if(!codeBinome){ msg.style.color='#e84040'; msg.textContent='Liez d\'abord un binome.'; return; }
+  msg.style.color='#5a7080'; msg.textContent='Chargement...';
+  fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis?student_code=in.(" + monCode + "," + codeBinome + ")&step=eq.ouverture&select=student_code,module", {
     headers: {
       "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
       "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
     }
-  }).then(r=>r.json()).then(function(data){
-    var moiMods = data.filter(function(d){ return d.student_code === monCode; }).map(function(d){ return d.module; });
-    var biномMods = data.filter(function(d){ return d.student_code === codeBinome; }).map(function(d){ return d.module; });
-    var communs = moiMods.filter(function(m){ return biномMods.indexOf(m) !== -1; });
-    var unique = [...new Set(communs)];
-
-    var badge = unique.length >= 10 ? '🏆 Binôme Expert' :
-                unique.length >= 5  ? '🥈 Binôme Actif' :
-                unique.length >= 1  ? '🥉 Binôme Débutant' : '⭐ Binôme Inscrit';
-
+  }).then(function(r){ return r.json(); }).then(function(data){
+    var moiMods = data.filter(function(d){ return d.student_code===monCode; }).map(function(d){ return d.module; });
+    var binomeMods = data.filter(function(d){ return d.student_code===codeBinome; }).map(function(d){ return d.module; });
+    var communs = [...new Set(moiMods.filter(function(m){ return binomeMods.indexOf(m)!==-1; }))];
+    var badge = communs.length>=10 ? 'Binome Expert' : communs.length>=5 ? 'Binome Actif' : communs.length>=1 ? 'Binome Debutant' : 'Binome Inscrit';
     scoreDiv.style.display = 'block';
-    scoreDiv.innerHTML =
-      '<div style="text-align:center;font-size:20px;margin-bottom:8px">' + badge + '</div>' +
-      '<div style="color:#5a7080;font-size:12px">Modules explorés en commun : <strong style="color:#38bdf8">' + unique.length + '</strong></div>' +
-      '<div style="color:#5a7080;font-size:12px;margin-top:4px">Votre binôme : <strong style="color:#a060ff">' + codeBinome + '</strong></div>' +
-      (unique.length > 0 ? '<div style="margin-top:8px;font-size:11px;color:#2a3a45">' + unique.join(', ') + '</div>' : '');
-
+    scoreDiv.innerHTML = '<div style="text-align:center;font-size:18px;color:#38bdf8;margin-bottom:8px">' + badge + '</div>' +
+      '<div style="color:#5a7080;font-size:12px">Modules explores en commun : <strong style="color:#38bdf8">' + communs.length + '</strong></div>' +
+      '<div style="color:#5a7080;font-size:12px;margin-top:4px">Binome : <strong style="color:#a060ff">' + codeBinome + '</strong></div>' +
+      (communs.length>0 ? '<div style="margin-top:8px;font-size:11px;color:#2a3a45">' + communs.join(', ') + '</div>' : '');
     msg.textContent = '';
   });
 }
-function resetInactivityTimer(){
-  clearTimeout(_inactivityTimer);
-  _inactivityTimer = setTimeout(function(){
-    envoyerTempsModule();
-    sessionStorage.removeItem('praxiscare_code');
-    sessionStorage.removeItem('praxiscare_promo');
-    window.location.replace('acces.html');
-  }, 10 * 60 * 1000); // 10 minutes
-}
-document.addEventListener('click', resetInactivityTimer);
-document.addEventListener('touchstart', resetInactivityTimer);
-document.addEventListener('keypress', resetInactivityTimer);
-resetInactivityTimer();
 </script>
 </body>
+</html>
 </html>
