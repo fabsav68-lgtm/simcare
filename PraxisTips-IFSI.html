@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisTips · SimCare IFSI</title>
+<meta name="theme-color" content="#04090f">
+<style>
+:root{--bg:#04090f;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);--txt:#e8edf2;--txt2:#5a7080;--em:#38bdf8;--amber:#e8a030;--red:#e84040;--green:#40c878;--purple:#a060ff;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--txt);padding:16px;}
+h1{font-family:Georgia,serif;font-size:22px;color:var(--em);margin-bottom:4px;}
+.sub{font-size:11px;color:var(--txt2);margin-bottom:20px;font-family:monospace;}
+.loterie{text-align:center;padding:24px 16px;background:var(--card);border:1.5px solid var(--bdr);border-radius:16px;margin-bottom:16px;}
+.loterie h2{font-size:16px;color:var(--txt);margin-bottom:6px;}
+.loterie p{font-size:12px;color:var(--txt2);margin-bottom:16px;}
+.btn-loterie{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#0d6a94,#38bdf8);color:#04090f;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
+.btn-small{display:inline-block;padding:7px 14px;background:rgba(255,255,255,.06);color:var(--txt2);border:1px solid var(--bdr);border-radius:8px;font-size:11px;cursor:pointer;margin:3px;}
+.chrono-wrap{text-align:center;margin-bottom:12px;}
+.chrono{font-size:32px;font-weight:700;font-family:monospace;color:var(--em);}
+.chrono.urgent{color:var(--red);}
+.chrono-bar{height:4px;background:rgba(255,255,255,.08);border-radius:2px;margin-bottom:16px;overflow:hidden;}
+.chrono-fill{height:100%;background:var(--em);border-radius:2px;transition:width .5s linear;}
+.chrono-fill.urgent{background:var(--red);}
+.sujet-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:16px;padding:16px;margin-bottom:16px;display:none;}
+.sujet-card.show{display:block;}
+.tip-type{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.tip-type.clinique{background:rgba(56,189,248,.1);color:var(--em);border:1px solid rgba(56,189,248,.2);}
+.tip-type.calcul{background:rgba(232,160,48,.1);color:var(--amber);border:1px solid rgba(232,160,48,.2);}
+.tip-type.communication{background:rgba(160,96,255,.1);color:var(--purple);border:1px solid rgba(160,96,255,.2);}
+.tip-type.urgence{background:rgba(232,64,64,.1);color:var(--red);border:1px solid rgba(232,64,64,.2);}
+.tip-title{font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.3;}
+.tip-situation{background:rgba(255,255,255,.03);border-left:3px solid var(--amber);padding:10px;border-radius:0 8px 8px 0;font-size:13px;color:var(--txt);margin-bottom:16px;line-height:1.6;}
+.reponse-wrap{display:none;}
+.reponse-wrap.show{display:block;}
+textarea{width:100%;padding:12px;background:rgba(255,255,255,.06);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:13px;font-family:system-ui,sans-serif;line-height:1.6;resize:vertical;min-height:120px;outline:none;}
+textarea:focus{border-color:rgba(56,189,248,.4);}
+.btn-correction{width:100%;padding:12px;background:linear-gradient(135deg,#0d6a94,#38bdf8);color:#04090f;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;}
+.btn-passer{width:100%;padding:10px;background:rgba(255,255,255,.04);color:var(--txt2);border:1px solid var(--bdr);border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;}
+.correction-wrap{display:none;margin-top:16px;}
+.correction-wrap.show{display:block;}
+.correction-card{border-radius:12px;padding:14px;margin-bottom:12px;}
+.correction-card.ia{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);}
+.correction-card.etapes{background:rgba(255,255,255,.03);border:1px solid var(--bdr);}
+.correction-card h3{font-size:13px;font-weight:700;margin-bottom:8px;}
+.correction-card.ia h3{color:var(--em);}
+.correction-card.etapes h3{color:var(--txt2);}
+.correction-texte{font-size:13px;line-height:1.7;color:var(--txt);}
+.etape-item{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;display:flex;gap:8px;align-items:flex-start;}
+.etape-item:last-child{border-bottom:none;}
+.etape-num{background:rgba(56,189,248,.15);color:var(--em);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.etape-num.amber{background:rgba(232,160,48,.15);color:var(--amber);}
+.etape-num.purple{background:rgba(160,96,255,.15);color:var(--purple);}
+.etape-num.red{background:rgba(232,64,64,.15);color:var(--red);}
+.tip-alert{background:rgba(232,64,64,.06);border:1px solid rgba(232,64,64,.2);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--red);margin-top:10px;}
+.tip-memo{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--em);margin-top:8px;}
+.btn-nouveau{width:100%;padding:10px;background:linear-gradient(135deg,#0d6a94,#38bdf8);color:#04090f;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:12px;}
+.loading{text-align:center;padding:20px;color:var(--txt2);font-size:13px;}
+.loading span{display:inline-block;animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.liste-wrap{background:var(--card);border:1px solid var(--bdr);border-radius:12px;margin-bottom:16px;overflow:hidden;display:none;}
+.liste-wrap.show{display:block;}
+.liste-item{padding:10px 14px;border-bottom:1px solid var(--bdr);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:12px;}
+.liste-item:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+ 
+<h1>PraxisTips IFSI</h1>
+<p class="sub">Preparation aux examens · Situations cliniques · Calculs · Communication · Urgences</p>
+ 
+<div class="loterie" id="loterie-screen">
+  <h2>Tirage au sort</h2>
+  <p>Comme a l'examen — un sujet au hasard, vous repondez, puis Claude analyse votre reponse.</p>
+  <button class="btn-loterie" onclick="tirerAuSort(null)">🎲 Tirer un sujet</button>
+  <br><br>
+  <button class="btn-small" onclick="tirerAuSort('clinique')">🏥 Situation clinique</button>
+  <button class="btn-small" onclick="tirerAuSort('calcul')">🧮 Calcul de dose</button>
+  <button class="btn-small" onclick="tirerAuSort('communication')">💬 Communication</button>
+  <button class="btn-small" onclick="tirerAuSort('urgence')">🚨 Urgence</button>
+  <br><br>
+  <button class="btn-small" onclick="toggleListe()">📚 Choisir un sujet</button>
+</div>
+ 
+<div class="liste-wrap" id="tips-liste"></div>
+ 
+<div class="chrono-wrap" id="chrono-wrap" style="display:none">
+  <div class="chrono" id="chrono-display">3:00</div>
+  <div class="chrono-bar"><div class="chrono-fill" id="chrono-fill" style="width:100%"></div></div>
+</div>
+ 
+<div class="sujet-card" id="sujet-card">
+  <span class="tip-type" id="tip-type-badge"></span>
+  <div class="tip-title" id="tip-title"></div>
+  <div class="tip-situation" id="tip-situation"></div>
+</div>
+ 
+<div class="reponse-wrap" id="reponse-wrap">
+  <textarea id="reponse-etudiant" placeholder="Ecrivez votre reponse ici... Decrivez votre raisonnement clinique, vos priorites, vos actions IDE."></textarea>
+  <button class="btn-correction" onclick="voirCorrection()">✅ Voir la correction et l'analyse</button>
+  <button class="btn-passer" onclick="passerDirectement()">Passer sans repondre</button>
+</div>
+ 
+<div class="correction-wrap" id="correction-wrap">
+  <div class="correction-card ia" id="analyse-ia">
+    <h3>🤖 Analyse de votre reponse</h3>
+    <div class="correction-texte" id="analyse-texte"><div class="loading"><span>Analyse en cours...</span></div></div>
+  </div>
+  <div class="correction-card etapes">
+    <h3>📋 Correction complete</h3>
+    <div id="etapes-correction"></div>
+    <div class="tip-alert" id="correction-alert" style="display:none"></div>
+    <div class="tip-memo" id="correction-memo" style="display:none"></div>
+  </div>
+  <button class="btn-nouveau" onclick="nouveauTirage()">🎲 Nouveau sujet</button>
+</div>
+ 
+<script>
+var TIPS = [
+  // SITUATIONS CLINIQUES
+  {type:"clinique",titre:"Patient sous O2 - SpO2 chute a 88%",situation:"M. Martin, 72 ans, BPCO, est hospitalise. Il est sous O2 a 2L/min. Vous constatez que sa SpO2 est a 88% alors qu'elle etait a 94% il y a 30 minutes. Il est un peu agite.",etapes:["Evaluer immediatement l'etat du patient : conscience, FR, FC, couleur","Verifier le dispositif O2 : debit, branchement, masque ou lunettes bien positionnees","Augmenter le debit O2 selon la prescription ou protocole en vigueur","Appeler le medecin en urgence avec les valeurs SBAR","Installer le patient en position demi-assise (Fowler)","Preparer le materiel d'urgence : aspiration, chariot d'urgence","Surveiller toutes les 5 minutes et tracer dans le dossier"],alerte:"Chez le BPCO : O2 a adapter avec prudence - risque d'hypercapnie. Ne jamais depasser la prescription sans avis medical.",memo:"SBAR : Situation - Background - Assessment - Recommendation. Toujours appeler avec les valeurs."},
+  {type:"clinique",titre:"Patient diabetique - Glycemie a 0,45 g/L",situation:"Mme Dupont, 68 ans, diabetique type 2 sous insuline, appuie sur sa sonnette. Vous la trouvez confuse, palote, avec des sueurs. Sa glycemie capillaire est a 0,45 g/L.",etapes:["Confirmer l'hypoglycemie : glycemie < 0,60 g/L avec signes cliniques","Si patient conscient et peut deglutir : donner 15g de sucre rapide (3 sucres ou jus de fruit)","Recontrôler la glycemie apres 15 minutes","Si inconsciente ou incapable de deglutir : allonger, appel medecin, glucagon ou G30% IV","Prevenir le medecin immediatement","Surveiller toutes les 15 min jusqu'a normalisation","Rechercher la cause : repas saute, activite physique, erreur de dose"],alerte:"Ne jamais laisser seul un patient hypoglycemique. Si perte de conscience : glucagon IM ou G30% IV - JAMAIS de sucre par la bouche.",memo:"Hypoglycemie < 0,60 g/L · Regle des 15 : 15g sucre puis controle 15 min apres."},
+  {type:"clinique",titre:"Chute d'un patient en chambre",situation:"Vous entendez un bruit dans la chambre de M. Bernard, 80 ans. En entrant, vous le trouvez au sol pres de son lit. Il est conscient et se plaint de la hanche droite.",etapes:["Ne pas mobiliser le patient seul - risque de fracture","Evaluer l'etat : conscience, douleur, deformation membre, saignement","Appeler a l'aide et alerter le medecin","Couvrir le patient pour eviter le refroidissement","Rassurer le patient et rester a cote","Realiser un ECG si disponible et surveiller les constantes","Completer la fiche d'evenement indesirable et tracer dans le dossier"],alerte:"Ne JAMAIS relever seul un patient chute. Risque de fracture du col femoral chez la personne agee.",memo:"Chute = evenement indesirable = declaration obligatoire + bilan du medecin + surveillance neurologique."},
+  {type:"clinique",titre:"Surveillance post-operatoire - Pansement qui saigne",situation:"Vous effectuez la surveillance post-operatoire de Mme Leroy, 55 ans, 2h apres une chirurgie abdominale. Vous constatez que le pansement est tache de sang frais et la tache s'etend.",etapes:["Evaluer l'importance du saignement : taille de la tache, vitesse d'extension","Prendre les constantes : PA, FC, SpO2, conscience","Appeler le medecin immediatement avec les parametres","Ne pas retirer le pansement - renforcer par dessus si necessaire","Surveiller les signes de choc : paleur, tachycardie, hypotension","Preparer une voie d'acces veineux si non presente","Tracer dans le dossier : heure, aspect, evolution"],alerte:"Tache de sang qui s'etend = hemorragie active = urgence chirurgicale possible.",memo:"Saignement post-op : ne pas oter le pansement - renforcer. SBAR au chirurgien."},
+  {type:"clinique",titre:"Patient confus en nuit - Desorientation brutale",situation:"A 2h du matin, l'aide-soignante vous signale que M. Petit, 75 ans, hospitalise pour pneumonie, est soudainement agite, desoriente, ne reconnait pas sa chambre et tente de se lever.",etapes:["Se rendre immediatement en chambre - ne pas laisser seul","Evaluation neurologique : conscience, orientation, pupilles, Glasgow","Prendre les constantes : T°, SpO2, glycemie, PA, FC","Rechercher une cause : globe vesical, douleur, hypoglycemie, hypoxie, infection","Appeler le medecin de garde avec les valeurs","Securiser l'environnement : barrieres, supprimer les obstacles","Ne pas utiliser de contention sans prescription medicale"],alerte:"Confusion brutale chez le sujet age = syndrome confusionnel = urgence diagnostique. Toujours chercher la cause organique.",memo:"Syndrome confusionnel = ATCD + constantes + glycemie + SpO2 + Globe + Douleur avant tout appel medecin."},
+  {type:"clinique",titre:"Reaction allergique apres injection",situation:"5 minutes apres l'injection d'un antibiotique IV, M. Garcia, 45 ans, se plaint de demangeaisons, vous observez des plaques rouges sur son thorax et son visage gonfle.",etapes:["Arreter immediatement la perfusion de l'antibiotique","Maintenir la voie veineuse avec du serum physiologique","Appeler le medecin en URGENCE - risque anaphylaxie","Evaluer : PA, FC, SpO2, difficulte respiratoire, oedeme larynge","Preparer adrenalire et antihistaminiques selon protocole","Installer en position adaptee : allonge si hypotension, demi-assis si detresse respiratoire","Surveillance rapprochee toutes les 5 minutes"],alerte:"Oedeme du visage + urticaire apres injection = choc anaphylactique possible = urgence vitale. Adrenalire IM disponible.",memo:"Arreter la cause + maintenir VV + appeler medecin + preparer adrenalire = 4 reflexes immediats."},
+ 
+  // CALCULS DE DOSES
+  {type:"calcul",titre:"Calcul de debit de perfusion",situation:"Prescription : Amoxicilline 1g dans 100mL de serum physiologique en 30 minutes. Vous devez calculer le debit en gouttes par minute (20 gouttes = 1mL).",etapes:["Volume a perfuser : 100 mL","Duree : 30 minutes","Debit en mL/min : 100/30 = 3,33 mL/min","Debit en gouttes/min : 3,33 x 20 = 66,6 gouttes/min","Arrondir a 67 gouttes/min","Verifier avec la pompe si disponible : 200 mL/h"],alerte:"Toujours verifier le calcul deux fois. Une erreur de debit peut entrainer une surdose ou une sous-dose.",memo:"Formule : Volume (mL) / Temps (min) x 20 = gouttes/min · En mL/h : Volume x 60 / Temps."},
+  {type:"calcul",titre:"Calcul de dose d'insuline",situation:"Prescription : Insuline Rapide Actrapid selon glycemie. Protocole : glycemie 2,50 g/L = 4 UI. Disponible : Actrapid 100 UI/mL en flacon 10mL. Quel volume prelever ?",etapes:["Dose prescrite : 4 UI","Concentration disponible : 100 UI/mL","Volume a prelever : 4 / 100 = 0,04 mL","Soit 4 unites sur une seringue a insuline graduee en UI","Verifier avec un second soignant selon le protocole","Tracer dans le dossier : heure, dose, glycemie avant injection","Recontrôler la glycemie 1h apres"],alerte:"L'insuline necessite toujours une double verification par un second soignant. 1 UI d'insuline = 0,01 mL avec une concentration de 100 UI/mL.",memo:"Insuline : toujours seringue a insuline graduee en UI. Double verification obligatoire."},
+  {type:"calcul",titre:"Calcul de dose pediatrique",situation:"Enfant de 20 kg. Prescription : Paracetamol 15 mg/kg en IV. Disponible : Perfalgan 10mg/mL en flacon de 100mL. Quel volume perfuser ?",etapes:["Dose par kg : 15 mg/kg","Poids : 20 kg","Dose totale : 15 x 20 = 300 mg","Concentration disponible : 10 mg/mL","Volume a perfuser : 300 / 10 = 30 mL","Duree de perfusion : 15 minutes","Verifier que la dose ne depasse pas la dose max : 60 mg/kg/jour soit 1200 mg/jour"],alerte:"En pediatrie : toujours calculer la dose en mg/kg et verifier la dose maximale journaliere.",memo:"Dose totale = dose/kg x poids · Volume = dose totale / concentration."},
+  {type:"calcul",titre:"Calcul de debit de morphine",situation:"Prescription : Morphine 2 mg/h en seringue auto-pulsee (SAP). Disponible : Morphine 1mg/mL. Seringue de 50 mL. Pour combien de temps la seringue durera-t-elle ? Quel debit programmer ?",etapes:["Concentration : 1 mg/mL","Volume seringue : 50 mL","Dose totale : 50 mL x 1 mg/mL = 50 mg","Debit prescrit : 2 mg/h","Debit en mL/h : 2 mg/h / 1 mg/mL = 2 mL/h","Programmer la SAP a 2 mL/h","Duree : 50 mL / 2 mL/h = 25 heures"],alerte:"Morphine = stupefiants = traçabilite obligatoire. Double verification et signature sur le registre des stupefiants.",memo:"SAP morphine : debit (mL/h) = dose prescrite (mg/h) / concentration (mg/mL)."},
+ 
+  // COMMUNICATION IDE
+  {type:"communication",titre:"Annonce d'un diagnostic difficile - Role de l'IDE",situation:"M. Moreau, 60 ans, vient d'apprendre de son medecin qu'il a un cancer du poumon. Il vous appelle dans sa chambre et vous demande : 'Infirmiere, est-ce que j'ai une chance de m'en sortir ?'",etapes:["S'asseoir pres du patient, a son niveau, sans etre presse","Reformuler pour comprendre ce qu'il sait deja : 'Qu'est-ce que le medecin vous a dit ?'","Ne pas donner de pronostic - ce n'est pas le role IDE","Reconnaitre la detresse : 'Je vois que c'est une nouvelle tres difficile pour vous'","Explorer ses besoins : 'Qu'est-ce qui vous aiderait en ce moment ?'","Proposer de recontacter le medecin si des questions persistent","Informer du dispositif de soutien : psychologue, assistante sociale"],alerte:"L'IDE ne donne JAMAIS de pronostic. Reformuler, ecouter, orienter vers le medecin.",memo:"Technique AREA : Accueillir - Reformuler - Ecouter - Accompagner."},
+  {type:"communication",titre:"Patient qui refuse un soin",situation:"Mme Simon, 78 ans, refuse ce matin sa prise de sang prescrite par le medecin. Elle dit : 'J'en ai marre, on me pique tout le temps, laissez-moi tranquille.'",etapes:["Accueillir le refus sans forcer ni argumenter immediatement","Explorer les raisons : 'Pouvez-vous me dire ce qui vous gene ?'","Informer sur l'importance de l'examen sans pression","Respecter le droit au refus : le patient est majeur et capable","Proposer de reporter si possible apres accord medical","Informer le medecin du refus et noter dans le dossier","Rediger la trace du refus et de l'information donnee"],alerte:"Un patient majeur et capable a le droit de refuser tout soin. L'equipe ne peut pas passer outre. Tracabilite obligatoire.",memo:"Refus de soin = ecouter + informer + respecter + tracer + medecin."},
+  {type:"communication",titre:"Famille anxieuse - Demande d'informations",situation:"Les enfants de M. Dupuis, 82 ans, hospitalisé pour AVC, vous interpellent dans le couloir : 'Infirmiere, notre pere va s'en sortir ? Qu'est-ce qu'il a exactement ?'",etapes:["Proposer d'aller dans un endroit calme et prive","Verifier qui sont les interlocuteurs et leur lien avec le patient","Evaluer ce que le medecin leur a deja dit","Ne pas donner de pronostic ni d'informations medicales detaillees","Rassurer sur la prise en charge : 'Votre pere est surveille en permanence'","Orienter vers le medecin pour les informations medicales","Proposer un rendez-vous avec le medecin referent"],alerte:"Les informations medicales sont donnees par le medecin. L'IDE accompagne mais ne diagnostique ni ne pronostique.",memo:"Information famille = lieu prive + verifier qui + orienter medecin + accompagner."},
+  {type:"communication",titre:"Education therapeutique - Patient diabetique",situation:"M. Leclerc, 55 ans, diabetique type 2 recemment diagnostique, doit apprendre a realiser sa glycemie capillaire avant sa sortie. Il semble anxieux et peu attentif.",etapes:["Evaluer ses connaissances prealables : 'Qu'est-ce qu'on vous a deja explique ?'","Choisir un moment calme, sans precipitation","Demontrer le geste complet avec le materiel","Faire redemonter le geste par le patient","Corriger avec bienveillance, encourager","Remettre une fiche ecrite avec les etapes","Evaluer la comprehension : 'Pouvez-vous me redire quand vous devez le faire ?'","Proposer un suivi : IDE liberale, reseaux diabete"],alerte:"Ne jamais supposer que le patient a compris. Toujours faire redemonter le geste.",memo:"Education = evaluer + demontrer + faire faire + corriger + tracer + planifier suivi."},
+ 
+  // URGENCES
+  {type:"urgence",titre:"Arret cardiaque - Protocole RCP",situation:"Vous entrez dans la chambre de M. Robert, 65 ans, pour lui apporter son traitement. Vous le trouvez inconscient, ne reagissant pas, ne respirant pas normalement.",etapes:["Verifier l'absence de reactivite : secouer epaules, appeler fort","Appeler immediatement a l'aide et faire declencher l'alerte 15 ou code bleu","Debuter les compressions thoraciques : 30 compressions/2 insufflations","Frequence : 100-120 compressions/min - profondeur : 5-6 cm","Des que disponible : brancher le defibrillateur et suivre les instructions","Continuer la RCP sans interruption jusqu'a l'arrivee du medecin","Preparer l'acces veineux et le chariot d'urgence"],alerte:"Tout arret = appel IMMEDIAT + RCP IMMEDIATE. Chaque minute sans RCP = 10% de chances de survie en moins.",memo:"A-B-C : Alerter - Bouche-a-bouche (si forme) - Compressions. 30/2 a 100-120/min."},
+  {type:"urgence",titre:"Detresse respiratoire aigue",situation:"Mme Blanc, 70 ans, ATCD d'insuffisance cardiaque, appelle en urgence. Vous la trouvez assise au bord du lit, en sueurs, cyanosee, avec une FR a 32/min. Elle dit : 'Je ne peux plus respirer.'",etapes:["Position demi-assise immediate (position de Fowler haute)","Mettre sous O2 a fort debit : masque haute concentration 10-15 L/min","Appeler le medecin en URGENCE - SBAR complet","Prendre les constantes : PA, FC, SpO2, FR","Preparer le materiel : aspirateur, defibrillateur, chariot urgence","Voie veineuse si non presente","Rassurer le patient et ne pas le laisser seul"],alerte:"FR > 30/min + cyanose = urgence vitale. Ne pas laisser seul. Medecin IMMEDIAT.",memo:"OAP : Position assise + O2 fort debit + Lasilix si prescrit + Denitrate si prescrit + Appel medecin."},
+  {type:"urgence",titre:"Choc anaphylactique",situation:"M. Durand, 40 ans, 5 minutes apres injection de penicilline IV, presente : urticaire generalisee, oedeme des levres, PA a 80/50 mmHg, FC a 130/min, difficultés respiratoires.",etapes:["Arreter IMMEDIATEMENT la perfusion de penicilline","Allonger le patient - jamais assis si hypotension","Appeler le medecin en code urgence","Adrenalire 0,5 mg IM face anterolaterale de la cuisse (si protocole)","Maintenir et securiser la voie veineuse - remplissage vasculaire","O2 masque haute concentration","Surveillance continue : PA, FC, SpO2 toutes les 5 minutes"],alerte:"Choc anaphylactique = urgence vitale absolute. Adrenalire IM = traitement de reference. Ne jamais administrer sans protocole ou prescription.",memo:"4 signes = choc anaph : urticaire + oedeme + hypotension + bronchospasme. Adrenalire IM face ant-lat cuisse."},
+  {type:"urgence",titre:"Convulsion chez un patient hospitalise",situation:"Vous etes dans la chambre de Mme Laurent, 35 ans, epileptique connue. Elle commence soudainement a convulser : mouvements tonico-cloniques generalisés.",etapes:["Ne pas retenir la patiente - ne pas mettre d'objet dans la bouche","Chronomtrer la duree de la crise","Proteger la tete avec un coussin, ecarter les objets dangereux","Position laterale de securite (PLS) des que possible apres la crise","Appeler le medecin si crise > 5 min ou repetition rapide","Surveiller : conscience, respiration, SpO2 apres la crise","Tracer dans le dossier : heure debut, duree, type, periode post-critique"],alerte:"Ne JAMAIS mettre les doigts ou un objet dans la bouche. Etat de mal epileptique (> 5 min) = urgence absolue.",memo:"Pendant la crise : proteger + chronomtrer + ne pas contraindre. Apres : PLS + surveillance + appel medecin si > 5 min."},
+];
+ 
+var currentTip = null;
+var chronoInterval = null;
+var chronoTotal = 180;
+var chronoRestant = 180;
+ 
+function tirerAuSort(filtre){
+  var pool = filtre ? TIPS.filter(function(t){ return t.type === filtre; }) : TIPS;
+  var tip = pool[Math.floor(Math.random() * pool.length)];
+  afficherSujet(tip);
+  document.getElementById('tips-liste').classList.remove('show');
+}
+ 
+function afficherSujet(tip){
+  currentTip = tip;
+  stopChrono();
+  var labels = {clinique:'🏥 Situation clinique', calcul:'🧮 Calcul de dose', communication:'💬 Communication IDE', urgence:'🚨 Urgence vitale'};
+  document.getElementById('tip-type-badge').textContent = labels[tip.type];
+  document.getElementById('tip-type-badge').className = 'tip-type ' + tip.type;
+  document.getElementById('tip-title').textContent = tip.titre;
+  document.getElementById('tip-situation').textContent = tip.situation;
+  document.getElementById('reponse-etudiant').value = '';
+  document.getElementById('loterie-screen').style.display = 'none';
+  document.getElementById('sujet-card').className = 'sujet-card show';
+  document.getElementById('reponse-wrap').className = 'reponse-wrap show';
+  document.getElementById('correction-wrap').className = 'correction-wrap';
+  document.getElementById('chrono-wrap').style.display = 'block';
+  demarrerChrono();
+  window.scrollTo(0, 0);
+}
+ 
+function demarrerChrono(){
+  chronoRestant = chronoTotal;
+  updateChronoDisplay();
+  chronoInterval = setInterval(function(){
+    chronoRestant--;
+    updateChronoDisplay();
+    if(chronoRestant <= 0) stopChrono();
+  }, 1000);
+}
+ 
+function stopChrono(){
+  if(chronoInterval) clearInterval(chronoInterval);
+  chronoInterval = null;
+}
+ 
+function updateChronoDisplay(){
+  var min = Math.floor(chronoRestant / 60);
+  var sec = chronoRestant % 60;
+  document.getElementById('chrono-display').textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+  document.getElementById('chrono-display').className = 'chrono' + (chronoRestant <= 30 ? ' urgent' : '');
+  var pct = Math.round(chronoRestant / chronoTotal * 100);
+  document.getElementById('chrono-fill').style.width = pct + '%';
+  document.getElementById('chrono-fill').className = 'chrono-fill' + (chronoRestant <= 30 ? ' urgent' : '');
+}
+ 
+async function voirCorrection(){
+  stopChrono();
+  var reponse = document.getElementById('reponse-etudiant').value.trim();
+  document.getElementById('correction-wrap').className = 'correction-wrap show';
+  document.getElementById('reponse-wrap').className = 'reponse-wrap';
+  document.getElementById('chrono-wrap').style.display = 'none';
+  afficherEtapes();
+  document.getElementById('analyse-texte').innerHTML = '<div class="loading"><span>Analyse de votre reponse en cours...</span></div>';
+ 
+  if(!reponse){
+    document.getElementById('analyse-texte').textContent = "Vous n'avez pas fourni de reponse. Consultez la correction ci-dessous pour vous entrainer.";
+    return;
+  }
+ 
+  try {
+    var prompt = "Tu es un formateur expert en soins infirmiers IDE (arrete du 20 fevrier 2026). " +
+      "Un etudiant IFSI vient de repondre a un sujet d'entrainement pour son examen. " +
+      "\n\nSujet : " + currentTip.titre +
+      "\nSituation clinique : " + currentTip.situation +
+      "\nReponse attendue (etapes) : " + currentTip.etapes.join(' / ') +
+      "\n\nReponse de l'etudiant : " + reponse +
+      "\n\nDonne un retour pedagogique en 3 parties :" +
+      "\n1. Ce que l'etudiant a bien identifie (points positifs)" +
+      "\n2. Ce qui manque ou est incorrect selon le referentiel IDE (points a ameliorer)" +
+      "\n3. Un conseil pratique pour l'examen IFSI" +
+      "\nSois bienveillant, precis et concis. Maximum 200 mots. Ecris en francais simple.";
+ 
+    var response = await fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/functions/v1/analyse-reponse", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({prompt: prompt})
+    });
+ 
+    var data = await response.json();
+    var texte = data.texte || "Analyse indisponible.";
+    document.getElementById('analyse-texte').textContent = texte;
+  } catch(err) {
+    document.getElementById('analyse-texte').textContent = "Analyse indisponible pour le moment. Consultez la correction ci-dessous.";
+  }
+ 
+  window.scrollTo(0, 0);
+}
+ 
+function passerDirectement(){
+  stopChrono();
+  document.getElementById('correction-wrap').className = 'correction-wrap show';
+  document.getElementById('reponse-wrap').className = 'reponse-wrap';
+  document.getElementById('chrono-wrap').style.display = 'none';
+  document.getElementById('analyse-texte').textContent = "Vous avez choisi de voir directement la correction. Etudiez les etapes et reessayez ce sujet plus tard.";
+  afficherEtapes();
+  window.scrollTo(0, 0);
+}
+ 
+function afficherEtapes(){
+  var etapesEl = document.getElementById('etapes-correction');
+  etapesEl.innerHTML = '';
+  var colors = {clinique:'', calcul:'amber', communication:'purple', urgence:'red'};
+  var color = colors[currentTip.type] || '';
+  currentTip.etapes.forEach(function(e, i){
+    var div = document.createElement('div');
+    div.className = 'etape-item';
+    div.innerHTML = '<span class="etape-num ' + color + '">' + (i+1) + '</span><span>' + e + '</span>';
+    etapesEl.appendChild(div);
+  });
+  var alertEl = document.getElementById('correction-alert');
+  alertEl.textContent = currentTip.alerte ? '⚠️ ' + currentTip.alerte : '';
+  alertEl.style.display = currentTip.alerte ? 'block' : 'none';
+  var memoEl = document.getElementById('correction-memo');
+  memoEl.textContent = currentTip.memo ? '💡 ' + currentTip.memo : '';
+  memoEl.style.display = currentTip.memo ? 'block' : 'none';
+}
+ 
+function nouveauTirage(){
+  stopChrono();
+  document.getElementById('loterie-screen').style.display = 'block';
+  document.getElementById('sujet-card').className = 'sujet-card';
+  document.getElementById('reponse-wrap').className = 'reponse-wrap';
+  document.getElementById('correction-wrap').className = 'correction-wrap';
+  document.getElementById('chrono-wrap').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+ 
+function toggleListe(){
+  var liste = document.getElementById('tips-liste');
+  if(liste.classList.contains('show')){ liste.classList.remove('show'); return; }
+  liste.innerHTML = '';
+  var labels = {clinique:'🏥', calcul:'🧮', communication:'💬', urgence:'🚨'};
+  TIPS.forEach(function(tip){
+    var item = document.createElement('div');
+    item.className = 'liste-item';
+    item.innerHTML = '<span style="font-size:16px">' + labels[tip.type] + '</span><span>' + tip.titre + '</span>';
+    item.onclick = function(){ afficherSujet(tip); };
+    liste.appendChild(item);
+  });
+  liste.classList.add('show');
+}
+ 
+// Signaler l'activite au parent (pour le timer d'inactivite SimCare)
+document.addEventListener('click', function(){ window.parent.postMessage({type:'activite'}, '*'); });
+document.addEventListener('keypress', function(){ window.parent.postMessage({type:'activite'}, '*'); });
+</script>
+</body>
+</html>
