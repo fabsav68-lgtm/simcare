@@ -58,6 +58,102 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:16px 2
 .module-btn{display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:700;border:1.5px solid transparent;}
 footer{border-top:1px solid rgba(255,255,255,.07);padding:24px 20px;text-align:center;font-size:11px;color:#2a3a45;font-family:monospace;}
 </style>
+  // RESTRICTION ACCES PAR ANNEE
+// A adapter apres reception du decret
+
+var MODULES_PAR_ANNEE = {
+// 1ere annee - S1 et S2 - bases fondamentales
+A1: [
+'PraxisO2-IFSI.html',
+'PraxisGluco-IFSI.html',
+'PraxisConstantes-IFSI.html',
+'PraxisDouleur-IFSI.html',
+'PraxisContention-IFSI.html',
+'PraxisConversions-IFSI.html',
+'PraxisAlmanach-IFSI.html'
+],
+// 2eme annee - S1 a S4 - competences intermediaires
+A2: [
+'PraxisO2-IFSI.html',
+'PraxisGluco-IFSI.html',
+'PraxisConstantes-IFSI.html',
+'PraxisDouleur-IFSI.html',
+'PraxisContention-IFSI.html',
+'PraxisConversions-IFSI.html',
+'PraxisAlmanach-IFSI.html',
+'PraxisPerf-IFSI.html',
+'PraxisRevision-IFSI.html',
+'PraxisConsultation-IFSI.html',
+'PraxisPsy-IFSI.html',
+'PraxisPediatrie-IFSI.html',
+'PraxisPrevention-IFSI.html'
+],
+// 3eme annee - acces complet
+A3: 'all'
+};
+
+// Modules toujours accessibles (hors formation)
+var MODULES_LIBRES = [
+'PraxisAlmanach-IFSI.html', // Almanach
+'PraxisAcademy', // MODULE 23 QCM
+'PraxisTips-IFSI.html', // Tips IA
+'binome', // Duetiste
+'PraxisTACA-Theorie-IFSI.html',
+'PraxisTACA-Stage-IFSI.html'
+];
+
+function getAnneeEtudiant(){
+var code = sessionStorage.getItem('praxiscare_code') || '';
+if(code.indexOf('PRAXIS-A1-') !== -1) return 'A1';
+if(code.indexOf('PRAXIS-A2-') !== -1) return 'A2';
+if(code.indexOf('PRAXIS-A3-') !== -1) return 'A3';
+if(code.indexOf('PRAXIS-FORM-') !== -1) return 'A3'; // Formateur = acces complet
+return 'A1'; // Par defaut
+}
+
+function moduleAccessible(fichier){
+var annee = getAnneeEtudiant();
+// Modules libres toujours accessibles
+for(var i=0; i<MODULES_LIBRES.length; i++){
+if(fichier.indexOf(MODULES_LIBRES[i]) !== -1) return true;
+}
+// 3eme annee ou formateur = tout
+if(annee === 'A3') return true;
+// Verifier la liste de l'annee
+var liste = MODULES_PAR_ANNEE[annee] || [];
+return liste.indexOf(fichier) !== -1;
+}
+
+function ouvrirModuleSecurise(fichier){
+if(!moduleAccessible(fichier)){
+alert('Ce module sera accessible en ' +
+(getAnneeEtudiant() === 'A1' ? '2eme' : '3eme') +
+' annee. Continuez a progresser !');
+return;
+}
+ouvrirModule(fichier);
+}
+
+function appliquerRestrictions(){
+var cards = document.querySelectorAll('.module-card');
+cards.forEach(function(card){
+var onclick = card.getAttribute('onclick') || '';
+var match = onclick.match(/'([^']+)'/);
+if(match){
+var fichier = match[1];
+if(!moduleAccessible(fichier)){
+card.classList.add('locked');
+}
+}
+});
+}
+
+// Appeler au chargement
+document.addEventListener('DOMContentLoaded', function(){
+appliquerRestrictions();
+});
+
+
 <script>
 (function(){
   var CODES = ['PRAXIS-A1-001','PRAXIS-A1-002','PRAXIS-A1-003','PRAXIS-A1-004','PRAXIS-A1-005',
