@@ -6,7 +6,8 @@
 <title>SimGluco · Outil pédagogique IFSI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
+.btn-audio{position:fixed;top:12px;right:12px;background:rgba(94,203,122,.1);border:1px solid rgba(94,203,122,.3);color:var(--em);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;z-index:100;}
+  <style>
 :root {
   --bg:    #06100a;
   --bg2:   #0c1a10;
@@ -329,6 +330,8 @@ hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:20px 0}
 </head>
 <body>
 <div id="app"></div>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
+<script>
 <script>
 // ═══════════════════════════════════════
 //  DONNÉES
@@ -437,6 +440,76 @@ function glycoPhysio(){
 
 function insulineInfo(){ return INSULINES.find(i=>i.id===S.rx.insuline)||INSULINES[0]; }
 function diabeteInfo(){ return DIABETE_TYPES.find(d=>d.id===S.patient.diabete)||DIABETE_TYPES[0]; }
+
+var _lecture = false;
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  var ph = glycoPhysio(), ins = insulineInfo(), di = diabeteInfo();
+  if(S.view === 'step1'){
+    textes.push('Patient : ' + (S.patient.prenom || 'sans prenom') + ', ' + (S.patient.sexe==='H'?'homme':'femme') + ', ' + S.patient.age + ' ans, ' + S.patient.poids + ' kilos.');
+    textes.push('Type de diabete : ' + di.label + '.');
+    if(S.patient.facteurs.length > 0){
+      var labs = S.patient.facteurs.map(function(f){ var fr=FACTEURS_RISQUE.find(function(x){return x.id===f;}); return fr?fr.label:f; });
+      textes.push('Facteurs de risque : ' + labs.join(', ') + '.');
+    }
+  } else if(S.view === 'step2'){
+    textes.push('Glycemie mesuree : ' + S.patient.glycemie.toFixed(1) + ' grammes par litre. ' + ph.zoneLabel + '.');
+    textes.push(ph.sucreAnalog + '.');
+    textes.push('Risque d\'hypoglycemie : ' + ph.risqueHypo + '.');
+    textes.push('Insulino-sensibilite estimee : ' + Math.round(ph.sensi*100) + ' pourcent.');
+    textes.push('Besoins basaux estimes : ' + ph.besoinBase + ' unites internationales par jour.');
+    if(S.patient.facteurs.includes('betablock')){
+      textes.push('Attention : patient sous beta-bloquants. Ils masquent la tachycardie, signe d\'alerte d\'une hypoglycemie. Seule la sudation reste visible.');
+    }
+  } else if(S.view === 'step3'){
+    var peakH = Math.round(ins.peak/60*10)/10;
+    var durH = Math.round(ins.dur/60*10)/10;
+    textes.push('Insuline prescrite : ' + ins.label + '.');
+    textes.push('Dose : ' + S.rx.dose + ' unites internationales, ' + momentLabel(S.rx.moment) + '.');
+    textes.push('Debut d\'action : ' + ins.onset + ' minutes. Pic a ' + peakH + ' heures. Duree totale : ' + durH + ' heures.');
+    textes.push('Vigilance : ' + ins.risque + '.');
+    if(S.rx.moment==='coucher' && ins.id==='lente'){
+      textes.push('Injection au coucher : surveiller l\'hypoglycemie nocturne.');
+    }
+    if(S.patient.facteurs.includes('jeune') && ins.id!=='lente'){
+      textes.push('Patient a jeun : risque hypoglycemique majore avec cette insuline.');
+    }
+  } else if(S.view === 'step4'){
+    textes.push('Recapitulatif. Patient : ' + (S.patient.prenom||'ce patient') + ', ' + S.patient.age + ' ans. Diabete : ' + di.label + '. Glycemie : ' + S.patient.glycemie.toFixed(1) + ' grammes par litre, ' + ph.zoneLabel + '. Risque hypoglycemique : ' + ph.risqueHypo + '. Insuline : ' + ins.label + ', ' + S.rx.dose + ' unites, ' + momentLabel(S.rx.moment) + '.');
+    if(S.loading){
+      textes.push('Analyse en cours.');
+    } else if(S.analyse){
+      textes.push(S.analyse.replace(/\*\*/g, ''));
+    } else {
+      textes.push('Aucune analyse clinique disponible pour le moment.');
+    }
+  } else {
+    return;
+  }
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 1;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  suivante();
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
 
 function ageLabel(a){
   if(a<3) return 'Nourrisson';if(a<12) return 'Enfant';if(a<18) return 'Adolescent';
@@ -934,7 +1007,7 @@ function render(scrollTop=false){
 // ═══════════════════════════════════════
 //  ACTIONS
 // ═══════════════════════════════════════
-function go(v){S.view=v;render(true);}
+function go(v){stopLecture();S.view=v;render(true);}
 function up(k,v){S.patient={...S.patient,[k]:v};render()}
 function upRx(k,v){S.rx={...S.rx,[k]:v};render()}
 function goAnalyse(){S.view='step4';S.analyse='';render(true);runAnalyse();}
