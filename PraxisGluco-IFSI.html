@@ -501,7 +501,7 @@ function lireOnglet(){
     speechSynthesis.speak(u);
   }
   speechSynthesis.cancel();
-  suivante();
+  setTimeout(suivante, 50);
 }
 function stopLecture(){
   _lecture = false;
