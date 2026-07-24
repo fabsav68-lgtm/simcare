@@ -148,10 +148,12 @@ hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:14px 0}
 @keyframes dotB{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
 .fadeup{animation:fadeUp .3s ease forwards}
 @media(max-width:480px){.profil-grid{grid-template-columns:repeat(2,1fr)}.zones-grid{grid-template-columns:1fr 1fr}}
+
 </style>
 </head>
 <body>
 <div id="app"></div>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
 <script>
 // Données profils
 var PROFILS = [
@@ -568,7 +570,7 @@ function render(){
 }
 
 function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});}
-function setO(o){S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function setO(o){stopLecture();S.onglet=o;S.analyse='';render();window.scrollTo({top:0,behavior:'smooth'});}
 function toggleC(id){S.cstOpen=S.cstOpen===id?null:id;render();}
 function nSel(k,s){nSet(k,s);render();}
 function clearN(){NEWS2.forEach(function(p){delete ST['n_'+p.key];});save(ST);render();}
@@ -595,6 +597,46 @@ async function runIA(){
     S.analyse=data.content&&data.content.find(function(b){return b.type==='text';})?data.content.find(function(b){return b.type==='text';}).text:'';
   }catch(e){S.analyse='**Erreur**\n\n'+e.message;}
   S.loading=false;render();
+}
+var _lecture = false;
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  if(S.onglet === 'constantes'){
+    CONSTANTES.forEach(function(cst){
+      var n = cst.normes[S.profil] || cst.normes['adulte'];
+      textes.push(cst.nom + '. Valeur normale : ' + n.ok + '.');
+      if(n.alerte) textes.push('Seuil d\'alerte : ' + n.alerte + '.');
+      if(n.critique) textes.push('Seuil critique : ' + n.critique + '.');
+    });
+  } else {
+    document.querySelectorAll('#app .card-title, #app .card-sub, #app p, #app li').forEach(function(el){
+      var t = el.innerText.trim();
+      if(t.length > 2) textes.push(t);
+    });
+  }
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 1;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  suivante();
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
 }
 
 render();
