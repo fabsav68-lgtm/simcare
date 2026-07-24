@@ -625,8 +625,27 @@ function lireOnglet(){
       textes.push('Réponse : ' + ['A','B','C','D'][qc.rep] + '.');
       textes.push(qc.expl.replace(/\*\*/g, ''));
     }
+  } else if(S.onglet === 'news2'){
+    var f = nFilled();
+    if(f < NEWS2.length){
+      textes.push('Veuillez remplir les ' + NEWS2.length + ' paramètres pour obtenir le score NEWS2.');
+      NEWS2.forEach(function(p){ textes.push(p.lbl); });
+    } else {
+      var t = nTotal();
+      textes.push('Score NEWS2 : ' + t + '. ' + nl(t) + '.');
+      textes.push(na(t));
+    }
+    textes.push('Rappel : score supérieur ou égal à 5, alerte médicale sans attendre. Score supérieur ou égal à 7, urgence majeure.');
+  } else if(S.onglet === 'analyse'){
+    if(S.loading){
+      textes.push('Analyse en cours, veuillez patienter.');
+    } else if(S.analyse){
+      textes.push(S.analyse.replace(/\*\*/g, ''));
+    } else {
+      textes.push('Décrivez un bilan de constantes dans la zone de texte, puis cliquez sur Analyser ce bilan pour obtenir une interprétation.');
+    }
   } else {
-    alert('Lecture audio pas encore disponible pour cet onglet.');
+  
     return;
   }
   if(textes.length === 0) return;
