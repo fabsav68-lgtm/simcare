@@ -379,7 +379,7 @@ const VOIES = [
 let S = {
   view:'welcome',
   patient: { prenom:'Jean', sexe:'H', age:78, taille:172, poids:74, pathologie:'card' },
-  rx:      { solution:'nacl09', volume:500, dureeH:4, dureeMin:0, voie:'periph' },
+  rx:      { solution:'nacl09', volume:500, duree:4, voie:'periph' },
   analyse:'', loading:false,
   apiKey: localStorage.getItem('simperf_key')||'',
   apiKeySaved: !!localStorage.getItem('simperf_key'),
@@ -434,15 +434,16 @@ function vasculaire() {
 }
 
 function perfusion() {
-  const { volume, dureeH, dureeMin } = S.rx;
-  const dureeMinTotal = dureeH*60 + dureeMin;
-  const debitHeure = Math.round(volume / (dureeMinTotal/60) * 10) / 10;
+  const { volume, duree } = S.rx;
+  const dureeMinTotal = duree*60;
+  const debitHeure = Math.round(volume / duree * 10) / 10;
   const debitMin   = Math.round(volume / dureeMinTotal * 10) / 10;
   const goutteMin  = Math.round(debitHeure / 3); // macrogouttes : 1 mL = 20 gouttes, /60*20 = /3
   const goutteS    = Math.round(goutteMin / 60 * 10) / 10;
   const dureeAffH  = Math.floor(dureeMinTotal/60);
-  const dureeAffM  = dureeMinTotal % 60;
+  const dureeAffM  = Math.round(dureeMinTotal % 60);
   return { debitHeure, debitMin, goutteMin, goutteS, dureeMinTotal, dureeAffH, dureeAffM };
+}
 }
 
 function risqueNiveau(r) {
@@ -664,7 +665,7 @@ function render(scrollTop=false){
           <label class="lbl">Solution de perfusion</label>
           <div class="col8">
             ${SOLUTIONS.map(s=>`
-              <div class="sel ${S.perf.solution===s.id?'on':''}" onclick="S.perf.solution='${s.id}';render()">
+              <div class="sel ${S.rx.solution===s.id?'on':''}" onclick="S.rx.solution='${s.id}';render()">
                 <span class="si">💊</span>
                 <div><div style="font-weight:500">${s.label}</div><div class="sd">${s.osmol} mOsm/L · ${s.type}</div></div>
               </div>`).join('')}
@@ -674,7 +675,7 @@ function render(scrollTop=false){
           <label class="lbl">Voie d'abord</label>
           <div class="col8">
             ${VOIES.map(v=>`
-              <div class="sel ${S.perf.voie===v.id?'on':''}" onclick="S.perf.voie='${v.id}';render()">
+              <div class="sel ${S.rx.voie===v.id?'on':''}" onclick="S.rx.voie='${v.id}';render()">
                 <span class="si">${v.icon}</span>
                 <div><div style="font-weight:500">${v.label}</div><div class="sd">${v.desc}</div></div>
               </div>`).join('')}
@@ -684,27 +685,37 @@ function render(scrollTop=false){
           ⚕️ <strong>Rôle IDE :</strong> Le volume, la durée et le débit sont <strong>prescrits par le médecin</strong>. L'IDE applique, surveille et adapte selon les paramètres cliniques du patient.
         </div>
         <div>
-          <div class="lbl-row"><label class="lbl" style="margin:0">Volume prescrit</label><span class="lbl-val">${S.perf.volume} mL</span></div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Volume prescrit</label><span class="lbl-val">${S.rx.volume} mL</span></div>
           <div class="sl-wrap">
             <button class="sl-btn" onclick="upPerf('volume',-50)">−</button>
-            <input type="range" min="50" max="1000" step="50" value="${S.perf.volume}" oninput="S.perf.volume=+this.value;render()">
+            <input type="range" min="50" max="1000" step="50" value="${S.rx.volume}" oninput="S.rx.volume=+this.value;render()">
             <button class="sl-btn" onclick="upPerf('volume',50)">+</button>
           </div>
         </div>
         <div>
-          <div class="lbl-row"><label class="lbl" style="margin:0">Durée prescrite</label><span class="lbl-val">${S.perf.duree}h</span></div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Volume prescrit</label><span class="lbl-val">${S.rx.volume} mL</span></div>
+          <div class="sl-wrap">
+            <button class="sl-btn" onclick="upPerf('volume',-50)">−</button>
+            <input type="range" min="50" max="1000" step="50" value="${S.rx.volume}" oninput="S.rx.volume=+this.value;render()">
+            <button class="sl-btn" onclick="upPerf('volume',50)">+</button>
+          </div>
+        </div>
+        <div>
+          <div class="lbl-row"><label class="lbl" style="margin:0">Durée prescrite</label><span class="lbl-val">${S.rx.duree}h</span></div>
           <div class="sl-wrap">
             <button class="sl-btn" onclick="upPerf('duree',-0.5)">−</button>
-            <input type="range" min="0.5" max="24" step="0.5" value="${S.perf.duree}" oninput="S.perf.duree=+this.value;render()">
+            <input type="range" min="0.5" max="24" step="0.5" value="${S.rx.duree}" oninput="S.rx.duree=+this.value;render()">
             <button class="sl-btn" onclick="upPerf('duree',0.5)">+</button>
+          </div>
+        </div>
           </div>
         </div>
       </div>
       <div style="background:rgba(212,168,83,.08);border:1px solid rgba(212,168,83,.25);border-radius:14px;padding:18px;margin-top:16px">
         <div style="font-family:monospace;font-size:11px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Débit résultant de la prescription</div>
         <div class="grid2" style="text-align:center">
-          <div><div style="font-size:36px;font-weight:700;color:var(--em);font-family:monospace">${pf2.debitH}</div><div style="font-size:12px;color:var(--txt3)">mL/h</div></div>
-          <div><div style="font-size:36px;font-weight:700;color:var(--em);font-family:monospace">${pf2.gouttes}</div><div style="font-size:12px;color:var(--txt3)">gttes/min (macro)</div></div>
+          <div><div style="font-size:36px;font-weight:700;color:var(--em);font-family:monospace">${pf2.debitHeure}</div><div style="font-size:12px;color:var(--txt3)">mL/h</div></div>
+          <div><div style="font-size:36px;font-weight:700;color:var(--em);font-family:monospace">${pf2.goutteMin}</div><div style="font-size:12px;color:var(--txt3)">gttes/min (macro)</div></div>
         </div>
         <div style="font-size:12px;color:var(--txt3);margin-top:10px;font-style:italic">
           L'IDE vérifie la cohérence du débit affiché avec la prescription et surveille le point de ponction, le débit réel et l'état clinique du patient.
@@ -760,10 +771,9 @@ function render(scrollTop=false){
 
 function go(v){S.view=v;render(true)}
 function upPat(k,d){S.patient[k]=Math.max(0,Math.min(220,S.patient[k]+d));render()}
-function upPerf(k,d){S.perf[k]=Math.round((S.perf[k]+d)*10)/10;render()}
+function upPerf(k,d){S.rx[k]=Math.round((S.rx[k]+d)*10)/10;render()}
 function saveKey(){localStorage.setItem('simperf_key',S.apiKey);S.apiKeySaved=true;render()}
-function reset(){S={...S,view:'welcome',patient:{prenom:'',sexe:'F',age:65,poids:65,pathologie:'sain'},perf:{solution:'nacl',voie:'vvp',volume:500,duree:4},analyse:'',showKey:false};render(true)}
-
+function reset(){S={...S,view:'welcome',patient:{prenom:'',sexe:'F',age:65,poids:65,pathologie:'sain'},rx:{solution:'nacl09',voie:'periph',volume:500,duree:4},analyse:'',showKey:false};render(true)}
 async function runAnalyse(){
   const pf=perfusion(),va=vasculaire(),pa=patho(),so=sol(),vo=voie();
   S.loading=true;S.analyse='';render();
@@ -774,7 +784,8 @@ async function runAnalyse(){
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
         messages:[{role:'user',content:`Tu es formateur IFSI expert en perfusion IV. Analyse pour un étudiant.
 Patient: ${S.patient.prenom}, ${S.patient.sexe==='H'?'homme':'femme'} ${S.patient.age} ans, ${S.patient.poids}kg.
-Pathologie: ${pa.label}. Volémie estimée: ${va.volemie} mL, DC: ${va.dc} L/min.
+Pathologie: ${pa.label}. Volémie estimée: ${va.vole} mL, DC: ${va.dc} L/min.
+Perfusion: ${so.label} ${S.rx.volume}mL en ${S.rx.duree}h via ${vo.label} → ${pf.debitHeure} mL/h = ${pf.goutteMin} gttes/min.
 Perfusion: ${so.label} ${S.perf.volume}mL en ${S.perf.duree}h via ${vo.label} → ${pf.debitH} mL/h = ${pf.gouttes} gttes/min.
 Réponds en 4 blocs: **🎯 Cohérence**, **⚠️ Vigilance**, **🔬 Impact physiologique**, **✅ Surveillance**. Tutoie l'étudiant.`}]})
     });
