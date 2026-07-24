@@ -610,13 +610,27 @@ function lireOnglet(){
       if(n.alerte) textes.push('Seuil d\'alerte : ' + n.alerte + '.');
       if(n.critique) textes.push('Seuil critique : ' + n.critique + '.');
     });
-  } else {
-    document.querySelectorAll('#app .card-title, #app .card-sub, #app p, #app li').forEach(function(el){
+  } else if(S.onglet === 'biologie'){
+    document.querySelectorAll('#app .bio-title, #app .bio-row, #app .info').forEach(function(el){
       var t = el.innerText.trim();
       if(t.length > 2) textes.push(t);
     });
+  } else if(S.onglet === 'quiz'){
+    var qc = QUIZ[S.qIdx % QUIZ.length];
+    textes.push(qc.q);
+    qc.opts.forEach(function(opt, i){
+      textes.push(['A','B','C','D'][i] + '. ' + opt);
+    });
+    if(S.qShown){
+      textes.push('Réponse : ' + ['A','B','C','D'][qc.rep] + '.');
+      textes.push(qc.expl.replace(/\*\*/g, ''));
+    }
+  } else {
+    alert('Lecture audio pas encore disponible pour cet onglet.');
+    return;
   }
   if(textes.length === 0) return;
+
   _lecture = true;
   document.getElementById('btn-audio').textContent = '⏹ Stop';
   var i = 0;
