@@ -6,7 +6,8 @@
 <title>PraxisPerf · Outil pédagogique IFSI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
+.btn-audio{position:fixed;top:12px;right:12px;background:rgba(212,168,83,.1);border:1px solid rgba(212,168,83,.3);color:var(--gold);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;z-index:100;}
+  <style>
 :root {
   --bg:     #0a0d0f;
   --bg2:    #111518;
@@ -343,6 +344,8 @@ hr.div { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 20px
 </head>
 <body>
 <div id="app"></div>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
+<script>
 <script>
 
 // ═══════════════════════════════════════
@@ -493,6 +496,63 @@ function renderMd(text){
 function sol()  { return SOLUTIONS.find(s=>s.id===S.rx.solution)||SOLUTIONS[0]; }
 function patho(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0]; }
 function voie() { return VOIES.find(v=>v.id===S.rx.voie)||VOIES[0]; }
+
+var _lecture = false;
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  var va = vasculaire(), pa = patho(), so = sol(), vo = voie(), pf = perfusion();
+  if(S.view === 'step1'){
+    textes.push('Patient : ' + (S.patient.prenom || 'sans prenom') + ', ' + (S.patient.sexe==='H'?'homme':'femme') + ', ' + S.patient.age + ' ans, ' + S.patient.poids + ' kilos.');
+    textes.push('Pathologie : ' + pa.label + '.');
+  } else if(S.view === 'step2'){
+    textes.push('Volemie estimee : ' + va.vole + ' millilitres.');
+    textes.push('Debit cardiaque : ' + va.dc + ' litres par minute.');
+    textes.push('Filtration renale : ' + va.du + ' millilitres par minute.');
+    textes.push('Pression arterielle estimee : ' + va.pasSys + ' sur ' + va.pasDia + '.');
+    textes.push('Risque de surcharge : ' + va.risque + '.');
+    if(pa.id !== 'sain'){
+      textes.push(pa.label + '. ' + pa.perf_note);
+    }
+  } else if(S.view === 'step3'){
+    textes.push('Solution choisie : ' + so.label + '.');
+    textes.push('Voie d\'abord : ' + vo.label + '.');
+    textes.push('Volume prescrit : ' + S.rx.volume + ' millilitres, sur ' + S.rx.duree + ' heures.');
+    textes.push('Debit resultant : ' + pf.debitHeure + ' millilitres par heure, soit ' + pf.goutteMin + ' gouttes par minute.');
+  } else if(S.view === 'step4'){
+    if(S.loading){
+      textes.push('Analyse clinique en cours.');
+    } else if(S.analyse){
+      textes.push(S.analyse.replace(/\*\*/g, ''));
+    } else {
+      textes.push('Aucune analyse clinique disponible pour le moment.');
+    }
+  } else {
+    return;
+  }
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 1;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  suivante();
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
 
 // ═══════════════════════════════════════
 //  RENDER
@@ -768,8 +828,7 @@ function render(scrollTop=false){
   document.getElementById('app').innerHTML=h;
   if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
 }
-
-function go(v){S.view=v;render(true)}
+function go(v){stopLecture();S.view=v;render(true)}
 function upPat(k,d){S.patient[k]=Math.max(0,Math.min(220,S.patient[k]+d));render()}
 function upPerf(k,d){S.rx[k]=Math.round((S.rx[k]+d)*10)/10;render()}
 function saveKey(){localStorage.setItem('simperf_key',S.apiKey);S.apiKeySaved=true;render()}
