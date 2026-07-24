@@ -316,6 +316,7 @@
 </head>
 <body>
 <div id="app"></div>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
 <script>
 
 // ═══════════════════════════════════════════════════════
@@ -431,6 +432,76 @@ function renderMd(text) {
 function disp() { return DISPOSITIFS.find(d=>d.id===S.rx.dispositif)||DISPOSITIFS[0]; }
 function patho(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0]; }
 
+var _lecture = false;
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  var ph = physio(), fi = fio2(), lv = lvl(fi), dp = disp(), pa = patho();
+  if(S.view === 'step1'){
+    textes.push('Patient : ' + (S.patient.prenom || 'sans prenom') + ', ' + S.patient.age + ' ans, ' + S.patient.poids + ' kilos, ' + S.patient.taille + ' centimetres.');
+    textes.push('Pathologie respiratoire : ' + pa.label + '.');
+  } else if(S.view === 'step2'){
+    textes.push('Frequence respiratoire : ' + ph.rr + ' cycles par minute.');
+    textes.push('Volume courant : ' + ph.vt + ' millilitres, soit environ ' + ph.analog + '.');
+    textes.push('Volume minute : ' + ph.vm + ' litres par minute.');
+    textes.push('SpO2 estimee sans oxygene supplementaire : ' + ph.spo2 + ' pourcent.');
+    var noteMap = {
+      sain:'Physiologie normale. Aucune adaptation particuliere necessaire.',
+      bpco_stable:'Hypoxemie chronique. Cible SpO2 88 a 92 pourcent, eviter l\'hyperoxie.',
+      bpco_decompense:'Decompensation. Attention au drive hypoxique, oxygene titre.',
+      detresse:'Detresse respiratoire aigue. Majoration urgente du support ventilatoire.',
+      cardiac:'Insuffisance cardiaque. Dyspnee d\'origine centrale, traiter la cause.',
+      pneumonie:'Pneumonie. Hypoxemie inflammatoire, oxygene pour maintenir une SpO2 superieure a 94 pourcent.',
+      postop:'Post-operatoire. Surveillance rapprochee, risque atelectasie.'
+    };
+    textes.push(pa.label + '. ' + (noteMap[pa.id] || ''));
+  } else if(S.view === 'step3'){
+    var spo2Cible = (pa.id==='bpco_stable'||pa.id==='bpco_decompense') ? '88 a 92 pourcent' : '94 a 98 pourcent';
+    textes.push('Cible SpO2 pour ce profil : ' + spo2Cible + '.');
+    textes.push('Dispositif choisi : ' + dp.label + ', debit ' + S.rx.debit + ' litres par minute.');
+    textes.push('FiO2 delivree estimee : ' + fi + ' pourcent. ' + lv.t + '.');
+    if(fi>55 && (pa.id==='bpco_stable'||pa.id==='bpco_decompense')){
+      textes.push('Attention : FiO2 trop elevee pour un patient BPCO, risque de depression du drive hypoxique. Cibler 88 a 92 pourcent.');
+    } else if(fi<24){
+      textes.push('Debit insuffisant, FiO2 proche de l\'air ambiant. Augmenter le debit.');
+    } else {
+      textes.push('Prescription coherente avec le profil du patient.');
+    }
+  } else if(S.view === 'step4'){
+    textes.push('Pathologie : ' + pa.label + '. Dispositif : ' + dp.label + '. Debit : ' + S.rx.debit + ' litres par minute. FiO2 : ' + fi + ' pourcent.');
+    if(S.loading){
+      textes.push('Analyse clinique en cours.');
+    } else if(S.analyse){
+      textes.push(S.analyse.replace(/\*\*/g, ''));
+    } else {
+      textes.push('Aucune analyse clinique disponible pour le moment.');
+    }
+  } else {
+    return;
+  }
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 1;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  suivante();
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
 // ═══════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════
@@ -765,7 +836,7 @@ function render(scrollTop=false){
 }
 
 // ── ACTIONS ──
-function go(v){S.view=v;render(true)}
+function go(v){stopLecture();S.view=v;render(true)}
 function upPat(k,d){S.patient[k]=Math.max(0,Math.min(220,S.patient[k]+d));render()}
 function upDebit(d){
   const dp=disp();
