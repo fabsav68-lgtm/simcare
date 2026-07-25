@@ -825,8 +825,33 @@ function validerOnboarding(){
 }
 
 function go(v){
+  stopLecture();
   if(v==='main' && !S.anneeChoisie){ S.view='choix_annee'; render(); window.scrollTo({top:0,behavior:'smooth'}); return; }
   S.view=v;render();window.scrollTo({top:0,behavior:'smooth'});
+}
+function setAnnee(a){
+  stopLecture();
+  if(S.anneeChoisie && S.annee!==a){
+    if(!confirm('⚠️ Vous allez accéder au contenu de '+anLabel(a)+'. Si vous n'avez pas encore suivi ces cours, vous risquez de voir des réponses avant d'avoir réfléchi aux questions.\n\nConfirmer quand même ?')) return;
+  }
+  S.annee=a;S.anneeChoisie=true;S.qcmIdx=0;S.qcmSelected=null;S.qcmShown=false;
+  S.casIdx=0;S.casReponse='';S.casRevele=false;S.casAnalyse='';S.ficheOpen=null;
+  if(S.view==='welcome') S.view='main';
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
+function setMode(m){stopLecture();S.mode=m;render();window.scrollTo({top:0,behavior:'smooth'})}
+}
+function setAnnee(a){
+  stopLecture();
+  if(S.anneeChoisie && S.annee!==a){
+    if(!confirm('⚠️ Vous allez accéder au contenu de '+anLabel(a)+'. Si vous n'avez pas encore suivi ces cours, vous risquez de voir des réponses avant d'avoir réfléchi aux questions.\n\nConfirmer quand même ?')) return;
+  }
+  S.annee=a;S.anneeChoisie=true;S.qcmIdx=0;S.qcmSelected=null;S.qcmShown=false;
+  S.casIdx=0;S.casReponse='';S.casRevele=false;S.casAnalyse='';S.ficheOpen=null;
+  if(S.view==='welcome') S.view='main';
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
+function setMode(m){stopLecture();S.mode=m;render();window.scrollTo({top:0,behavior:'smooth'})}
 }
 function setAnnee(a){
   if(S.anneeChoisie && S.annee!==a){
