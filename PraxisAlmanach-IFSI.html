@@ -811,8 +811,7 @@ function lireOnglet(){
   if(_lecture){ stopLecture(); return; }
   if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
   var textes = [];
-  document.querySelectorAll('#app .col-title, #app .une-titre, #app .une-corps, #app .citation-texte, #app .citation-auteur, #app .savez-texte, #app .blague-texte, #app .blague-chute, #app .pa-titre, #app .pa-corps, #app .eph-content, #app p').forEach(function(el){
-    var t = el.innerText.trim();
+  document.querySelectorAll('#app .col-title, #app .une-titre, #app .une-corps, #app .citation-texte, #app .citation-auteur, #app .savez-texte, #app .blague-texte, #app .blague-chute, #app .pa-titre, #app .pa-corps, #app .eph-content, #app .horo-signe, #app .horo-profil, #app .horo-conseil, #app .prov-texte, #app .prov-sens, #app p').forEach(function(el){
     if(t.length > 2) textes.push(t);
   });
   if(textes.length === 0){
