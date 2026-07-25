@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PraxisDouleur · Outil pédagogique IFSI</title>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
+.btn-audio{position:fixed;bottom:16px;right:16px;background:var(--em);color:#1a0a0a;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:700;cursor:pointer;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+  <style>
 :root {
   --bg:    #1a0a0a;
   --bg2:   #240d0d;
@@ -304,7 +305,8 @@ hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:20px 0}
 </head>
 <body>
 <div id="app"></div>
-<script>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
+  <script>
 // ═══════════════════════════════════════
 //  DONNÉES
 // ═══════════════════════════════════════
@@ -415,6 +417,83 @@ let S = {
 function profilObj(){ return PROFILS.find(p=>p.id===S.patient.profil)||PROFILS[0] }
 function pathoObj(){ return PATHOLOGIES_DOULEUR.find(p=>p.id===S.patient.pathologie_douleur)||PATHOLOGIES_DOULEUR[0] }
 
+var _lecture = false;
+function meilleureVoixFr(){
+  var voix = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('fr') === 0; });
+  if(voix.length === 0) return null;
+  var bonsNoms = ['amélie','audrey','thomas','daniel'];
+  var meilleure = voix.find(function(v){ return /enhanced|premium|neural/i.test(v.name); });
+  if(!meilleure){
+    meilleure = voix.find(function(v){ var n=v.name.toLowerCase(); return bonsNoms.some(function(bn){ return n.indexOf(bn)!==-1; }); });
+  }
+  return meilleure || voix[0];
+}
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  var pa = pathoObj(), pf = profilObj();
+  if(S.view === 'step1'){
+    textes.push('Patient : ' + (S.patient.prenom || 'sans prenom') + ', ' + (S.patient.sexe==='H'?'homme':'femme') + ', ' + S.patient.age + ' ans, ' + S.patient.poids + ' kilos.');
+    textes.push('Profil de communication : ' + pf.label + '.');
+    textes.push('Type de douleur : ' + pa.label + '.');
+  } else if(S.view === 'step2'){
+    var mecaAudio = {
+      aigue: 'Signal d\'alarme, activation des nocicepteurs. Utile et protecteur, disparait avec la cause.',
+      chronique: 'Sensibilisation centrale, les voies douloureuses restent activees apres guerison. Composante psychologique majeure.',
+      neuropath: 'Lesion ou dysfonction du systeme nerveux. Douleur spontanee sans stimulus.',
+      cancereuse: 'Mixte, nociceptive et neuropathique. Composante psychologique et existentielle.',
+      postop: 'Inflammation tissulaire et lesions nerveuses locales. Pic a J0-J1, decroissance progressive.',
+      traumatique: 'Lesion directe des tissus. Douleur proportionnelle au traumatisme.'
+    };
+    textes.push('Douleur de ' + (S.patient.prenom||'ce patient') + '. ' + pa.label + '. ' + (mecaAudio[S.patient.pathologie_douleur] || mecaAudio.aigue));
+    var impactAudio = S.patient.age < 4 ? 'Le nourrisson ne peut exprimer la douleur que par le comportement. Les echelles auto-rapportees sont impossibles.'
+      : S.patient.age < 12 ? 'L\'enfant peut cooperer mais surestime ou sous-estime selon la peur. Preferer les echelles visuelles.'
+      : S.patient.age > 75 ? 'La personne agee sous-evalue souvent sa douleur. Les troubles cognitifs rendent l\'auto-evaluation peu fiable.'
+      : 'Adulte communicant, auto-evaluation fiable via echelle numerique si le patient est cooperant.';
+    textes.push('Impact du profil : ' + impactAudio);
+    textes.push('Echelles recommandees pour ce profil : ' + pf.echelles.join(', ') + '.');
+  } else if(S.view === 'step3'){
+    var sc3 = echelleScore(), mx3 = echelleMax(), szc3 = scoreZone(sc3, mx3);
+    textes.push('Score actuel : ' + sc3 + ' sur ' + mx3 + '. Zone : ' + szc3.z + '.');
+    textes.push(scoreAnalog(sc3, mx3, S.patient.profil));
+  } else if(S.view === 'step4'){
+    var sc4 = echelleScore(), mx4 = echelleMax(), szc4 = scoreZone(sc4, mx4);
+    textes.push('Recapitulatif. Patient : ' + (S.patient.prenom||'ce patient') + ', ' + S.patient.age + ' ans. Profil : ' + pf.label + '. Type de douleur : ' + pa.label + '. Score : ' + sc4 + ' sur ' + mx4 + '. Zone : ' + szc4.z + '.');
+    if(S.loading){
+      textes.push('Analyse clinique en cours.');
+    } else if(S.analyse){
+      textes.push(S.analyse.replace(/\*\*/g, ''));
+    } else {
+      textes.push('Analyse clinique reservee a l\'acces premium.');
+    }
+  } else {
+    return;
+  }
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var voixChoisie = meilleureVoixFr();
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 0.9;
+    if(voixChoisie) u.voice = voixChoisie;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  setTimeout(suivante, 50);
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
 function flaccTotal(){
   return Object.values(S.scores.flacc).reduce((a,b)=>a+b,0);
 }
@@ -926,8 +1005,8 @@ function render(){
 // ═══════════════════════════════════════
 //  ACTIONS
 // ═══════════════════════════════════════
-function go(v){S.view=v;render();window.scrollTo({top:0,behavior:'smooth'})}
-function up(k,v){S.patient={...S.patient,[k]:v};render()}
+function go(v){stopLecture();S.view=v;render();window.scrollTo({top:0,behavior:'smooth'})}
+    function up(k,v){S.patient={...S.patient,[k]:v};render()}
 function upStep(k,d){S.patient={...S.patient,[k]:Math.max(0,Math.min(200,S.patient[k]+d))};render()}
 function upScore(k,d){S.scores[k]=Math.max(0,Math.min(10,S.scores[k]+d));render()}
 function goAnalyse(){S.view='step4';S.analyse='';render();runAnalyse()}
