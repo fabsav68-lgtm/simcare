@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PraxisConversions · PraxisCare IFSI</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Karla:wght@300;400;600&family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
+.btn-audio{position:fixed;bottom:16px;right:16px;background:var(--em);color:#06090d;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:700;cursor:pointer;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+  <style>
 :root{
   --bg:#06090d;--bg2:#0a0f16;--card:rgba(255,255,255,.035);--bdr:rgba(255,255,255,.07);
   --txt:#dde4ec;--txt2:#304050;--txt3:#506070;
@@ -146,8 +147,8 @@ body::before{
   <div id="content" class="fadeup"></div>
 </div>
 
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
 <a class="home-btn-fixed" href="index.html">⌂ PraxisCare</a>
-
 <script>
 // ═══════════════════════════════════════
 //  DONNÉES DE CONVERSION
@@ -1206,8 +1207,50 @@ function calcDose3(){
   var total = p*u;
   el.innerHTML = '<span class="result-num">'+fmt(Math.round(total*100)/100)+'</span><span class="result-unit">UI au total</span><div class="result-hint" style="margin-top:8px">'+p+' kg × '+u+' UI/kg = <strong>'+fmt(Math.round(total*100)/100)+' UI</strong></div>';
 }
-
-function setO(o){ S.onglet=o; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+var _lecture = false;
+function meilleureVoixFr(){
+  var voix = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('fr') === 0; });
+  if(voix.length === 0) return null;
+  var bonsNoms = ['amélie','audrey','thomas','daniel'];
+  var meilleure = voix.find(function(v){ return /enhanced|premium|neural/i.test(v.name); });
+  if(!meilleure){
+    meilleure = voix.find(function(v){ var n=v.name.toLowerCase(); return bonsNoms.some(function(bn){ return n.indexOf(bn)!==-1; }); });
+  }
+  return meilleure || voix[0];
+}
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  document.querySelectorAll('#content .conv-title, #content .conv-sub, #content .info, #content .result-box, #content .stat-v, #content .stat-l').forEach(function(el){
+    var t = el.innerText.trim();
+    if(t.length > 2) textes.push(t);
+  });
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var voixChoisie = meilleureVoixFr();
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 0.9;
+    if(voixChoisie) u.voice = voixChoisie;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  setTimeout(suivante, 50);
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
+function setO(o){ stopLecture(); S.onglet=o; render(); window.scrollTo({top:0,behavior:'smooth'}); }
 
 render();
 </script>
