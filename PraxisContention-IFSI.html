@@ -495,6 +495,82 @@ function dispObj(){ return DISPOSITIFS.find(d=>d.id===S.rx.dispositif)||DISPOSIT
 function pathoObj(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0] }
 function classeObj(){ return CLASSES.find(c=>c.id===S.rx.classe)||CLASSES[1] }
 
+var _lecture = false;
+function meilleureVoixFr(){
+  var voix = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('fr') === 0; });
+  if(voix.length === 0) return null;
+  var bonsNoms = ['amélie','audrey','thomas','daniel'];
+  var meilleure = voix.find(function(v){ return /enhanced|premium|neural/i.test(v.name); });
+  if(!meilleure){
+    meilleure = voix.find(function(v){ var n=v.name.toLowerCase(); return bonsNoms.some(function(bn){ return n.indexOf(bn)!==-1; }); });
+  }
+  return meilleure || voix[0];
+}
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  var pa = pathoObj(), di = dispObj(), cl = classeObj(), taille = recommandeTaille(), clRec = recommandeClasse(), ci = hasContreIndic();
+  if(S.view === 'step1'){
+    textes.push('Patient : ' + (S.patient.prenom || 'sans prenom') + ', ' + (S.patient.sexe==='H'?'homme':'femme') + ', ' + S.patient.age + ' ans, ' + S.patient.poids + ' kilos.');
+    textes.push('Pathologie : ' + pa.label + '. Classe recommandee : ' + pa.classe + '.');
+    if(ci){
+      textes.push('Attention : contre-indication formelle detectee. La contention est contre-indiquee. Alertez le medecin avant tout acte.');
+    } else if(S.patient.contreIndications.length > 0){
+      textes.push('Prudence renforcee signalee pour ce patient.');
+    }
+  } else if(S.view === 'step2'){
+    var imc = Math.round(S.patient.poids / Math.pow(S.patient.taille/100, 2));
+    textes.push('IMC : ' + imc + '.');
+    textes.push('Classe de compression recommandee : ' + clRec + '.');
+    textes.push(ci ? 'Contre-indication detectee : aucune contention ne doit etre posee sans avis medical.' : 'La contention agit comme une pompe mecanique externe pour ameliorer le retour veineux.');
+  } else if(S.view === 'step3'){
+    textes.push('Dispositif prescrit : ' + di.label + '.');
+    textes.push('Classe prescrite : ' + cl.id + ', ' + cl.pression + '.');
+    if(S.rx.classe !== clRec){
+      textes.push('Attention : la classe recommandee pour ce patient est la classe ' + clRec + '. Verifiez la prescription medicale.');
+    }
+    textes.push('Taille recommandee selon les mesures : ' + taille + '.');
+    textes.push('Regle d\'or : toujours poser avant le lever, jamais apres avoir marche ou etre reste debout.');
+  } else if(S.view === 'step4'){
+    textes.push('Recapitulatif. Patient : ' + (S.patient.prenom||'ce patient') + ', ' + S.patient.age + ' ans. Pathologie : ' + pa.label + '. Dispositif : ' + di.label + '. Classe prescrite : ' + cl.id + '. Classe recommandee : ' + clRec + '.');
+    if(ci){
+      textes.push('Contre-indication presente. L\'analyse est bloquee.');
+    } else if(S.loading){
+      textes.push('Analyse clinique en cours.');
+    } else if(S.analyse){
+      textes.push(S.analyse.replace(/\*\*/g, ''));
+    } else {
+      textes.push('Analyse clinique reservee a l\'acces premium.');
+    }
+  } else {
+    return;
+  }
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var voixChoisie = meilleureVoixFr();
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 0.9;
+    if(voixChoisie) u.voice = voixChoisie;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  setTimeout(suivante, 50);
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
+
 // ═══════════════════════════════════════
 //  UTILS
 // ═══════════════════════════════════════
@@ -1140,7 +1216,7 @@ function render(scrollTop=false){
 // ═══════════════════════════════════════
 //  ACTIONS
 // ═══════════════════════════════════════
-function go(v){S.view=v;render(true);}
+function go(v){stopLecture();S.view=v;render(true);}
 function up(k,v){S.patient={...S.patient,[k]:v};render()}
 function upRx(k,v){S.rx={...S.rx,[k]:v};render()}
 function upMes(k,v){S.mesures={...S.mesures,[k]:parseFloat(v)||0};render()}
