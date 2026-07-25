@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PraxisPédiatrie · Outil pédagogique IFSI</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Josefin+Sans:wght@300;400;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
+.btn-audio{position:fixed;bottom:16px;right:16px;background:var(--em);color:#0a0d0f;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:700;cursor:pointer;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+  <style>
 :root {
   --bg:    #05111a;
   --bg2:   #081820;
@@ -219,6 +220,7 @@ hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:18px 0}
 </head>
 <body>
 <div id="app"></div>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
 <script>
 
 // ═══════════════════════════════════════
@@ -809,8 +811,51 @@ function render(){
 // ═══════════════════════════════════════
 //  ACTIONS
 // ═══════════════════════════════════════
-function go(v){ S.view=v; S.situation=null; render(); window.scrollTo({top:0,behavior:'smooth'}); }
-function setOnglet(o){ S.onglet=o; S.analyse=''; S.situation=null; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+var _lecture = false;
+function meilleureVoixFr(){
+  var voix = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('fr') === 0; });
+  if(voix.length === 0) return null;
+  var bonsNoms = ['amélie','audrey','thomas','daniel'];
+  var meilleure = voix.find(function(v){ return /enhanced|premium|neural/i.test(v.name); });
+  if(!meilleure){
+    meilleure = voix.find(function(v){ var n=v.name.toLowerCase(); return bonsNoms.some(function(bn){ return n.indexOf(bn)!==-1; }); });
+  }
+  return meilleure || voix[0];
+}
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  document.querySelectorAll('#app .card-title, #app .card-sub, #app .info, #app .stat-v, #app .stat-l, #app .norme-label, #app .norme-val, #app .norme-unit, #app .echelle-title, #app .echelle-body, #app .quiz-opt, #app .quiz-expl, #app .video-label, #app .video-source, #app summary, #app p').forEach(function(el){
+    var t = el.innerText.trim();
+    if(t.length > 2) textes.push(t);
+  });
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var voixChoisie = meilleureVoixFr();
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 0.9;
+    if(voixChoisie) u.voice = voixChoisie;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  setTimeout(suivante, 50);
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
+  function go(v){ stopLecture(); S.view=v; S.situation=null; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setOnglet(o){ stopLecture(); S.onglet=o; S.analyse=''; S.situation=null; render(); window.scrollTo({top:0,behavior:'smooth'}); }
 function toggleEchelle(id){ S.echelleOpen = S.echelleOpen===id ? null : id; render(); }
 function selectQuiz(i){
   if(S.quizShown) return;
