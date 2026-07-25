@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PraxisConsultation · Outil pédagogique IFSI</title>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
+.btn-audio{position:fixed;bottom:16px;right:16px;background:var(--em);color:#1a1408;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:700;cursor:pointer;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+  <style>
 :root {
   --bg:     #111118;
   --bg2:    #18181f;
@@ -264,6 +265,7 @@ hr.div{border:none;border-top:1px solid rgba(255,255,255,.06);margin:18px 0}
 </head>
 <body>
 <div id="app"></div>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
 <script>
 // ═══════════════════════════════════════
 //  DONNÉES
@@ -377,6 +379,93 @@ let S = {
 };
 
 function motifObj(){ return MOTIFS.find(m=>m.id===S.motif)||MOTIFS[0] }
+var _lecture = false;
+function meilleureVoixFr(){
+  var voix = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('fr') === 0; });
+  if(voix.length === 0) return null;
+  var bonsNoms = ['amélie','audrey','thomas','daniel'];
+  var meilleure = voix.find(function(v){ return /enhanced|premium|neural/i.test(v.name); });
+  if(!meilleure){
+    meilleure = voix.find(function(v){ var n=v.name.toLowerCase(); return bonsNoms.some(function(bn){ return n.indexOf(bn)!==-1; }); });
+  }
+  return meilleure || voix[0];
+}
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  var textes = [];
+  var mo = motifObj();
+  if(S.step === 1){
+    textes.push('Patient : ' + (S.patient.prenom||'sans prenom') + ', ' + (S.patient.sexe==='H'?'homme':'femme') + ', ' + S.patient.age + ' ans, ' + S.patient.poids + ' kilos, ' + S.patient.taille + ' centimetres.');
+    textes.push('Motif de consultation : ' + mo.label + '.');
+    if(S.atcd.length > 0){
+      var atcdLabels = S.atcd.map(function(id){ var a = ANTECEDENTS.find(function(x){return x.id===id;}); return a?a.label:id; });
+      textes.push('Antecedents : ' + atcdLabels.join(', ') + '.');
+    }
+    if(S.traitements_cours) textes.push('Traitements en cours : ' + S.traitements_cours);
+    if(S.allergies) textes.push('Allergies : ' + S.allergies);
+  } else if(S.step === 2){
+    if(S.motif_detail) textes.push('Motif precis : ' + S.motif_detail);
+    if(S.histoire_maladie) textes.push('Histoire de la maladie : ' + S.histoire_maladie);
+    if(S.signes_fonctionnels) textes.push('Signes fonctionnels : ' + S.signes_fonctionnels);
+    if(!S.motif_detail && !S.histoire_maladie && !S.signes_fonctionnels) textes.push('Aucune anamnese saisie pour le moment.');
+  } else if(S.step === 3){
+    var champs = [['fc','Frequence cardiaque'],['fr','Frequence respiratoire'],['pas','Pression arterielle'],['spo2','Saturation'],['temp','Temperature'],['glyc','Glycemie capillaire']];
+    champs.forEach(function(c){ if(S[c[0]]) textes.push(c[1] + ' : ' + S[c[0]] + '.'); });
+    if(S.obs_clinique) textes.push('Observations : ' + S.obs_clinique);
+    if(textes.length === 0) textes.push('Aucun parametre clinique saisi pour le moment.');
+  } else if(S.step === 4){
+    var tmpl = diagTemplate();
+    textes.push('Diagnostic infirmier. Probleme : ' + (S.diag_prob||tmpl.prob) + '. Facteurs lies : ' + (S.diag_lien||tmpl.lien) + '. Manifestations : ' + (S.diag_manifest||tmpl.manifest) + '.');
+  } else if(S.step === 5){
+    if(S.prescriptions_choisies.length > 0){
+      textes.push('Prescriptions infirmieres retenues :');
+      S.prescriptions_choisies.forEach(function(pid){
+        var p = PRESCRIPTIONS_IDE.find(function(x){return x.id===pid;});
+        if(p) textes.push(p.nom + '. ' + p.detail);
+      });
+    } else {
+      textes.push('Aucune prescription selectionnee pour le moment.');
+    }
+    if(S.notes_prescription) textes.push('Notes : ' + S.notes_prescription);
+  } else if(S.step === 6){
+    var tmpl6 = diagTemplate();
+    textes.push('Synthese. Patient : ' + (S.patient.prenom||'ce patient') + ', ' + S.patient.age + ' ans. Motif : ' + mo.label + '. ' + S.atcd.length + ' antecedents. ' + S.prescriptions_choisies.length + ' prescriptions.');
+    textes.push('Diagnostic retenu : ' + (S.diag_prob||tmpl6.prob) + ', ' + (S.diag_lien||tmpl6.lien) + ', ' + (S.diag_manifest||tmpl6.manifest) + '.');
+    if(S.loading){
+      textes.push('Analyse en cours.');
+    } else if(S.analyse){
+      textes.push(S.analyse.replace(/\*\*/g, ''));
+    } else {
+      textes.push('Analyse clinique reservee a l\'acces premium.');
+    }
+  } else {
+    return;
+  }
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var voixChoisie = meilleureVoixFr();
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 0.9;
+    if(voixChoisie) u.voice = voixChoisie;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  setTimeout(suivante, 50);
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
 function diagTemplate(){ return DIAG_TEMPLATES[S.motif]||DIAG_TEMPLATES.suivi_chronique }
 
 // ═══════════════════════════════════════
@@ -829,8 +918,9 @@ function render(){
 // ═══════════════════════════════════════
 //  ACTIONS
 // ═══════════════════════════════════════
-function go(v){S.view=v;S.step=1;render();window.scrollTo({top:0,behavior:'smooth'})}
-function goStep(n){S.step=n;render();window.scrollTo({top:0,behavior:'smooth'})}
+function go(v){stopLecture();S.view=v;S.step=1;render();window.scrollTo({top:0,behavior:'smooth'})}
+function goStep(n){stopLecture();S.step=n;render();window.scrollTo({top:0,behavior:'smooth'})}
+  function goStep(n){S.step=n;render();window.scrollTo({top:0,behavior:'smooth'})}
 function goAnalyse(){S.step=6;S.analyse='';render();runAnalyse()}
 function upPat(k,d){S.patient={...S.patient,[k]:Math.max(0,Math.min(220,S.patient[k]+d))};render()}
 function toggleAtcd(id){S.atcd=S.atcd.includes(id)?S.atcd.filter(x=>x!==id):[...S.atcd,id];render()}
