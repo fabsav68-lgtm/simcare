@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisTransfusion · Sécurité transfusionnelle IFSI</title>
+<style>
+:root{
+  --bg:#0d0808; --bg2:#180c0c; --card:rgba(255,255,255,.035); --bdr:rgba(255,255,255,.09);
+  --txt:#f0e6e4; --txt2:#a89490; --txt3:#5a4a48;
+  --em:#dc5050; --em2:#a83838; --amber:#e8a840; --green:#40c878; --blue:#4090c8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,var(--bg),var(--bg2) 60%,var(--bg));color:var(--txt);font-family:'Instrument Sans','Segoe UI',sans-serif;min-height:100vh;padding-bottom:60px}
+.site-header{padding:36px 20px 20px;text-align:center}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(220,80,80,.09);border:1px solid rgba(220,80,80,.25);color:var(--em);padding:5px 16px;border-radius:20px;font-family:'Fira Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.site-header h1 span{color:var(--em)}
+.site-header p{color:var(--txt2);font-size:13px;margin-top:6px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:0 16px 14px;-webkit-overflow-scrolling:touch}
+.tab{flex-shrink:0;background:rgba(255,255,255,.03);border:1px solid var(--bdr);color:var(--txt2);padding:8px 14px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.tab.active{background:rgba(220,80,80,.12);border-color:rgba(220,80,80,.4);color:var(--em)}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:18px;margin-bottom:14px}
+.card-title{font-size:16px;font-weight:800;margin-bottom:6px}
+.card-sub{font-size:13px;color:var(--txt2);line-height:1.65;margin-bottom:14px}
+.info{border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.7;margin-top:10px}
+.info-em{background:rgba(220,80,80,.07);border-left:3px solid rgba(220,80,80,.5);color:var(--em)}
+.info-amber{background:rgba(232,168,64,.07);border-left:3px solid rgba(232,168,64,.5);color:var(--amber)}
+.info-green{background:rgba(64,200,120,.07);border-left:3px solid rgba(64,200,120,.5);color:var(--green)}
+.step-card{border-left:3px solid var(--em);background:rgba(0,0,0,.2);border-radius:0 10px 10px 0;padding:14px;margin-bottom:10px;cursor:pointer}
+.step-num{font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--em);margin-bottom:4px}
+.step-title{font-size:14.5px;font-weight:700;margin-bottom:6px}
+.step-body{display:none;font-size:12.5px;color:var(--txt2);line-height:1.7;margin-top:8px}
+.step-card.open .step-body{display:block}
+.step-card.open{border-left-color:var(--amber)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.stat{background:rgba(0,0,0,.2);border-radius:10px;padding:12px;text-align:center}
+.stat-v{font-size:22px;font-weight:800;color:var(--em);display:block}
+.stat-l{font-size:10.5px;color:var(--txt2);margin-top:2px;display:block}
+.psl-card{background:rgba(0,0,0,.2);border:1px solid var(--bdr);border-radius:10px;padding:12px;margin-bottom:8px}
+.psl-nom{font-weight:700;font-size:13.5px;color:var(--em);margin-bottom:4px}
+.psl-desc{font-size:12px;color:var(--txt2);line-height:1.6}
+.checklist-item{display:flex;gap:10px;align-items:flex-start;background:rgba(0,0,0,.18);border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:12.5px;color:var(--txt2);line-height:1.6}
+.checklist-item span.n{color:var(--em);font-family:'Fira Mono',monospace;font-weight:700;flex-shrink:0}
+.quiz-opt{display:flex;gap:10px;align-items:center;background:rgba(0,0,0,.2);border:1.5px solid var(--bdr);border-radius:10px;padding:12px 14px;margin-bottom:8px;font-size:13.5px;cursor:pointer}
+.quiz-opt.correct{background:rgba(64,200,120,.12);border-color:rgba(64,200,120,.5);color:var(--green)}
+.quiz-opt.wrong{background:rgba(220,80,80,.12);border-color:rgba(220,80,80,.5);color:var(--em)}
+.quiz-expl{background:rgba(0,0,0,.25);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--txt2);line-height:1.7;margin-top:6px}
+.btn-p{background:linear-gradient(135deg,var(--em2),var(--em));border:none;border-radius:8px;color:#fff;font-size:13.5px;font-weight:700;padding:12px 22px;cursor:pointer;width:100%;margin-top:6px}
+.btn-g{background:rgba(255,255,255,.03);border:1.5px solid var(--bdr);border-radius:8px;color:var(--txt2);font-size:13px;font-weight:600;padding:10px 18px;cursor:pointer}
+.textarea-ia{width:100%;min-height:90px;background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);padding:12px;font-size:13px;resize:vertical;margin-bottom:10px}
+.premium-box{background:rgba(0,0,0,.2);border:1px solid var(--bdr);border-radius:14px;padding:18px;text-align:center}
+.btn-audio{position:fixed;bottom:16px;right:16px;background:var(--em);color:#fff;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:700;cursor:pointer;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);border:none}
+.btn-audio:disabled{opacity:.4;cursor:default}
+.home-btn-fixed{position:fixed;bottom:16px;left:16px;background:rgba(255,255,255,.06);border:1px solid var(--bdr);color:var(--txt2);padding:10px 16px;border-radius:24px;font-size:12.5px;text-decoration:none;z-index:1000}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
+<a class="home-btn-fixed" href="index.html">⌂ PraxisCare</a>
+
+<script>
+// ═══════════════════════════════════════
+//  DONNÉES
+// ═══════════════════════════════════════
+var S = { view:'welcome', onglet:'chaine', analyse:'', loading:false, stepOpen:null, quizIdx:0, quizSelected:null, quizShown:false, quizScore:0, quizTotal:0 };
+
+var ETAPES = [
+  { n:1, titre:"Demande d'examens pré-transfusionnels", detail:"Prescription médicale de PSL et des examens d'immuno-hématologie nécessaires (groupage, RAI), ainsi que des examens complémentaires comme l'hémoglobine et la numération plaquettaire, en contexte transfusionnel avéré." },
+  { n:2, titre:"Commande, remise et transport des PSL", detail:"Une fois la prescription établie, commande des produits sanguins labiles auprès de la structure de délivrance, remise et transport dans des conditions garantissant la conservation du produit jusqu'au service de soins." },
+  { n:3, titre:"Réception des PSL dans le service", detail:"Contrôle à réception : concordance entre le produit livré, la prescription et le patient concerné. Vérification de l'intégrité du produit et des délais de conservation avant stockage ou transfusion immédiate." },
+  { n:4, titre:"Transfusion, surveillance et traçabilité", detail:"Réalisation du contrôle ultime pré-transfusionnel (CUPT), transfusion proprement dite, surveillance clinique du patient, puis traçabilité complète de l'acte dans le dossier transfusionnel." },
+];
+
+var PSL_TYPES = [
+  { nom:"Concentré de globules rouges (CGR)", desc:"Le produit le plus fréquemment transfusé. Nécessite un contrôle de compatibilité ABO au lit du patient avant transfusion." },
+  { nom:"Concentré de plaquettes", desc:"Indiqué en cas de thrombopénie ou de trouble de l'hémostase. Compatibilité ABO recommandée mais moins stricte que pour les CGR." },
+  { nom:"Concentré de granulocytes", desc:"Produit rare, réservé à des indications spécifiques d'aplasie médullaire sévère avec infection non contrôlée." },
+  { nom:"Plasma frais congelé", desc:"Utilisé pour corriger des troubles de la coagulation. Compatibilité ABO du receveur à vérifier." },
+  { nom:"Plasma lyophilisé (CTSA)", desc:"Produit du Centre de transfusion sanguine des armées, utilisé notamment en contexte pré-hospitalier et militaire." },
+];
+
+var CONTROLES_CUPT = [
+  { n:'1', t:"Concordance identité / produit / documents", d:"Vérifier que l'identité du patient (idéalement confirmée à l'oral par le patient lui-même), l'étiquette du produit et les documents de délivrance correspondent strictement, sans aucune interruption de tâche pendant ce contrôle." },
+  { n:'2', t:"Compatibilité ABO", d:"Contrôle ultime de compatibilité ABO entre le patient et le CGR (ou le concentré de granulocytes), réalisé au lit du malade juste avant la transfusion, sauf indication technique contraire du fabricant du dispositif de contrôle." },
+];
+
+var QUIZ = [
+  { q:"Que signifie CUPT ?", opts:["Contrôle Ultime Pré-Transfusionnel","Contrôle Unique du Patient Transfusé","Certificat d'Utilisation des Produits Transfusionnels","Contrôle Universel Post-Transfusion"], rep:0,
+    expl:"CUPT = Contrôle Ultime Pré-Transfusionnel. Il doit être réalisé juste avant la transfusion, par le même professionnel de santé, sans interruption de tâche." },
+  { q:"Le CUPT comporte deux vérifications essentielles. Lesquelles ?", opts:["Température et pression artérielle","Concordance identité/produit/documents et compatibilité ABO","Poids du patient et date de péremption","Groupe sanguin du donneur et du receveur uniquement"], rep:1,
+    expl:"Le CUPT repose sur deux étapes : le contrôle de concordance entre l'identité du patient, l'identification du produit et les documents de délivrance, puis le contrôle de compatibilité ABO." },
+  { q:"Pendant combien de temps la surveillance clinique doit-elle être continue dès le début de la transfusion ?", opts:["5 minutes","15 minutes","30 minutes","1 heure"], rep:1,
+    expl:"La surveillance doit être attentive et continue pendant les 15 premières minutes de la transfusion, période où surviennent la majorité des réactions immédiates graves." },
+  { q:"Combien de temps dure au total la surveillance clinique recommandée après le début de la transfusion ?", opts:["30 minutes","1 heure","2 heures","24 heures"], rep:2,
+    expl:"La surveillance clinique doit se poursuivre pendant les deux heures qui suivent le début de la transfusion, en l'adaptant à l'état clinique et aux facteurs de risque du patient." },
+  { q:"Qui peut renouveler ou adapter une prescription initiale de PSL ?", opts:["Aucun professionnel autre que le médecin prescripteur","L'infirmier en pratique avancée (IPA), dans le cadre d'une procédure écrite","N'importe quel IDE","Le pharmacien hospitalier"], rep:1,
+    expl:"L'IPA peut renouveler et adapter une prescription initiale de PSL, à l'appréciation du médecin prescripteur et dans le cadre d'une procédure écrite établie par ce dernier. La prescription initiale reste un acte médical." },
+  { q:"Quel effet indésirable grave est notamment surveillé en lien avec un excès de volume transfusé ?", opts:["L'hyperthermie maligne","L'œdème pulmonaire de surcharge (TACO)","La crise d'asthme","L'hypoglycémie"], rep:1,
+    expl:"L'œdème pulmonaire de surcharge post-transfusionnel est un effet indésirable potentiellement létal, particulièrement surveillé chez les patients à risque de surcharge volémique (âges extrêmes, insuffisance cardiaque)." },
+  { q:"Pendant combien de temps le dossier transfusionnel doit-il être conservé ?", opts:["5 ans","10 ans","30 ans","À vie, sans limite définie"], rep:2,
+    expl:"Le dossier transfusionnel doit être conservé 30 ans, sur un support (papier ou informatique) garantissant l'intégrité, la confidentialité et la disponibilité des données." },
+  { q:"Quels professionnels peuvent réaliser l'acte de transfusion après prescription ?", opts:["Uniquement les médecins","Médecins, sages-femmes et infirmiers diplômés d'État","Uniquement les IDE","Médecins et pharmaciens uniquement"], rep:1,
+    expl:"Après la prescription, la transfusion peut être réalisée par les médecins, les sages-femmes ou les infirmiers diplômés d'État (IDE), en collaboration étroite avec un médecin pouvant intervenir à tout moment." },
+];
+
+// ═══════════════════════════════════════
+//  RENDU
+// ═══════════════════════════════════════
+function esc(s){ return (s||'').replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+function render(){
+  var h = '';
+  if(S.view === 'welcome'){
+    h += '<div class="site-header"><div class="badge">🩸 B.3 · Sécurité transfusionnelle · Instruction 2026</div><h1>Praxis<span>Transfusion</span></h1></div>';
+    h += '<div class="wrap"><div class="card">';
+    h += '<div class="card-title">La chaîne transfusionnelle en toute sécurité</div>';
+    h += '<div class="card-sub">Transfuser à bon escient le bon produit sanguin labile, au bon patient, au bon moment et à la bonne posologie — le principe fondamental de l\'Instruction n° DGS/PP4/2026/97 du 19 juin 2026, qui remplace le texte de 2021.</div>';
+    h += '<div class="grid2"><div class="stat"><span class="stat-v">4</span><span class="stat-l">Étapes de la chaîne</span></div><div class="stat"><span class="stat-v">15 min</span><span class="stat-l">Surveillance continue</span></div></div>';
+    h += '<button class="btn-p" onclick="go(\'main\')">Explorer PraxisTransfusion →</button>';
+    h += '</div></div>';
+  } else {
+    h += '<div class="site-header" style="padding-top:26px"><div class="badge">🩸 B.3 · Sécurité transfusionnelle</div><h1>Praxis<span>Transfusion</span></h1></div>';
+    h += '<div class="tabs">';
+    [
+      {id:'chaine', l:'⛓️ La chaîne'},
+      {id:'cupt', l:'✅ CUPT'},
+      {id:'psl', l:'🩸 Types de PSL'},
+      {id:'surveillance', l:'👁️ Surveillance'},
+      {id:'quiz', l:'🎯 Quiz'},
+      {id:'analyse', l:'🔬 Analyse IA'},
+    ].forEach(function(t){
+      h += '<button class="tab '+(S.onglet===t.id?'active':'')+'" onclick="setOnglet(\''+t.id+'\')">'+t.l+'</button>';
+    });
+    h += '</div><div class="wrap">';
+
+    if(S.onglet === 'chaine'){
+      h += '<div class="card"><div class="card-title">Les 4 étapes de la chaîne transfusionnelle</div>';
+      h += '<div class="card-sub">Chaque étape doit s\'effectuer sans interruption des tâches et de façon indépendante par rapport à celle qui l\'a précédée. Cliquez sur une étape pour le détail.</div>';
+      ETAPES.forEach(function(e){
+        var open = S.stepOpen === e.n;
+        h += '<div class="step-card '+(open?'open':'')+'" onclick="toggleStep('+e.n+')">';
+        h += '<div class="step-num">Étape '+e.n+'</div><div class="step-title">'+esc(e.titre)+'</div>';
+        h += '<div class="step-body">'+esc(e.detail)+'</div></div>';
+      });
+      h += '</div><div class="info info-em">📋 <strong>Champ d\'application :</strong> tous les produits sanguins labiles homologues ou autologues (CGR, plaquettes, granulocytes, plasma frais congelé, plasma lyophilisé CTSA), à l\'exclusion du plasma pour fractionnement et des médicaments dérivés du plasma.</div>';
+
+    } else if(S.onglet === 'cupt'){
+      h += '<div class="card"><div class="card-title">Contrôle Ultime Pré-Transfusionnel (CUPT)</div>';
+      h += '<div class="card-sub">La transfusion doit impérativement être réalisée après le CUPT, par le même professionnel de santé, sans interruption de tâche.</div>';
+      CONTROLES_CUPT.forEach(function(c){
+        h += '<div class="checklist-item"><span class="n">'+c.n+'</span><div><strong>'+esc(c.t)+'</strong><br>'+esc(c.d)+'</div></div>';
+      });
+      h += '</div><div class="info info-amber">⚠️ <strong>Point de vigilance :</strong> le CUPT n\'est valable que réalisé au lit du patient, juste avant l\'acte, par le professionnel qui va effectivement transfuser — jamais en amont, jamais délégué à un tiers.</div>';
+
+    } else if(S.onglet === 'psl'){
+      h += '<div class="card"><div class="card-title">Les produits sanguins labiles (PSL)</div>';
+      h += '<div class="card-sub">Cinq grandes familles de produits, chacune avec ses spécificités de contrôle.</div>';
+      PSL_TYPES.forEach(function(p){
+        h += '<div class="psl-card"><div class="psl-nom">'+esc(p.nom)+'</div><div class="psl-desc">'+esc(p.desc)+'</div></div>';
+      });
+      h += '</div>';
+
+    } else if(S.onglet === 'surveillance'){
+      h += '<div class="card"><div class="card-title">Surveillance et traçabilité</div>';
+      h += '<div class="card-sub">La surveillance clinique doit être adaptée à l\'état du patient et à ses facteurs de risque, notamment aux âges extrêmes de la vie et pour les patients à risque de surcharge volémique.</div>';
+      h += '<div class="grid2"><div class="stat"><span class="stat-v">15 min</span><span class="stat-l">Surveillance continue au début</span></div><div class="stat"><span class="stat-v">2 h</span><span class="stat-l">Durée totale de surveillance</span></div></div>';
+      h += '<div class="info info-em">🚨 <strong>Effets indésirables à surveiller :</strong> incompatibilités immunologiques transfusionnelles, œdème pulmonaire de surcharge (potentiellement létal) — d\'où l\'importance de l\'évaluation de la balance bénéfices-risques avant transfusion, en particulier chez les patients à risque de surcharge volémique.</div>';
+      h += '<div class="info info-green">🗂️ <strong>Traçabilité :</strong> le dossier transfusionnel doit être conservé 30 ans, sur un support garantissant l\'intégrité, la confidentialité et la disponibilité des données.</div>';
+
+    } else if(S.onglet === 'quiz'){
+      var q = QUIZ[S.quizIdx % QUIZ.length];
+      var pct = Math.round(S.quizIdx / QUIZ.length * 100);
+      h += '<div style="display:flex;justify-content:space-between;font-family:\'Fira Mono\',monospace;font-size:11px;color:var(--txt2);margin-bottom:10px">';
+      h += '<span>Question '+(S.quizIdx % QUIZ.length + 1)+' / '+QUIZ.length+'</span>';
+      h += '<span style="color:var(--em)">'+(S.quizTotal>0 ? Math.round(S.quizScore/S.quizTotal*100)+'% correct' : '—')+'</span></div>';
+      h += '<div class="card"><div style="font-size:15.5px;font-weight:700;margin-bottom:16px">'+esc(q.q)+'</div>';
+      q.opts.forEach(function(opt, i){
+        var cls = '';
+        if(S.quizShown){ if(i===q.rep) cls='correct'; else if(i===S.quizSelected) cls='wrong'; }
+        h += '<div class="quiz-opt '+cls+'" onclick="'+(S.quizShown?'':'selectQuiz('+i+')')+'">';
+        h += '<span style="font-family:\'Fira Mono\',monospace;font-size:11px;flex-shrink:0">'+['A','B','C','D'][i]+'</span><span>'+esc(opt)+'</span></div>';
+      });
+      if(S.quizShown){
+        h += '<div class="quiz-expl">'+esc(q.expl)+'</div>';
+        h += '<button class="btn-p" onclick="nextQuiz()">Question suivante →</button>';
+      }
+      h += '</div>';
+      h += '<button class="btn-g" onclick="S.quizIdx=0;S.quizScore=0;S.quizTotal=0;S.quizSelected=null;S.quizShown=false;stopLecture();render()">↺ Recommencer</button>';
+
+    } else if(S.onglet === 'analyse'){
+      h += '<div class="card"><div class="card-title">Analyse IA — Situation transfusionnelle</div>';
+      h += '<div class="card-sub">Décrivez une situation de transfusion (contexte patient, étape en cours, question) — l\'IA vous répond dans une perspective pédagogique IFSI.</div>';
+      h += '<textarea class="textarea-ia" id="question-transf" placeholder="Ex : Un patient présente des frissons 10 minutes après le début d\'une transfusion de CGR, que faites-vous ?"></textarea>';
+      h += '<button class="btn-p" onclick="runAnalyse()">🩸 Obtenir une réponse pédagogique →</button>';
+      if(S.loading) h += '<div style="margin-top:14px;font-size:12.5px;color:var(--txt2)">Analyse en cours…</div>';
+      if(!S.loading && S.analyse) h += '<div class="info info-em" style="margin-top:14px;white-space:pre-wrap">'+esc(S.analyse)+'</div>';
+      h += '</div><div class="premium-box"><div style="font-size:15px;font-weight:700;margin-bottom:6px">🔒 Analyse IA — Accès Premium</div><div style="font-size:12.5px;color:var(--txt2)">Les 5 autres onglets sont entièrement gratuits.</div></div>';
+    }
+    h += '</div>';
+  }
+  document.getElementById('app').innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
+function go(v){ stopLecture(); S.view=v; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setOnglet(o){ stopLecture(); S.onglet=o; S.analyse=''; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function toggleStep(n){ S.stepOpen = S.stepOpen===n ? null : n; render(); }
+function selectQuiz(i){
+  if(S.quizShown) return;
+  S.quizSelected = i; S.quizShown = true; S.quizTotal++;
+  if(i === QUIZ[S.quizIdx % QUIZ.length].rep) S.quizScore++;
+  render();
+}
+function nextQuiz(){ stopLecture(); S.quizIdx++; S.quizSelected=null; S.quizShown=false; render(); }
+function runAnalyse(){
+  var val = document.getElementById('question-transf').value.trim();
+  if(!val) return;
+  S.loading = true; render();
+  setTimeout(function(){
+    S.loading = false;
+    S.analyse = "Fonctionnalité d'analyse IA à connecter à la fonction Supabase partagée (analyse-reponse), comme sur les autres modules PraxisCare.";
+    render();
+  }, 600);
+}
+
+// ═══════════════════════════════════════
+//  AUDIO
+// ═══════════════════════════════════════
+var _lecture = false;
+function meilleureVoixFr(){
+  var voix = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('fr') === 0; });
+  if(voix.length === 0) return null;
+  var bonsNoms = ['amélie','audrey','thomas','daniel'];
+  var meilleure = voix.find(function(v){ return /enhanced|premium|neural/i.test(v.name); });
+  if(!meilleure){
+    meilleure = voix.find(function(v){ var n=v.name.toLowerCase(); return bonsNoms.some(function(bn){ return n.indexOf(bn)!==-1; }); });
+  }
+  return meilleure || voix[0];
+}
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  if(S.view !== 'main') return;
+  var textes = [];
+  document.querySelectorAll('#app .card-title, #app .card-sub, #app .info, #app .step-title, #app .step-body, #app .psl-nom, #app .psl-desc, #app .checklist-item, #app .stat-v, #app .stat-l, #app .quiz-opt, #app .quiz-expl').forEach(function(el){
+    var t = el.innerText.trim();
+    if(t.length > 2) textes.push(t);
+  });
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var voixChoisie = meilleureVoixFr();
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 0.9;
+    if(voixChoisie) u.voice = voixChoisie;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  setTimeout(suivante, 50);
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
+
+render();
+
+// ═══════════════════════════════════════
+//  TRACKING (cohérent avec les autres modules PraxisCare)
+// ═══════════════════════════════════════
+document.addEventListener('click', function(){ window.parent.postMessage({type:'activite'}, '*'); });
+</script>
+</body>
+</html>
