@@ -346,6 +346,8 @@ let S = {
   apiKey: localStorage.getItem('almanach_key') || '',
   apiKeySaved: !!localStorage.getItem('almanach_key'),
   showApiKey: false,
+  signeChoisi: null,
+};
 };
 
 // Annonces stockées en mémoire (persistantes via localStorage)
@@ -413,11 +415,13 @@ function render(){
 
     <!-- ONGLETS -->
     <div class="tabs">
-      ${[
+     ${[
         {id:'une',     label:'📰 À la Une'},
         {id:'humour',  label:'😄 Humour'},
         {id:'pa',      label:'📌 Petites annonces'},
         {id:'ephemeride', label:'📅 Éphéméride'},
+        {id:'horoscope', label:'🔮 Horoscope'},
+        {id:'proverbes', label:'📜 Proverbes'},
       ].map(t=>`<button class="tab ${S.onglet===t.id?'active':''}" onclick="setOnglet('${t.id}')">${t.label}</button>`).join('')}
     </div>
   `;
@@ -631,7 +635,99 @@ function render(){
       </div>
     </div>`;
   }
+</div>`;
+  }
 
+  // ─── HOROSCOPE ────────────────────────────────────────────────
+  else if(S.onglet==='horoscope'){
+    const SIGNES = [
+      {id:'belier', nom:'Bélier', dates:'21 mars - 19 avril', emoji:'♈', profil:"Toujours le premier à se porter volontaire pour la garde de nuit, quitte à le regretter au bout de la 3e heure."},
+      {id:'taureau', nom:'Taureau', dates:'20 avril - 20 mai', emoji:'♉', profil:"Ne change jamais sa façon de faire un pansement, même si le protocole a été révisé trois fois depuis."},
+      {id:'gemeaux', nom:'Gémeaux', dates:'21 mai - 20 juin', emoji:'♊', profil:"Capable de tenir une conversation avec un patient tout en calculant un débit de perfusion dans sa tête."},
+      {id:'cancer', nom:'Cancer', dates:'21 juin - 22 juillet', emoji:'♋', profil:"Retient le prénom de tous les patients, y compris ceux du service d'à côté qu'il n'a jamais croisés."},
+      {id:'lion', nom:'Lion', dates:'23 juillet - 22 août', emoji:'♌', profil:"Le premier à annoncer fièrement qu'il a posé une voie veineuse du premier coup, même sur le patient le plus difficile."},
+      {id:'vierge', nom:'Vierge', dates:'23 août - 22 septembre', emoji:'♍', profil:"Range la pharmacie du service par ordre alphabétique ET par date de péremption. Les deux."},
+      {id:'balance', nom:'Balance', dates:'23 septembre - 22 octobre', emoji:'♎', profil:"Le seul capable de calmer un conflit entre deux collègues et un patient mécontent en même temps."},
+      {id:'scorpion', nom:'Scorpion', dates:'23 octobre - 21 novembre', emoji:'♏', profil:"Sait déjà que la garde va être compliquée rien qu'en regardant la lune se lever par la fenêtre."},
+      {id:'sagittaire', nom:'Sagittaire', dates:'22 novembre - 21 décembre', emoji:'♐', profil:"Toujours partant pour un stage à l'étranger, même sans parler la langue du pays."},
+      {id:'capricorne', nom:'Capricorne', dates:'22 décembre - 19 janvier', emoji:'♑', profil:"A un plan de carrière détaillé jusqu'à la retraite, mis à jour chaque année selon les concours."},
+      {id:'verseau', nom:'Verseau', dates:'20 janvier - 18 février', emoji:'♒', profil:"Propose toujours une idée un peu folle en réunion de service — qui finit souvent par être adoptée."},
+      {id:'poissons', nom:'Poissons', dates:'19 février - 20 mars', emoji:'♓', profil:"Pleure devant les scènes émouvantes des séries médicales, même après 10 ans de carrière."},
+    ];
+    const CONSEILS = [
+      "Buvez un grand verre d'eau avant votre prochaine garde — votre futur vous remerciera.",
+      "Aujourd'hui, prenez trente secondes de plus pour respirer entre deux tâches.",
+      "Un bon repas avant la garde de nuit change vraiment la donne.",
+      "Rappelez-vous : personne ne pose une voie veineuse parfaite à chaque fois.",
+      "Votre dos vous remerciera si vous pliez les genoux ce soir.",
+      "Un café partagé avec un collègue vaut toutes les pauses solitaires.",
+      "Ce soir, laissez le travail à l'hôpital — vraiment, cette fois.",
+      "Votre paire de chaussures mérite d'être changée plus souvent que vous ne le pensez.",
+      "Un sourire échangé avec un patient anxieux peut faire toute la différence de sa journée.",
+      "Accordez-vous cinq minutes de silence avant de rentrer chez vous.",
+    ];
+    const jourMois = TODAY.getDate();
+    const signeActif = S.signeChoisi ? SIGNES.find(s=>s.id===S.signeChoisi) : null;
+    const conseilDuJour = signeActif ? CONSEILS[(jourMois + SIGNES.indexOf(signeActif)) % CONSEILS.length] : '';
+
+    h += `<div class="section fadeup">
+      <div class="col-title">🔮 Horoscope du soignant</div>
+      <div class="col-rule"></div>
+      <p style="font-size:13px;color:var(--ink3);font-style:italic;margin-bottom:18px">
+        Purement pour le fun — choisis ton signe pour ton profil de soignant et ton conseil santé du jour.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px">
+        ${SIGNES.map(s=>`
+          <div onclick="S.signeChoisi='${s.id}';render()" style="cursor:pointer;text-align:center;padding:10px 4px;border-radius:10px;background:${S.signeChoisi===s.id?'var(--ink)':'transparent'};border:1px solid var(--bdr)">
+            <div style="font-size:22px">${s.emoji}</div>
+            <div style="font-size:10px;color:${S.signeChoisi===s.id?'#fff':'var(--ink3)'};margin-top:2px">${s.nom}</div>
+          </div>`).join('')}
+      </div>
+      ${signeActif ? `
+        <div class="card or">
+          <div class="horo-signe" style="font-size:14px;color:#fff;font-weight:700">${signeActif.emoji} ${signeActif.nom} <span style="font-size:11px;color:var(--ink3);font-weight:400">(${signeActif.dates})</span></div>
+          <div class="horo-profil" style="font-size:14px;color:#e8edf2;line-height:1.7;margin-top:8px">${signeActif.profil}</div>
+          <div class="horo-conseil" style="font-size:14px;color:#e8edf2;line-height:1.7;margin-top:10px"><strong style="color:#fff">💡 Conseil santé du jour :</strong> ${conseilDuJour}</div>
+        </div>
+      ` : `<p style="font-size:13px;color:var(--ink3);text-align:center;padding:20px 0">Choisis ton signe ci-dessus ⬆️</p>`}
+    </div>`;
+  }
+
+  // ─── PROVERBES SANTÉ ──────────────────────────────────────────
+  else if(S.onglet==='proverbes'){
+    const PROVERBES = [
+      { prov:"Mieux vaut prévenir que guérir.", sens:"La prévention (dépistage, vaccination, hygiène de vie) coûte toujours moins cher, en santé comme en argent, qu'un traitement curatif tardif." },
+      { prov:"Qui dort dîne.", sens:"Le sommeil a un effet régulateur sur l'appétit et le métabolisme — dormir suffisamment aide à mieux réguler la faim." },
+      { prov:"Un esprit sain dans un corps sain.", sens:"La santé mentale et la santé physique sont indissociables — prendre soin de l'une aide à préserver l'autre." },
+      { prov:"La nuit porte conseil.", sens:"Le sommeil consolide la mémoire et améliore la prise de décision — utile à rappeler avant une décision clinique importante prise dans la fatigue." },
+      { prov:"Petit à petit, l'oiseau fait son nid.", sens:"En rééducation ou en éducation thérapeutique, les progrès se construisent par étapes, pas d'un coup." },
+      { prov:"Il vaut mieux faire envie que pitié.", sens:"Rappel bienveillant sur l'image de soi et l'estime de soi, notamment en soins palliatifs ou en gériatrie." },
+      { prov:"L'appétit vient en mangeant.", sens:"Chez le patient dénutri, réintroduire de petites quantités peut relancer progressivement l'appétit." },
+      { prov:"Rira bien qui rira le dernier.", sens:"En humour de soignant : la garde difficile de ce soir sera l'anecdote racontée avec fierté dans dix ans." },
+      { prov:"Tout vient à point à qui sait attendre.", sens:"La cicatrisation, comme la guérison, a son propre rythme biologique qu'aucune impatience ne peut accélérer." },
+      { prov:"Qui va lentement va sûrement.", sens:"En gérontologie, ralentir le rythme de mobilisation d'une personne âgée fragile prévient les chutes." },
+      { prov:"Chassez le naturel, il revient au galop.", sens:"En addictologie, les rechutes font souvent partie du parcours de sevrage — elles ne signent pas un échec définitif." },
+      { prov:"Il n'y a pas de fumée sans feu.", sens:"Un symptôme, même mineur ou isolé, mérite toujours d'être exploré avant d'être écarté." },
+      { prov:"Charité bien ordonnée commence par soi-même.", sens:"Le soignant qui ne prend pas soin de lui-même finit par moins bien soigner les autres — le repère du burn-out." },
+      { prov:"Après la pluie, le beau temps.", sens:"Message d'espoir souvent utile en annonce de mauvaise nouvelle ou en accompagnement d'une convalescence longue." },
+      { prov:"Loin des yeux, loin du cœur.", sens:"À l'inverse en santé : les patients isolés de leurs proches ou de leur médecin traitant sont statistiquement moins bien suivis." },
+    ];
+
+    h += `<div class="section fadeup">
+      <div class="col-title">📜 Dictionnaire des proverbes santé</div>
+      <div class="col-rule"></div>
+      <p style="font-size:13px;color:var(--ink3);font-style:italic;margin-bottom:18px">
+        La sagesse populaire, relue à la lumière des soins.
+      </p>
+      ${PROVERBES.map(p=>`
+        <div class="card vert" style="margin-bottom:12px">
+          <div class="prov-texte" style="font-size:14px;color:#fff;font-weight:700;margin-bottom:6px;font-style:italic">« ${p.prov} »</div>
+          <div class="prov-sens" style="font-size:13px;color:#e8edf2;line-height:1.6">${p.sens}</div>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  h += `</div>`; // .wrap
   // ─── ÉPHÉMÉRIDE ─────────────────────────────────────────────
   else if(S.onglet==='ephemeride'){
     const day = TODAY.getDate();
