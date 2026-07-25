@@ -535,17 +535,29 @@ function lireOnglet(){
   _lecture = true;
   document.getElementById('btn-audio').textContent = '⏹ Stop';
   var i = 0;
+ function meilleureVoixFr(){
+    var voix = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('fr') === 0; });
+    if(voix.length === 0) return null;
+    var bonsNoms = ['amélie','audrey','thomas','daniel'];
+    var meilleure = voix.find(function(v){ return /enhanced|premium|neural/i.test(v.name); });
+    if(!meilleure){
+      meilleure = voix.find(function(v){ var n=v.name.toLowerCase(); return bonsNoms.some(function(bn){ return n.indexOf(bn)!==-1; }); });
+    }
+    return meilleure || voix[0];
+  }
+  var voixChoisie = meilleureVoixFr();
   function suivante(){
     if(!_lecture || i >= textes.length){ stopLecture(); return; }
     var u = new SpeechSynthesisUtterance(textes[i++]);
     u.lang = 'fr-FR';
-    u.rate = 1;
+    u.rate = 0.9;
+    if(voixChoisie) u.voice = voixChoisie;
     u.onend = suivante;
     u.onerror = suivante;
     speechSynthesis.speak(u);
   }
   speechSynthesis.cancel();
-  suivante();
+  setTimeout(suivante, 50);
 }
 function stopLecture(){
   _lecture = false;
