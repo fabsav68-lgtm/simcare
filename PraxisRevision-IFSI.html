@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PraxisRévision · Outil pédagogique IFSI</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
+.btn-audio{position:fixed;bottom:16px;right:16px;background:var(--em);color:#fff;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:700;cursor:pointer;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+  <style>
 :root {
   --bg:    #0e0e14;
   --bg2:   #14141e;
@@ -235,6 +236,7 @@ body{
 </head>
 <body>
 <div id="app"></div>
+<button class="btn-audio" id="btn-audio" onclick="lireOnglet()">🔊 Écouter</button>
 <script>
 // ═══════════════════════════════════════
 //  DONNÉES QCM
@@ -715,6 +717,87 @@ function render(){
   h+='</div>';
   document.getElementById('app').innerHTML=h;
 }
+
+var _lecture = false;
+function meilleureVoixFr(){
+  var voix = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf('fr') === 0; });
+  if(voix.length === 0) return null;
+  var bonsNoms = ['amélie','audrey','thomas','daniel'];
+  var meilleure = voix.find(function(v){ return /enhanced|premium|neural/i.test(v.name); });
+  if(!meilleure){
+    meilleure = voix.find(function(v){ var n=v.name.toLowerCase(); return bonsNoms.some(function(bn){ return n.indexOf(bn)!==-1; }); });
+  }
+  return meilleure || voix[0];
+}
+function lireOnglet(){
+  if(_lecture){ stopLecture(); return; }
+  if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
+  if(S.view !== 'main' || !S.anneeChoisie) return;
+  var textes = [];
+  var qList = QCM[S.annee]||[], cList = CAS[S.annee]||[], fList = FICHES[S.annee]||[];
+  if(S.mode === 'qcm'){
+    var q = qList[S.qcmIdx % qList.length];
+    if(!q) return;
+    textes.push(q.q);
+    q.opts.forEach(function(opt, i){
+      textes.push(['A','B','C','D'][i] + '. ' + opt);
+    });
+    if(S.qcmShown){
+      textes.push(S.qcmSelected===q.rep ? 'Bonne reponse.' : 'Mauvaise reponse.');
+      textes.push(q.expl.replace(/\*\*/g, ''));
+    }
+  } else if(S.mode === 'cas'){
+    var casA = cList[S.casIdx % cList.length];
+    if(!casA) return;
+    textes.push(casA.titre + '. ' + casA.contexte);
+    textes.push('Question : ' + casA.question);
+    if(S.casRevele){
+      textes.push('Elements de reponse : ' + casA.elements_reponse.replace(/\*\*/g, ''));
+      if(S.casAnalyse) textes.push('Retour personnalise : ' + S.casAnalyse.replace(/\*\*/g, ''));
+    }
+  } else if(S.mode === 'fiches'){
+    if(S.ficheOpen){
+      var f = fList.find(function(x){ return x.id === S.ficheOpen; });
+      if(f){
+        textes.push(f.titre + '. ' + f.ue + '.');
+        var tmp = document.createElement('div');
+        tmp.innerHTML = f.contenu;
+        var txt = tmp.innerText || tmp.textContent || '';
+        if(txt.trim()) textes.push(txt);
+      }
+    } else {
+      alert('Ouvre une fiche pour pouvoir l\'écouter.');
+      return;
+    }
+  }
+  if(textes.length === 0) return;
+  _lecture = true;
+  document.getElementById('btn-audio').textContent = '⏹ Stop';
+  var voixChoisie = meilleureVoixFr();
+  var i = 0;
+  function suivante(){
+    if(!_lecture || i >= textes.length){ stopLecture(); return; }
+    var u = new SpeechSynthesisUtterance(textes[i++]);
+    u.lang = 'fr-FR';
+    u.rate = 0.9;
+    if(voixChoisie) u.voice = voixChoisie;
+    u.onend = suivante;
+    u.onerror = suivante;
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  setTimeout(suivante, 50);
+}
+function stopLecture(){
+  _lecture = false;
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  var btn = document.getElementById('btn-audio');
+  if(btn) btn.textContent = '🔊 Écouter';
+}
+
+// ═══════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════
 
 // ═══════════════════════════════════════
 //  ACTIONS
