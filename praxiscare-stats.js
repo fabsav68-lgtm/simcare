@@ -30,8 +30,8 @@ const PraxisStats = (() => {
   const MAX_EVENTS = 2000;     // Max events stockés localement
 
   // Supabase (optionnel — rempli si disponible)
-  const SUPABASE_URL  = 'VOTRE_PROJECT_URL';
-  const SUPABASE_ANON = 'VOTRE_ANON_PUBLIC_KEY';
+  const SUPABASE_URL  = 'https://fvrfiikrasezlzpaxpqz.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
 
   // ── ÉTAT INTERNE ─────────────────────────────────────
   let _moduleId    = null;
