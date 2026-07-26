@@ -711,16 +711,16 @@ function render(){
     ];
 
     h += `<div class="section fadeup">
-      <div class="col-title">📜 Dictionnaire des proverbes santé</div>
+   <div class="col-title">📜 Dictionnaire des proverbes santé</div>
       <div class="col-rule"></div>
       <p style="font-size:13px;color:var(--ink3);font-style:italic;margin-bottom:18px">
         La sagesse populaire, relue à la lumière des soins.
       </p>
       ${PROVERBES.map(p=>`
-       <div class="card vert" style="margin-bottom:12px">
+        <div class="card vert" style="margin-bottom:12px">
           <div class="prov-texte" style="font-size:14px;color:var(--ink);font-weight:700;margin-bottom:6px;font-style:italic">« ${p.prov} »</div>
           <div class="prov-sens" style="font-size:13px;color:var(--ink2);line-height:1.6">${p.sens}</div>
-        </div>.join('')}
+        </div>`).join('')}
     </div>`;
   }
   // ─── ÉPHÉMÉRIDE ─────────────────────────────────────────────
