@@ -681,10 +681,10 @@ function render(){
           </div>`).join('')}
       </div>
       ${signeActif ? `
-        <div class="card or">
-          <div class="horo-signe" style="font-size:14px;color:#fff;font-weight:700">${signeActif.emoji} ${signeActif.nom} <span style="font-size:11px;color:var(--ink3);font-weight:400">(${signeActif.dates})</span></div>
-          <div class="horo-profil" style="font-size:14px;color:#e8edf2;line-height:1.7;margin-top:8px">${signeActif.profil}</div>
-          <div class="horo-conseil" style="font-size:14px;color:#e8edf2;line-height:1.7;margin-top:10px"><strong style="color:#fff">💡 Conseil santé du jour :</strong> ${conseilDuJour}</div>
+      <div class="card or">
+          <div class="horo-signe" style="font-size:14px;color:var(--ink);font-weight:700">${signeActif.emoji} ${signeActif.nom} <span style="font-size:11px;color:var(--ink3);font-weight:400">(${signeActif.dates})</span></div>
+          <div class="horo-profil" style="font-size:14px;color:var(--ink2);line-height:1.7;margin-top:8px">${signeActif.profil}</div>
+          <div class="horo-conseil" style="font-size:14px;color:var(--ink2);line-height:1.7;margin-top:10px"><strong style="color:var(--ink)">💡 Conseil santé du jour :</strong> ${conseilDuJour}</div>
         </div>
       ` : `<p style="font-size:13px;color:var(--ink3);text-align:center;padding:20px 0">Choisis ton signe ci-dessus ⬆️</p>`}
     </div>`;
@@ -717,10 +717,10 @@ function render(){
         La sagesse populaire, relue à la lumière des soins.
       </p>
       ${PROVERBES.map(p=>`
-        <div class="card vert" style="margin-bottom:12px">
-          <div class="prov-texte" style="font-size:14px;color:#fff;font-weight:700;margin-bottom:6px;font-style:italic">« ${p.prov} »</div>
-          <div class="prov-sens" style="font-size:13px;color:#e8edf2;line-height:1.6">${p.sens}</div>
-        </div>`).join('')}
+       <div class="card vert" style="margin-bottom:12px">
+          <div class="prov-texte" style="font-size:14px;color:var(--ink);font-weight:700;margin-bottom:6px;font-style:italic">« ${p.prov} »</div>
+          <div class="prov-sens" style="font-size:13px;color:var(--ink2);line-height:1.6">${p.sens}</div>
+        </div>
     </div>`;
   }
   // ─── ÉPHÉMÉRIDE ─────────────────────────────────────────────
