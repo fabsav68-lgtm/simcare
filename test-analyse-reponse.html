@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Test analyse-reponse</title>
+<style>
+  body{font-family:-apple-system,sans-serif;background:#0d1117;color:#e6edf3;padding:24px;max-width:600px;margin:0 auto}
+  h1{font-size:18px}
+  button{background:#2ea043;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:15px;cursor:pointer;margin:16px 0}
+  button:disabled{opacity:.5}
+  pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;white-space:pre-wrap;word-break:break-word;font-size:13px}
+  .ok{color:#3fb950}
+  .err{color:#f85149}
+</style>
+</head>
+<body>
+  <h1>🧪 Test de la fonction analyse-reponse</h1>
+  <p>Clique sur le bouton, le résultat s'affiche juste en dessous.</p>
+  <button onclick="tester()" id="btn">Tester la fonction</button>
+  <pre id="resultat">Le résultat apparaîtra ici après le clic.</pre>
+
+<script>
+async function tester(){
+  const btn = document.getElementById('btn');
+  const res = document.getElementById('resultat');
+  btn.disabled = true;
+  res.textContent = 'Test en cours...';
+  res.className = '';
+
+  const cle = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
+
+  try {
+    const response = await fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/functions/v1/analyse-reponse', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': cle,
+        'Authorization': 'Bearer ' + cle,
+      },
+      body: JSON.stringify({ prompt: 'Dis simplement bonjour en une phrase.' }),
+    });
+
+    const texte = await response.text();
+    res.textContent = 'Statut HTTP : ' + response.status + '\n\n' + texte;
+    res.className = response.ok ? 'ok' : 'err';
+
+  } catch(err) {
+    res.textContent = 'Erreur réseau : ' + err.message;
+    res.className = 'err';
+  }
+
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
