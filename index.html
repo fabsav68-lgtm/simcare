@@ -380,7 +380,12 @@ window.addEventListener('load', appliquerRestrictions);
       <div class="module-sub">QCM chronometres - B.1 - 13 missions - 75 questions</div>
       <div class="module-desc">Revisions actives par competences - atomes, ions, pH, eau, cellule, sang, muscles.</div>
       <div class="module-btn" style="background:rgba(160,96,255,.1);color:#a060ff;border-color:rgba(160,96,255,.3)">Ouvrir</div>
-    </div>
+    <div class="module-card" onclick="ouvrirModule('SimCare-References.html')" style="border-color:rgba(26,111,181,.2);grid-column:span 2">
+  <div class="module-num">RÉFÉRENCES · BIBLIOGRAPHIE</div>
+  <div class="module-icon">📚</div>
+  <div class="module-name" style="color:#1a6fb5">SimRéférences</div>
+  <div class="module-sub">Les auteurs et théories qui fondent les soins infirmiers</div>
+  <div class="module-desc">Nightingale, Henderson, Bernard, Cannon, Maslow, Kübler-Ross — et les textes réglementaires IDE.</div>
   </div>
 
   <footer>
@@ -389,6 +394,7 @@ window.addEventListener('load', appliquerRestrictions);
     <br><a href="stats-formateur.html" style="color:rgba(255,255,255,.1);font-size:10px;text-decoration:none">acces formateur</a>
     <br><button onclick="ouvrirBinome()" style="background:none;border:none;color:rgba(56,189,248,.5);font-size:10px;cursor:pointer;font-family:monospace;margin-top:8px">Mon Binome</button>
   </footer>
+  
 </div>
 
 <!-- POPUP BINOME -->
@@ -404,6 +410,7 @@ window.addEventListener('load', appliquerRestrictions);
     <div id="binome-score" style="display:none;background:rgba(255,255,255,.04);border-radius:8px;padding:12px;margin-bottom:12px;text-align:left"></div>
     <button onclick="fermerBinome()" style="background:none;border:1px solid rgba(255,255,255,.1);color:#5a7080;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:12px">Fermer</button>
   </div>
+  
 </div>
 
 <script src="praxiscare-feedback.js"></script>
@@ -599,14 +606,8 @@ function voirScoreBinome(){
   });
 }
 </script>
-  <div class="module-card" onclick="ouvrirModule('SimCare-References.html')" style="border-color:rgba(26,111,181,.2);grid-column:span 2">
-  <div class="module-num">RÉFÉRENCES · BIBLIOGRAPHIE</div>
-  <div class="module-icon">📚</div>
-  <div class="module-name" style="color:#1a6fb5">SimRéférences</div>
-  <div class="module-sub">Les auteurs et théories qui fondent les soins infirmiers</div>
-  <div class="module-desc">Nightingale, Henderson, Bernard, Cannon, Maslow, Kübler-Ross — et les textes réglementaires IDE.</div>
-  <div class="module-btn" style="background:rgba(26,111,181,.1);color:#1a6fb5;border-color:rgba(26,111,181,.3)">Consulter</div>
-  </div>
+
+ 
 </div>
 </body>
 </html>
