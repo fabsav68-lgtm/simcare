@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PraxisRéférences-SimCare · Bibliographie</title>
+<style>
+:root{
+  --blue:#1a6fb5;--blue-light:#e8f2fb;--blue-mid:#2d87d0;--blue-dark:#124f85;
+  --orange:#e07b2a;--green:#2a9d5c;--purple:#7b52ab;--teal:#0097a7;--pink:#c0396b;
+  --gray-bg:#f5f7fa;--gray-border:#dde3ec;
+  --text:#1e2a3a;--text-light:#5a6a7e;
+  --radius:10px;--shadow:0 2px 10px rgba(26,111,181,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray-bg);color:var(--text);min-height:100vh;}
+header{background:linear-gradient(135deg,#0a3d6b,#1a6fb5 60%,#2d87d0);color:#fff;padding:18px 20px 14px;position:sticky;top:0;z-index:100;box-shadow:0 3px 12px rgba(10,61,107,.3);}
+.header-top{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.module-badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:3px 9px;font-size:.72rem;font-weight:700;letter-spacing:.05em;white-space:nowrap;}
+header h1{font-size:1.05rem;font-weight:700;line-height:1.2;}
+header p.subtitle{font-size:.75rem;opacity:.8;margin-top:2px;}
+.content{max-width:860px;margin:0 auto;padding:20px 16px 80px;}
+
+.intro-banner{background:linear-gradient(135deg,#0a3d6b,#1a6fb5);color:#fff;border-radius:var(--radius);padding:18px 20px;margin-bottom:24px;display:flex;gap:14px;align-items:flex-start;}
+.intro-banner .icon{font-size:2rem;flex-shrink:0;}
+.intro-banner h2{font-size:.95rem;font-weight:700;margin-bottom:6px;}
+.intro-banner p{font-size:.81rem;line-height:1.6;opacity:.9;}
+
+.section-title{font-size:.75rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 12px;padding-left:10px;border-left:3px solid var(--blue);}
+
+.ref-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px;display:grid;grid-template-columns:80px 1fr;gap:18px;align-items:start;border-left:4px solid var(--blue);}
+@media(max-width:480px){.ref-card{grid-template-columns:1fr;}}
+.ref-card.orange{border-left-color:var(--orange);}
+.ref-card.green{border-left-color:var(--green);}
+.ref-card.purple{border-left-color:var(--purple);}
+.ref-card.teal{border-left-color:var(--teal);}
+.ref-card.pink{border-left-color:var(--pink);}
+
+.ref-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;background:var(--blue-light);border:3px solid var(--blue-light);}
+.ref-avatar.orange{background:#fde8c5;border-color:#fde8c5;}
+.ref-avatar.green{background:#e6f4ee;border-color:#e6f4ee;}
+.ref-avatar.purple{background:#f0ebff;border-color:#f0ebff;}
+.ref-avatar.teal{background:#e0f7fa;border-color:#e0f7fa;}
+.ref-avatar.pink{background:#fce4ec;border-color:#fce4ec;}
+
+.ref-body h3{font-size:.98rem;font-weight:700;color:var(--blue-dark);margin-bottom:3px;}
+.ref-card.orange .ref-body h3{color:#b55f10;}
+.ref-card.green .ref-body h3{color:#1e7a45;}
+.ref-card.purple .ref-body h3{color:#5a3a8a;}
+.ref-card.teal .ref-body h3{color:#006978;}
+.ref-card.pink .ref-body h3{color:#8a1040;}
+
+.ref-meta{font-size:.75rem;color:var(--text-light);margin-bottom:10px;}
+.ref-meta span{display:inline-block;margin-right:12px;}
+.ref-apport{font-size:.83rem;line-height:1.65;color:var(--text);margin-bottom:10px;}
+.ref-oeuvre{font-size:.77rem;color:var(--text-light);margin-bottom:8px;}
+.ref-oeuvre strong{color:var(--text);}
+
+.ref-modules{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.ref-module{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.72rem;font-weight:600;background:var(--blue-light);color:var(--blue-dark);}
+.ref-card.orange .ref-module{background:#fde8c5;color:#b55f10;}
+.ref-card.green .ref-module{background:#e6f4ee;color:#1e7a45;}
+.ref-card.purple .ref-module{background:#f0ebff;color:#5a3a8a;}
+.ref-card.teal .ref-module{background:#e0f7fa;color:#006978;}
+.ref-card.pink .ref-module{background:#fce4ec;color:#8a1040;}
+
+.ref-citation{background:var(--gray-bg);border-radius:7px;padding:10px 14px;margin-bottom:10px;font-size:.8rem;font-style:italic;color:var(--text);border-left:3px solid var(--blue);line-height:1.6;}
+.ref-card.orange .ref-citation{border-left-color:var(--orange);}
+.ref-card.green .ref-citation{border-left-color:var(--green);}
+.ref-card.purple .ref-citation{border-left-color:var(--purple);}
+.ref-card.teal .ref-citation{border-left-color:var(--teal);}
+.ref-card.pink .ref-citation{border-left-color:var(--pink);}
+
+.ref-link{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:7px;background:var(--blue);color:#fff;font-size:.78rem;font-weight:700;text-decoration:none;transition:background .18s;}
+.ref-link:hover{background:var(--blue-dark);}
+.ref-card.orange .ref-link{background:var(--orange);}
+.ref-card.green .ref-link{background:var(--green);}
+.ref-card.purple .ref-link{background:var(--purple);}
+.ref-card.teal .ref-link{background:var(--teal);}
+.ref-card.pink .ref-link{background:var(--pink);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="module-badge">RÉFÉRENCES · BIBLIOGRAPHIE · SimCare</div>
+    <div>
+      <h1>PraxisRéférences-SimCare</h1>
+      <p class="subtitle">Les auteurs et théories qui fondent les soins infirmiers</p>
+    </div>
+  </div>
+</header>
+
+<div class="content">
+
+  <div class="intro-banner">
+    <div class="icon">📚</div>
+    <div>
+      <h2>Pourquoi cette page ?</h2>
+      <p>Les soins infirmiers reposent sur des théories et des modèles construits par des pionnières et des chercheurs qui ont transformé la profession. Cette page présente les auteurs cités dans SimCare, leurs apports essentiels et les liens vers leurs biographies.</p>
+    </div>
+  </div>
+
+  <!-- PIONNIÈRES DES SOINS -->
+  <div class="section-title">🏥 Pionnières des soins infirmiers</div>
+
+  <div class="ref-card pink">
+    <div class="ref-avatar pink">🕯️</div>
+    <div class="ref-body">
+      <h3>Florence Nightingale</h3>
+      <div class="ref-meta">
+        <span>🇬🇧 Britannique</span>
+        <span>📅 1820 – 1910</span>
+        <span>🎓 Fondatrice des soins infirmiers modernes</span>
+      </div>
+      <p class="ref-apport">Florence Nightingale est universellement reconnue comme la <strong>fondatrice des soins infirmiers modernes</strong>. Pendant la guerre de Crimée (1853-1856), elle réorganise les hôpitaux militaires et réduit le taux de mortalité de 42 % à 2 % grâce à l'hygiène et à l'organisation des soins. Elle fonde la première école d'infirmières au monde en 1860 à Londres. Sa théorie environnementale des soins — l'air pur, la lumière, la chaleur, la propreté et le calme favorisent la guérison — reste d'actualité.</p>
+      <div class="ref-oeuvre"><strong>Œuvre clé :</strong> Notes on Nursing (1859) — traduit : Notes sur les soins infirmiers</div>
+      <div class="ref-citation">"Le premier devoir d'un hôpital est de ne pas nuire aux malades."</div>
+      <div class="ref-modules">
+        <span class="ref-module">Hygiène hospitalière</span>
+        <span class="ref-module">Environnement thérapeutique</span>
+        <span class="ref-module">Histoire des soins</span>
+      </div>
+      <a class="ref-link" href="https://fr.wikipedia.org/wiki/Florence_Nightingale" target="_blank">🔗 Wikipedia</a>
+    </div>
+  </div>
+
+  <div class="ref-card">
+    <div class="ref-avatar">🏥</div>
+    <div class="ref-body">
+      <h3>Virginia Henderson</h3>
+      <div class="ref-meta">
+        <span>🇺🇸 Américaine</span>
+        <span>📅 1897 – 1996</span>
+        <span>🎓 Infirmière théoricienne</span>
+      </div>
+      <p class="ref-apport">Virginia Henderson a défini le rôle propre de l'infirmière et établi les <strong>14 besoins fondamentaux</strong> de la personne. Son modèle structure encore aujourd'hui la démarche de soins infirmiers dans le monde entier. Elle définit l'infirmière comme celle qui aide la personne à accomplir ce qu'elle ferait seule si elle en avait la force, la volonté ou les connaissances — une définition qui fonde le principe d'autonomie au cœur de SimCare.</p>
+      <div class="ref-oeuvre"><strong>Œuvre clé :</strong> The Nature of Nursing (1966) · Basic Principles of Nursing Care (1960)</div>
+      <div class="ref-citation">"L'infirmière est temporairement la conscience du patient inconscient, l'amour de la vie du suicidaire, le membre amputé de l'amputé."</div>
+      <div class="ref-modules">
+        <span class="ref-module">Démarche de soins</span>
+        <span class="ref-module">14 besoins fondamentaux</span>
+        <span class="ref-module">Autonomie du patient</span>
+      </div>
+      <a class="ref-link" href="https://fr.wikipedia.org/wiki/Virginia_Henderson" target="_blank">🔗 Wikipedia</a>
+    </div>
+  </div>
+
+  <!-- PHYSIOLOGIE & HOMÉOSTASIE -->
+  <div class="section-title">🔬 Physiologie et homéostasie</div>
+
+  <div class="ref-card green">
+    <div class="ref-avatar green">⚗️</div>
+    <div class="ref-body">
+      <h3>Claude Bernard</h3>
+      <div class="ref-meta">
+        <span>🇫🇷 Français</span>
+        <span>📅 1813 – 1878</span>
+        <span>🎓 Médecin, physiologiste</span>
+      </div>
+      <p class="ref-apport">Claude Bernard est le fondateur de la <strong>médecine expérimentale</strong> et le concepteur du concept de <strong>milieu intérieur</strong> — l'idée que l'organisme maintient un environnement interne stable indépendamment du milieu extérieur. Ce concept sera plus tard développé par Cannon sous le nom d'homéostasie. En soins infirmiers, comprendre l'homéostasie (équilibre hydrique, glycémie, température…) est fondamental pour interpréter les paramètres vitaux et les signes cliniques.</p>
+      <div class="ref-oeuvre"><strong>Œuvre clé :</strong> Introduction à l'étude de la médecine expérimentale (1865)</div>
+      <div class="ref-citation">"La fixité du milieu intérieur est la condition d'une vie libre et indépendante."</div>
+      <div class="ref-modules">
+        <span class="ref-module">Paramètres vitaux</span>
+        <span class="ref-module">Équilibre hydrique</span>
+        <span class="ref-module">Physiologie</span>
+      </div>
+      <a class="ref-link" href="https://fr.wikipedia.org/wiki/Claude_Bernard" target="_blank">🔗 Wikipedia</a>
+    </div>
+  </div>
+
+  <div class="ref-card teal">
+    <div class="ref-avatar teal">⚖️</div>
+    <div class="ref-body">
+      <h3>Walter Bradford Cannon</h3>
+      <div class="ref-meta">
+        <span>🇺🇸 Américain</span>
+        <span>📅 1871 – 1945</span>
+        <span>🎓 Physiologiste, neurologiste</span>
+      </div>
+      <p class="ref-apport">Walter Cannon est l'auteur du concept d'<strong>homéostasie</strong> — la capacité de l'organisme à maintenir un état d'équilibre stable face aux perturbations extérieures. Il a également décrit la réaction <strong>fight or flight</strong> (combat ou fuite) face au stress. En soins, l'homéostasie explique pourquoi un déséquilibre (déshydratation, hypoglycémie, fièvre) entraîne des symptômes mesurables que l'IDE et l'AS surveillent via les paramètres vitaux.</p>
+      <div class="ref-oeuvre"><strong>Œuvre clé :</strong> The Wisdom of the Body (1932)</div>
+      <div class="ref-citation">"L'homéostasie est la sagesse du corps pour maintenir sa propre stabilité."</div>
+      <div class="ref-modules">
+        <span class="ref-module">Homéostasie</span>
+        <span class="ref-module">Paramètres vitaux</span>
+        <span class="ref-module">Réaction au stress</span>
+      </div>
+      <a class="ref-link" href="https://fr.wikipedia.org/wiki/Walter_Bradford_Cannon" target="_blank">🔗 Wikipedia</a>
+    </div>
+  </div>
+
+  <!-- BESOINS & PSYCHOLOGIE -->
+  <div class="section-title">🌱 Besoins et psychologie de la santé</div>
+
+  <div class="ref-card orange">
+    <div class="ref-avatar orange">🔺</div>
+    <div class="ref-body">
+      <h3>Abraham Maslow</h3>
+      <div class="ref-meta">
+        <span>🇺🇸 Américain</span>
+        <span>📅 1908 – 1970</span>
+        <span>🎓 Psychologue humaniste</span>
+      </div>
+      <p class="ref-apport">La <strong>pyramide des besoins de Maslow</strong> structure la hiérarchie des besoins humains en 5 niveaux. En soins infirmiers, ce modèle guide la priorisation des interventions : un patient en détresse respiratoire (besoin physiologique) ne peut pas être apaisé psychologiquement (besoin de sécurité) sans que son besoin vital soit d'abord satisfait. La pyramide rappelle que les soins techniques précèdent toujours les soins relationnels quand les deux sont urgents.</p>
+      <div class="ref-oeuvre"><strong>Œuvre clé :</strong> A Theory of Human Motivation (1943)</div>
+      <div class="ref-citation">"Si vous ne planifiez pas, vous planifiez d'échouer."</div>
+      <div class="ref-modules">
+        <span class="ref-module">Démarche de soins</span>
+        <span class="ref-module">Priorisation des soins</span>
+        <span class="ref-module">Relation soignant-soigné</span>
+      </div>
+      <a class="ref-link" href="https://fr.wikipedia.org/wiki/Abraham_Maslow" target="_blank">🔗 Wikipedia</a>
+    </div>
+  </div>
+
+  <!-- DEUIL & FIN DE VIE -->
+  <div class="section-title">🕊️ Deuil et fin de vie</div>
+
+  <div class="ref-card purple">
+    <div class="ref-avatar purple">🕊️</div>
+    <div class="ref-body">
+      <h3>Elisabeth Kübler-Ross</h3>
+      <div class="ref-meta">
+        <span>🇨🇭 Suisse-Américaine</span>
+        <span>📅 1926 – 2004</span>
+        <span>🎓 Psychiatre, pionnière des soins palliatifs</span>
+      </div>
+      <p class="ref-apport">Le modèle des <strong>5 stades du deuil</strong> de Kübler-Ross (déni, colère, marchandage, dépression, acceptation) est fondamental en soins infirmiers pour comprendre les réactions des patients face à un diagnostic grave, une perte d'autonomie ou la mort imminente. L'IDE et l'AS qui connaissent ce modèle peuvent adapter leur communication et leur accompagnement selon le stade traversé par le patient ou sa famille.</p>
+      <div class="ref-oeuvre"><strong>Œuvre clé :</strong> On Death and Dying (1969) · Les derniers instants de la vie</div>
+      <div class="ref-citation">"Mourir n'est pas triste. Ce qui est triste, c'est de ne pas avoir vécu."</div>
+      <div class="ref-modules">
+        <span class="ref-module">Soins palliatifs</span>
+        <span class="ref-module">Annonce diagnostique</span>
+        <span class="ref-module">Accompagnement fin de vie</span>
+      </div>
+      <a class="ref-link" href="https://fr.wikipedia.org/wiki/Elisabeth_K%C3%BCbler-Ross" target="_blank">🔗 Wikipedia</a>
+    </div>
+  </div>
+
+  <!-- TEXTES RÉGLEMENTAIRES -->
+  <div class="section-title">📜 Textes réglementaires de référence</div>
+
+  <div class="ref-card">
+    <div class="ref-avatar">📋</div>
+    <div class="ref-body">
+      <h3>Textes officiels SimCare</h3>
+      <div class="ref-meta"><span>🇫🇷 République Française</span></div>
+      <p class="ref-apport">Les contenus de SimCare sont fondés sur les textes réglementaires suivants :</p>
+      <ul style="font-size:.81rem;line-height:1.9;padding-left:18px;margin-top:8px;">
+        <li><strong>Décret n°2004-802 du 29 juillet 2004</strong> — Actes professionnels et exercice de la profession infirmière</li>
+        <li><strong>Arrêté du 31 juillet 2009</strong> — Référentiel de compétences infirmières (8 compétences)</li>
+        <li><strong>Loi 2002-303 du 4 mars 2002</strong> — Droits des malades et qualité du système de santé (loi Kouchner)</li>
+        <li><strong>Loi 2005-370 du 22 avril 2005</strong> — Droits des malades et fin de vie (loi Leonetti)</li>
+        <li><strong>Loi 2016-87 du 2 février 2016</strong> — Droits des malades à une fin de vie digne (loi Claeys-Leonetti)</li>
+        <li><strong>RGPD — Règlement (UE) 2016/679</strong> — Protection des données personnelles de santé</li>
+        <li><strong>Code de déontologie infirmier — Décret n°2016-1605</strong></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
