@@ -106,14 +106,8 @@ var MODULES_LIBRES = [
   'PraxisTACA-Theorie-IFSI.html',
   'PraxisTACA-Stage-IFSI.html'
 ];
-
 function getAnneeEtudiant(){
-  var code = sessionStorage.getItem('praxiscare_code') || '';
-  if(code.indexOf('PRAXIS-A1-') !== -1) return 'A1';
-  if(code.indexOf('PRAXIS-A2-') !== -1) return 'A2';
-  if(code.indexOf('PRAXIS-A3-') !== -1) return 'A3';
-  if(code.indexOf('PRAXIS-FORM-') !== -1) return 'A3'; // Formateur = acces complet
-  return 'A1'; // Par defaut
+  return sessionStorage.getItem('praxiscare_annee') || 'A1';
 }
 
 function moduleAccessible(fichier){
