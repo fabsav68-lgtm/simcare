@@ -45,15 +45,9 @@ footer{border-top:1px solid rgba(255,255,255,.07);padding:24px 20px;text-align:c
 
 <script>
 (function(){
-  var CODES = ['PRAXIS-A1-001','PRAXIS-A1-002','PRAXIS-A1-003','PRAXIS-A1-004','PRAXIS-A1-005',
-    'PRAXIS-A1-006','PRAXIS-A1-007','PRAXIS-A1-008','PRAXIS-A1-009','PRAXIS-A1-010',
-    'PRAXIS-A2-001','PRAXIS-A2-002','PRAXIS-A2-003','PRAXIS-A2-004','PRAXIS-A2-005',
-    'PRAXIS-A2-006','PRAXIS-A2-007','PRAXIS-A2-008','PRAXIS-A2-009','PRAXIS-A2-010',
-    'PRAXIS-A3-001','PRAXIS-A3-002','PRAXIS-A3-003','PRAXIS-A3-004','PRAXIS-A3-005',
-    'PRAXIS-A3-006','PRAXIS-A3-007','PRAXIS-A3-008','PRAXIS-A3-009','PRAXIS-A3-010',
-    'PRAXIS-FORM-01'];
   var code = sessionStorage.getItem('praxiscare_code');
-  if(!code || CODES.indexOf(code) === -1){
+  var annee = sessionStorage.getItem('praxiscare_annee');
+  if(!code || !annee){
     window.location.replace('acces.html');
   }
 })();
