@@ -533,12 +533,6 @@ document.addEventListener('keypress', resetInactivityTimer);
 resetInactivityTimer();
 
 // BINOME
-var CODES_VALIDES = ['PRAXIS-A1-001','PRAXIS-A1-002','PRAXIS-A1-003','PRAXIS-A1-004','PRAXIS-A1-005',
-  'PRAXIS-A1-006','PRAXIS-A1-007','PRAXIS-A1-008','PRAXIS-A1-009','PRAXIS-A1-010',
-  'PRAXIS-A2-001','PRAXIS-A2-002','PRAXIS-A2-003','PRAXIS-A2-004','PRAXIS-A2-005',
-  'PRAXIS-A2-006','PRAXIS-A2-007','PRAXIS-A2-008','PRAXIS-A2-009','PRAXIS-A2-010',
-  'PRAXIS-A3-001','PRAXIS-A3-002','PRAXIS-A3-003','PRAXIS-A3-004','PRAXIS-A3-005',
-  'PRAXIS-A3-006','PRAXIS-A3-007','PRAXIS-A3-008','PRAXIS-A3-009','PRAXIS-A3-010'];
 
 function ouvrirBinome(){
   var overlay = document.getElementById('binome-overlay');
@@ -560,26 +554,46 @@ function lierBinome(){
   var msg = document.getElementById('binome-msg');
   if(!codeBinome){ msg.style.color='#e84040'; msg.textContent='Entrez un code binome.'; return; }
   if(codeBinome === monCode){ msg.style.color='#e84040'; msg.textContent='Vous ne pouvez pas vous lier a vous-meme !'; return; }
-  if(CODES_VALIDES.indexOf(codeBinome) === -1){ msg.style.color='#e84040'; msg.textContent='Ce code n\'est pas un abonne actif.'; return; }
-  localStorage.setItem('praxiscare_binome', codeBinome);
-  fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
-    method: "POST",
+
+  msg.style.color='#5a7080'; msg.textContent='Verification...';
+
+  fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/functions/v1/verifier-acces', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+      'Content-Type': 'application/json',
+      'apikey': 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+      'Authorization': 'Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
     },
-    body: JSON.stringify({
-      student_code: monCode,
-      app: "praxiscare",
-      module: "binome",
-      step: codeBinome,
-      session_id: monCode + "_binome_" + Date.now()
-    })
+    body: JSON.stringify({ code: codeBinome, app: 'SimCare' }),
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(!data.valide){
+      msg.style.color='#e84040'; msg.textContent='Ce code n\'est pas un abonne actif.'; return;
+    }
+    localStorage.setItem('praxiscare_binome', codeBinome);
+    fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+      },
+      body: JSON.stringify({
+        student_code: monCode,
+        app: "praxiscare",
+        module: "binome",
+        step: codeBinome,
+        session_id: monCode + "_binome_" + Date.now()
+      })
+    }).catch(function(){});
+    msg.style.color='#40c878';
+    msg.textContent='Binome ' + codeBinome + ' lie avec succes !';
+    document.getElementById('binome-actuel').textContent = 'Binome actuel : ' + codeBinome;
+  })
+  .catch(function(){
+    msg.style.color='#e84040'; msg.textContent='Erreur de verification, reessayez.';
   });
-  msg.style.color='#40c878';
-  msg.textContent='Binome ' + codeBinome + ' lie avec succes !';
-  document.getElementById('binome-actuel').textContent = 'Binome actuel : ' + codeBinome;
 }
 
 function voirScoreBinome(){
