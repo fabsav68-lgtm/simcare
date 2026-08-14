@@ -196,48 +196,16 @@ body::before{
 //  Format : PRAXIS-[A1/A2/A3]-[001-099]
 //  Modifier cette liste selon les promotions
 // ═══════════════════════════════════════
-var CODES_VALIDES = {
-  // Promotion 1ère année
-  'PRAXIS-A1-001': {promo:'1ère année', nom:'Étudiant 1-1'},
-  'PRAXIS-A1-002': {promo:'1ère année', nom:'Étudiant 1-2'},
-  'PRAXIS-A1-003': {promo:'1ère année', nom:'Étudiant 1-3'},
-  'PRAXIS-A1-004': {promo:'1ère année', nom:'Étudiant 1-4'},
-  'PRAXIS-A1-005': {promo:'1ère année', nom:'Étudiant 1-5'},
-  'PRAXIS-A1-006': {promo:'1ère année', nom:'Étudiant 1-6'},
-  'PRAXIS-A1-007': {promo:'1ère année', nom:'Étudiant 1-7'},
-  'PRAXIS-A1-008': {promo:'1ère année', nom:'Étudiant 1-8'},
-  'PRAXIS-A1-009': {promo:'1ère année', nom:'Étudiant 1-9'},
-  'PRAXIS-A1-010': {promo:'1ère année', nom:'Étudiant 1-10'},
-  // Promotion 2ème année
-  'PRAXIS-A2-001': {promo:'2ème année', nom:'Étudiant 2-1'},
-  'PRAXIS-A2-002': {promo:'2ème année', nom:'Étudiant 2-2'},
-  'PRAXIS-A2-003': {promo:'2ème année', nom:'Étudiant 2-3'},
-  'PRAXIS-A2-004': {promo:'2ème année', nom:'Étudiant 2-4'},
-  'PRAXIS-A2-005': {promo:'2ème année', nom:'Étudiant 2-5'},
-  'PRAXIS-A2-006': {promo:'2ème année', nom:'Étudiant 2-6'},
-  'PRAXIS-A2-007': {promo:'2ème année', nom:'Étudiant 2-7'},
-  'PRAXIS-A2-008': {promo:'2ème année', nom:'Étudiant 2-8'},
-  'PRAXIS-A2-009': {promo:'2ème année', nom:'Étudiant 2-9'},
-  'PRAXIS-A2-010': {promo:'2ème année', nom:'Étudiant 2-10'},
-  // Promotion 3ème année
-  'PRAXIS-A3-001': {promo:'3ème année', nom:'Étudiant 3-1'},
-  'PRAXIS-A3-002': {promo:'3ème année', nom:'Étudiant 3-2'},
-  'PRAXIS-A3-003': {promo:'3ème année', nom:'Étudiant 3-3'},
-  'PRAXIS-A3-004': {promo:'3ème année', nom:'Étudiant 3-4'},
-  'PRAXIS-A3-005': {promo:'3ème année', nom:'Étudiant 3-5'},
-  'PRAXIS-A3-006': {promo:'3ème année', nom:'Étudiant 3-6'},
-  'PRAXIS-A3-007': {promo:'3ème année', nom:'Étudiant 3-7'},
-  'PRAXIS-A3-008': {promo:'3ème année', nom:'Étudiant 3-8'},
-  'PRAXIS-A3-009': {promo:'3ème année', nom:'Étudiant 3-9'},
-  'PRAXIS-A3-010': {promo:'3ème année', nom:'Étudiant 3-10'},
-  // Code formateur
-  'PRAXIS-FORM-01': {promo:'Formateur', nom:'Formateur MedExpert'},
-};
+// ═══════════════════════════════════════
+//  VÉRIFICATION D'ACCÈS — via serveur (plus de liste en clair ici)
+// ═══════════════════════════════════════
+var ANNEE_LABELS = { A1: '1ère année', A2: '2ème année', A3: '3ème année' };
 
 // ── Vérifier session existante ──
 window.onload = function(){
   var session = sessionStorage.getItem('praxiscare_code');
-  if(session && CODES_VALIDES[session]){
+  var annee = sessionStorage.getItem('praxiscare_annee');
+  if(session && annee){
     window.location.replace('index.html');
   }
 };
@@ -265,66 +233,84 @@ function valider(){
   btn.disabled = true;
   btn.textContent = 'Vérification...';
 
-  setTimeout(function(){
-    if(CODES_VALIDES[code]){
-      // Code valide
-      var info = CODES_VALIDES[code];
-      sessionStorage.setItem('praxiscare_code', code);
-      sessionStorage.setItem('praxiscare_promo', info.promo);
+  fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/functions/v1/verifier-acces', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+      'Authorization': 'Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+    },
+    body: JSON.stringify({ code: code, app: 'SimCare' }),
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.valide){
+      var promo = ANNEE_LABELS[data.annee] || data.annee;
 
-      // Enregistrer la connexion dans localStorage (stats)
+      sessionStorage.setItem('praxiscare_code', code);
+      sessionStorage.setItem('praxiscare_annee', data.annee);
+      sessionStorage.setItem('praxiscare_promo', promo);
+
+      // Stats (mécanisme existant conservé)
       var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
       var today = new Date().toISOString().split('T')[0];
       if(!stats.connexions) stats.connexions = [];
       stats.connexions.push({
         code: code,
-        promo: info.promo,
+        promo: promo,
         date: today,
         heure: new Date().toLocaleTimeString('fr-FR'),
       });
       localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
-fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-"apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
-},
-body: JSON.stringify({
-student_code: code,
-student_name: info.promo,
-app: "praxiscare",
-module: "login",
-session_id: code + "_" + Date.now()
-})
-});
+
+      // Tracking existant conservé (tableau de bord actuel, projet Supabase d'origine)
+      fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+        },
+        body: JSON.stringify({
+          student_code: code,
+          student_name: promo,
+          app: "praxiscare",
+          module: "login",
+          session_id: code + "_" + Date.now()
+        })
+      }).catch(function(){});
 
       // Afficher succès
       input.classList.add('success');
       document.getElementById('card-login').style.display = 'none';
       document.getElementById('card-success').style.display = 'block';
       document.getElementById('success-msg').textContent =
-        'Bienvenue, ' + info.promo + ' ! Redirection en cours...';
+        'Bienvenue, ' + promo + ' ! Redirection en cours...';
 
-      // Barre de progression
       setTimeout(function(){
         document.getElementById('success-bar-fill').style.width = '100%';
       }, 50);
 
-      // Redirection
       setTimeout(function(){
         window.location.replace('index.html');
       }, 2100);
 
     } else {
-      // Code invalide
       input.classList.add('error');
       document.getElementById('msg-error').classList.add('show');
+      document.getElementById('msg-error').textContent = data.message || 'Ce code n\'est pas reconnu.';
       btn.disabled = false;
       btn.textContent = 'Accéder à PraxisCare →';
       input.select();
     }
-  }, 600);
+  })
+  .catch(function(){
+    input.classList.add('error');
+    document.getElementById('msg-error').classList.add('show');
+    document.getElementById('msg-error').textContent = 'Erreur de connexion, réessaie.';
+    btn.disabled = false;
+    btn.textContent = 'Accéder à PraxisCare →';
+  });
 }
 </script>
 </body>
