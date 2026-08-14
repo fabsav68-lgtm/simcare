@@ -1,19 +1,67 @@
--- Insère un abonnement de test et un code d'accès associé,
--- juste pour vérifier que verifier-acces fonctionne correctement.
--- À supprimer une fois le test validé.
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Test verifier-acces</title>
+<style>
+  body{font-family:-apple-system,sans-serif;background:#0d1117;color:#e6edf3;padding:24px;max-width:600px;margin:0 auto}
+  h1{font-size:18px}
+  input{width:100%;padding:12px;border-radius:8px;border:1px solid #30363d;background:#161b22;color:#e6edf3;font-size:14px;margin:6px 0;box-sizing:border-box}
+  label{font-size:12px;color:#8b949e}
+  button{background:#2ea043;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:15px;cursor:pointer;margin:10px 0}
+  button:disabled{opacity:.5}
+  pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;white-space:pre-wrap;word-break:break-word;font-size:13px}
+  .ok{color:#3fb950}
+  .err{color:#f85149}
+</style>
+</head>
+<body>
+  <h1>🔐 Test de verifier-acces</h1>
 
-with nouvel_abonnement as (
-  insert into abonnements (
-    type, email_etudiant, nom_etudiant, app, annee_formation,
-    duree_type, date_debut, date_fin, statut, montant_paye
-  ) values (
-    'individuel', 'test@praxiscare.fr', 'Étudiant Test',
-    'SimCare', 'A1', 'annuel',
-    current_date, current_date + interval '1 year',
-    'active', 3.00
-  )
-  returning id
-)
-insert into acces_etudiants (abonnement_id, code_acces, email_etudiant, nom_etudiant)
-select id, 'TEST-CODE-001', 'test@praxiscare.fr', 'Étudiant Test'
-from nouvel_abonnement;
+  <label>Code d'accès</label>
+  <input type="text" id="code" value="TEST-CODE-001">
+
+  <label>Application</label>
+  <input type="text" id="app" value="SimCare">
+
+  <button onclick="tester()" id="btn">Tester la vérification</button>
+  <pre id="resultat">Le résultat apparaîtra ici après le clic.</pre>
+
+<script>
+async function tester(){
+  const btn = document.getElementById('btn');
+  const res = document.getElementById('resultat');
+  const code = document.getElementById('code').value.trim();
+  const app = document.getElementById('app').value.trim();
+
+  btn.disabled = true;
+  res.textContent = 'Test en cours...';
+  res.className = '';
+
+  const cle = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
+
+  try {
+    const response = await fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/functions/v1/verifier-acces', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': cle,
+        'Authorization': 'Bearer ' + cle,
+      },
+      body: JSON.stringify({ code, app }),
+    });
+
+    const texte = await response.text();
+    res.textContent = 'Statut HTTP : ' + response.status + '\n\n' + texte;
+    res.className = response.ok ? 'ok' : 'err';
+
+  } catch(err) {
+    res.textContent = 'Erreur réseau : ' + err.message;
+    res.className = 'err';
+  }
+
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
