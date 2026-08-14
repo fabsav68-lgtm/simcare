@@ -1,0 +1,19 @@
+-- Insère un abonnement de test et un code d'accès associé,
+-- juste pour vérifier que verifier-acces fonctionne correctement.
+-- À supprimer une fois le test validé.
+
+with nouvel_abonnement as (
+  insert into abonnements (
+    type, email_etudiant, nom_etudiant, app, annee_formation,
+    duree_type, date_debut, date_fin, statut, montant_paye
+  ) values (
+    'individuel', 'test@praxiscare.fr', 'Étudiant Test',
+    'SimCare', 'A1', 'annuel',
+    current_date, current_date + interval '1 year',
+    'active', 3.00
+  )
+  returning id
+)
+insert into acces_etudiants (abonnement_id, code_acces, email_etudiant, nom_etudiant)
+select id, 'TEST-CODE-001', 'test@praxiscare.fr', 'Étudiant Test'
+from nouvel_abonnement;
