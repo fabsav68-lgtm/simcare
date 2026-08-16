@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisCare · Demande de contact</title>
+<style>
+:root{
+  --bg:#070c14; --bg2:#0c1420; --card:rgba(255,255,255,.035); --bdr:rgba(255,255,255,.09);
+  --txt:#eef2f6; --txt2:#8a99a8; --em:#38bdf8; --green:#40c878;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--txt);font-family:-apple-system,'Segoe UI',sans-serif;min-height:100vh;padding:32px 16px 60px}
+.wrap{max-width:520px;margin:0 auto}
+.logo{font-family:Georgia,serif;font-size:26px;font-weight:700;text-align:center;margin-bottom:6px}
+.logo span{color:var(--em)}
+h1{font-size:19px;font-weight:700;text-align:center;margin-bottom:8px}
+.sub{color:var(--txt2);font-size:13.5px;text-align:center;margin-bottom:28px;line-height:1.6}
+label{display:block;font-size:12.5px;color:var(--txt2);margin-bottom:6px;margin-top:16px;font-weight:600}
+input,select,textarea{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:14px;font-family:inherit}
+textarea{min-height:80px;resize:vertical}
+.apps-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.app-choice{background:rgba(255,255,255,.04);border:1.5px solid var(--bdr);border-radius:10px;padding:10px;text-align:center;font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.app-choice.sel{background:rgba(56,189,248,.15);border-color:rgba(56,189,248,.4);color:var(--em)}
+.btn-envoyer{width:100%;margin-top:24px;background:linear-gradient(135deg,#0284c7,var(--em));border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;padding:14px;cursor:pointer}
+.btn-envoyer:disabled{opacity:.5}
+#msg{margin-top:14px;font-size:13px;text-align:center;min-height:18px}
+.success-box{display:none;text-align:center;padding:40px 20px}
+.success-box .icon{font-size:44px;display:block;margin-bottom:12px}
+.success-box h2{color:var(--green);font-size:19px;margin-bottom:8px}
+.success-box p{color:var(--txt2);font-size:13.5px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">Praxis<span>Care</span></div>
+  <h1>Une question, un partenariat, une envie de tester ?</h1>
+  <p class="sub">Laissez vos coordonnées — nous revenons vers vous rapidement pour organiser l'accès ou répondre à vos questions.</p>
+
+  <div id="form-zone">
+    <label>Nom et prénom</label>
+    <input type="text" id="nom" placeholder="Votre nom">
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="vous@exemple.fr">
+
+    <label>Téléphone <span style="font-weight:400">(facultatif)</span></label>
+    <input type="tel" id="telephone" placeholder="06 12 34 56 78">
+
+    <label>Vous êtes</label>
+    <select id="profil">
+      <option value="etablissement">Un établissement (IFSI, IFAS...)</option>
+      <option value="formateur">Un formateur / une formatrice</option>
+      <option value="etudiant">Un étudiant / une étudiante</option>
+      <option value="autre">Autre</option>
+    </select>
+
+    <label>Application(s) qui vous intéresse(nt)</label>
+    <div class="apps-grid">
+      <div class="app-choice" data-app="SimCare">SimCare (IDE)</div>
+      <div class="app-choice" data-app="SimVeto">SimVeto (ASV)</div>
+      <div class="app-choice" data-app="SimAs">SimAs (AS)</div>
+      <div class="app-choice" data-app="SimAP">SimAP (AP)</div>
+    </div>
+
+    <label>Message <span style="font-weight:400">(facultatif)</span></label>
+    <textarea id="message" placeholder="Votre établissement, votre besoin, vos questions..."></textarea>
+
+    <button class="btn-envoyer" id="btn" onclick="envoyer()">Envoyer ma demande →</button>
+    <p id="msg"></p>
+  </div>
+
+  <div class="success-box" id="success-box">
+    <span class="icon">🎉</span>
+    <h2>Merci !</h2>
+    <p>Votre demande a bien été reçue. Nous revenons vers vous très prochainement.</p>
+  </div>
+</div>
+
+<script>
+var appsChoisies = [];
+document.querySelectorAll('.app-choice').forEach(function(el){
+  el.addEventListener('click', function(){
+    var app = el.getAttribute('data-app');
+    var i = appsChoisies.indexOf(app);
+    if(i === -1){ appsChoisies.push(app); el.classList.add('sel'); }
+    else { appsChoisies.splice(i,1); el.classList.remove('sel'); }
+  });
+});
+
+function envoyer(){
+  var nom = document.getElementById('nom').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var telephone = document.getElementById('telephone').value.trim();
+  var profil = document.getElementById('profil').value;
+  var message = document.getElementById('message').value.trim();
+  var msg = document.getElementById('msg');
+  var btn = document.getElementById('btn');
+
+  if(!nom || !email){
+    msg.style.color = '#e85050';
+    msg.textContent = 'Merci de renseigner au moins votre nom et votre email.';
+    return;
+  }
+
+  btn.disabled = true;
+  msg.style.color = '#8a99a8';
+  msg.textContent = 'Envoi en cours...';
+
+  fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/demandes_contact', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+      'Authorization': 'Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+      'Prefer': 'return=minimal',
+    },
+    body: JSON.stringify({
+      nom: nom, email: email, telephone: telephone || null,
+      profil: profil, apps_interesse: appsChoisies, message: message || null,
+    }),
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error('Erreur serveur');
+    document.getElementById('form-zone').style.display = 'none';
+    document.getElementById('success-box').style.display = 'block';
+  })
+  .catch(function(){
+    msg.style.color = '#e85050';
+    msg.textContent = 'Une erreur est survenue, réessayez dans un instant.';
+    btn.disabled = false;
+  });
+}
+</script>
+</body>
+</html>
