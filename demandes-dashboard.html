@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demandes — Dashboard PraxisCare</title>
+<style>
+:root{
+  --bg:#070c14; --bg2:#0c1420; --card:rgba(255,255,255,.035); --bdr:rgba(255,255,255,.09);
+  --txt:#eef2f6; --txt2:#8a99a8; --em:#38bdf8; --green:#40c878; --amber:#e8a840;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--txt);font-family:-apple-system,'Segoe UI',sans-serif;min-height:100vh;padding:20px 16px 60px}
+.wrap{max-width:680px;margin:0 auto}
+h1{font-size:22px;font-weight:800;margin-bottom:4px}
+.sub{color:var(--txt2);font-size:13px;margin-bottom:20px}
+.filters{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px}
+.filter{flex-shrink:0;background:rgba(255,255,255,.04);border:1px solid var(--bdr);color:var(--txt2);padding:8px 14px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.filter.active{background:rgba(56,189,248,.15);border-color:rgba(56,189,248,.4);color:var(--em)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px;text-align:center}
+.stat-v{font-size:20px;font-weight:800;color:var(--em);display:block}
+.stat-l{font-size:10.5px;color:var(--txt2);margin-top:2px}
+.demande-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:12px}
+.demande-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px}
+.demande-nom{font-size:15px;font-weight:700}
+.demande-meta{font-size:11px;color:var(--txt2);font-family:'Fira Mono',monospace;margin-top:2px}
+.demande-profil{background:rgba(56,189,248,.12);color:var(--em);padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;flex-shrink:0}
+.demande-contact{font-size:13px;color:var(--txt);margin:8px 0}
+.demande-contact a{color:var(--em);text-decoration:none}
+.demande-apps{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.demande-tag{background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--txt2);font-size:10.5px;padding:3px 9px;border-radius:12px}
+.demande-message{font-size:13px;color:var(--txt2);line-height:1.6;margin:8px 0;padding:10px 12px;background:rgba(0,0,0,.2);border-radius:10px;font-style:italic}
+.statut-select{margin-top:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:rgba(255,255,255,.04);color:var(--txt);font-size:12.5px}
+.empty{text-align:center;padding:40px 20px;color:var(--txt2);font-size:13.5px}
+.loading{text-align:center;padding:30px;color:var(--txt2);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📬 Demandes de contact</h1>
+  <div class="sub">Établissements, formateurs, étudiants intéressés</div>
+  <div id="stats-zone"></div>
+  <div class="filters" id="filters"></div>
+  <div id="liste"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://fvrfiikrasezlzpaxpqz.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
+
+let DEMANDES = [];
+let FILTRE = 'tous';
+const STATUTS = ['en_attente','contacte','converti','sans_suite'];
+const STATUT_LABELS = {en_attente:'En attente',contacte:'Contacté',converti:'Converti',sans_suite:'Sans suite'};
+
+function esc(s){ return (s||'').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function charger(){
+  document.getElementById('liste').innerHTML = '<div class="loading">Chargement…</div>';
+  try{
+    const res = await fetch(SUPABASE_URL + '/rest/v1/demandes_contact?select=*&order=created_at.desc', {
+      headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON }
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    DEMANDES = await res.json();
+    render();
+  } catch(e){
+    document.getElementById('liste').innerHTML = '<div class="empty">⚠️ Erreur de chargement (' + esc(e.message) + ').</div>';
+  }
+}
+
+function render(){
+  document.getElementById('filters').innerHTML = ['tous', ...STATUTS].map(s =>
+    `<button class="filter ${FILTRE===s?'active':''}" onclick="setFiltre('${s}')">${s==='tous'?'Toutes':STATUT_LABELS[s]}</button>`
+  ).join('');
+
+  const visibles = FILTRE==='tous' ? DEMANDES : DEMANDES.filter(d => d.statut === FILTRE);
+  const enAttente = DEMANDES.filter(d => d.statut === 'en_attente').length;
+  const convertis = DEMANDES.filter(d => d.statut === 'converti').length;
+
+  document.getElementById('stats-zone').innerHTML = `
+    <div class="stats">
+      <div class="stat"><span class="stat-v">${DEMANDES.length}</span><span class="stat-l">Total</span></div>
+      <div class="stat"><span class="stat-v">${enAttente}</span><span class="stat-l">En attente</span></div>
+      <div class="stat"><span class="stat-v">${convertis}</span><span class="stat-l">Convertis</span></div>
+    </div>`;
+
+  if(visibles.length === 0){
+    document.getElementById('liste').innerHTML = '<div class="empty">Aucune demande pour le moment.</div>';
+    return;
+  }
+
+  document.getElementById('liste').innerHTML = visibles.map(d => `
+    <div class="demande-card">
+      <div class="demande-top">
+        <div>
+          <div class="demande-nom">${esc(d.nom)}</div>
+          <div class="demande-meta">${new Date(d.created_at).toLocaleString('fr-FR')}</div>
+        </div>
+        <div class="demande-profil">${esc(d.profil||'—')}</div>
+      </div>
+      <div class="demande-contact">
+        📧 <a href="mailto:${esc(d.email)}">${esc(d.email)}</a>
+        ${d.telephone ? ' · 📱 <a href="tel:'+esc(d.telephone)+'">'+esc(d.telephone)+'</a>' : ''}
+      </div>
+      ${(d.apps_interesse && d.apps_interesse.length) ? `
+        <div class="demande-apps">${d.apps_interesse.map(a=>`<span class="demande-tag">${esc(a)}</span>`).join('')}</div>` : ''}
+      ${d.message ? `<div class="demande-message">"${esc(d.message)}"</div>` : ''}
+      <select class="statut-select" onchange="changerStatut('${d.id}', this.value)">
+        ${STATUTS.map(s => `<option value="${s}" ${d.statut===s?'selected':''}>${STATUT_LABELS[s]}</option>`).join('')}
+      </select>
+    </div>
+  `).join('');
+}
+
+function setFiltre(s){ FILTRE = s; render(); }
+
+async function changerStatut(id, statut){
+  await fetch(SUPABASE_URL + '/rest/v1/demandes_contact?id=eq.' + id, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON,
+      'Content-Type': 'application/json', 'Prefer': 'return=minimal',
+    },
+    body: JSON.stringify({ statut: statut }),
+  });
+  const d = DEMANDES.find(x => x.id === id);
+  if(d) d.statut = statut;
+  render();
+}
+
+charger();
+</script>
+</body>
+</html>
