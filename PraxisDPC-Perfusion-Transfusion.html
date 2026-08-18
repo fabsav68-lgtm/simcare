@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisDPC · Perfusion & Transfusion 2026</title>
+<meta name="theme-color" content="#04090f">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#04090f;color:#e8edf2;font-family:system-ui,sans-serif;min-height:100vh;padding-bottom:70px}
+header{padding:24px 20px 16px;text-align:center;border-bottom:1px solid rgba(255,255,255,.07)}
+header h1{font-family:Georgia,serif;font-size:24px;font-weight:300}
+header h1 strong{font-weight:700;color:#e85050}
+header p{font-size:12px;color:#8a99a8;margin-top:6px;line-height:1.6}
+.badge{display:inline-block;background:rgba(232,80,80,.08);border:1px solid rgba(232,80,80,.25);color:#e85050;padding:3px 12px;border-radius:20px;font-size:10px;letter-spacing:1.5px;font-family:monospace;margin-bottom:12px}
+.stepper{display:flex;gap:4px;padding:14px 20px;max-width:640px;margin:0 auto}
+.step-dot{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.08)}
+.step-dot.done{background:#40c878}
+.step-dot.active{background:#e85050}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+.panel{display:none}
+.panel.active{display:block}
+h2{font-family:Georgia,serif;font-size:19px;margin-bottom:8px;color:#e85050}
+.intro{font-size:13px;color:#8a99a8;line-height:1.7;margin-bottom:18px}
+label{display:block;font-size:12.5px;color:#8a99a8;margin-bottom:6px;margin-top:14px;font-weight:600}
+input,select{width:100%;padding:12px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;color:#e8edf2;font-size:14px}
+.crit-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;margin-bottom:12px}
+.crit-txt{font-size:13.5px;color:#e8edf2;line-height:1.6;margin-bottom:10px}
+.crit-choices{display:flex;gap:8px}
+.crit-choice{flex:1;text-align:center;padding:9px;border-radius:8px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-size:12.5px;cursor:pointer}
+.crit-choice.oui.sel{background:rgba(64,200,120,.15);border-color:#40c878;color:#40c878}
+.crit-choice.non.sel{background:rgba(232,80,80,.12);border-color:#e85050;color:#e85050}
+.form-section{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;margin-bottom:14px}
+.form-section h3{font-size:15px;color:#e8edf2;margin-bottom:8px}
+.form-section p{font-size:13px;color:#8a99a8;line-height:1.7;margin-bottom:8px}
+.form-section .maj{background:rgba(232,168,64,.08);border-left:3px solid rgba(232,168,64,.5);border-radius:0 8px 8px 0;padding:10px 12px;font-size:12.5px;color:#e8a840;margin-top:8px}
+.btn-p{background:linear-gradient(135deg,#a83838,#e85050);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;padding:13px 20px;cursor:pointer;width:100%;margin-top:20px}
+.btn-p:disabled{opacity:.4}
+.btn-g{background:none;border:1px solid rgba(255,255,255,.12);color:#8a99a8;padding:10px 18px;border-radius:8px;font-size:12.5px;cursor:pointer;width:100%;margin-top:8px}
+.resultat-box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;margin-bottom:14px;text-align:center}
+.resultat-score{font-size:36px;font-weight:800;color:#40c878}
+.resultat-label{font-size:12px;color:#8a99a8;margin-top:4px}
+.compare-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12.5px}
+.compare-row .t0{color:#8a99a8}
+.compare-row .t1.ok{color:#40c878}
+.compare-row .t1.gap{color:#e85050}
+.plan-item{background:rgba(232,80,80,.08);border-left:3px solid #e85050;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;font-size:12.5px;color:#e8edf2}
+.attestation{background:rgba(64,200,120,.06);border:1px solid rgba(64,200,120,.25);border-radius:12px;padding:18px;text-align:center}
+.attestation h3{color:#40c878;font-size:16px;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">DPC · Orientation prioritaire 2026-2028</div>
+  <h1>Praxis<strong>DPC</strong></h1>
+  <p>Surveillance des patients sous perfusion et transfusion<br>Actualisation réglementaire 2026 — Instruction du 19 juin 2026</p>
+</header>
+
+<div class="stepper" id="stepper"></div>
+
+<div class="wrap">
+
+  <!-- ============ IDENTITÉ ============ -->
+  <div class="panel active" id="panel-identite">
+    <h2>Avant de commencer</h2>
+    <p class="intro">Ces informations servent uniquement à générer votre attestation de participation en fin de parcours — conformément à l'obligation de traçabilité DPC.</p>
+    <label>Nom et prénom</label>
+    <input type="text" id="nom" placeholder="Votre nom">
+    <label>Numéro RPPS ou ADELI</label>
+    <input type="text" id="rpps" placeholder="11 chiffres">
+    <label>Mode d'exercice</label>
+    <select id="exercice">
+      <option value="idel">Infirmier(ère) libéral(e)</option>
+      <option value="salarie">Salarié(e)</option>
+      <option value="mixte">Exercice mixte</option>
+    </select>
+    <button class="btn-p" onclick="go('audit-t0')">Commencer l'audit initial →</button>
+  </div>
+
+  <!-- ============ AUDIT T0 ============ -->
+  <div class="panel" id="panel-audit-t0">
+    <h2>Audit initial (T0)</h2>
+    <p class="intro">Répondez honnêtement en fonction de votre pratique <b>actuelle</b>, avant la formation. Il n'y a pas de bonne ou de mauvaise réponse individuelle — c'est votre point de départ.</p>
+    <div id="criteres-t0"></div>
+    <button class="btn-p" id="btn-t0" onclick="go('formation')" disabled>Passer à la formation →</button>
+  </div>
+
+  <!-- ============ FORMATION ============ -->
+  <div class="panel" id="panel-formation">
+    <h2>Ce qui change en 2026</h2>
+    <p class="intro">L'Instruction n° DGS/PP4/2026/97 du 19 juin 2026 remplace le texte du 16 novembre 2021. Elle structure l'ensemble de la chaîne transfusionnelle et de la surveillance sous perfusion en quatre fiches.</p>
+
+    <div class="form-section">
+      <h3>1. Le principe qui gouverne tout</h3>
+      <p>« Bon produit, bon patient, bon moment, bonne posologie » — ce principe reste la colonne vertébrale du texte 2026, appliqué à chaque étape de la chaîne, de la prescription à la surveillance post-acte.</p>
+    </div>
+
+    <div class="form-section">
+      <h3>2. Le contrôle ultime pré-transfusionnel (CUPT)</h3>
+      <p>Deux volets indissociables : la concordance entre l'identité du patient (confirmée à l'oral quand son état le permet), le produit et les documents de délivrance — puis la compatibilité ABO pour tout CGR ou concentré de granulocytes.</p>
+      <p class="maj">Ce qui est renforcé en 2026 : le CUPT doit être réalisé par le <b>même professionnel</b> que celui qui transfuse, sans interruption de tâche — un point de vigilance particulièrement pertinent en exercice isolé.</p>
+    </div>
+
+    <div class="form-section">
+      <h3>3. La surveillance — le vrai cœur du métier infirmier</h3>
+      <p>Continue et attentive pendant les 15 premières minutes, puis clinique pendant les deux heures suivant le début de l'acte, adaptée aux facteurs de risque du patient — âges extrêmes, insuffisance cardiaque, tout terrain à risque de surcharge volémique.</p>
+      <p class="maj">Pour une surveillance sous perfusion hors contexte transfusionnel (antibiothérapie, chimiothérapie à domicile, PICC line), les mêmes principes de vigilance active s'appliquent : signes précoces d'intolérance, débit, point de ponction.</p>
+    </div>
+
+    <div class="form-section">
+      <h3>4. Qui peut transfuser, qui peut prescrire</h3>
+      <p>Médecins, sages-femmes et IDE peuvent réaliser l'acte transfusionnel sur prescription médicale. L'IPA peut renouveler ou adapter une prescription initiale de PSL, à l'appréciation du médecin prescripteur et dans le cadre d'une procédure écrite — la prescription initiale reste un acte médical.</p>
+    </div>
+
+    <div class="form-section">
+      <h3>5. Traçabilité</h3>
+      <p>Le dossier transfusionnel doit être conservé 30 ans, sur un support garantissant intégrité, confidentialité et disponibilité — un point de vigilance renforcé en exercice libéral où les outils numériques varient d'un cabinet à l'autre.</p>
+    </div>
+
+    <button class="btn-p" onclick="go('audit-t1')">Passer au ré-audit →</button>
+  </div>
+
+  <!-- ============ AUDIT T1 ============ -->
+  <div class="panel" id="panel-audit-t1">
+    <h2>Ré-audit (T1)</h2>
+    <p class="intro">Mêmes critères qu'au départ — répondez maintenant en fonction de ce que vous <b>allez mettre en œuvre</b> dans votre pratique, à la lumière de ce qui vient d'être vu.</p>
+    <div id="criteres-t1"></div>
+    <button class="btn-p" id="btn-t1" onclick="go('resultats')" disabled>Voir mes résultats →</button>
+  </div>
+
+  <!-- ============ RESULTATS ============ -->
+  <div class="panel" id="panel-resultats">
+    <h2>Vos résultats</h2>
+    <div class="resultat-box">
+      <div class="resultat-score" id="score-t1"></div>
+      <div class="resultat-label">critères validés sur 8, après formation</div>
+    </div>
+    <div id="comparaison"></div>
+    <div id="plan-action" style="margin-top:18px"></div>
+    <button class="btn-p" onclick="go('attestation')">Générer mon attestation →</button>
+  </div>
+
+  <!-- ============ ATTESTATION ============ -->
+  <div class="panel" id="panel-attestation">
+    <div class="attestation">
+      <h3>🎓 Parcours DPC complété</h3>
+      <p id="att-nom" style="font-size:13px;color:#8a99a8;margin-bottom:14px"></p>
+      <p style="font-size:12.5px;color:#8a99a8;line-height:1.7">
+        Programme intégré (formation continue + évaluation des pratiques professionnelles)<br>
+        Méthode HAS : audit clinique ciblé<br>
+        Orientation prioritaire DPC 2026-2028 : surveillance des patients sous perfusion<br>
+        <span id="att-date"></span>
+      </p>
+    </div>
+    <button class="btn-g" onclick="window.print()">Imprimer / enregistrer en PDF</button>
+  </div>
+
+</div>
+
+<script>
+const CRITERES = [
+  "Le CUPT est réalisé au lit du patient, immédiatement avant la transfusion, sans interruption de tâche.",
+  "L'identité du patient est confirmée oralement par le patient lui-même chaque fois que possible.",
+  "Le CUPT est réalisé par le même professionnel que celui qui effectue la transfusion.",
+  "La compatibilité ABO est systématiquement vérifiée avant toute transfusion de CGR ou de granulocytes.",
+  "La surveillance est continue et attentive pendant les 15 premières minutes suivant le début de l'acte.",
+  "La surveillance clinique se poursuit pendant les deux heures suivant le début de l'acte.",
+  "Une vigilance renforcée est appliquée pour les patients à risque de surcharge volémique.",
+  "La traçabilité de l'acte est complète et conservée dans les conditions réglementaires.",
+];
+
+const ETAPES = ['identite','audit-t0','formation','audit-t1','resultats','attestation'];
+let reponsesT0 = {};
+let reponsesT1 = {};
+
+function renderStepper(){
+  const idx = ETAPES.indexOf(document.querySelector('.panel.active').id.replace('panel-',''));
+  document.getElementById('stepper').innerHTML = ETAPES.map((e,i) =>
+    `<div class="step-dot ${i<idx?'done':i===idx?'active':''}"></div>`
+  ).join('');
+}
+
+function renderCriteres(containerId, store, btnId){
+  const el = document.getElementById(containerId);
+  el.innerHTML = CRITERES.map((c,i) => `
+    <div class="crit-card">
+      <div class="crit-txt">${i+1}. ${c}</div>
+      <div class="crit-choices">
+        <div class="crit-choice oui" onclick="repondre('${containerId}',${i},true,'${btnId}')" id="${containerId}-${i}-oui">Oui</div>
+        <div class="crit-choice non" onclick="repondre('${containerId}',${i},false,'${btnId}')" id="${containerId}-${i}-non">Non</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function repondre(containerId, i, valeur, btnId){
+  const store = containerId === 'criteres-t0' ? reponsesT0 : reponsesT1;
+  store[i] = valeur;
+  document.getElementById(`${containerId}-${i}-oui`).classList.toggle('sel', valeur === true);
+  document.getElementById(`${containerId}-${i}-non`).classList.toggle('sel', valeur === false);
+  document.getElementById(btnId).disabled = Object.keys(store).length < CRITERES.length;
+}
+
+function go(step){
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + step).classList.add('active');
+  renderStepper();
+  window.scrollTo(0,0);
+
+  if(step === 'resultats') afficherResultats();
+  if(step === 'attestation') afficherAttestation();
+}
+
+function afficherResultats(){
+  const scoreT1 = Object.values(reponsesT1).filter(v => v === true).length;
+  document.getElementById('score-t1').textContent = scoreT1;
+
+  let compHtml = '';
+  let planHtml = '';
+  CRITERES.forEach((c,i) => {
+    const t0ok = reponsesT0[i] === true;
+    const t1ok = reponsesT1[i] === true;
+    compHtml += `<div class="compare-row">
+      <span>${i+1}. ${c.slice(0,50)}...</span>
+      <span><span class="t0">T0: ${t0ok?'✓':'✗'}</span> → <span class="t1 ${t1ok?'ok':'gap'}">T1: ${t1ok?'✓':'✗'}</span></span>
+    </div>`;
+    if(!t1ok){
+      planHtml += `<div class="plan-item">⚠️ Point d'amélioration : ${c}</div>`;
+    }
+  });
+  document.getElementById('comparaison').innerHTML = compHtml;
+  document.getElementById('plan-action').innerHTML = planHtml || '<div class="plan-item" style="background:rgba(64,200,120,.08);border-color:#40c878;color:#40c878">✅ Tous les critères sont validés — aucun plan d\'action nécessaire.</div>';
+
+  // Enregistrement Supabase
+  const nom = document.getElementById('nom').value.trim();
+  const rpps = document.getElementById('rpps').value.trim();
+  const exercice = document.getElementById('exercice').value;
+  fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/dpc_participations', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+      'Authorization': 'Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+      'Prefer': 'return=minimal',
+    },
+    body: JSON.stringify({
+      nom, rpps, exercice,
+      score_t0: Object.values(reponsesT0).filter(v => v === true).length,
+      score_t1: scoreT1,
+      reponses_t0: reponsesT0,
+      reponses_t1: reponsesT1,
+    }),
+  }).catch(() => {});
+}
+
+function afficherAttestation(){
+  const nom = document.getElementById('nom').value.trim() || 'Professionnel';
+  document.getElementById('att-nom').textContent = nom;
+  document.getElementById('att-date').textContent = 'Complété le ' + new Date().toLocaleDateString('fr-FR');
+}
+
+renderCriteres('criteres-t0', reponsesT0, 'btn-t0');
+renderCriteres('criteres-t1', reponsesT1, 'btn-t1');
+renderStepper();
+</script>
+</body>
+</html>
