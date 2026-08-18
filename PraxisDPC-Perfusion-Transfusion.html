@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PraxisDPC · Perfusion & Transfusion 2026</title>
+<title>PraxisDPC · Surveillance des patients sous perfusion</title>
 <meta name="theme-color" content="#04090f">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -54,7 +54,7 @@ input,select{width:100%;padding:12px;background:rgba(255,255,255,.04);border:1.5
 <header>
   <div class="badge">DPC · Orientation prioritaire 2026-2028</div>
   <h1>Praxis<strong>DPC</strong></h1>
-  <p>Surveillance des patients sous perfusion et transfusion<br>Actualisation réglementaire 2026 — Instruction du 19 juin 2026</p>
+  <p>Surveillance des patients sous perfusion<br>Cas de la transfusion — Actualisation réglementaire 2026</p>
 </header>
 
 <div class="stepper" id="stepper"></div>
@@ -89,32 +89,37 @@ input,select{width:100%;padding:12px;background:rgba(255,255,255,.04);border:1.5
   <!-- ============ FORMATION ============ -->
   <div class="panel" id="panel-formation">
     <h2>Ce qui change en 2026</h2>
-    <p class="intro">L'Instruction n° DGS/PP4/2026/97 du 19 juin 2026 remplace le texte du 16 novembre 2021. Elle structure l'ensemble de la chaîne transfusionnelle et de la surveillance sous perfusion en quatre fiches.</p>
+    <p class="intro">La surveillance d'un patient sous perfusion repose sur des principes communs — vérification du point d'accès, conformité du débit, vigilance clinique active — quelle que soit la nature du produit perfusé. La transfusion en est le cas le plus exigeant : l'Instruction n° DGS/PP4/2026/97 du 19 juin 2026, qui remplace le texte du 16 novembre 2021, en détaille les règles précises.</p>
 
     <div class="form-section">
-      <h3>1. Le principe qui gouverne tout</h3>
+      <h3>1. La surveillance d'une perfusion, quel que soit le produit</h3>
+      <p>Vérifier régulièrement le point de ponction ou l'abord veineux (rougeur, œdème, douleur, signes d'infiltration ou de phlébite), contrôler que le débit correspond à la prescription, et rester attentif aux premiers signes d'intolérance — ces principes s'appliquent à toute perfusion : antibiothérapie, chimiothérapie à domicile, nutrition parentérale, PICC line.</p>
+    </div>
+
+    <div class="form-section">
+      <h3>2. Le principe qui gouverne la transfusion en particulier</h3>
       <p>« Bon produit, bon patient, bon moment, bonne posologie » — ce principe reste la colonne vertébrale du texte 2026, appliqué à chaque étape de la chaîne, de la prescription à la surveillance post-acte.</p>
     </div>
 
     <div class="form-section">
-      <h3>2. Le contrôle ultime pré-transfusionnel (CUPT)</h3>
+      <h3>3. Le contrôle ultime pré-transfusionnel (CUPT)</h3>
       <p>Deux volets indissociables : la concordance entre l'identité du patient (confirmée à l'oral quand son état le permet), le produit et les documents de délivrance — puis la compatibilité ABO pour tout CGR ou concentré de granulocytes.</p>
       <p class="maj">Ce qui est renforcé en 2026 : le CUPT doit être réalisé par le <b>même professionnel</b> que celui qui transfuse, sans interruption de tâche — un point de vigilance particulièrement pertinent en exercice isolé.</p>
     </div>
 
     <div class="form-section">
-      <h3>3. La surveillance — le vrai cœur du métier infirmier</h3>
+      <h3>4. La surveillance post-transfusionnelle — le vrai cœur du métier infirmier</h3>
       <p>Continue et attentive pendant les 15 premières minutes, puis clinique pendant les deux heures suivant le début de l'acte, adaptée aux facteurs de risque du patient — âges extrêmes, insuffisance cardiaque, tout terrain à risque de surcharge volémique.</p>
       <p class="maj">Pour une surveillance sous perfusion hors contexte transfusionnel (antibiothérapie, chimiothérapie à domicile, PICC line), les mêmes principes de vigilance active s'appliquent : signes précoces d'intolérance, débit, point de ponction.</p>
     </div>
 
     <div class="form-section">
-      <h3>4. Qui peut transfuser, qui peut prescrire</h3>
+      <h3>5. Qui peut transfuser, qui peut prescrire</h3>
       <p>Médecins, sages-femmes et IDE peuvent réaliser l'acte transfusionnel sur prescription médicale. L'IPA peut renouveler ou adapter une prescription initiale de PSL, à l'appréciation du médecin prescripteur et dans le cadre d'une procédure écrite — la prescription initiale reste un acte médical.</p>
     </div>
 
     <div class="form-section">
-      <h3>5. Traçabilité</h3>
+      <h3>6. Traçabilité</h3>
       <p>Le dossier transfusionnel doit être conservé 30 ans, sur un support garantissant intégrité, confidentialité et disponibilité — un point de vigilance renforcé en exercice libéral où les outils numériques varient d'un cabinet à l'autre.</p>
     </div>
 
@@ -160,6 +165,8 @@ input,select{width:100%;padding:12px;background:rgba(255,255,255,.04);border:1.5
 
 <script>
 const CRITERES = [
+  "Le point de ponction ou l'abord veineux est vérifié régulièrement pendant toute la durée de la perfusion (signes d'infiltration, de phlébite, d'infection).",
+  "Le débit de perfusion est contrôlé et conforme à la prescription tout au long de l'administration.",
   "Le CUPT est réalisé au lit du patient, immédiatement avant la transfusion, sans interruption de tâche.",
   "L'identité du patient est confirmée oralement par le patient lui-même chaque fois que possible.",
   "Le CUPT est réalisé par le même professionnel que celui qui effectue la transfusion.",
