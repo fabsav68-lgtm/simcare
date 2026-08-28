@@ -640,7 +640,7 @@ function voirScoreBinome(){
     var totalCumule = cumulBase + minutesSession;
 
     // UPDATE Supabase
-    fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/abonnements?notes=like.DEMO-' + code.split('-').slice(1,2).join('-') + '%', {
+    fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/abonnements?notes=like.' + encodeURIComponent(code + '%'), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
