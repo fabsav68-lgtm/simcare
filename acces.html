@@ -9,7 +9,7 @@
 :root{
   --bg:#04090f;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.08);
   --txt:#e8edf2;--txt2:#2a3a45;--em:#38bdf8;--em2:#0d6a94;
-  --red:#e84040;--green:#40c878;
+  --red:#e84040;--green:#40c878;--orange:#f59e0b;
   --head:'Unbounded',sans-serif;--sans:'Karla',sans-serif;--mono:'Fira Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -27,113 +27,62 @@ body::before{
     repeating-linear-gradient(0deg,rgba(56,189,248,.015) 0px,rgba(56,189,248,.015) 1px,transparent 1px,transparent 60px),
     repeating-linear-gradient(90deg,rgba(56,189,248,.015) 0px,rgba(56,189,248,.015) 1px,transparent 1px,transparent 60px);
 }
-
-.container{
-  max-width:420px;width:100%;
-  position:relative;z-index:1;
-  text-align:center;
-}
-
-.logo{
-  font-family:var(--head);font-size:42px;font-weight:800;
-  letter-spacing:-2px;margin-bottom:6px;
-}
+.container{max-width:420px;width:100%;position:relative;z-index:1;text-align:center;}
+.logo{font-family:var(--head);font-size:42px;font-weight:800;letter-spacing:-2px;margin-bottom:6px;}
 .logo span{color:var(--em)}
-.logo-sub{
-  font-family:var(--mono);font-size:10px;letter-spacing:3px;
-  text-transform:uppercase;color:var(--txt2);margin-bottom:40px;display:block;
-}
-
-.card{
-  background:var(--card);border:1.5px solid var(--bdr);
-  border-radius:16px;padding:32px 28px;margin-bottom:16px;
-  border-top:2px solid var(--em);
-}
-
-.card-title{
-  font-family:var(--head);font-size:16px;font-weight:700;
-  letter-spacing:-0.5px;margin-bottom:6px;color:var(--em);
-}
-.card-sub{
-  font-size:13px;color:var(--txt2);margin-bottom:24px;line-height:1.65;
-}
-
-/* Input code */
+.logo-sub{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--txt2);margin-bottom:40px;display:block;}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:16px;padding:32px 28px;margin-bottom:16px;border-top:2px solid var(--em);}
+.card-title{font-family:var(--head);font-size:16px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px;color:var(--em);}
+.card-sub{font-size:13px;color:var(--txt2);margin-bottom:24px;line-height:1.65;}
 .code-input-wrap{position:relative;margin-bottom:16px}
 .code-input{
-  width:100%;padding:16px 18px;
-  font-family:var(--mono);font-size:18px;letter-spacing:3px;
-  text-transform:uppercase;text-align:center;
-  background:rgba(0,0,0,.3);
-  border:2px solid rgba(56,189,248,.2);
-  border-radius:10px;color:var(--txt);
-  outline:none;transition:border-color .2s;
-  -webkit-appearance:none;
+  width:100%;padding:16px 18px;font-family:var(--mono);font-size:18px;letter-spacing:3px;
+  text-transform:uppercase;text-align:center;background:rgba(0,0,0,.3);
+  border:2px solid rgba(56,189,248,.2);border-radius:10px;color:var(--txt);
+  outline:none;transition:border-color .2s;-webkit-appearance:none;
 }
 .code-input:focus{border-color:rgba(56,189,248,.6)}
-.code-input::placeholder{
-  color:rgba(255,255,255,.15);letter-spacing:2px;font-size:13px;
-}
+.code-input::placeholder{color:rgba(255,255,255,.15);letter-spacing:2px;font-size:13px;}
 .code-input.error{border-color:var(--red);animation:shake .3s ease}
 .code-input.success{border-color:var(--green)}
-
-@keyframes shake{
-  0%,100%{transform:translateX(0)}
-  25%{transform:translateX(-8px)}
-  75%{transform:translateX(8px)}
-}
-
-.msg-error{
-  color:var(--red);font-size:12px;font-family:var(--mono);
-  letter-spacing:1px;margin-bottom:12px;display:none;
-}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.msg-error{color:var(--red);font-size:12px;font-family:var(--mono);letter-spacing:1px;margin-bottom:12px;display:none;}
 .msg-error.show{display:block}
-
 .btn{
-  width:100%;padding:14px;border-radius:10px;
-  font-family:var(--head);font-size:14px;font-weight:700;
-  letter-spacing:-0.3px;cursor:pointer;border:none;
-  background:linear-gradient(135deg,var(--em2),var(--em));
-  color:#04090f;transition:opacity .2s,transform .1s;
-  -webkit-tap-highlight-color:transparent;
+  width:100%;padding:14px;border-radius:10px;font-family:var(--head);font-size:14px;font-weight:700;
+  letter-spacing:-0.3px;cursor:pointer;border:none;background:linear-gradient(135deg,var(--em2),var(--em));
+  color:#04090f;transition:opacity .2s,transform .1s;-webkit-tap-highlight-color:transparent;
 }
 .btn:hover{opacity:.9;transform:translateY(-1px)}
 .btn:active{transform:translateY(0)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-
-/* Success state */
 .success-wrap{display:none;text-align:center;padding:20px 0}
 .success-icon{font-size:48px;display:block;margin-bottom:14px}
-.success-title{
-  font-family:var(--head);font-size:20px;font-weight:800;
-  color:var(--green);letter-spacing:-1px;margin-bottom:8px;
-}
+.success-title{font-family:var(--head);font-size:20px;font-weight:800;color:var(--green);letter-spacing:-1px;margin-bottom:8px;}
 .success-sub{font-size:13px;color:var(--txt2);line-height:1.6}
-.success-bar{
-  height:4px;background:rgba(64,200,120,.2);border-radius:2px;
-  margin-top:20px;overflow:hidden;
-}
-.success-bar-fill{
-  height:100%;width:0;background:var(--green);border-radius:2px;
-  transition:width 2s linear;
-}
-
-/* Format aide */
-.format-hint{
-  font-family:var(--mono);font-size:11px;color:var(--txt2);
-  letter-spacing:1px;margin-top:12px;
-}
+.success-bar{height:4px;background:rgba(64,200,120,.2);border-radius:2px;margin-top:20px;overflow:hidden;}
+.success-bar-fill{height:100%;width:0;background:var(--green);border-radius:2px;transition:width 2s linear;}
+.format-hint{font-family:var(--mono);font-size:11px;color:var(--txt2);letter-spacing:1px;margin-top:12px;}
 .format-hint span{color:var(--em)}
-
-/* Footer */
-.footer-txt{
-  font-family:var(--mono);font-size:10px;letter-spacing:1.5px;
-  text-transform:uppercase;color:var(--txt2);
-  position:fixed;bottom:20px;left:0;right:0;text-align:center;
-}
-
+.footer-txt{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);position:fixed;bottom:20px;left:0;right:0;text-align:center;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .fadeup{animation:fadeUp .4s ease forwards}
+
+/* ── Compteur temps démo ── */
+.demo-timer{
+  margin-top:16px;padding:10px 16px;border-radius:8px;
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);
+  font-family:var(--mono);font-size:11px;color:var(--orange);letter-spacing:1px;
+  display:none;
+}
+.demo-timer.show{display:block}
+.demo-timer strong{font-size:14px;}
+
+/* ── Carte expirée ── */
+.card-expired{border-top-color:var(--red)!important;}
+.expired-icon{font-size:48px;display:block;margin-bottom:14px;}
+.expired-title{font-family:var(--head);font-size:20px;font-weight:800;color:var(--red);letter-spacing:-1px;margin-bottom:8px;}
+.expired-sub{font-size:13px;color:var(--txt2);line-height:1.6}
 </style>
 </head>
 <body>
@@ -142,47 +91,44 @@ body::before{
   <div class="logo">Praxis<span>Care</span></div>
   <span class="logo-sub">Suite pédagogique IFSI · Accès sécurisé</span>
 
+  <!-- ── Carte login ── -->
   <div class="card" id="card-login">
     <div class="card-title">🔐 Code d'accès</div>
-    <div class="card-sub">Saisissez le code fourni par votre formateur pour accéder aux 20 modules pédagogiques.</div>
-
+    <div class="card-sub">Saisissez le code fourni par votre formateur pour accéder aux modules pédagogiques.</div>
     <div class="code-input-wrap">
-      <input
-        type="text"
-        class="code-input"
-        id="code-input"
-        placeholder="PRAXIS-A2-000"
-        maxlength="14"
-        autocomplete="off"
-        autocorrect="off"
-        spellcheck="false"
+      <input type="text" class="code-input" id="code-input"
+        placeholder="PRAXIS-A2-000" maxlength="30"
+        autocomplete="off" autocorrect="off" spellcheck="false"
         oninput="formatCode(this)"
         onkeydown="if(event.key==='Enter') valider()"
       />
     </div>
-
-    <div class="msg-error" id="msg-error">
-      ⚠️ Code invalide — vérifiez avec votre formateur
-    </div>
-
-    <button class="btn" id="btn-valider" onclick="valider()">
-      Accéder à PraxisCare →
-    </button>
-
-    <div class="format-hint">
-      Format : <span>PRAXIS-A1-001</span> · <span>PRAXIS-A2-001</span> · <span>PRAXIS-A3-001</span>
-    </div>
+    <div class="msg-error" id="msg-error">⚠️ Code invalide — vérifiez avec votre formateur</div>
+    <button class="btn" id="btn-valider" onclick="valider()">Accéder à PraxisCare →</button>
+    <div class="format-hint">Format : <span>PRAXIS-A1-001</span> · <span>DEMO-RESPPEDA-2026</span></div>
   </div>
 
-  <!-- SUCCESS -->
+  <!-- ── Carte succès ── -->
   <div class="card" id="card-success" style="display:none">
     <div class="success-wrap" style="display:block">
       <span class="success-icon">✅</span>
       <div class="success-title">Accès accordé</div>
       <div class="success-sub" id="success-msg">Bienvenue ! Redirection vers PraxisCare...</div>
-      <div class="success-bar">
-        <div class="success-bar-fill" id="success-bar-fill"></div>
-      </div>
+      <div class="success-bar"><div class="success-bar-fill" id="success-bar-fill"></div></div>
+    </div>
+    <div class="demo-timer" id="demo-timer">
+      ⏱ Accès démo · Temps restant : <strong id="timer-value">—</strong>
+    </div>
+  </div>
+
+  <!-- ── Carte expirée ── -->
+  <div class="card card-expired" id="card-expired" style="display:none">
+    <span class="expired-icon">⏰</span>
+    <div class="expired-title">Démo expirée</div>
+    <div class="expired-sub">
+      Votre accès démo de 60 minutes a été utilisé en totalité.<br><br>
+      Pour un accès complet à PraxisCare, contactez :<br>
+      <strong style="color:var(--em)">fab.sav@medexpert.fr</strong>
     </div>
   </div>
 
@@ -191,26 +137,28 @@ body::before{
 <div class="footer-txt">PraxisCare · Référentiel IDE 2026 · MedExpert</div>
 
 <script>
-// ═══════════════════════════════════════
-//  CODES D'ACCÈS
-//  Format : PRAXIS-[A1/A2/A3]-[001-099]
-//  Modifier cette liste selon les promotions
-// ═══════════════════════════════════════
-// ═══════════════════════════════════════
-//  VÉRIFICATION D'ACCÈS — via serveur (plus de liste en clair ici)
-// ═══════════════════════════════════════
 var ANNEE_LABELS = { A1: '1ère année', A2: '2ème année', A3: '3ème année' };
 
-// ── Vérifier session existante ──
+var SUPABASE_URL  = 'https://fvrfiikrasezlzpaxpqz.supabase.co';
+var SUPABASE_KEY  = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
+
+// ── Variables démo timer ──────────────────────────────────────────
+var _demoTempsMax     = null;   // minutes max autorisées
+var _demoTempsCumule  = null;   // minutes déjà consommées en base
+var _demoSessionStart = null;   // Date.now() au moment de la connexion
+var _heartbeatInterval = null;  // setInterval pour le heartbeat
+var _demoCodeActif     = null;  // code en cours
+
+// ── Vérifier session existante ────────────────────────────────────
 window.onload = function(){
   var session = sessionStorage.getItem('praxiscare_code');
-  var annee = sessionStorage.getItem('praxiscare_annee');
+  var annee   = sessionStorage.getItem('praxiscare_annee');
   if(session && annee){
     window.location.replace('index.html');
   }
 };
 
-// ── Formater la saisie ──
+// ── Formater saisie ───────────────────────────────────────────────
 function formatCode(input){
   var v = input.value.toUpperCase().replace(/[^A-Z0-9-]/g,'');
   input.value = v;
@@ -218,91 +166,116 @@ function formatCode(input){
   document.getElementById('msg-error').classList.remove('show');
 }
 
-// ── Valider le code ──
+// ── Valider le code ───────────────────────────────────────────────
 function valider(){
   var input = document.getElementById('code-input');
-  var code = input.value.trim().toUpperCase();
-  var btn = document.getElementById('btn-valider');
+  var code  = input.value.trim().toUpperCase();
+  var btn   = document.getElementById('btn-valider');
 
-  if(!code){
-    input.classList.add('error');
-    document.getElementById('msg-error').classList.add('show');
-    return;
-  }
+  if(!code){ input.classList.add('error'); document.getElementById('msg-error').classList.add('show'); return; }
 
   btn.disabled = true;
   btn.textContent = 'Vérification...';
 
-  fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/functions/v1/verifier-acces', {
+  fetch(SUPABASE_URL + '/functions/v1/verifier-acces', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'apikey': 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
-      'Authorization': 'Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
     },
     body: JSON.stringify({ code: code, app: 'SimCare' }),
   })
   .then(function(r){ return r.json(); })
   .then(function(data){
-    if(data.valide){
-      var promo = ANNEE_LABELS[data.annee] || data.annee;
-
-      sessionStorage.setItem('praxiscare_code', code);
-      sessionStorage.setItem('praxiscare_annee', data.annee);
-      sessionStorage.setItem('praxiscare_promo', promo);
-
-      // Stats (mécanisme existant conservé)
-      var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
-      var today = new Date().toISOString().split('T')[0];
-      if(!stats.connexions) stats.connexions = [];
-      stats.connexions.push({
-        code: code,
-        promo: promo,
-        date: today,
-        heure: new Date().toLocaleTimeString('fr-FR'),
-      });
-      localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
-
-      // Tracking existant conservé (tableau de bord actuel, projet Supabase d'origine)
-      fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
-        },
-        body: JSON.stringify({
-          student_code: code,
-          student_name: promo,
-          app: "praxiscare",
-          module: "login",
-          session_id: code + "_" + Date.now()
-        })
-      }).catch(function(){});
-
-      // Afficher succès
-      input.classList.add('success');
-      document.getElementById('card-login').style.display = 'none';
-      document.getElementById('card-success').style.display = 'block';
-      document.getElementById('success-msg').textContent =
-        'Bienvenue, ' + promo + ' ! Redirection en cours...';
-
-      setTimeout(function(){
-        document.getElementById('success-bar-fill').style.width = '100%';
-      }, 50);
-
-      setTimeout(function(){
-        window.location.replace('index.html');
-      }, 2100);
-
-    } else {
+    if(!data.valide){
       input.classList.add('error');
       document.getElementById('msg-error').classList.add('show');
       document.getElementById('msg-error').textContent = data.message || 'Ce code n\'est pas reconnu.';
       btn.disabled = false;
       btn.textContent = 'Accéder à PraxisCare →';
       input.select();
+      return;
     }
+
+    var promo = ANNEE_LABELS[data.annee] || data.annee;
+    var isDemo = (data.temps_max !== null && data.temps_max !== undefined);
+    var tempsCumule = data.temps_cumule || 0;
+    var tempsMax    = data.temps_max    || null;
+
+    // ── Vérifier si démo expirée ──────────────────────────────────
+    if(isDemo && tempsCumule >= tempsMax){
+      document.getElementById('card-login').style.display   = 'none';
+      document.getElementById('card-expired').style.display = 'block';
+      return;
+    }
+
+    // ── Stocker session ───────────────────────────────────────────
+    sessionStorage.setItem('praxiscare_code',  code);
+    sessionStorage.setItem('praxiscare_annee', data.annee);
+    sessionStorage.setItem('praxiscare_promo', promo);
+
+    // Stats localStorage (conservé)
+    var stats = JSON.parse(localStorage.getItem('praxiscare_stats') || '{}');
+    var today = new Date().toISOString().split('T')[0];
+    if(!stats.connexions) stats.connexions = [];
+    stats.connexions.push({ code: code, promo: promo, date: today, heure: new Date().toLocaleTimeString('fr-FR') });
+    localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
+
+    // Tracking existant conservé
+    fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+      },
+      body: JSON.stringify({ student_code: code, student_name: promo, app: "praxiscare", module: "login", session_id: code + "_" + Date.now() })
+    }).catch(function(){});
+
+    // ── Afficher succès ───────────────────────────────────────────
+    input.classList.add('success');
+    document.getElementById('card-login').style.display   = 'none';
+    document.getElementById('card-success').style.display = 'block';
+    document.getElementById('success-msg').textContent = 'Bienvenue, ' + promo + ' ! Redirection en cours...';
+
+    // ── Démo : démarrer timer ─────────────────────────────────────
+    if(isDemo){
+      _demoTempsMax    = tempsMax;
+      _demoTempsCumule = tempsCumule;
+      _demoSessionStart = Date.now();
+      _demoCodeActif   = code;
+
+      var minutesRestantes = tempsMax - tempsCumule;
+      document.getElementById('demo-timer').classList.add('show');
+      document.getElementById('timer-value').textContent = minutesRestantes + ' min';
+
+      // Heartbeat toutes les 2 minutes → UPDATE Supabase
+      _heartbeatInterval = setInterval(function(){
+        var minutesSession = Math.floor((Date.now() - _demoSessionStart) / 60000);
+        var totalCumule    = _demoTempsCumule + minutesSession;
+        updateTempsCumule(code, totalCumule);
+
+        // Mettre à jour l'affichage
+        var restant = Math.max(0, _demoTempsMax - totalCumule);
+        document.getElementById('timer-value').textContent = restant + ' min';
+      }, 2 * 60 * 1000); // toutes les 2 minutes
+
+      // Sauvegarder à la fermeture (filet de sécurité)
+      window.addEventListener('beforeunload', function(){
+        var minutesSession = Math.floor((Date.now() - _demoSessionStart) / 60000);
+        var totalCumule    = _demoTempsCumule + minutesSession;
+        updateTempsCumule(code, totalCumule);
+      });
+    }
+
+    setTimeout(function(){
+      document.getElementById('success-bar-fill').style.width = '100%';
+    }, 50);
+
+    setTimeout(function(){
+      window.location.replace('index.html');
+    }, 2100);
   })
   .catch(function(){
     input.classList.add('error');
@@ -311,6 +284,21 @@ function valider(){
     btn.disabled = false;
     btn.textContent = 'Accéder à PraxisCare →';
   });
+}
+
+// ── UPDATE temps cumulé dans Supabase ────────────────────────────
+function updateTempsCumule(code, totalMinutes){
+  // Utiliser l'API REST Supabase directement (pas de Edge Function nécessaire)
+  fetch(SUPABASE_URL + '/rest/v1/abonnements?notes=like.*' + encodeURIComponent(code) + '*', {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ temps_cumule_minutes: totalMinutes })
+  }).catch(function(){});
 }
 </script>
 </body>
