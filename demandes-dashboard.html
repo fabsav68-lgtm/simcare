@@ -8,12 +8,38 @@
 :root{
   --bg:#070c14; --bg2:#0c1420; --card:rgba(255,255,255,.035); --bdr:rgba(255,255,255,.09);
   --txt:#eef2f6; --txt2:#8a99a8; --em:#38bdf8; --green:#40c878; --amber:#e8a840;
+  --violet:#a060ff; --rouge:#e84040;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--txt);font-family:-apple-system,'Segoe UI',sans-serif;min-height:100vh;padding:20px 16px 60px}
 .wrap{max-width:680px;margin:0 auto}
 h1{font-size:22px;font-weight:800;margin-bottom:4px}
 .sub{color:var(--txt2);font-size:13px;margin-bottom:20px}
+
+/* ── Bloc démo ── */
+.demo-section{margin-bottom:24px}
+.demo-title{font-size:13px;font-weight:700;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.demo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.demo-card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:14px 10px;text-align:center;position:relative;overflow:hidden}
+.demo-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.demo-card.v1::before{background:var(--em)}
+.demo-card.v2::before{background:var(--violet)}
+.demo-card.v3::before{background:var(--green)}
+.demo-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:6px}
+.demo-minutes{font-size:26px;font-weight:800;line-height:1}
+.demo-card.v1 .demo-minutes{color:var(--em)}
+.demo-card.v2 .demo-minutes{color:var(--violet)}
+.demo-card.v3 .demo-minutes{color:var(--green)}
+.demo-restant{font-size:10px;color:var(--txt2);margin-top:4px}
+.demo-bar-wrap{height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:8px;overflow:hidden}
+.demo-bar{height:100%;border-radius:2px;transition:width .5s}
+.demo-card.v1 .demo-bar{background:var(--em)}
+.demo-card.v2 .demo-bar{background:var(--violet)}
+.demo-card.v3 .demo-bar{background:var(--green)}
+.demo-refresh{font-size:10px;color:var(--txt2);text-align:right;margin-top:6px;cursor:pointer}
+.demo-refresh:hover{color:var(--em)}
+
+/* ── Demandes ── */
 .filters{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px}
 .filter{flex-shrink:0;background:rgba(255,255,255,.04);border:1px solid var(--bdr);color:var(--txt2);padding:8px 14px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
 .filter.active{background:rgba(56,189,248,.15);border-color:rgba(56,189,248,.4);color:var(--em)}
@@ -31,30 +57,101 @@ h1{font-size:22px;font-weight:800;margin-bottom:4px}
 .demande-apps{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .demande-tag{background:rgba(255,255,255,.05);border:1px solid var(--bdr);color:var(--txt2);font-size:10.5px;padding:3px 9px;border-radius:12px}
 .demande-message{font-size:13px;color:var(--txt2);line-height:1.6;margin:8px 0;padding:10px 12px;background:rgba(0,0,0,.2);border-radius:10px;font-style:italic}
-.statut-select{margin-top:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:rgba(255,255,255,.04);color:var(--txt);font-size:12.5px}
+.statut-select{margin-top:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:rgba(255,255,255,.04);color:var(--txt);font-size:12.5px;width:100%}
 .empty{text-align:center;padding:40px 20px;color:var(--txt2);font-size:13.5px}
 .loading{text-align:center;padding:30px;color:var(--txt2);font-size:13px}
+.section-title{font-size:13px;font-weight:700;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;margin-top:24px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>📬 Demandes de contact</h1>
-  <div class="sub">Établissements, formateurs, étudiants intéressés</div>
+
+  <h1>📬 Dashboard PraxisCare</h1>
+  <div class="sub">Demandes de contact · Suivi codes démo</div>
+
+  <!-- ══════════════════════════════════════════
+       BLOC CODES DÉMO
+  ══════════════════════════════════════════ -->
+  <div class="demo-section">
+    <div class="demo-title">⏱ Codes démo — utilisation temps réel</div>
+    <div class="demo-grid" id="demo-grid">
+      <div class="demo-card v1"><div class="demo-label">V1 · Resp. péda</div><div class="demo-minutes">—</div><div class="demo-restant">chargement...</div><div class="demo-bar-wrap"><div class="demo-bar" style="width:0%"></div></div></div>
+      <div class="demo-card v2"><div class="demo-label">V2 · Handicap</div><div class="demo-minutes">—</div><div class="demo-restant">chargement...</div><div class="demo-bar-wrap"><div class="demo-bar" style="width:0%"></div></div></div>
+      <div class="demo-card v3"><div class="demo-label">V3 · Ambassadeur</div><div class="demo-minutes">—</div><div class="demo-restant">chargement...</div><div class="demo-bar-wrap"><div class="demo-bar" style="width:0%"></div></div></div>
+    </div>
+    <div class="demo-refresh" onclick="chargerDemo()">↻ Actualiser</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       DEMANDES DE CONTACT
+  ══════════════════════════════════════════ -->
+  <div class="section-title">📬 Demandes de contact</div>
   <div id="stats-zone"></div>
   <div class="filters" id="filters"></div>
   <div id="liste"></div>
+
 </div>
 
 <script>
-const SUPABASE_URL = 'https://fvrfiikrasezlzpaxpqz.supabase.co';
+const SUPABASE_URL  = 'https://fvrfiikrasezlzpaxpqz.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
 
+// ══════════════════════════════════════════
+//  CODES DÉMO
+// ══════════════════════════════════════════
+async function chargerDemo(){
+  try {
+    const res = await fetch(
+      SUPABASE_URL + "/rest/v1/abonnements?notes=like.DEMO-%25&select=notes,temps_cumule_minutes,temps_max_minutes",
+      { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON } }
+    );
+    const rows = await res.json();
+
+    const segments = [
+      { key: 'DEMO-RESPPEDA',    classe: 'v1', label: 'V1 · Resp. péda' },
+      { key: 'DEMO-HANDICAP',    classe: 'v2', label: 'V2 · Handicap' },
+      { key: 'DEMO-AMBASSADEUR', classe: 'v3', label: 'V3 · Ambassadeur' },
+    ];
+
+    const cards = document.querySelectorAll('.demo-card');
+    segments.forEach(function(seg, i) {
+      const row = rows.find(function(r){ return r.notes && r.notes.indexOf(seg.key) === 0; });
+      const card = cards[i];
+      if(!card) return;
+
+      const utilise  = row ? (row.temps_cumule_minutes || 0) : 0;
+      const max      = row ? (row.temps_max_minutes || 60) : 60;
+      const restant  = Math.max(0, max - utilise);
+      const pct      = Math.min(100, Math.round(utilise / max * 100));
+
+      card.querySelector('.demo-minutes').textContent = utilise + ' min';
+      card.querySelector('.demo-restant').textContent = restant + ' min restantes sur ' + max;
+      card.querySelector('.demo-bar').style.width = pct + '%';
+
+      // Colorer en rouge si > 80%
+      if(pct >= 80){
+        card.querySelector('.demo-bar').style.background = 'var(--rouge)';
+        card.querySelector('.demo-minutes').style.color = 'var(--rouge)';
+      }
+    });
+  } catch(e) {
+    console.error('Erreur démo:', e);
+  }
+}
+
+// Auto-refresh toutes les 2 minutes
+chargerDemo();
+setInterval(chargerDemo, 2 * 60 * 1000);
+
+// ══════════════════════════════════════════
+//  DEMANDES DE CONTACT
+// ══════════════════════════════════════════
 let DEMANDES = [];
 let FILTRE = 'tous';
 const STATUTS = ['en_attente','contacte','converti','sans_suite'];
 const STATUT_LABELS = {en_attente:'En attente',contacte:'Contacté',converti:'Converti',sans_suite:'Sans suite'};
 
-function esc(s){ return (s||'').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function esc(s){ return (s||'').toString().replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
 async function charger(){
   document.getElementById('liste').innerHTML = '<div class="loading">Chargement…</div>';
@@ -71,47 +168,41 @@ async function charger(){
 }
 
 function render(){
-  document.getElementById('filters').innerHTML = ['tous', ...STATUTS].map(s =>
-    `<button class="filter ${FILTRE===s?'active':''}" onclick="setFiltre('${s}')">${s==='tous'?'Toutes':STATUT_LABELS[s]}</button>`
-  ).join('');
+  document.getElementById('filters').innerHTML = ['tous', ...STATUTS].map(function(s){
+    return '<button class="filter ' + (FILTRE===s?'active':'') + '" onclick="setFiltre(\'' + s + '\')">' + (s==='tous'?'Toutes':STATUT_LABELS[s]) + '</button>';
+  }).join('');
 
-  const visibles = FILTRE==='tous' ? DEMANDES : DEMANDES.filter(d => d.statut === FILTRE);
-  const enAttente = DEMANDES.filter(d => d.statut === 'en_attente').length;
-  const convertis = DEMANDES.filter(d => d.statut === 'converti').length;
+  const visibles  = FILTRE==='tous' ? DEMANDES : DEMANDES.filter(function(d){ return d.statut === FILTRE; });
+  const enAttente = DEMANDES.filter(function(d){ return d.statut === 'en_attente'; }).length;
+  const convertis = DEMANDES.filter(function(d){ return d.statut === 'converti'; }).length;
 
-  document.getElementById('stats-zone').innerHTML = `
-    <div class="stats">
-      <div class="stat"><span class="stat-v">${DEMANDES.length}</span><span class="stat-l">Total</span></div>
-      <div class="stat"><span class="stat-v">${enAttente}</span><span class="stat-l">En attente</span></div>
-      <div class="stat"><span class="stat-v">${convertis}</span><span class="stat-l">Convertis</span></div>
-    </div>`;
+  document.getElementById('stats-zone').innerHTML =
+    '<div class="stats">' +
+    '<div class="stat"><span class="stat-v">' + DEMANDES.length + '</span><span class="stat-l">Total</span></div>' +
+    '<div class="stat"><span class="stat-v">' + enAttente + '</span><span class="stat-l">En attente</span></div>' +
+    '<div class="stat"><span class="stat-v">' + convertis + '</span><span class="stat-l">Convertis</span></div>' +
+    '</div>';
 
   if(visibles.length === 0){
     document.getElementById('liste').innerHTML = '<div class="empty">Aucune demande pour le moment.</div>';
     return;
   }
 
-  document.getElementById('liste').innerHTML = visibles.map(d => `
-    <div class="demande-card">
-      <div class="demande-top">
-        <div>
-          <div class="demande-nom">${esc(d.nom)}</div>
-          <div class="demande-meta">${new Date(d.created_at).toLocaleString('fr-FR')}</div>
-        </div>
-        <div class="demande-profil">${esc(d.profil||'—')}</div>
-      </div>
-      <div class="demande-contact">
-        📧 <a href="mailto:${esc(d.email)}">${esc(d.email)}</a>
-        ${d.telephone ? ' · 📱 <a href="tel:'+esc(d.telephone)+'">'+esc(d.telephone)+'</a>' : ''}
-      </div>
-      ${(d.apps_interesse && d.apps_interesse.length) ? `
-        <div class="demande-apps">${d.apps_interesse.map(a=>`<span class="demande-tag">${esc(a)}</span>`).join('')}</div>` : ''}
-      ${d.message ? `<div class="demande-message">"${esc(d.message)}"</div>` : ''}
-      <select class="statut-select" onchange="changerStatut('${d.id}', this.value)">
-        ${STATUTS.map(s => `<option value="${s}" ${d.statut===s?'selected':''}>${STATUT_LABELS[s]}</option>`).join('')}
-      </select>
-    </div>
-  `).join('');
+  document.getElementById('liste').innerHTML = visibles.map(function(d){
+    return '<div class="demande-card">' +
+      '<div class="demande-top"><div>' +
+      '<div class="demande-nom">' + esc(d.nom) + '</div>' +
+      '<div class="demande-meta">' + new Date(d.created_at).toLocaleString('fr-FR') + '</div>' +
+      '</div><div class="demande-profil">' + esc(d.profil||'—') + '</div></div>' +
+      '<div class="demande-contact">📧 <a href="mailto:' + esc(d.email) + '">' + esc(d.email) + '</a>' +
+      (d.telephone ? ' · 📱 <a href="tel:' + esc(d.telephone) + '">' + esc(d.telephone) + '</a>' : '') + '</div>' +
+      ((d.apps_interesse && d.apps_interesse.length) ?
+        '<div class="demande-apps">' + d.apps_interesse.map(function(a){ return '<span class="demande-tag">' + esc(a) + '</span>'; }).join('') + '</div>' : '') +
+      (d.message ? '<div class="demande-message">"' + esc(d.message) + '"</div>' : '') +
+      '<select class="statut-select" onchange="changerStatut(\'' + d.id + '\', this.value)">' +
+      STATUTS.map(function(s){ return '<option value="' + s + '"' + (d.statut===s?' selected':'') + '>' + STATUT_LABELS[s] + '</option>'; }).join('') +
+      '</select></div>';
+  }).join('');
 }
 
 function setFiltre(s){ FILTRE = s; render(); }
@@ -125,7 +216,7 @@ async function changerStatut(id, statut){
     },
     body: JSON.stringify({ statut: statut }),
   });
-  const d = DEMANDES.find(x => x.id === id);
+  const d = DEMANDES.find(function(x){ return x.id === id; });
   if(d) d.statut = statut;
   render();
 }
