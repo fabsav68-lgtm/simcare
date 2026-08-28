@@ -621,6 +621,38 @@ function voirScoreBinome(){
     msg.textContent = '';
   });
 }
+  // ── Heartbeat démo — toutes les 2 minutes ──────────────────
+(function(){
+  var code = sessionStorage.getItem('praxiscare_code');
+  if(!code) return;
+
+  // Vérifier si c'est un code démo (commence par DEMO-)
+  if(code.indexOf('DEMO-') !== 0) return;
+
+  var sessionStart = Date.now();
+
+  setInterval(function(){
+    var minutesSession = Math.floor((Date.now() - sessionStart) / 60000);
+    if(minutesSession < 1) return;
+
+    // Récupérer le temps cumulé actuel depuis sessionStorage
+    var cumulBase = parseInt(sessionStorage.getItem('praxiscare_temps_cumule') || '0');
+    var totalCumule = cumulBase + minutesSession;
+
+    // UPDATE Supabase
+    fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/abonnements?notes=like.DEMO-' + code.split('-').slice(1,2).join('-') + '%', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+        'Authorization': 'Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ temps_cumule_minutes: totalCumule })
+    }).catch(function(){});
+
+  }, 2 * 60 * 1000);
+})();
 </script>
 </div>
 </body>
