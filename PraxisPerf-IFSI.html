@@ -351,14 +351,14 @@ hr.div { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 20px
 //  DONNÉES
 // ═══════════════════════════════════════
 const PATHOLOGIES = [
-  { id:'sain',       label:'Aucune pathologie',              icon:'💚', short:'Bonne santé' },
-  { id:'card',       label:'Insuffisance cardiaque',         icon:'❤️', short:'IC' },
-  { id:'renal',      label:'Insuffisance rénale',            icon:'🫘', short:'IR' },
-  { id:'deshyd',     label:'Déshydratation / Hypovolémie',   icon:'💧', short:'Déshydraté' },
-  { id:'postop',     label:'Post-opératoire',                icon:'🏥', short:'Post-op' },
-  { id:'hta',        label:'HTA / Rétention hydrosodée',     icon:'🩺', short:'HTA' },
-  { id:'diab',       label:'Diabète sous insuline',          icon:'🩸', short:'Diabète' },
-  { id:'fragile',    label:'Personne âgée fragile (>75 ans)',icon:'👴', short:'Âgé fragile' },
+  { id:'sain',       label:'Aucune pathologie',              icon:'💚', short:'Bonne santé', perf_note:'' },
+  { id:'card',       label:'Insuffisance cardiaque',         icon:'❤️', short:'IC', perf_note:'Risque de surcharge volémique — surveiller les signes de décompensation, limiter le débit.' },
+  { id:'renal',      label:'Insuffisance rénale',            icon:'🫘', short:'IR', perf_note:'Élimination réduite — adapter les volumes et surveiller la diurèse.' },
+  { id:'deshyd',     label:'Déshydratation / Hypovolémie',   icon:'💧', short:'Déshydraté', perf_note:'Besoin de réhydratation — surveiller la reprise de diurèse et les constantes.' },
+  { id:'postop',     label:'Post-opératoire',                icon:'🏥', short:'Post-op', perf_note:'Pertes per-opératoires à compenser — surveillance rapprochée du site opératoire.' },
+  { id:'hta',        label:'HTA / Rétention hydrosodée',     icon:'🩺', short:'HTA', perf_note:'Risque de rétention hydrosodée — limiter les apports sodés.' },
+  { id:'diab',       label:'Diabète sous insuline',          icon:'🩸', short:'Diabète', perf_note:'Surveiller la glycémie, éviter les solutés glucosés non justifiés.' },
+  { id:'fragile',    label:'Personne âgée fragile (>75 ans)',icon:'👴', short:'Âgé fragile', perf_note:'Réserves physiologiques réduites — vitesse de perfusion prudente.' },
 ];
 
 const SOLUTIONS = [
@@ -380,7 +380,7 @@ const VOIES = [
 // ═══════════════════════════════════════
 let S = {
   view:'welcome',
-  patient: { prenom:'Jean', sexe:'H', age:78, taille:172, poids:74, pathologie:'card' },
+  patient: { prenom:'Jean', sexe:'H', age:78, taille:172, poids:74, pathologies:['card'] },
   rx:      { solution:'nacl09', volume:500, duree:4, voie:'periph' },
   analyse:'', loading:false,
   apiKey: localStorage.getItem('simperf_key')||'',
@@ -392,39 +392,45 @@ let S = {
 //  PHYSIOLOGIE VASCULAIRE
 // ═══════════════════════════════════════
 function vasculaire() {
-  const { age, sexe, poids, pathologie } = S.patient;
+  const { age, sexe, poids, pathologies } = S.patient;
+  const p = (pathologies||[]).filter(id => id !== 'sain');
 
-  // Volémie estimée
+  // Volémie estimée (facteurs multiplicatifs combinés)
   let vole = sexe==='H' ? poids*70 : poids*65;
   if (age>65) vole *= 0.92;
   if (age<12) vole = poids*80;
-  if (pathologie==='deshyd') vole *= 0.88;
-  if (pathologie==='card')   vole *= 1.08; // hypervolémie
+  if (p.includes('deshyd')) vole *= 0.88;
+  if (p.includes('card'))   vole *= 1.08; // hypervolémie
   vole = Math.round(vole);
 
-  // Débit cardiaque
+  // Débit cardiaque (facteurs multiplicatifs combinés)
   let dc = sexe==='H' ? 5.5 : 4.8;
   if (age>70) dc *= 0.85;
-  if (pathologie==='card') dc *= 0.68;
-  if (pathologie==='deshyd') dc *= 0.80;
+  if (p.includes('card')) dc *= 0.68;
+  if (p.includes('deshyd')) dc *= 0.80;
   dc = Math.round(dc*10)/10;
 
-  // Débit urinaire (élimination)
-  let du = 1.0; // mL/min normal
-  if (pathologie==='renal') du = 0.3;
-  if (pathologie==='card')  du = 0.5;
-  if (pathologie==='hta')   du = 0.7;
-  if (pathologie==='deshyd') du = 0.2;
+  // Débit urinaire (élimination) — le plus restrictif parmi les pathologies présentes
+  let duVals = [1.0];
+  if (p.includes('renal'))  duVals.push(0.3);
+  if (p.includes('card'))   duVals.push(0.5);
+  if (p.includes('hta'))    duVals.push(0.7);
+  if (p.includes('deshyd')) duVals.push(0.2);
+  let du = Math.min(...duVals);
   du = Math.round(du*10)/10;
 
-  // Risque surcharge
+  // Risque surcharge — le plus sévère parmi les pathologies présentes
   let risque = 'faible';
-  if (pathologie==='card' || pathologie==='renal') risque='élevé';
-  else if (pathologie==='hta' || pathologie==='fragile') risque='modéré';
+  if (p.includes('card') || p.includes('renal')) risque='élevé';
+  else if (p.includes('hta') || p.includes('fragile')) risque='modéré';
 
-  // Pression artérielle de base
-  const pasSys = pathologie==='hta' ? 155 : pathologie==='deshyd' ? 90 : pathologie==='card' ? 100 : 120;
-  const pasDia = pathologie==='hta' ? 95  : pathologie==='deshyd' ? 60  : pathologie==='card' ? 70  : 75;
+  // Pression artérielle de base — moyenne des valeurs des pathologies concernées
+  const pasSysMap = {hta:155, deshyd:90, card:100};
+  const pasDiaMap = {hta:95,  deshyd:60, card:70};
+  const sysVals = p.filter(id=>pasSysMap[id]!==undefined).map(id=>pasSysMap[id]);
+  const diaVals = p.filter(id=>pasDiaMap[id]!==undefined).map(id=>pasDiaMap[id]);
+  const pasSys = sysVals.length ? Math.round(sysVals.reduce((a,b)=>a+b,0)/sysVals.length) : 120;
+  const pasDia = diaVals.length ? Math.round(diaVals.reduce((a,b)=>a+b,0)/diaVals.length) : 75;
 
   // Analogie volémie
   const analog = vole<3000 ? 'environ 3 grandes bouteilles d\'eau'
@@ -493,7 +499,17 @@ function renderMd(text){
   }).join('');
 }
 function sol()  { return SOLUTIONS.find(s=>s.id===S.rx.solution)||SOLUTIONS[0]; }
-function patho(){ return PATHOLOGIES.find(p=>p.id===S.patient.pathologie)||PATHOLOGIES[0]; }
+function pathos(){ var list=(S.patient.pathologies||[]).filter(id=>id!=='sain').map(id=>PATHOLOGIES.find(p=>p.id===id)).filter(Boolean); return list.length?list:[PATHOLOGIES[0]]; }
+function togglePatho(id){
+  var arr = S.patient.pathologies||[];
+  if(id==='sain'){ S.patient.pathologies=['sain']; render(); return; }
+  arr = arr.filter(x=>x!=='sain');
+  var i = arr.indexOf(id);
+  if(i===-1) arr.push(id); else arr.splice(i,1);
+  if(arr.length===0) arr=['sain'];
+  S.patient.pathologies = arr;
+  render();
+}
 function voie() { return VOIES.find(v=>v.id===S.rx.voie)||VOIES[0]; }
 
 var _lecture = false;
@@ -501,19 +517,19 @@ function lireOnglet(){
   if(_lecture){ stopLecture(); return; }
   if(!('speechSynthesis' in window)){ alert('Lecture audio non disponible sur ce navigateur.'); return; }
   var textes = [];
-  var va = vasculaire(), pa = patho(), so = sol(), vo = voie(), pf = perfusion();
+  var va = vasculaire(), pa = pathos(), so = sol(), vo = voie(), pf = perfusion();
   if(S.view === 'step1'){
     textes.push('Patient : ' + (S.patient.prenom || 'sans prenom') + ', ' + (S.patient.sexe==='H'?'homme':'femme') + ', ' + S.patient.age + ' ans, ' + S.patient.poids + ' kilos.');
-    textes.push('Pathologie : ' + pa.label + '.');
+    textes.push('Pathologie(s) : ' + pa.map(function(x){return x.label}).join(', ') + '.');
   } else if(S.view === 'step2'){
     textes.push('Volemie estimee : ' + va.vole + ' millilitres.');
     textes.push('Debit cardiaque : ' + va.dc + ' litres par minute.');
     textes.push('Filtration renale : ' + va.du + ' millilitres par minute.');
     textes.push('Pression arterielle estimee : ' + va.pasSys + ' sur ' + va.pasDia + '.');
     textes.push('Risque de surcharge : ' + va.risque + '.');
-    if(pa.id !== 'sain'){
-      textes.push(pa.label + '. ' + pa.perf_note);
-    }
+    pa.forEach(function(x){
+      if(x.id !== 'sain'){ textes.push(x.label + '. ' + x.perf_note); }
+    });
   } else if(S.view === 'step3'){
     textes.push('Solution choisie : ' + so.label + '.');
     textes.push('Voie d\'abord : ' + vo.label + '.');
@@ -573,7 +589,7 @@ function stopLecture(){
 //  RENDU PRINCIPAL
 // ═══════════════════════════════════════
 function render(scrollTop=false){
-  const pf=perfusion(), va=vasculaire(), so=sol(), vo=voie(), pa=patho();
+  const pf=perfusion(), va=vasculaire(), so=sol(), vo=voie(), pa=pathos();
   const pr=S.patient.prenom||'votre patient';
   const stepNum={step1:1,step2:2,step3:3,step4:4}[S.view]||0;
   let h='';
@@ -654,10 +670,10 @@ function render(scrollTop=false){
           </div>
         </div>
         <div>
-          <label class="lbl">Pathologie</label>
+          <label class="lbl">Pathologie(s) — plusieurs choix possibles</label>
           <div class="col8">
             ${PATHOLOGIES.map(p=>`
-              <div class="sel ${S.patient.pathologie===p.id?'on':''}" onclick="S.patient.pathologie='${p.id}';render()">
+              <div class="sel ${S.patient.pathologies.includes(p.id)?'on':''}" onclick="togglePatho('${p.id}')">
                 <span class="si">${p.icon}</span>
                 <div><div style="font-weight:500">${p.label}</div><div class="sd">${p.desc}</div></div>
               </div>`).join('')}
@@ -693,15 +709,15 @@ function render(scrollTop=false){
       <div class="card-title" style="color:var(--em)">🩸 Physiologie vasculaire — ${esc(pr)}</div>
       <div class="card-sub">Ces données sont calculées pour CE patient. Elles influencent directement la tolérance à la perfusion.</div>
       <div class="grid2" style="margin-bottom:14px">
-        <div class="stat"><span class="stat-v">${va.volemie}</span><span class="stat-l">mL — Volémie</span></div>
+        <div class="stat"><span class="stat-v">${va.vole}</span><span class="stat-l">mL — Volémie</span></div>
         <div class="stat"><span class="stat-v">${va.dc}</span><span class="stat-l">L/min — Débit cardiaque</span></div>
-        <div class="stat"><span class="stat-v">${va.qr}</span><span class="stat-l">mL/h — Filtration rénale</span></div>
-        <div class="stat"><span class="stat-v">${va.pression}</span><span class="stat-l">mmHg — PA estimée</span></div>
+        <div class="stat"><span class="stat-v">${va.du}</span><span class="stat-l">mL/min — Filtration rénale</span></div>
+        <div class="stat"><span class="stat-v">${va.pasSys}/${va.pasDia}</span><span class="stat-l">mmHg — PA estimée</span></div>
       </div>
       <div class="info info-em">
-        💡 La volémie de ${esc(pr)} représente <strong>${Math.round(va.volemie/70*100)/100} fois un flacon de 70 mL</strong> — soit environ ${Math.round(va.volemie/500)} flacons de 500 mL.
+        💡 La volémie de ${esc(pr)} représente <strong>${Math.round(va.vole/70*100)/100} fois un flacon de 70 mL</strong> — soit environ ${Math.round(va.vole/500)} flacons de 500 mL.
       </div>
-      ${pa.id!=='sain'?`<div class="info info-amb" style="margin-top:10px">${pa.icon} <strong>${pa.label}</strong> — ${pa.perf_note}</div>`:''}
+      ${pa.filter(x=>x.id!=='sain').map(x=>`<div class="info info-amb" style="margin-top:10px">${x.icon} <strong>${x.label}</strong> — ${x.perf_note}</div>`).join('')}
     </div>
     <div class="nav-row">
       <button class="btn-g" onclick="go('step1')">← Patient</button>
@@ -843,9 +859,9 @@ function go(v){stopLecture();S.view=v;render(true)}
 function upPat(k,d){S.patient[k]=Math.max(0,Math.min(220,S.patient[k]+d));render()}
 function upPerf(k,d){S.rx[k]=Math.round((S.rx[k]+d)*10)/10;render()}
 function saveKey(){localStorage.setItem('simperf_key',S.apiKey);S.apiKeySaved=true;render()}
-function reset(){S={...S,view:'welcome',patient:{prenom:'',sexe:'F',age:65,poids:65,pathologie:'sain'},rx:{solution:'nacl09',voie:'periph',volume:500,duree:4},analyse:'',showKey:false};render(true)}
+function reset(){S={...S,view:'welcome',patient:{prenom:'',sexe:'F',age:65,poids:65,pathologies:['sain']},rx:{solution:'nacl09',voie:'periph',volume:500,duree:4},analyse:'',showKey:false};render(true)}
 async function runAnalyse(){
-  const pf=perfusion(),va=vasculaire(),pa=patho(),so=sol(),vo=voie();
+  const pf=perfusion(),va=vasculaire(),pa=pathos(),so=sol(),vo=voie();
   S.loading=true;S.analyse='';render();
   try{
     const headers={'Content-Type':'application/json'};
@@ -854,7 +870,7 @@ async function runAnalyse(){
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
         messages:[{role:'user',content:`Tu es formateur IFSI expert en perfusion IV. Analyse pour un étudiant.
 Patient: ${S.patient.prenom}, ${S.patient.sexe==='H'?'homme':'femme'} ${S.patient.age} ans, ${S.patient.poids}kg.
-Pathologie: ${pa.label}. Volémie estimée: ${va.vole} mL, DC: ${va.dc} L/min.
+Pathologie(s): ${pa.map(function(x){return x.label}).join(', ')}. Volémie estimée: ${va.vole} mL, DC: ${va.dc} L/min.
 Perfusion: ${so.label} ${S.rx.volume}mL en ${S.rx.duree}h via ${vo.label} → ${pf.debitHeure} mL/h = ${pf.goutteMin} gttes/min.
 Perfusion: ${so.label} ${S.perf.volume}mL en ${S.perf.duree}h via ${vo.label} → ${pf.debitH} mL/h = ${pf.gouttes} gttes/min.
 Réponds en 4 blocs: **🎯 Cohérence**, **⚠️ Vigilance**, **🔬 Impact physiologique**, **✅ Surveillance**. Tutoie l'étudiant.`}]})
