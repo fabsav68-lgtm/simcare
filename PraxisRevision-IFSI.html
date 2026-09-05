@@ -251,6 +251,12 @@ const QCM = {
     { ue:'UE 2.4', q:'L\'échelle de Glasgow évalue :', opts:['La douleur','La conscience','La saturation','La pression artérielle'], rep:1, expl:'Le **Score de Glasgow** évalue le niveau de conscience sur 3 critères : ouverture des yeux (1–4), réponse verbale (1–5), réponse motrice (1–6). Score total : 3 (coma profond) à 15 (normal).' },
     { ue:'UE 4.2', q:'Une solution isotonique a une osmolarité de :', opts:['< 280 mOsm/L','280–320 mOsm/L','> 320 mOsm/L','> 500 mOsm/L'], rep:1, expl:'Une solution **isotonique** a une osmolarité proche du plasma : **280–320 mOsm/L**. Hypotonique < 280. Hypertonique > 320. Le NaCl 0,9% et le Ringer Lactate sont isotoniques.' },
     { ue:'UE 2.1', q:'La fréquence respiratoire normale d\'un adulte au repos est de :', opts:['8–12 cycles/min','12–20 cycles/min','20–30 cycles/min','30–40 cycles/min'], rep:1, expl:'La **fréquence respiratoire normale** de l\'adulte est de 12 à 20 cycles/minute. Bradypnée < 12. Tachypnée > 20. La FR est souvent négligée mais c\'est un signe vital précoce de décompensation.' },
+    { ue:'UE B.1', q:'Quel organite cellulaire est responsable de la production d\'énergie (ATP) ?', opts:['Le noyau','La mitochondrie','L\'appareil de Golgi','Le réticulum endoplasmique'], rep:1, expl:'La **mitochondrie** est la « centrale énergétique » de la cellule : elle produit l\'ATP par respiration cellulaire. Le noyau contient l\'ADN, l\'appareil de Golgi trie et exporte les protéines.' },
+    { ue:'UE B.1', q:'L\'homéostasie désigne :', opts:['La division cellulaire','Le maintien d\'un équilibre interne stable malgré les variations externes','La destruction des cellules anormales','La transmission de l\'influx nerveux'], rep:1, expl:'L\'**homéostasie** est la capacité de l\'organisme à maintenir un milieu intérieur stable (température, pH, glycémie...) malgré les variations de l\'environnement. C\'est un concept central de la physiologie.' },
+    { ue:'UE B.1', q:'Le pH sanguin normal se situe entre :', opts:['6,80 et 7,00','7,00 et 7,35','7,35 et 7,45','7,45 et 7,80'], rep:2, expl:'Le **pH sanguin normal** est de **7,35 à 7,45** (légèrement alcalin). En dessous : acidose. Au-dessus : alcalose. Une variation de quelques centièmes peut déjà avoir des conséquences cliniques.' },
+    { ue:'UE B.1', q:'Une cellule somatique humaine contient normalement :', opts:['23 chromosomes','46 chromosomes','92 chromosomes','44 chromosomes'], rep:1, expl:'Une cellule **somatique** (non reproductrice) contient **46 chromosomes**, soit 23 paires. Les cellules reproductrices (gamètes) n\'en contiennent que 23, pour se combiner à la fécondation.' },
+    { ue:'UE B.1', q:'Lors d\'une osmose, l\'eau se déplace :', opts:['Du milieu le plus concentré vers le moins concentré','Du milieu le moins concentré vers le plus concentré en soluté','Toujours vers l\'extérieur de la cellule','Aléatoirement, sans direction précise'], rep:1, expl:'L\'eau traverse une membrane semi-perméable du milieu **le moins concentré** vers le milieu **le plus concentré en soluté**, pour tendre vers l\'équilibre. C\'est ce principe qui explique les échanges entre le sérum perfusé et les cellules.' },
+    { ue:'UE B.1', q:'Quelle structure du système nerveux central régule la température corporelle ?', opts:['Le cervelet','L\'hypothalamus','Le bulbe rachidien','Le cortex moteur'], rep:1, expl:'L\'**hypothalamus** est le centre de régulation de la température corporelle, mais aussi de la faim, de la soif et de nombreuses hormones. C\'est un acteur clé de l\'homéostasie.' },
   ],
   2: [ // 2ème année
     { ue:'UE 4.4', q:'Lors d\'une perfusion de NaCl 0,9% 500mL en 4h, le débit en mL/h est de :', opts:['100 mL/h','125 mL/h','150 mL/h','250 mL/h'], rep:1, expl:'Débit = Volume ÷ Durée = **500 ÷ 4 = 125 mL/h**. En gouttes/min (macrogouttes) : 125 ÷ 3 ≈ 42 gouttes/min.' },
@@ -334,6 +340,38 @@ const FICHES = {
         <li><strong>Bonne surveillance</strong> — Effets attendus et indésirables</li>
       </ul>
       <div class="mnemo">🧠 <strong>5B = Patient · Médicament · Dose · Voie · Moment</strong></div>
+    `},
+    { id:'f-ueb1-1', icon:'🔬', titre:'La cellule et ses structures', ue:'UE B.1', contenu:`
+      <h4>Structures principales</h4>
+      <ul>
+        <li><strong>Membrane plasmique :</strong> bicouche lipidique, sélectivement perméable — contrôle les échanges avec l'extérieur</li>
+        <li><strong>Noyau :</strong> contient l'ADN (46 chromosomes dans une cellule somatique)</li>
+        <li><strong>Mitochondrie :</strong> production d'énergie (ATP) — la « centrale énergétique »</li>
+        <li><strong>Appareil de Golgi :</strong> tri et exportation des protéines</li>
+        <li><strong>Réticulum endoplasmique :</strong> synthèse et transport des protéines et lipides</li>
+      </ul>
+      <h4>Échanges membranaires</h4>
+      <ul>
+        <li><strong>Diffusion simple :</strong> mouvement passif, du milieu concentré vers le moins concentré</li>
+        <li><strong>Osmose :</strong> déplacement de l'eau du milieu le moins concentré vers le plus concentré en soluté</li>
+        <li><strong>Transport actif :</strong> nécessite de l'énergie (ATP), va contre le gradient de concentration</li>
+      </ul>
+      <div class="mnemo">🧠 Une solution isotonique (NaCl 0,9%) a la même concentration que le plasma — pas de mouvement d'eau anormal à travers la membrane.</div>
+    `},
+    { id:'f-ueb1-2', icon:'⚖️', titre:'Homéostasie et grandes fonctions', ue:'UE B.1', contenu:`
+      <h4>Le concept</h4>
+      <ul>
+        <li>L'<strong>homéostasie</strong> est le maintien d'un équilibre interne stable malgré les variations du milieu extérieur</li>
+        <li>Elle concerne notamment : la température corporelle, le pH sanguin (7,35–7,45), la glycémie, la pression artérielle</li>
+        <li>Régulée principalement par l'<strong>hypothalamus</strong> (température, faim, soif) et le système endocrinien</li>
+      </ul>
+      <h4>Pourquoi c'est la base de tout le reste</h4>
+      <ul>
+        <li>Comprendre le fonctionnement normal du corps est indispensable pour repérer un dérèglement (signe clinique anormal)</li>
+        <li>Une constante vitale anormale (UE 2.1) est souvent le signe qu'un mécanisme homéostatique est dépassé</li>
+        <li>Exemple : la fièvre est une réponse homéostatique à une infection, pas un dérèglement en soi</li>
+      </ul>
+      <div class="mnemo">🧠 Homéostasie = équilibre. Pas de compréhension du normal, pas de repérage fiable de l'anormal.</div>
     `},
   ],
   2: [
