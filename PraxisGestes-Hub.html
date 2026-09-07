@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praxis Gestes · Fiches pratiques</title>
+<style>
+:root{
+  --bg:#07101f; --bg2:#0c1a2e; --card:rgba(255,255,255,.038); --bdr:rgba(255,255,255,.09);
+  --txt:#e2e8f0; --txt2:#93a4b4; --sky:#38bdf8; --teal:#14b8a6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',system-ui,sans-serif;background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 55%,var(--bg) 100%);color:var(--txt);min-height:100vh;padding-bottom:60px}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+header{padding:28px 0 20px;text-align:center}
+.badge{display:inline-block;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky);padding:4px 14px;border-radius:20px;font-size:11px;letter-spacing:1.5px;font-weight:700;margin-bottom:12px}
+h1{font-size:24px;font-weight:800}
+.sub{color:var(--txt2);font-size:13px;margin-top:6px;line-height:1.6}
 
+.home-btn-fixed{position:fixed;top:14px;left:14px;background:rgba(255,255,255,.08);border:1px solid var(--bdr);color:var(--txt);text-decoration:none;padding:7px 14px;border-radius:20px;font-size:13px;z-index:10;backdrop-filter:blur(6px)}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+@media(max-width:420px){.grid{grid-template-columns:1fr}}
+
+.fiche-card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px;text-decoration:none;color:var(--txt);display:block;transition:border-color .15s}
+.fiche-card:active{border-color:var(--sky)}
+.fiche-icon{font-size:28px;margin-bottom:8px}
+.fiche-name{font-size:15px;font-weight:800;margin-bottom:4px}
+.fiche-desc{font-size:12px;color:var(--txt2);line-height:1.5}
+
+.soon-card{background:rgba(255,255,255,.02);border:1px dashed var(--bdr);border-radius:16px;padding:18px;color:var(--txt2);opacity:.6}
+.soon-card .fiche-name{color:var(--txt2)}
+
+footer{text-align:center;padding:30px 20px 10px;color:var(--txt2);font-size:11px}
+</style>
+</head>
+<body>
+<a class="home-btn-fixed" href="index.html">⌂ Praxis</a>
+
+<div class="wrap">
+  <header>
+    <div class="badge">GESTES TECHNIQUES</div>
+    <h1>Praxis Gestes</h1>
+    <p class="sub">Fiches pratiques de consultation rapide — matériel, étapes, surveillance.<br>Utile en stage, en révision, et après le diplôme.</p>
+  </header>
+
+  <div class="grid">
+    <a class="fiche-card" href="FicheTechnique-Perfusion.html">
+      <div class="fiche-icon">💧</div>
+      <div class="fiche-name">Perfusion périphérique</div>
+      <div class="fiche-desc">Pose d'un cathéter veineux périphérique</div>
+    </a>
+    <a class="fiche-card" href="FicheTechnique-O2.html">
+      <div class="fiche-icon">🫁</div>
+      <div class="fiche-name">Oxygénothérapie</div>
+      <div class="fiche-desc">Administration d'oxygène</div>
+    </a>
+    <a class="fiche-card" href="FicheTechnique-Glycemie.html">
+      <div class="fiche-icon">🩸</div>
+      <div class="fiche-name">Glycémie capillaire</div>
+      <div class="fiche-desc">Prélèvement et lecture</div>
+    </a>
+    <a class="fiche-card" href="FicheTechnique-Transfusion.html">
+      <div class="fiche-icon">🅾️</div>
+      <div class="fiche-name">Transfusion</div>
+      <div class="fiche-desc">Produit sanguin labile, CUPT</div>
+    </a>
+    <a class="fiche-card" href="FicheTechnique-Sondage.html">
+      <div class="fiche-icon">🩹</div>
+      <div class="fiche-name">Sondage urinaire</div>
+      <div class="fiche-desc">Pose de sonde vésicale</div>
+    </a>
+    <div class="soon-card">
+      <div class="fiche-icon">➕</div>
+      <div class="fiche-name">Prochainement</div>
+      <div class="fiche-desc">Sonde, pansements, prélèvements, injections...</div>
+    </div>
+  </div>
+
+  <footer>MedExpert · Praxis · Base de données des soins techniques</footer>
+</div>
+</body>
+</html>
