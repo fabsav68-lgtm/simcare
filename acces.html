@@ -146,6 +146,7 @@ var SUPABASE_KEY  = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
 var _demoTempsMax     = null;   // minutes max autorisées
 var _demoTempsCumule  = null;   // minutes déjà consommées en base
 var _demoSessionStart = null;   // Date.now() au moment de la connexion
+var _demoLastHeartbeat = null;  // Date.now() du dernier envoi en base
 var _heartbeatInterval = null;  // setInterval pour le heartbeat
 var _demoCodeActif     = null;  // code en cours
 
@@ -222,15 +223,15 @@ function valider(){
     stats.connexions.push({ code: code, promo: promo, date: today, heure: new Date().toLocaleTimeString('fr-FR') });
     localStorage.setItem('praxiscare_stats', JSON.stringify(stats));
 
-    // Tracking existant conservé
-    fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+    // Tracking connexions — redirige vers le projet principal (l'ancien projet a ete supprime)
+    fetch(SUPABASE_URL + "/rest/v1/connexions_historique", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY
       },
-      body: JSON.stringify({ student_code: code, student_name: promo, app: "praxiscare", module: "login", session_id: code + "_" + Date.now() })
+      body: JSON.stringify({ student_code: code, student_name: promo, app: "simcare", module: "login", session_id: code + "_" + Date.now() })
     }).catch(function(){});
 
     // ── Afficher succès ───────────────────────────────────────────
@@ -243,29 +244,32 @@ function valider(){
     if(isDemo){
       _demoTempsMax    = tempsMax;
       _demoTempsCumule = tempsCumule;
-      _demoSessionStart = Date.now();
+      _demoLastHeartbeat = Date.now();
       _demoCodeActif   = code;
 
       var minutesRestantes = tempsMax - tempsCumule;
       document.getElementById('demo-timer').classList.add('show');
       document.getElementById('timer-value').textContent = minutesRestantes + ' min';
 
-      // Heartbeat toutes les 2 minutes → UPDATE Supabase
+      // Heartbeat toutes les 2 minutes → incrément atomique en base (pas d'ecrasement)
       _heartbeatInterval = setInterval(function(){
-        var minutesSession = Math.floor((Date.now() - _demoSessionStart) / 60000);
-        var totalCumule    = _demoTempsCumule + minutesSession;
-        updateTempsCumule(code, totalCumule);
-
-        // Mettre à jour l'affichage
-        var restant = Math.max(0, _demoTempsMax - totalCumule);
+        var minutesEcoulees = Math.floor((Date.now() - _demoLastHeartbeat) / 60000);
+        if(minutesEcoulees > 0){
+          incrementerTempsCumule(code, minutesEcoulees);
+          _demoTempsCumule += minutesEcoulees;
+          _demoLastHeartbeat = Date.now();
+        }
+        // Mettre à jour l'affichage (estimation locale)
+        var restant = Math.max(0, _demoTempsMax - _demoTempsCumule);
         document.getElementById('timer-value').textContent = restant + ' min';
       }, 2 * 60 * 1000); // toutes les 2 minutes
 
-      // Sauvegarder à la fermeture (filet de sécurité)
+      // Sauvegarder à la fermeture (filet de sécurité) — increment, pas ecrasement
       window.addEventListener('beforeunload', function(){
-        var minutesSession = Math.floor((Date.now() - _demoSessionStart) / 60000);
-        var totalCumule    = _demoTempsCumule + minutesSession;
-        updateTempsCumule(code, totalCumule);
+        var minutesEcoulees = Math.floor((Date.now() - _demoLastHeartbeat) / 60000);
+        if(minutesEcoulees > 0){
+          incrementerTempsCumule(code, minutesEcoulees);
+        }
       });
     }
 
@@ -286,18 +290,16 @@ function valider(){
   });
 }
 
-// ── UPDATE temps cumulé dans Supabase ────────────────────────────
-function updateTempsCumule(code, totalMinutes){
-  // Utiliser l'API REST Supabase directement (pas de Edge Function nécessaire)
-  fetch(SUPABASE_URL + '/rest/v1/abonnements?notes=like.*' + encodeURIComponent(code) + '*', {
-    method: 'PATCH',
+// ── Incrément atomique du temps cumulé (evite l'ecrasement entre sessions simultanees) ──
+function incrementerTempsCumule(code, minutesAAjouter){
+  fetch(SUPABASE_URL + '/rest/v1/rpc/incrementer_temps_cumule', {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_KEY,
-      'Prefer': 'return=minimal'
+      'Authorization': 'Bearer ' + SUPABASE_KEY
     },
-    body: JSON.stringify({ temps_cumule_minutes: totalMinutes })
+    body: JSON.stringify({ code_recherche: code, minutes_a_ajouter: minutesAAjouter })
   }).catch(function(){});
 }
 </script>
