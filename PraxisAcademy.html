@@ -118,11 +118,25 @@ h1{font-size:24px;font-weight:800;text-align:center}
 const BANQUE = QCM[1].filter(q => q.ue === 'UE B.1');
 
 const MISSIONS = [
-  { titre: 'Mission 1 — Échauffement', desc: '10 questions, rythme modéré', n: 10, tempsDebut: 45, tempsFin: 25 },
-  { titre: 'Mission 2 — Rythme concours', desc: '15 questions, pression croissante', n: 15, tempsDebut: 40, tempsFin: 18 },
-  { titre: 'Mission 3 — Épreuve complète', desc: '20 questions, conditions réelles', n: 20, tempsDebut: 35, tempsFin: 15 },
-  { titre: 'Mission Éclair', desc: '8 questions, temps très serré', n: 8, tempsDebut: 20, tempsFin: 10 },
+  { titre: 'Mission 1 — Échauffement', desc: '10 questions, rythme modéré', n: 10, tempsDebut: 45, tempsFin: 25, chap: null },
+  { titre: 'Mission 2 — Rythme concours', desc: '15 questions, pression croissante', n: 15, tempsDebut: 40, tempsFin: 18, chap: null },
+  { titre: 'Mission 3 — Épreuve complète', desc: '20 questions, conditions réelles', n: 20, tempsDebut: 35, tempsFin: 15, chap: null },
+  { titre: 'Mission Éclair', desc: '8 questions, temps très serré', n: 8, tempsDebut: 20, tempsFin: 10, chap: null },
 ];
+
+// Génère une mission dédiée pour chaque chapitre présent dans la banque
+const CHAPITRES = [...new Set(BANQUE.map(q => q.chap).filter(Boolean))];
+const MISSIONS_CHAPITRE = CHAPITRES.map(chap => {
+  const nQuestions = BANQUE.filter(q => q.chap === chap).length;
+  return {
+    titre: '📚 ' + chap,
+    desc: nQuestions + ' questions de ce chapitre uniquement',
+    n: nQuestions,
+    tempsDebut: 40,
+    tempsFin: 20,
+    chap: chap
+  };
+});
 
 let missionActuelle = null;
 let questionsSession = [];
@@ -135,8 +149,9 @@ let reponduCetteQuestion = false;
 
 function afficherMissions(){
   const container = document.getElementById('missions-list');
-  container.innerHTML = MISSIONS.map((m, i) => `
-    <div class="mission-card" onclick="demarrerMission(${i})">
+
+  let html = MISSIONS.map((m, i) => `
+    <div class="mission-card" onclick="demarrerMission(${i}, false)">
       <div class="mission-num">${i+1}</div>
       <div class="mission-info">
         <div class="mission-title">${m.titre}</div>
@@ -145,6 +160,22 @@ function afficherMissions(){
       <div class="mission-arrow">→</div>
     </div>
   `).join('');
+
+  if(MISSIONS_CHAPITRE.length > 0){
+    html += '<div style="margin:20px 0 8px;font-size:13px;font-weight:700;color:var(--txt2)">📖 Réviser par chapitre</div>';
+    html += MISSIONS_CHAPITRE.map((m, i) => `
+      <div class="mission-card" onclick="demarrerMission(${i}, true)">
+        <div class="mission-num">📚</div>
+        <div class="mission-info">
+          <div class="mission-title">${m.titre}</div>
+          <div class="mission-desc">${m.desc}</div>
+        </div>
+        <div class="mission-arrow">→</div>
+      </div>
+    `).join('');
+  }
+
+  container.innerHTML = html;
 }
 
 function melanger(arr){
@@ -156,14 +187,15 @@ function melanger(arr){
   return a;
 }
 
-function demarrerMission(i){
-  missionActuelle = MISSIONS[i];
-  questionsSession = melanger(BANQUE).slice(0, missionActuelle.n);
+function demarrerMission(i, estChapitre){
+  missionActuelle = estChapitre ? MISSIONS_CHAPITRE[i] : MISSIONS[i];
+  const pool = missionActuelle.chap ? BANQUE.filter(q => q.chap === missionActuelle.chap) : BANQUE;
+  questionsSession = melanger(pool).slice(0, missionActuelle.n);
   indexActuel = 0;
   scoreActuel = 0;
   document.getElementById('accueil').style.display = 'none';
   document.getElementById('mission').style.display = 'block';
-  document.getElementById('score-live-total').textContent = missionActuelle.n;
+  document.getElementById('score-live-total').textContent = questionsSession.length;
   afficherQuestion();
 }
 
@@ -252,7 +284,12 @@ function finMission(){
 
 function retenter(){
   document.getElementById('resultats').style.display = 'none';
-  demarrerMission(MISSIONS.indexOf(missionActuelle));
+  const iGen = MISSIONS.indexOf(missionActuelle);
+  if(iGen !== -1){
+    demarrerMission(iGen, false);
+  } else {
+    demarrerMission(MISSIONS_CHAPITRE.indexOf(missionActuelle), true);
+  }
 }
 
 function quitterMission(){
