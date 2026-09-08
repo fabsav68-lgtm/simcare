@@ -430,3 +430,144 @@ const QCM = {
     { ue:'UE 4.5', chap:'Transfusion sanguine et immunohématologie', q:'Quel intérêt présente un CGR lavé dans certaines indications ?', opts:['Réduire fortement les protéines plasmatiques résiduelles','Ajouter des plaquettes','Augmenter les leucocytes','Changer le groupe ABO'], rep:0, expl:'Le lavage élimine une grande partie du plasma résiduel, utile notamment dans certaines **réactions allergiques sévères récidivantes**.' },
  ],
 };
+
+// Praxis — Scénarios de simulation transfusionnelle
+// Module distinct des QCM : briefing, déroulement, critères observables et débriefing
+
+const SCENARIOS_TRANSFUSION = [
+  {
+    id:'TRS-01', titre:'La date de naissance ne concorde pas', niveau:'Débutant', duree:15,
+    objectifs:['Réaliser une identification active','Comparer les identifiants','Interrompre une procédure non sûre'],
+    situation:'Mme Claire Martin doit recevoir un CGR. Le nom concorde sur le bracelet et la prescription, mais la date de naissance figurant sur le produit est différente.',
+    declencheurs:['Si l\'étudiant ne voit pas l\'écart, la patiente dit : « On se trompe souvent sur mon année de naissance. »'],
+    attendus:['Faire décliner l\'identité si possible','Comparer tous les identifiants','Ne pas débuter la transfusion','Alerter et faire corriger la discordance','Tracer la non-conformité'],
+    erreurs_critiques:['Débuter malgré la discordance','Corriger manuellement un document'],
+    debrief:['Pourquoi un nom identique ne suffit-il pas ?','Comment reprendre la procédure après une interruption ?']
+  },
+  {
+    id:'TRS-02', titre:'La bonne poche, mais le mauvais patient', niveau:'Débutant', duree:15,
+    objectifs:['Comprendre la délivrance nominative','Résister au biais lié au groupe O'],
+    situation:'Un CGR O RhD négatif est apporté pour M. Bernard, installé dans la chambre voisine. Un collègue propose de l\'utiliser pour votre patient O RhD négatif « puisque c\'est compatible ».',
+    declencheurs:['Le collègue insiste sur l\'urgence et le caractère « universel » du groupe O négatif.'],
+    attendus:['Refuser la substitution','Identifier le produit et son destinataire','Contacter la délivrance','Maintenir la prise en charge clinique du patient'],
+    erreurs_critiques:['Transfuser un PSL attribué à une autre personne'],
+    debrief:['Pourquoi la compatibilité ABO ne suffit-elle pas ?','Comment s\'affirmer face à une pression d\'équipe ?']
+  },
+  {
+    id:'TRS-03', titre:'Contrôle ultime interrompu', niveau:'Intermédiaire', duree:20,
+    objectifs:['Sécuriser une séquence critique','Gérer une interruption','Utiliser une communication explicite'],
+    situation:'Pendant le contrôle ultime au lit du patient, le téléphone sonne et un collègue demande une aide immédiate dans une autre chambre.',
+    declencheurs:['Au retour, plusieurs documents et deux poches sont présents sur le chariot.'],
+    attendus:['Sécuriser le matériel avant de partir','À la reprise, recommencer la vérification depuis un point sûr','Éloigner les éléments étrangers','Réaliser chaque contrôle pour une seule unité'],
+    erreurs_critiques:['Continuer de mémoire','Contrôler simultanément deux produits'],
+    debrief:['Quels effets les interruptions ont-elles sur l\'attention ?','Quelles mesures organisationnelles peuvent les réduire ?']
+  },
+  {
+    id:'TRS-04', titre:'Agglutination inattendue sur la carte', niveau:'Intermédiaire', duree:20,
+    objectifs:['Interpréter un contrôle simulé','Reconnaître un résultat douteux','Décider de ne pas transfuser'],
+    situation:'Avec la PraxisBlood Card, la réaction observée ne correspond pas au résultat attendu à partir des documents du patient et du CGR.',
+    declencheurs:['Le formateur propose un aspect faiblement positif ou une zone difficile à lire.'],
+    attendus:['Relire selon le délai prévu','Identifier le doute ou l\'incompatibilité','Ne pas poser la transfusion','Conserver les éléments et demander un avis','Reprendre la procédure avec du matériel valide si indiqué'],
+    erreurs_critiques:['Interpréter arbitrairement comme compatible','Débuter à débit réduit'],
+    debrief:['Quelle différence entre doute technique et incompatibilité ?','Pourquoi le contrôle ne corrige-t-il jamais une erreur d\'identité ?']
+  },
+  {
+    id:'TRS-05', titre:'La carte a séché', niveau:'Intermédiaire', duree:15,
+    objectifs:['Respecter les conditions de lecture','Repérer un artefact technique','Écarter un dispositif invalide'],
+    situation:'L\'étudiant est appelé ailleurs après avoir déposé les échantillons. À son retour, le délai de lecture recommandé est dépassé et les dépôts commencent à sécher.',
+    declencheurs:['Le résultat semble désormais montrer une agglutination absente initialement.'],
+    attendus:['Déclarer le test non interprétable','Ne pas se fier à l\'aspect tardif','Recommencer avec une carte neuve selon la procédure'],
+    erreurs_critiques:['Valider le test hors délai','Réutiliser la même carte'],
+    debrief:['Comment le temps modifie-t-il un test visuel ?','Comment anticiper une séquence qui ne doit pas être interrompue ?']
+  },
+  {
+    id:'TRS-06', titre:'Frissons dans les premières minutes', niveau:'Intermédiaire', duree:20,
+    objectifs:['Reconnaître une réaction transfusionnelle','Appliquer la conduite immédiate','Organiser l\'alerte'],
+    situation:'Cinq minutes après le début d\'un CGR, le patient signale des frissons et un malaise. Sa température augmente et son pouls s\'accélère.',
+    declencheurs:['Si la transfusion continue, apparaissent hypotension et dyspnée.'],
+    attendus:['Arrêter immédiatement la transfusion','Évaluer le patient selon ABCDE','Maintenir un abord selon le protocole sans reprendre le PSL','Alerter le médecin et l\'équipe transfusionnelle','Revérifier les identités','Conserver poche et tubulure','Tracer'],
+    erreurs_critiques:['Ralentir seulement le débit','Administrer un antipyrétique et poursuivre'],
+    debrief:['Pourquoi ne peut-on pas conclure immédiatement à une réaction bénigne ?','Quelles informations transmettre avec SAED ?']
+  },
+  {
+    id:'TRS-07', titre:'Urticaire isolé ou anaphylaxie ?', niveau:'Intermédiaire', duree:20,
+    objectifs:['Évaluer la gravité d\'une réaction allergique','Rechercher une atteinte respiratoire ou circulatoire'],
+    situation:'Pendant une transfusion plaquettaire, le patient présente un prurit et des plaques d\'urticaire.',
+    declencheurs:['À la demande du formateur, le patient décrit ensuite une gêne pharyngée et devient hypotendu.'],
+    attendus:['Arrêter la transfusion','Évaluer voies aériennes, respiration et circulation','Alerter sans délai','Préparer et appliquer la prise en charge prescrite ou protocolisée','Assurer la traçabilité'],
+    erreurs_critiques:['Banaliser la gêne respiratoire','Reprendre le PSL sans décision médicale'],
+    debrief:['Quels signes font passer d\'une réaction cutanée à une urgence vitale ?','Pourquoi réévaluer fréquemment ?']
+  },
+  {
+    id:'TRS-08', titre:'Dyspnée chez une patiente insuffisante cardiaque', niveau:'Avancé', duree:25,
+    objectifs:['Repérer une surcharge circulatoire','Identifier les facteurs de risque','Prioriser les actions'],
+    situation:'Mme Petit, 84 ans, insuffisante cardiaque et rénale, reçoit son deuxième CGR. Elle devient dyspnéique, hypertendue et présente des crépitants.',
+    declencheurs:['La SpO₂ baisse et la patiente demande à s\'asseoir.'],
+    attendus:['Arrêter la transfusion','Installer selon la tolérance et évaluer ABCDE','Administrer l\'oxygène si prescrit ou protocolisé','Alerter','Surveiller paramètres et bilan hydrique','Préparer le traitement prescrit'],
+    erreurs_critiques:['Accélérer pour terminer la poche','Allonger à plat malgré la détresse respiratoire'],
+    debrief:['Quels éléments orientent vers une surcharge ?','Comment aurait-on pu réduire le risque avant la pose ?']
+  },
+  {
+    id:'TRS-09', titre:'Détresse respiratoire sans signes de surcharge', niveau:'Avancé', duree:25,
+    objectifs:['Évoquer un TRALI','Différencier plusieurs causes de dyspnée transfusionnelle'],
+    situation:'Une heure après le début d\'une transfusion, un patient sans antécédent cardiaque présente une hypoxémie brutale, une dyspnée et des infiltrats pulmonaires bilatéraux.',
+    declencheurs:['La pression artérielle n\'est pas élevée et aucun signe périphérique de surcharge n\'est retrouvé.'],
+    attendus:['Arrêter la transfusion','Prendre en charge la détresse respiratoire','Alerter immédiatement','Conserver les éléments','Transmettre les éléments orientant vers un TRALI sans poser seul le diagnostic'],
+    erreurs_critiques:['Poursuivre parce que le patient n\'est pas hypertendu','Attendre une radiographie avant d\'alerter'],
+    debrief:['Quels éléments opposent TRALI et surcharge ?','Pourquoi l\'IDE décrit-il les signes plutôt que d\'affirmer un diagnostic ?']
+  },
+  {
+    id:'TRS-10', titre:'Douleur lombaire et urines foncées', niveau:'Avancé', duree:25,
+    objectifs:['Reconnaître une hémolyse aiguë potentielle','Rechercher une erreur ABO','Prévenir l\'aggravation'],
+    situation:'Dix minutes après le début d\'un CGR, le patient présente douleur lombaire, oppression, hypotension et urines foncées.',
+    declencheurs:['Une nouvelle lecture révèle une discordance entre le numéro du PSL tracé et celui de la prescription.'],
+    attendus:['Arrêter le PSL','Évaluer et alerter en urgence','Revérifier identité, produit et documents','Préserver la voie selon protocole','Conserver le matériel et réaliser les prélèvements prescrits','Tracer et déclarer'],
+    erreurs_critiques:['Jeter la poche','Attendre le résultat biologique avant d\'agir'],
+    debrief:['Quel mécanisme explique l\'hémolyse ABO ?','Quelles barrières ont échoué ?']
+  },
+  {
+    id:'TRS-11', titre:'Fièvre élevée et choc', niveau:'Avancé', duree:25,
+    objectifs:['Suspecter une contamination bactérienne','Prendre en charge un sepsis transfusionnel'],
+    situation:'Pendant une transfusion plaquettaire, le patient présente brutalement frissons intenses, température élevée, hypotension et confusion.',
+    declencheurs:['La poche paraît inhabituelle lorsque l\'étudiant l\'inspecte de nouveau.'],
+    attendus:['Arrêter la transfusion','Évaluer et alerter immédiatement','Mettre en œuvre la prise en charge du choc selon prescriptions et protocoles','Conserver poche et tubulure','Préparer les prélèvements du patient et du produit selon la procédure'],
+    erreurs_critiques:['Conclure à une réaction fébrile simple','Éliminer le produit avant investigation'],
+    debrief:['Pourquoi les plaquettes sont-elles particulièrement surveillées pour le risque bactérien ?','Quels prélèvements peuvent être demandés ?']
+  },
+  {
+    id:'TRS-12', titre:'Transfusion urgente au déchocage', niveau:'Avancé', duree:30,
+    objectifs:['Agir dans une urgence hémorragique','Maintenir identitovigilance et traçabilité sous pression','Communiquer en boucle fermée'],
+    situation:'Un patient polytraumatisé arrive en choc hémorragique. Son identité est provisoire et le protocole de transfusion massive est activé.',
+    declencheurs:['Plusieurs PSL arrivent simultanément ; un membre de l\'équipe emporte un produit sans annoncer son numéro.'],
+    attendus:['Utiliser l\'identité provisoire unique','Organiser un rôle dédié aux produits','Annoncer et tracer chaque unité','Réaliser les contrôles adaptés à l\'urgence','Surveiller hypothermie, calcium, coagulation et kaliémie','Réévaluer en équipe'],
+    erreurs_critiques:['Mélanger deux identités provisoires','Perdre la traçabilité d\'une unité'],
+    debrief:['Comment simplifier sans supprimer les barrières ?','Quels rôles attribuer lors d\'une transfusion massive ?']
+  },
+  {
+    id:'TRS-13', titre:'Refus de transfusion', niveau:'Avancé', duree:25,
+    objectifs:['Respecter l\'autonomie','Conduire une information adaptée','Gérer un conflit de valeurs'],
+    situation:'Un patient majeur, conscient et capable refuse le CGR prescrit malgré une anémie symptomatique. Sa famille exige que l\'équipe transfuse sans lui dire.',
+    declencheurs:['Le patient explique que sa décision repose sur des convictions personnelles et demande les alternatives.'],
+    attendus:['Reconnaître la capacité décisionnelle sans juger','Explorer la compréhension et les raisons','Informer le prescripteur','Présenter les options avec l\'équipe médicale','Respecter et tracer le refus','Soutenir la famille sans divulgation abusive'],
+    erreurs_critiques:['Transfuser contre la volonté exprimée','Faire pression ou culpabiliser'],
+    debrief:['Quelle différence entre informer et contraindre ?','Comment documenter un refus éclairé ?']
+  },
+  {
+    id:'TRS-14', titre:'Retour impossible au dépôt', niveau:'Intermédiaire', duree:20,
+    objectifs:['Respecter la chaîne de conservation','Gérer un PSL non transfusé','Éviter une remise en stock non sûre'],
+    situation:'La transfusion est annulée. Le CGR est resté dans le service dans un contenant ouvert et personne ne peut préciser depuis combien de temps.',
+    declencheurs:['Un collègue propose de le replacer directement dans le réfrigérateur du dépôt.'],
+    attendus:['Ne pas remettre soi-même le produit en stock','Isoler le PSL dans les conditions prévues','Contacter immédiatement la délivrance','Communiquer les données disponibles','Tracer son devenir'],
+    erreurs_critiques:['Placer le produit dans un réfrigérateur non qualifié','Attribuer le produit à un autre patient'],
+    debrief:['Quelles informations conditionnent une éventuelle reprise ?','Pourquoi la traçabilité inclut-elle les produits non transfusés ?']
+  },
+  {
+    id:'TRS-15', titre:'Parcours complet avec erreurs latentes', niveau:'Évaluation certificative', duree:35,
+    objectifs:['Réaliser l\'ensemble de la pose en sécurité','Prioriser les contrôles','Détecter plusieurs erreurs latentes'],
+    situation:'Le patient doit recevoir un CGR. Le dossier comporte une ancienne allo-immunisation, la RAI actuelle est valide, le produit est attribué correctement, mais le bracelet est partiellement illisible et une tubulure inadéquate a été préparée.',
+    declencheurs:['Le patient donne un deuxième prénom absent d\'un document','Une sonnerie interrompt le contrôle','Après correction, le patient signale un prurit léger cinq minutes après le début.'],
+    attendus:['Résoudre chaque discordance avant la pose','Vérifier prescription, résultats, produit et identité','Choisir le matériel adapté','Réaliser le contrôle ultime sans interruption','Informer et surveiller le patient','Arrêter et évaluer devant le symptôme','Alerter et tracer'],
+    erreurs_critiques:['Poser avec un bracelet non fiable','Ignorer l\'historique immunohématologique','Poursuivre malgré le symptôme'],
+    debrief:['Quelles barrières ont été déterminantes ?','Quels biais ont influencé les décisions ?','Comment améliorer l\'organisation du poste de travail ?']
+  }
+];
