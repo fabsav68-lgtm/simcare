@@ -79,6 +79,7 @@ h1{font-size:22px;font-weight:800}
     <p class="sub">Situations de transfusion à travailler seul ou en groupe — lis la situation, anticipe ta conduite, puis compare-toi aux éléments attendus.</p>
   </header>
 
+  <div class="filters" id="filters-categorie"></div>
   <div class="filters" id="filters"></div>
   <div id="scenarios-list"></div>
 </div>
@@ -119,15 +120,31 @@ h1{font-size:22px;font-weight:800}
 
 <script src="praxis-qcm-data.js"></script>
 <script>
-const NIVEAUX = ['Tous', ...new Set(SCENARIOS_TRANSFUSION.map(s => s.niveau))];
+const TOUS_SCENARIOS = [
+  ...SCENARIOS_TRANSFUSION.map(s => ({...s, categorie: 'Transfusion'})),
+  ...SCENARIOS_INJECTIONS.map(s => ({...s, categorie: 'Injections / CVC'}))
+];
+
+const CATEGORIES = ['Toutes', ...new Set(TOUS_SCENARIOS.map(s => s.categorie))];
+const NIVEAUX = ['Tous', ...new Set(TOUS_SCENARIOS.map(s => s.niveau))];
+let categorieActuelle = 'Toutes';
 let filtreActuel = 'Tous';
 let scenarioActuel = null;
 let checkedItems = new Set();
 
 function afficherFiltres(){
+  document.getElementById('filters-categorie').innerHTML = CATEGORIES.map(c =>
+    `<div class="filter-chip ${c === categorieActuelle ? 'active' : ''}" onclick="filtrerCategorie('${c}')">${c}</div>`
+  ).join('');
   document.getElementById('filters').innerHTML = NIVEAUX.map(n =>
     `<div class="filter-chip ${n === filtreActuel ? 'active' : ''}" onclick="filtrer('${n}')">${n}</div>`
   ).join('');
+}
+
+function filtrerCategorie(cat){
+  categorieActuelle = cat;
+  afficherFiltres();
+  afficherListe();
 }
 
 function filtrer(niveau){
@@ -137,7 +154,9 @@ function filtrer(niveau){
 }
 
 function afficherListe(){
-  const scenarios = filtreActuel === 'Tous' ? SCENARIOS_TRANSFUSION : SCENARIOS_TRANSFUSION.filter(s => s.niveau === filtreActuel);
+  let scenarios = TOUS_SCENARIOS;
+  if(categorieActuelle !== 'Toutes') scenarios = scenarios.filter(s => s.categorie === categorieActuelle);
+  if(filtreActuel !== 'Tous') scenarios = scenarios.filter(s => s.niveau === filtreActuel);
   document.getElementById('scenarios-list').innerHTML = scenarios.map(s => `
     <div class="scenario-card" onclick="ouvrirScenario('${s.id}')">
       <div class="scenario-top">
@@ -151,7 +170,7 @@ function afficherListe(){
 }
 
 function ouvrirScenario(id){
-  scenarioActuel = SCENARIOS_TRANSFUSION.find(s => s.id === id);
+  scenarioActuel = TOUS_SCENARIOS.find(s => s.id === id);
   checkedItems.clear();
 
   document.getElementById('liste').style.display = 'none';
