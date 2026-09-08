@@ -809,6 +809,81 @@ const SCENARIOS_INJECTIONS = [
   },
 ];
 
+const SCENARIOS_CALCULS = [
+  {
+    id:'CALC-01', titre:'Confusion mg et microgrammes', niveau:'Débutant', duree:15,
+    objectifs:['Repérer une confusion d\'unités avant préparation', 'Sécuriser la lecture d\'une prescription'],
+    situation:'Une prescription indique 50 µg d\'un médicament. En préparant, vous remarquez que l\'ampoule disponible est dosée en mg, et le calcul rapide que vous vous apprêtiez à faire ne tenait pas compte de cette différence d\'unité.',
+    declencheurs:['Un collègue pressé vous dit : « c\'est presque pareil, vas-y directement au pif. »'],
+    attendus:['Convertir systématiquement dans la même unité avant tout calcul', 'Ne jamais mélanger mg et µg sans conversion explicite', 'Refuser d\'estimer \'au pif\' sous prétexte de gain de temps', 'Vérifier le résultat avec un ordre de grandeur plausible', 'Faire vérifier par une seconde personne si le doute persiste'],
+    erreurs_critiques:['Calculer sans convertir dans la même unité', 'Suivre le conseil d\'estimer approximativement'],
+    debrief:['Pourquoi la confusion mg/µg est-elle une des erreurs les plus documentées en sécurité médicamenteuse ?', 'Quel réflexe simple élimine ce risque à la source ?']
+  },
+  {
+    id:'CALC-02', titre:'Une virgule mal placée', niveau:'Débutant', duree:15,
+    objectifs:['Détecter un résultat de calcul invraisemblable', 'Développer le réflexe de plausibilité clinique'],
+    situation:'Après un calcul de dose pondérale, vous obtenez un volume à administrer de 25 mL pour un médicament habituellement administré en 0,5 à 2 mL.',
+    declencheurs:['Le service est chargé, une collègue vous dit que \'parfois les doses sont juste plus grosses\'.'],
+    attendus:['Ne jamais administrer un volume qui semble disproportionné sans revérifier', 'Refaire le calcul depuis le début, poste par poste', 'Vérifier si une virgule a été mal placée dans un facteur intermédiaire', 'Comparer au volume habituel connu pour ce médicament', 'Demander un second avis si le doute persiste malgré la revérification'],
+    erreurs_critiques:['Administrer un volume manifestement disproportionné sans revérification', 'Accepter l\'explication \'parfois c\'est plus gros\' sans vérifier'],
+    debrief:['Pourquoi un résultat de calcul qui \'semble étrange\' doit-il toujours être revérifié avant administration ?', 'Quel est le rôle du bon sens clinique face à un chiffre issu d\'un calcul juste en apparence ?']
+  },
+  {
+    id:'CALC-03', titre:'Poids de la veille ou du jour ?', niveau:'Intermédiaire', duree:15,
+    objectifs:['Utiliser une donnée fiable et actuelle pour un calcul pondéral', 'Ne pas se fier à une valeur ancienne par défaut'],
+    situation:'Vous devez calculer une dose en mg/kg pour un patient. Le dossier affiche un poids, mais vous réalisez qu\'il date de l\'admission, cinq jours plus tôt, et que le patient a été perfusé abondamment depuis.',
+    declencheurs:['Un collègue suggère d\'utiliser directement ce poids \'pour ne pas perdre de temps à repeser\'.'],
+    attendus:['Vérifier la date du dernier poids enregistré avant tout calcul pondéral', 'Faire repeser le patient si le poids disponible n\'est pas fiable ou trop ancien', 'Ne jamais utiliser un poids manifestement obsolète sans le signaler', 'Documenter le poids utilisé pour le calcul'],
+    erreurs_critiques:['Utiliser un poids ancien sans vérifier sa pertinence actuelle', 'Calculer sans jamais consulter la date du poids utilisé'],
+    debrief:['Pourquoi un poids peut-il varier significativement en quelques jours d\'hospitalisation ?', 'Dans quels contextes cette variation a-t-elle le plus d\'impact sur un calcul de dose ?']
+  },
+  {
+    id:'CALC-04', titre:'Deux façons de lire la même prescription', niveau:'Intermédiaire', duree:20,
+    objectifs:['Clarifier une prescription ambiguë avant tout calcul', 'Ne jamais deviner l\'intention du prescripteur'],
+    situation:'Une prescription manuscrite indique \'5-10mg\' sans autre précision. Deux interprétations sont possibles : une dose comprise entre 5 et 10mg à ajuster selon l\'état clinique, ou une dose fixe de 5,10mg (avec une virgule mal lue comme un tiret).',
+    declencheurs:['Le pharmacien n\'est pas immédiatement joignable, la situation n\'est pas urgente.'],
+    attendus:['Ne jamais choisir une interprétation par défaut face à une ambiguïté réelle', 'Contacter le prescripteur pour clarification avant de préparer', 'Documenter la clarification obtenue', 'Ne pas administrer tant que l\'ambiguïté n\'est pas résolue si la situation n\'est pas urgente'],
+    erreurs_critiques:['Choisir arbitrairement une des deux interprétations sans clarification', 'Administrer avant d\'avoir résolu l\'ambiguïté'],
+    debrief:['Pourquoi l\'écriture manuscrite reste-t-elle une source connue d\'erreur en prescription ?', 'Quels formats de prescription réduisent ce risque ?']
+  },
+  {
+    id:'CALC-05', titre:'Un débit de pompe qui ne correspond pas au calcul', niveau:'Intermédiaire', duree:20,
+    objectifs:['Confirmer la cohérence entre calcul manuel et paramétrage réel', 'Ne jamais faire confiance aveuglément à un affichage'],
+    situation:'Vous calculez un débit de 15 mL/h pour une perfusion. En programmant la pompe, vous constatez que l\'écran affiche 150 mL/h après votre saisie.',
+    declencheurs:['Vous êtes interrompu juste après avoir remarqué l\'écart, avant d\'avoir pu comprendre pourquoi.'],
+    attendus:['Ne jamais démarrer la perfusion tant que l\'écart n\'est pas expliqué', 'Revérifier chaque chiffre saisi un par un', 'Vérifier si une unité de la pompe a été mal sélectionnée (mL/h vs autre)', 'Reprendre la saisie complètement depuis le début plutôt que de corriger un seul chiffre au hasard'],
+    erreurs_critiques:['Démarrer la perfusion malgré l\'écart constaté', 'Corriger un chiffre au hasard sans comprendre la cause de l\'écart'],
+    debrief:['Pourquoi un écart d\'un facteur 10 est-il une erreur de saisie particulièrement fréquente sur les pompes ?', 'Quelle habitude de double lecture de l\'écran avant validation peut prévenir ça ?']
+  },
+  {
+    id:'CALC-06', titre:'Calcul juste, mais mauvais médicament', niveau:'Avancé', duree:20,
+    objectifs:['Ne jamais dissocier le calcul de dose de la vérification du produit lui-même', 'Prévenir une erreur de médicament malgré un calcul rigoureux'],
+    situation:'Vous réalisez un calcul de dose parfaitement exact. En vous relisant, vous remarquez que le nom du médicament que vous avez utilisé pour chercher la concentration ressemble beaucoup à celui réellement prescrit, mais n\'est pas exactement le même (deux noms de médicaments à consonance proche).',
+    declencheurs:['Le flacon présent sur le chariot porte effectivement le nom du mauvais médicament, déjà sorti par erreur par un collègue.'],
+    attendus:['Vérifier le nom exact du médicament avant toute chose, même après un calcul juste', 'Ne jamais assumer qu\'un flacon présent sur le chariot est le bon produit', 'Comparer le nom complet, pas seulement les premières lettres', 'Signaler l\'erreur de préparation du collègue selon la procédure'],
+    erreurs_critiques:['Administrer un calcul juste appliqué au mauvais médicament', 'Ne pas vérifier le nom complet du produit avant préparation'],
+    debrief:['Pourquoi un calcul de dose parfaitement exact ne protège-t-il en rien contre une erreur de médicament ?', 'Quels sont des exemples connus de noms de médicaments à consonance proche ?']
+  },
+  {
+    id:'CALC-07', titre:'Double contrôle refusé faute de temps', niveau:'Avancé', duree:20,
+    objectifs:['Maintenir la rigueur du double contrôle même sous pression', 'Argumenter la nécessité d\'un contrôle indépendant'],
+    situation:'Un calcul de dose à haut risque (médicament nécessitant un double contrôle selon le protocole du service) doit être vérifié par un collègue. Le service est très chargé et personne ne semble disponible immédiatement.',
+    declencheurs:['Un cadre de passage propose de \'valider de loin\' sans réellement refaire le calcul.'],
+    attendus:['Ne jamais accepter une validation qui n\'est pas un vrai second calcul indépendant', 'Attendre qu\'un collègue soit réellement disponible pour un contrôle sérieux', 'Expliquer posément pourquoi une validation de façade n\'a pas de valeur', 'Prioriser la sécurité du geste sur la pression temporelle'],
+    erreurs_critiques:['Accepter une validation de façade sans second calcul réel', 'Administrer sans double contrôle un médicament qui l\'exige selon le protocole'],
+    debrief:['Pourquoi un double contrôle \'de façade\' est-il pire qu\'aucun contrôle, en donnant une fausse sécurité ?', 'Comment organiser le service pour que le double contrôle reste réalisable même en période chargée ?']
+  },
+  {
+    id:'CALC-08', titre:'Conversion oubliée entre deux unités de volume', niveau:'Intermédiaire', duree:15,
+    objectifs:['Vérifier systématiquement l\'unité de volume utilisée dans un calcul', 'Prévenir une erreur de facteur 10 par confusion cL/mL'],
+    situation:'Une prescription est rédigée en centilitres (cL), mais le matériel de mesure disponible au poste de soin est gradué en millilitres (mL).',
+    declencheurs:['Rien ne signale visuellement la différence d\'unité sur l\'étiquette du flacon.'],
+    attendus:['Convertir explicitement cL en mL avant toute mesure', 'Ne jamais transposer un chiffre d\'une unité à l\'autre sans conversion', 'Vérifier la cohérence du volume obtenu avec le bon sens clinique', 'Signaler si les unités utilisées dans le service prêtent à confusion, pour une amélioration du protocole'],
+    erreurs_critiques:['Mesurer le nombre de mL identique au nombre de cL sans convertir'],
+    debrief:['Pourquoi les erreurs de facteur 10 sont-elles parmi les plus fréquentes en calcul de dose ?', 'Comment un service peut-il réduire ce risque au niveau de son organisation ?']
+  },
+];
+
 // Nouveau chapitre — Prescription et calculs de doses (100 QCM)
 const PRESCRIPTION_CALCULS_DOSES = [
   // 1. Lecture et sécurisation de la prescription
