@@ -122,7 +122,8 @@ h1{font-size:22px;font-weight:800}
 <script>
 const TOUS_SCENARIOS = [
   ...SCENARIOS_TRANSFUSION.map(s => ({...s, categorie: 'Transfusion'})),
-  ...SCENARIOS_INJECTIONS.map(s => ({...s, categorie: 'Injections / CVC'}))
+  ...SCENARIOS_INJECTIONS.map(s => ({...s, categorie: 'Injections / CVC'})),
+  ...SCENARIOS_CALCULS.map(s => ({...s, categorie: 'Calculs de doses'}))
 ];
 
 const CATEGORIES = ['Toutes', ...new Set(TOUS_SCENARIOS.map(s => s.categorie))];
