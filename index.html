@@ -379,7 +379,7 @@ window.addEventListener('load', appliquerRestrictions);
       <div class="module-desc">Tirage au sort de situations aleatoires pour se preparer aux examens IFSI - comme le vrai examen - avec analyse IA de votre reponse.</div>
       <div class="module-btn" style="background:rgba(56,189,248,.1);color:#38bdf8;border-color:rgba(56,189,248,.3)">Tirer un sujet</div>
     </div>
-      <div class="module-card" onclick="ouvrirModule('PraxisAcademy')" style="border-color:rgba(160,96,255,.2)">
+      <div class="module-card" onclick="ouvrirModule('PraxisAcademy.html')" style="border-color:rgba(160,96,255,.2)">
       <div class="module-num">MODULE 23</div>
       <div class="module-icon">🎯</div>
       <div class="module-name" style="color:#a060ff"><span style="font-size:16px;font-weight:400;opacity:.75">Praxis</span>Academy</div>
@@ -470,12 +470,12 @@ function ouvrirModule(fichier){
   _moduleStart = Date.now();
   _moduleNom = nomModule;
   var codeEtudiant = sessionStorage.getItem('praxiscare_code');
-  fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+  fetch("https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/connexions_historique", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+      "apikey": "sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt",
+      "Authorization": "Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt"
     },
     body: JSON.stringify({
       student_code: codeEtudiant,
@@ -496,12 +496,12 @@ function envoyerTempsModule(){
   if(_moduleStart && _moduleNom){
     var tempsPasse = Date.now() - _moduleStart;
     var codeEtudiant = sessionStorage.getItem('praxiscare_code');
-    fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+    fetch("https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/connexions_historique", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+        "apikey": "sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt",
+        "Authorization": "Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt"
       },
       body: JSON.stringify({
         student_code: codeEtudiant,
@@ -606,12 +606,12 @@ function lierBinome(){
       msg.style.color='#e84040'; msg.textContent='Ce code n\'est pas un abonne actif.'; return;
     }
     localStorage.setItem('praxiscare_binome', codeBinome);
-    fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis", {
+    fetch("https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/connexions_historique", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+        "apikey": "sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt",
+        "Authorization": "Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt"
       },
       body: JSON.stringify({
         student_code: monCode,
@@ -637,10 +637,10 @@ function voirScoreBinome(){
   var msg = document.getElementById('binome-msg');
   if(!codeBinome){ msg.style.color='#e84040'; msg.textContent='Liez d\'abord un binome.'; return; }
   msg.style.color='#5a7080'; msg.textContent='Chargement...';
-  fetch("https://uhbbwtxmsomqhuvzvoxy.supabase.co/rest/v1/praxis?student_code=in.(" + monCode + "," + codeBinome + ")&step=eq.ouverture&select=student_code,module", {
+  fetch("https://fvrfiikrasezlzpaxpqz.supabase.co/rest/v1/connexions_historique?student_code=in.(" + monCode + "," + codeBinome + ")&step=eq.ouverture&select=student_code,module", {
     headers: {
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoYmJ3dHhtc29tcWh1dnp2b3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTI2OTIsImV4cCI6MjA5OTA4ODY5Mn0.WsH1qUbwjL8eF0y5vUBqG8lvpE4UgbNd3k2JbBGVyyY"
+      "apikey": "sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt",
+      "Authorization": "Bearer sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt"
     }
   }).then(function(r){ return r.json(); }).then(function(data){
     var moiMods = data.filter(function(d){ return d.student_code===monCode; }).map(function(d){ return d.module; });
