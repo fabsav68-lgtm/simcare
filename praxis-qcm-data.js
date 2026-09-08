@@ -673,6 +673,99 @@ const SCENARIOS_TRANSFUSION = [
   }
 ];
 
+const SCENARIOS_INJECTIONS = [
+  {
+    id:'INJ-01', titre:'Douleur inhabituelle pendant une IM', niveau:'Débutant', duree:15,
+    objectifs:['Reconnaître un signe d\'alerte pendant une IM', 'Réagir sans céder à la précipitation'],
+    situation:'Vous réalisez une injection intramusculaire dans le site ventroglutéal. Dès l\'introduction de l\'aiguille, le patient signale une douleur vive et inhabituelle, différente d\'une gêne normale.',
+    declencheurs:['Si vous poursuivez malgré la plainte, le patient décrit ensuite une sensation de décharge électrique dans la jambe.'],
+    attendus:['Interrompre immédiatement le geste', 'Retirer l\'aiguille sans injecter', 'Évaluer la sensibilité et la mobilité du membre', 'Rassurer le patient et documenter précisément l\'incident', 'Alerter et faire réévaluer si nécessaire'],
+    erreurs_critiques:['Poursuivre l\'injection malgré la douleur électrique', 'Minimiser la plainte du patient sans évaluation'],
+    debrief:['Pourquoi une décharge électrique est-elle un signal d\'alerte majeur ?', 'Qu\'est-ce qui différencie une gêne normale d\'un signe de lésion nerveuse ?']
+  },
+  {
+    id:'INJ-02', titre:'Gonflement pendant une perfusion périphérique', niveau:'Débutant', duree:15,
+    objectifs:['Reconnaître une extravasation', 'Appliquer la conduite immédiate'],
+    situation:'Un patient sous perfusion de NaCl 0,9% signale une gêne au point de ponction. Vous observez un léger gonflement et une peau plus pâle autour du cathéter.',
+    declencheurs:['Si la perfusion continue, le gonflement augmente et le patient signale une douleur croissante.'],
+    attendus:['Arrêter la perfusion', 'Évaluer l\'étendue et la douleur', 'Retirer le cathéter selon la procédure pour ce produit non vésicant', 'Réinstaller une nouvelle voie ailleurs si besoin', 'Surveiller l\'évolution locale', 'Tracer l\'incident'],
+    erreurs_critiques:['Continuer la perfusion en espérant que ça passe', 'Masser vigoureusement la zone gonflée'],
+    debrief:['Pourquoi la conduite change-t-elle selon que le produit est vésicant ou non ?', 'Quels signes différencient extravasation et phlébite ?']
+  },
+  {
+    id:'INJ-03', titre:'Deux stylos à insuline, un seul patient', niveau:'Débutant', duree:15,
+    objectifs:['Sécuriser l\'identification d\'un dispositif d\'injection', 'Prévenir une erreur de dose ou de type d\'insuline'],
+    situation:'Sur le chariot, deux stylos d\'insuline sont présents : une insuline rapide et une insuline lente, tous deux au nom du même patient.',
+    declencheurs:['Le patient dit : « D\'habitude c\'est toujours la même seringue, je ne sais plus laquelle. »'],
+    attendus:['Vérifier la prescription précise (type, dose, horaire)', 'Confirmer le nom de l\'insuline sur le stylo avant de préparer', 'Ne jamais se fier à l\'habitude du patient seul', 'Amorcer le stylo avant injection', 'Tracer le type et la dose réellement injectés'],
+    erreurs_critiques:['Choisir le stylo au hasard', 'Se fier uniquement à la mémoire du patient sans vérifier la prescription'],
+    debrief:['Pourquoi les erreurs d\'insuline sont-elles particulièrement à risque ?', 'Quelles habitudes de vérification systématique adopter ?']
+  },
+  {
+    id:'INJ-04', titre:'Pansement décollé sur chambre implantable', niveau:'Intermédiaire', duree:20,
+    objectifs:['Évaluer un site d\'accès central', 'Reconnaître les signes devant alerter'],
+    situation:'En faisant sa toilette, vous remarquez que le pansement recouvrant l\'aiguille de Huber d\'une chambre implantable est partiellement décollé et légèrement humide.',
+    declencheurs:['En y regardant de plus près, la peau autour du point de ponction est légèrement rouge et chaude.'],
+    attendus:['Ne pas ignorer le pansement non intègre', 'Évaluer précisément le site (rougeur, chaleur, douleur, écoulement)', 'Refaire le pansement selon la procédure d\'asepsie', 'Alerter si des signes d\'infection sont présents', 'Tracer l\'observation'],
+    erreurs_critiques:['Recouvrir simplement par-dessus l\'ancien pansement', 'Ignorer une rougeur car \'ce n\'est pas grave\''],
+    debrief:['Pourquoi un pansement non intègre est-il un vrai problème de sécurité ?', 'Quels signes évoquent une infection débutante du site ?']
+  },
+  {
+    id:'INJ-05', titre:'Raccord ouvert sur une ligne centrale', niveau:'Intermédiaire', duree:20,
+    objectifs:['Prévenir une embolie gazeuse', 'Réagir à une ouverture accidentelle du circuit'],
+    situation:'En entrant dans la chambre, vous constatez qu\'un raccord d\'un cathéter veineux central est resté ouvert et déconnecté, potentiellement depuis plusieurs minutes.',
+    declencheurs:['Le patient signale une petite gêne thoracique et semble anxieux.'],
+    attendus:['Clamper immédiatement la ligne côté patient', 'Évaluer l\'état clinique (respiration, conscience, douleur thoracique)', 'Installer le patient en position adaptée selon protocole si suspicion d\'embolie gazeuse', 'Alerter sans délai', 'Sécuriser et reconnecter uniquement après désinfection complète', 'Tracer précisément l\'incident et sa durée estimée'],
+    erreurs_critiques:['Reconnecter directement sans désinfection ni évaluation clinique', 'Ignorer la plainte du patient car elle semble mineure'],
+    debrief:['Pourquoi une ligne centrale ouverte est-elle plus dangereuse qu\'une ligne périphérique ?', 'Quels signes cliniques évoquent une embolie gazeuse ?']
+  },
+  {
+    id:'INJ-06', titre:'Résistance au rinçage d\'un PICC', niveau:'Intermédiaire', duree:20,
+    objectifs:['Réagir face à une obstruction suspectée', 'Éviter un geste dangereux par excès de force'],
+    situation:'Vous tentez de rincer un PICC avant une administration prévue. Vous ressentez une résistance inhabituelle et le rinçage n\'est pas fluide.',
+    declencheurs:['Un collègue suggère d\'utiliser une seringue plus petite pour \'pousser plus fort\'.'],
+    attendus:['Ne jamais forcer le rinçage', 'Refuser d\'utiliser une seringue de petit volume pour augmenter la pression', 'Rechercher une cause (clamp fermé, coude, position du bras)', 'Alerter et faire évaluer la perméabilité selon le protocole', 'Reporter l\'administration si la voie n\'est pas confirmée fonctionnelle'],
+    erreurs_critiques:['Forcer avec une seringue de 1 ou 2 mL pour \'passer en force\'', 'Administrer le médicament malgré la résistance'],
+    debrief:['Pourquoi une petite seringue est-elle plus dangereuse pour forcer un rinçage ?', 'Que risque-t-on à forcer une obstruction ?']
+  },
+  {
+    id:'INJ-07', titre:'Calcul de dose pédiatrique sous pression', niveau:'Avancé', duree:25,
+    objectifs:['Maintenir la rigueur du calcul malgré le contexte urgent', 'Faire vérifier un calcul à risque'],
+    situation:'Un enfant de 14 kg nécessite une injection urgente. La prescription est donnée oralement en mg/kg pendant que l\'équipe s\'active autour de lui.',
+    declencheurs:['Un collègue propose d\'aller vite en arrondissant le poids à 15 kg \'pour simplifier\'.'],
+    attendus:['Refuser d\'arrondir le poids sans justification clinique', 'Réaliser le calcul complet avec le poids réel', 'Faire vérifier le calcul par une seconde personne selon le protocole', 'Formaliser la prescription orale dès que possible', 'Administrer seulement après double contrôle'],
+    erreurs_critiques:['Arrondir le poids pour aller plus vite', 'Administrer sans double contrôle en contexte pédiatrique à risque'],
+    debrief:['Pourquoi la pédiatrie est-elle un terrain à haut risque d\'erreur de dose ?', 'Comment maintenir la rigueur sans ralentir une urgence réelle ?']
+  },
+  {
+    id:'INJ-08', titre:'Deux médicaments sur la même ligne', niveau:'Avancé', duree:20,
+    objectifs:['Vérifier une compatibilité avant d\'administrer', 'Prévenir une précipitation dans la tubulure'],
+    situation:'Un médicament doit être injecté sur une voie où une perfusion différente est déjà en cours. Aucune information de compatibilité n\'est immédiatement disponible.',
+    declencheurs:['Le service est chargé et un collègue propose d\'injecter \'ça passe presque toujours\'.'],
+    attendus:['Ne pas administrer sans vérifier la compatibilité', 'Consulter une source fiable de compatibilité physicochimique', 'Rincer la ligne si nécessaire entre deux produits incompatibles', 'Utiliser une voie séparée si la compatibilité est incertaine ou défavorable', 'Tracer la vérification effectuée'],
+    erreurs_critiques:['Administrer sans vérification sous prétexte de gain de temps', 'Mélanger deux produits dans la même seringue sans certitude'],
+    debrief:['Que risque-t-on en cas d\'incompatibilité physicochimique ?', 'Pourquoi le doute doit-il toujours orienter vers la prudence ?']
+  },
+  {
+    id:'INJ-09', titre:'Piqûre accidentelle après un soin', niveau:'Intermédiaire', duree:15,
+    objectifs:['Réagir immédiatement à un accident d\'exposition au sang', 'Ne pas improviser une conduite non protocolisée'],
+    situation:'En rangeant le matériel après une injection, vous vous piquez accidentellement avec l\'aiguille utilisée.',
+    declencheurs:['Aucun déclencheur supplémentaire — le scénario porte sur la rapidité et la justesse de la première réaction.'],
+    attendus:['Réaliser immédiatement les soins locaux (lavage, antisepsie selon protocole)', 'Ne pas faire saigner excessivement la plaie', 'Signaler sans délai selon la procédure AES du service', 'Ne pas attendre la fin du soin ou de la journée pour déclarer', 'Assurer le suivi prévu'],
+    erreurs_critiques:['Continuer le soin en cours avant de s\'occuper de la piqûre', 'Ne pas déclarer l\'accident'],
+    debrief:['Pourquoi la rapidité de la prise en charge d\'un AES est-elle déterminante ?', 'Quelles habitudes de rangement réduisent ce risque ?']
+  },
+  {
+    id:'INJ-10', titre:'Alarme de pression répétée sur pompe', niveau:'Avancé', duree:20,
+    objectifs:['Ne jamais neutraliser une alarme sans en comprendre la cause', 'Explorer méthodiquement une ligne de perfusion'],
+    situation:'La pompe à perfusion d\'un patient déclenche une alarme de pression élevée à plusieurs reprises. Le service est très chargé.',
+    declencheurs:['Un collègue propose de simplement réarmer l\'alarme sans chercher plus loin, \'ça arrive souvent avec cette pompe\'.'],
+    attendus:['Ne jamais réarmer sans investigation', 'Vérifier toute la ligne : clamp, coude, position du cathéter, site cutané', 'Évaluer le patient et le site de perfusion', 'Corriger la cause identifiée avant de reprendre', 'Tracer l\'incident si une anomalie a été trouvée'],
+    erreurs_critiques:['Réarmer répétitivement sans chercher la cause', 'Augmenter manuellement la pression autorisée pour faire cesser l\'alarme'],
+    debrief:['Pourquoi une alarme répétée ne doit-elle jamais être banalisée ?', 'Quelles causes fréquentes expliquent une pression élevée sur une ligne ?']
+  },
+];
+
 // Nouveau chapitre — Prescription et calculs de doses (100 QCM)
 const PRESCRIPTION_CALCULS_DOSES = [
   // 1. Lecture et sécurisation de la prescription
@@ -788,4 +881,3 @@ const PRESCRIPTION_CALCULS_DOSES = [
 ].map(([q,opts,rep,expl]) => ({ ue:'UE B.3', chap:'Prescription et calculs de doses', q, opts, rep, expl }));
 
 QCM[3].push(...PRESCRIPTION_CALCULS_DOSES);
-
