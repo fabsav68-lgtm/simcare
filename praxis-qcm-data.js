@@ -884,6 +884,81 @@ const SCENARIOS_CALCULS = [
   },
 ];
 
+const SCENARIOS_PHARMA = [
+  {
+    id:'PHARMA-01', titre:'Somnolence après une dose de morphine', niveau:'Intermédiaire', duree:15,
+    objectifs:['Reconnaître les signes précoces de dépression respiratoire', 'Réagir avant l\'aggravation'],
+    situation:'Un patient a reçu une dose de morphine il y a 30 minutes pour une douleur post-opératoire. En passant dans la chambre, vous le trouvez somnolent, difficile à réveiller, avec une fréquence respiratoire qui vous semble plus lente que d\'habitude.',
+    declencheurs:['Un collègue pressé vous dit que \'c\'est normal, la morphine ça endort\'.'],
+    attendus:['Évaluer précisément la fréquence respiratoire et la saturation', 'Évaluer le niveau de conscience de façon standardisée', 'Ne jamais banaliser une somnolence inhabituelle après un morphinique', 'Alerter immédiatement si la fréquence respiratoire est basse ou la conscience altérée', 'Préparer l\'antidote et le matériel de réanimation respiratoire selon le protocole du service'],
+    erreurs_critiques:['Considérer la somnolence comme normale sans évaluer la respiration', 'Attendre la prochaine surveillance programmée sans réagir immédiatement'],
+    debrief:['Pourquoi la dépression respiratoire est-elle le risque le plus grave des morphiniques ?', 'Quels sont les signes précoces à ne jamais négliger après une injection de morphine ?']
+  },
+  {
+    id:'PHARMA-02', titre:'Selles noires chez un patient anticoagulé', niveau:'Intermédiaire', duree:15,
+    objectifs:['Reconnaître un signe d\'hémorragie digestive chez un patient sous anticoagulant', 'Ne pas confondre avec un effet secondaire bénin'],
+    situation:'Un patient traité par anticoagulant depuis plusieurs jours vous signale, presque en passant, que ses selles sont devenues noires depuis la veille.',
+    declencheurs:['Le patient minimise lui-même : \'ce n\'est sûrement rien, j\'ai peut-être juste mangé quelque chose d\'inhabituel\'.'],
+    attendus:['Ne jamais banaliser des selles noires chez un patient anticoagulé', 'Reconnaître qu\'il s\'agit potentiellement d\'un méléna, signe d\'hémorragie digestive haute', 'Évaluer les constantes hémodynamiques du patient', 'Alerter sans délai, même si le patient lui-même minimise le symptôme', 'Transmettre l\'information de façon précise et non édulcorée'],
+    erreurs_critiques:['Accepter l\'explication alimentaire sans évaluation plus poussée', 'Attendre la visite médicale du lendemain pour signaler'],
+    debrief:['Pourquoi un patient a-t-il parfois tendance à minimiser un symptôme inquiétant ?', 'Quels autres signes rechercher pour évaluer la gravité d\'une suspicion d\'hémorragie digestive ?']
+  },
+  {
+    id:'PHARMA-03', titre:'Un comprimé difficile à avaler, une solution risquée', niveau:'Débutant', duree:15,
+    objectifs:['Ne jamais écraser un comprimé sans vérifier s\'il l\'autorise', 'Proposer une alternative sûre'],
+    situation:'Un patient a des difficultés à avaler ses comprimés. Une collègue propose d\'écraser l\'ensemble du traitement pour le mélanger à une compote, par simplicité.',
+    declencheurs:['Un des comprimés du traitement est un gastro-résistant, sans que la collègue ne l\'ait remarqué.'],
+    attendus:['Vérifier systématiquement si un comprimé peut être écrasé avant de le faire', 'Ne jamais écraser un comprimé gastro-résistant ou à libération prolongée', 'Consulter une source fiable ou le pharmacien en cas de doute', 'Proposer une alternative adaptée (autre forme galénique, avis médical) si le comprimé ne peut pas être écrasé'],
+    erreurs_critiques:['Écraser un comprimé gastro-résistant sans vérification préalable', 'Écraser l\'ensemble d\'un traitement sans vérifier chaque médicament individuellement'],
+    debrief:['Pourquoi l\'enrobage gastro-résistant est-il si important pour certains médicaments ?', 'Quelles conséquences peut avoir l\'écrasement d\'une forme à libération prolongée ?']
+  },
+  {
+    id:'PHARMA-04', titre:'Nausées et troubles visuels sous digoxine', niveau:'Intermédiaire', duree:15,
+    objectifs:['Reconnaître des signes évocateurs de surdosage en digoxine', 'Vérifier la fréquence cardiaque avant d\'administrer'],
+    situation:'Avant d\'administrer la digoxine prescrite, le patient vous signale des nausées et une vision légèrement trouble depuis la veille, avec des halos colorés autour des lumières.',
+    declencheurs:['Rien n\'indique que ces symptômes ont été signalés au médecin auparavant.'],
+    attendus:['Reconnaître ces symptômes comme potentiellement évocateurs d\'un surdosage en digoxine', 'Vérifier la fréquence cardiaque avant toute administration', 'Ne pas administrer la dose sans avis médical dans ce contexte', 'Transmettre précisément les symptômes rapportés par le patient'],
+    erreurs_critiques:['Administrer la digoxine sans tenir compte des symptômes rapportés', 'Ne pas vérifier la fréquence cardiaque avant l\'administration'],
+    debrief:['Pourquoi les troubles visuels sont-ils un signe classique mais souvent méconnu du surdosage en digoxine ?', 'Quelle est la marge thérapeutique de la digoxine, et pourquoi cela justifie-t-il cette vigilance ?']
+  },
+  {
+    id:'PHARMA-05', titre:'Allergie mentionnée mais non vérifiée', niveau:'Débutant', duree:15,
+    objectifs:['Toujours vérifier les allergies avant une administration', 'Ne jamais se fier uniquement à la mémoire ou aux habitudes'],
+    situation:'Vous vous apprêtez à administrer un traitement à un patient que vous ne connaissez pas encore. Le dossier mentionne une allergie, mais vous êtes pressé et le médicament prescrit vous semble sans rapport évident avec cette allergie.',
+    declencheurs:['En y regardant de plus près, la classe du médicament prescrit correspond justement à la famille allergisante mentionnée dans le dossier.'],
+    attendus:['Vérifier systématiquement les allergies avant toute administration, sans exception', 'Ne jamais présumer qu\'un médicament est \'sans rapport\' sans vérifier précisément', 'Croiser l\'information avec une source fiable en cas de doute sur une classe médicamenteuse', 'Alerter le prescripteur en cas de contre-indication identifiée'],
+    erreurs_critiques:['Administrer un médicament sans avoir vérifié les allergies mentionnées au dossier', 'Présumer qu\'un médicament est sans risque sans vérification'],
+    debrief:['Pourquoi la vérification des allergies doit-elle être systématique et non basée sur une impression ?', 'Quelles réactions allergiques graves peuvent survenir même avec un médicament apparemment anodin ?']
+  },
+  {
+    id:'PHARMA-06', titre:'Deux noms de médicaments qui se ressemblent', niveau:'Intermédiaire', duree:15,
+    objectifs:['Prévenir une erreur liée à des noms de médicaments similaires', 'Vérifier le nom complet, pas seulement le début'],
+    situation:'Vous cherchez un médicament dans l\'armoire à pharmacie. Deux boîtes présentent un nom très proche visuellement, avec des indications complètement différentes.',
+    declencheurs:['La boîte que vous avez prise en premier n\'est pas celle prescrite, malgré une ressemblance frappante des emballages.'],
+    attendus:['Toujours lire le nom complet du médicament, pas seulement les premières lettres', 'Vérifier systématiquement le dosage et la forme galénique en plus du nom', 'Ne jamais se fier à la position habituelle d\'un médicament dans l\'armoire', 'Signaler à la pharmacie les cas de confusion visuelle entre deux produits'],
+    erreurs_critiques:['Prélever un médicament sur la base d\'une ressemblance de nom sans vérification complète', 'Administrer sans revérifier le nom exact juste avant le geste'],
+    debrief:['Pourquoi les confusions de noms de médicaments à consonance proche sont-elles une cause connue d\'erreur grave ?', 'Quelles habitudes de rangement peuvent réduire ce risque au niveau du service ?']
+  },
+  {
+    id:'PHARMA-07', titre:'Traitement habituel non retranscrit à l\'admission', niveau:'Avancé', duree:20,
+    objectifs:['Assurer une conciliation médicamenteuse fiable à l\'admission', 'Ne jamais supposer qu\'un traitement a été correctement transféré'],
+    situation:'Un patient admis depuis deux jours vous mentionne, en discutant, qu\'il prend habituellement un traitement quotidien pour une pathologie chronique. Ce traitement n\'apparaît nulle part dans sa prescription actuelle.',
+    declencheurs:['Le patient pensait que \'l\'équipe était déjà au courant\', sans que personne n\'ait officiellement recueilli cette information.'],
+    attendus:['Ne jamais supposer qu\'un traitement habituel est automatiquement connu de l\'équipe', 'Vérifier et transmettre immédiatement cette information au prescripteur', 'Documenter précisément le traitement habituel mentionné par le patient', 'Contribuer activement à la conciliation médicamenteuse, à l\'admission comme à la sortie'],
+    erreurs_critiques:['Ne pas transmettre l\'information sous prétexte qu\'elle a pu être recueillie par quelqu\'un d\'autre', 'Attendre la prochaine visite médicale sans alerter entretemps'],
+    debrief:['Pourquoi l\'omission d\'un traitement chronique à l\'admission peut-elle avoir des conséquences graves ?', 'Quel rôle l\'infirmier joue-t-il concrètement dans la conciliation médicamenteuse ?']
+  },
+  {
+    id:'PHARMA-08', titre:'Anticoagulant à haut risque, contrôle refusé', niveau:'Avancé', duree:20,
+    objectifs:['Maintenir la rigueur du contrôle sur les médicaments à haut risque', 'Ne jamais céder à la pression du service'],
+    situation:'Un traitement anticoagulant à haut risque doit être vérifié selon le protocole du service avant administration. Le service est en tension, et personne ne semble immédiatement disponible pour ce contrôle.',
+    declencheurs:['Un collègue propose d\'administrer \'cette fois sans contrôle, vu la charge de travail\', en promettant de vérifier après coup.'],
+    attendus:['Refuser d\'administrer un médicament à haut risque sans le contrôle prévu par le protocole', 'Attendre qu\'un collègue soit réellement disponible pour un contrôle sérieux, avant administration', 'Expliquer posément l\'importance du contrôle préalable, pas après coup', 'Signaler si le manque chronique de personnel empêche systématiquement ce contrôle'],
+    erreurs_critiques:['Administrer un médicament à haut risque sans contrôle préalable, même en promettant de vérifier après', 'Céder à la pression du collègue sans faire respecter le protocole'],
+    debrief:['Pourquoi un contrôle réalisé après l\'administration n\'a-t-il aucune valeur de sécurité ?', 'Comment un service peut-il s\'organiser pour que ce contrôle reste réalisable même sous tension ?']
+  },
+];
+
 // Nouveau chapitre — Prescription et calculs de doses (100 QCM)
 const PRESCRIPTION_CALCULS_DOSES = [
   // 1. Lecture et sécurisation de la prescription
