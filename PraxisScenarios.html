@@ -123,7 +123,8 @@ h1{font-size:22px;font-weight:800}
 const TOUS_SCENARIOS = [
   ...SCENARIOS_TRANSFUSION.map(s => ({...s, categorie: 'Transfusion'})),
   ...SCENARIOS_INJECTIONS.map(s => ({...s, categorie: 'Injections / CVC'})),
-  ...SCENARIOS_CALCULS.map(s => ({...s, categorie: 'Calculs de doses'}))
+  ...SCENARIOS_CALCULS.map(s => ({...s, categorie: 'Calculs de doses'})),
+  ...SCENARIOS_PHARMA.map(s => ({...s, categorie: 'Pharmacologie'}))
 ];
 
 const CATEGORIES = ['Toutes', ...new Set(TOUS_SCENARIOS.map(s => s.categorie))];
