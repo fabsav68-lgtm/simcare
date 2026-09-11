@@ -26,41 +26,63 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
 
-    // Chercher le code dans la table abonnements
-    const { data, error } = await supabase
-      .from('abonnements')
-      .select('annee_formation, statut, date_debut, date_fin, app, temps_cumule_minutes, temps_max_minutes')
-      .eq('email_etudiant', code)  // fallback
-      .or(`notes.like.%${code}%`)
-      .eq('statut', 'active')
-      .single()
+    let row = null
 
-    // Recherche plus directe par notes (code ambassadeur ou démo)
-    const { data: byNotes } = await supabase
-      .from('abonnements')
-      .select('annee_formation, statut, date_debut, date_fin, app, temps_cumule_minutes, temps_max_minutes')
-      .like('notes', `${code}%`)
-      .eq('statut', 'active')
+    // 1. Nouveau système : code individuel (acces_etudiants) lié à son abonnement
+    const { data: acces } = await supabase
+      .from('acces_etudiants')
+      .select(`
+        actif,
+        abonnements (
+          annee_formation, statut, date_debut, date_fin, app,
+          temps_cumule_minutes, temps_max_minutes
+        )
+      `)
+      .eq('code_acces', code)
+      .eq('actif', true)
       .maybeSingle()
 
-    // Recherche par nom_etablissement (codes PRAXIS-A1/A2/A3)
-    const { data: byCode } = await supabase
-      .from('abonnements')
-      .select('annee_formation, statut, date_debut, date_fin, app, temps_cumule_minutes, temps_max_minutes')
-      .ilike('notes', `${code}%`)
-      .in('statut', ['active'])
-      .maybeSingle()
+    if (acces && acces.abonnements) {
+      row = acces.abonnements
+    }
 
-    const row = byNotes || byCode || data
-
+    // 2. Ancien système (repli) : code stocké dans abonnements.notes, ou email_etudiant
     if (!row) {
+      const { data: byNotes } = await supabase
+        .from('abonnements')
+        .select('annee_formation, statut, date_debut, date_fin, app, temps_cumule_minutes, temps_max_minutes')
+        .ilike('notes', `${code}%`)
+        .eq('statut', 'active')
+        .maybeSingle()
+
+      const { data: byEmail } = await supabase
+        .from('abonnements')
+        .select('annee_formation, statut, date_debut, date_fin, app, temps_cumule_minutes, temps_max_minutes')
+        .eq('email_etudiant', code)
+        .eq('statut', 'active')
+        .maybeSingle()
+
+      row = byNotes || byEmail
+    }
+
+    if (!row || row.statut !== 'active') {
       return new Response(
         JSON.stringify({ valide: false, message: 'Code non reconnu ou inactif' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Vérifier la date de fin
+    // Vérifie que le code correspond bien à l'appli qui le demande
+    // (seulement si les deux valeurs sont renseignées, pour ne pas bloquer les anciens
+    // enregistrements où le champ app n'a jamais été rempli)
+    if (app && row.app && row.app !== app) {
+      return new Response(
+        JSON.stringify({ valide: false, message: "Ce code n'est pas valable pour cette application" }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Vérifie la date de fin
     const now = new Date()
     if (row.date_fin && new Date(row.date_fin) < now) {
       return new Response(
