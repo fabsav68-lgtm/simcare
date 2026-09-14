@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiche technique · Pose et surveillance de sonde nasogastrique</title>
+<style>
+:root{
+  --bg:#07101f; --bg2:#0c1a2e; --card:rgba(255,255,255,.038); --bdr:rgba(255,255,255,.09);
+  --txt:#e2e8f0; --txt2:#93a4b4; --sky:#38bdf8; --teal:#14b8a6; --amber:#f59e0b; --red:#ef4444; --green:#22c55e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',system-ui,sans-serif;background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 55%,var(--bg) 100%);color:var(--txt);min-height:100vh;padding-bottom:60px}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+header{padding:24px 0 16px;text-align:center}
+.badge{display:inline-block;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky);padding:4px 14px;border-radius:20px;font-size:11px;letter-spacing:1.5px;font-weight:700;margin-bottom:12px}
+h1{font-size:24px;font-weight:800}
+.sub{color:var(--txt2);font-size:13px;margin-top:6px}
+
+.section{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px;margin-bottom:14px}
+.section h2{font-size:15px;font-weight:800;color:var(--sky);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+.materiel-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:420px){.materiel-grid{grid-template-columns:1fr}}
+.materiel-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt);background:rgba(255,255,255,.03);padding:8px 10px;border-radius:8px}
+
+.precaution{background:rgba(245,158,11,.08);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:10px 14px;font-size:13px;color:var(--txt);margin-bottom:8px}
+.tip-item{background:rgba(56,189,248,.08);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:10px 14px;font-size:13px;color:var(--txt);margin-bottom:8px}
+.tip-item:last-child{margin-bottom:0}
+.precaution:last-child{margin-bottom:0}
+
+.etapes-scroll{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(min-width:560px){.etapes-scroll{grid-template-columns:1fr 1fr 1fr}}
+.etape-card{background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;position:relative}
+.etape-num{position:absolute;top:8px;left:8px;background:var(--sky);color:#04121f;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.25);z-index:2}
+.etape-img{width:100%;height:110px;background:#0e1e33;display:flex;align-items:center;justify-content:center}
+.etape-img svg{width:60%;height:60%}
+.etape-txt{padding:8px 10px;font-size:11.5px;line-height:1.45;color:var(--txt)}
+
+.surveil-item{display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-bottom:10px}
+.surveil-item:last-child{margin-bottom:0}
+.surveil-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);margin-top:5px;flex-shrink:0}
+
+.erreur-item{display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-bottom:10px;color:var(--txt)}
+.erreur-item:last-child{margin-bottom:0}
+.erreur-icon{flex-shrink:0}
+
+.notice{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--txt2);margin-bottom:14px;line-height:1.6}
+.notice strong{color:var(--red)}
+
+footer{text-align:center;padding:20px;color:var(--txt2);font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">FICHE TECHNIQUE · GESTE INFIRMIER</div>
+    <h1>Pose et surveillance d'une sonde nasogastrique</h1>
+    <p class="sub">Consultation rapide — matériel, étapes, surveillance</p>
+  </header>
+
+  <div class="notice">⚠️ <strong>Illustrations provisoires</strong> — les icônes ci-dessous sont des repères visuels simples en attendant les illustrations définitives (même pipeline que les autres fiches). À remplacer avant publication finale.</div>
+
+  <div class="section">
+    <h2>🧰 Matériel nécessaire</h2>
+    <div class="materiel-grid">
+      <div class="materiel-item">🪈 Sonde nasogastrique (calibre adapté)</div>
+      <div class="materiel-item">💧 Lubrifiant hydrosoluble</div>
+      <div class="materiel-item">💉 Seringue à embout conique 50 mL</div>
+      <div class="materiel-item">🧪 Bandelette de pH gastrique</div>
+      <div class="materiel-item">🥤 Verre d'eau (si patient conscient, capable de déglutir)</div>
+      <div class="materiel-item">📎 Sparadrap hypoallergénique / fixation dédiée</div>
+      <div class="materiel-item">✏️ Marqueur pour repère externe</div>
+      <div class="materiel-item">🧤 Gants non stériles</div>
+      <div class="materiel-item">🩹 Sac collecteur ou bouchon d'obturation</div>
+      <div class="materiel-item">🗑️ Container DASRI</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚠️ Indications & précautions</h2>
+    <div class="precaution"><strong>Indications :</strong> nutrition entérale, administration de médicaments par voie impossible per os, aspiration/décompression gastrique, lavage gastrique.</div>
+    <div class="precaution"><strong>Contre-indications à connaître :</strong> suspicion de traumatisme maxillo-facial grave ou de fracture de la base du crâne (risque de fausse route intracrânienne), obstruction du nasopharynx ou de l'œsophage, varices œsophagiennes ou lésions hémorragiques connues, anomalies de la coagulation non corrigées.</div>
+    <div class="precaution"><strong>Avant de poser :</strong> vérifier la prescription (type de sonde, indication), installer le patient en position assise ou demi-assise, expliquer le geste et rechercher sa coopération.</div>
+  </div>
+
+  <div class="section">
+    <h2>📋 Étapes du soin</h2>
+    <div class="etapes-scroll" id="etapes"></div>
+  </div>
+
+  <div class="section">
+    <h2>💡 Astuces pratiques</h2>
+    <div class="tip-item"><strong>Mesure NEX (Nez-Oreille-Xiphoïde) :</strong> repère classique et rapide, mais des études montrent qu'elle place mal une part importante des sondes (orifices latéraux hors de l'estomac). À utiliser comme première estimation — jamais comme confirmation finale de position.</div>
+    <div class="tip-item"><strong>Faciliter le passage :</strong> tête légèrement fléchie vers l'avant une fois la sonde dans l'oropharynx — cette position ferme relativement les voies aériennes et oriente la sonde vers l'œsophage plutôt que vers la trachée.</div>
+    <div class="tip-item"><strong>Coopération du patient :</strong> si le patient est conscient et autorisé à déglutir, lui faire prendre de petites gorgées d'eau au moment de l'avancée de la sonde facilite la progression et réduit l'inconfort.</div>
+    <div class="tip-item"><strong>Toux, désaturation, changement de voix :</strong> tout signe respiratoire pendant la progression doit faire retirer immédiatement la sonde — évoque un passage dans les voies aériennes plutôt que dans l'œsophage.</div>
+    <div class="tip-item"><strong>Mandrin métallique :</strong> si la sonde en est équipée, ne jamais le retirer avant la mise en place complète, et ne jamais le réintroduire une fois la sonde en place (risque de perforation ou de lésion des muqueuses).</div>
+    <div class="tip-item"><strong>Radiographie :</strong> reste la méthode de référence pour confirmer la position avant la toute première utilisation (alimentation, médicaments) — le test au pH est un complément utile pour les vérifications suivantes, pas un substitut à cette première confirmation en cas de doute.</div>
+  </div>
+
+  <div class="section">
+    <h2>👁️ Points de surveillance</h2>
+    <div class="surveil-item"><div class="surveil-dot"></div><div>Repère externe de la sonde à la narine : vérifié et comparé à la longueur documentée à chaque prise de poste, avant chaque utilisation.</div></div>
+    <div class="surveil-item"><div class="surveil-dot"></div><div>pH du liquide aspiré avant chaque nouvelle utilisation (alimentation, médicament) — un pH inférieur à 5,5 oriente vers une position gastrique correcte.</div></div>
+    <div class="surveil-item"><div class="surveil-dot"></div><div>État cutané de la narine et du point de fixation : rougeur, pression, début de lésion.</div></div>
+    <div class="surveil-item"><div class="surveil-dot"></div><div>Tolérance digestive : nausées, résidu gastrique important, ballonnement.</div></div>
+    <div class="surveil-item"><div class="surveil-dot"></div><div>Toute toux, gêne respiratoire ou désaturation apparue après la pose — à signaler sans délai.</div></div>
+  </div>
+
+  <div class="section">
+    <h2>🚫 Erreurs et complications à connaître</h2>
+    <div class="erreur-item"><span class="erreur-icon">❌</span><div>Ne jamais débuter une alimentation ou une administration de médicament sans avoir vérifié la position (pH et/ou radiographie selon le contexte).</div></div>
+    <div class="erreur-item"><span class="erreur-icon">❌</span><div>Ne jamais se fier à la seule mesure externe (NEX) ou au seul test auscultatoire à l'air insufflé pour confirmer la position — ces méthodes seules ne sont pas fiables.</div></div>
+    <div class="erreur-item"><span class="erreur-icon">❌</span><div>Ne jamais forcer en cas de résistance ou de douleur importante pendant la pose — retirer et réévaluer.</div></div>
+    <div class="erreur-item"><span class="erreur-icon">❌</span><div>Ne jamais poser à l'aveugle en cas de suspicion de fracture de la base du crâne ou de traumatisme facial grave.</div></div>
+    <div class="erreur-item"><span class="erreur-icon">❌</span><div>Ne pas omettre de dater, mesurer et tracer la pose et le repère externe dans le dossier.</div></div>
+  </div>
+
+  <footer>MedExpert · Praxis · Fiche pilote — base de données des soins techniques</footer>
+</div>
+
+<script>
+const ETAPES = [
+  { titre: "Vérification & installation", txt: "Identité, prescription, matériel réuni ; patient installé en position assise ou demi-assise.",
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="42" fill="none" stroke="#38bdf8" stroke-width="4"/><path d="M30 55 L45 68 L72 35" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+  { titre: "Mesure (NEX)", txt: "Repère nez → oreille → appendice xiphoïde ; marquage au feutre du point de référence.",
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><line x1="15" y1="70" x2="85" y2="30" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/><circle cx="15" cy="70" r="5" fill="#38bdf8"/><circle cx="50" cy="50" r="5" fill="#38bdf8"/><circle cx="85" cy="30" r="5" fill="#38bdf8"/></svg>` },
+  { titre: "Lubrification & insertion", txt: "Extrémité lubrifiée, tête légèrement fléchie ; progression douce, déglutition si autorisée.",
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="55" rx="30" ry="22" fill="none" stroke="#38bdf8" stroke-width="4"/><path d="M20 55 Q50 30 80 55" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/></svg>` },
+  { titre: "Vérification de position", txt: "Aspiration du liquide gastrique, test au pH (< 5,5) ; radiographie si doute avant 1ʳᵉ utilisation.",
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="35" y="15" width="12" height="55" rx="3" fill="none" stroke="#38bdf8" stroke-width="4"/><rect x="35" y="15" width="12" height="18" fill="#38bdf8"/><path d="M25 78 L75 78" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/></svg>` },
+  { titre: "Fixation", txt: "Sparadrap sur le nez, sans pression sur l'aile narinaire ; repère externe vérifié.",
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="42" width="60" height="16" rx="8" fill="none" stroke="#38bdf8" stroke-width="4"/><line x1="35" y1="42" x2="35" y2="58" stroke="#38bdf8" stroke-width="3"/><line x1="65" y1="42" x2="65" y2="58" stroke="#38bdf8" stroke-width="3"/></svg>` },
+  { titre: "Traçabilité", txt: "Longueur externe, date, tolérance documentées ; vérification prévue à chaque poste.",
+    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="15" width="50" height="70" rx="4" fill="none" stroke="#38bdf8" stroke-width="4"/><line x1="35" y1="32" x2="65" y2="32" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/><line x1="35" y1="48" x2="65" y2="48" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/><line x1="35" y1="64" x2="55" y2="64" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/></svg>` },
+];
+
+document.getElementById('etapes').innerHTML = ETAPES.map((e,i) => `
+  <div class="etape-card">
+    <div class="etape-num">${i+1}</div>
+    <div class="etape-img">${e.svg}</div>
+    <div class="etape-txt"><strong>${e.titre}</strong><br>${e.txt}</div>
+  </div>
+`).join('');
+</script>
+</body>
+</html>
