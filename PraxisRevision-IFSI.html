@@ -203,6 +203,7 @@ body{
 .info-em {background:rgba(160,96,255,.07);border:1px solid rgba(160,96,255,.2);color:var(--em)}
 .info-grn{background:rgba(176,240,96,.07);border:1px solid rgba(176,240,96,.2);color:var(--lime)}
 .info-amb{background:rgba(255,176,64,.07);border:1px solid rgba(255,176,64,.2);color:var(--amber)}
+.info-rose{background:rgba(255,96,144,.07);border:1px solid rgba(255,96,144,.2);color:var(--rose)}
 
 /* ── LOADING ── */
 .dots{text-align:center;padding:28px 0}
@@ -460,6 +461,13 @@ function render(){
   const q=qList[S.qcmIdx%qList.length];
   const cas=cList[S.casIdx%cList.length];
   const sc=savedScores[S.annee];
+  const noteSur20 = sc.total>0 ? (sc.ok/sc.total*20) : null;
+  const noteClass = noteSur20===null ? 'info-em' : noteSur20>=10 ? 'info-grn' : noteSur20>=9 ? 'info-amb' : 'info-rose';
+  const noteLabel = noteSur20===null
+    ? '📊 Répondez à des questions pour voir votre note simulée'
+    : noteSur20>=10 ? '✅ Validé — au-dessus du seuil de 10/20'
+    : noteSur20>=9  ? '🔶 Zone compensable (9 à 10/20) — à confirmer avec vos autres UE'
+    : '❌ Note éliminatoire simulée (< 9/20) — pas de compensation possible';
 
   let h='';
 
@@ -612,6 +620,12 @@ function render(){
         <span class="stat-n" style="color:${sc.total>0?(sc.ok/sc.total)>.7?'var(--lime)':(sc.ok/sc.total)>.5?'var(--amber)':'var(--rose)':'var(--txt3)'}">${sc.total>0?Math.round(sc.ok/sc.total*100)+'%':'—'}</span>
         <span class="stat-l">Réussite</span>
       </div>
+    </div>
+
+    <!-- Note simulée vs seuil de validation IFSI -->
+    <div class="info ${noteClass}" style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <span>${noteLabel}</span>
+      <strong style="font-family:'Fira Mono',monospace;font-size:15px;white-space:nowrap">${noteSur20!==null?noteSur20.toFixed(1):'—'}/20</strong>
     </div>
 
     <!-- Modes -->
