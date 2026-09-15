@@ -124,7 +124,22 @@ const TOUS_SCENARIOS = [
   ...SCENARIOS_TRANSFUSION.map(s => ({...s, categorie: 'Transfusion'})),
   ...SCENARIOS_INJECTIONS.map(s => ({...s, categorie: 'Injections / CVC'})),
   ...SCENARIOS_CALCULS.map(s => ({...s, categorie: 'Calculs de doses'})),
-  ...SCENARIOS_PHARMA.map(s => ({...s, categorie: 'Pharmacologie'}))
+  ...SCENARIOS_PHARMA.map(s => ({...s, categorie: 'Pharmacologie'})),
+  <script>
+const TOUS_SCENARIOS = [
+  ...SCENARIOS_TRANSFUSION.map(s => ({...s, categorie: 'Transfusion'})),
+  ...SCENARIOS_INJECTIONS.map(s => ({...s, categorie: 'Injections / CVC'})),
+  ...SCENARIOS_CALCULS.map(s => ({...s, categorie: 'Calculs de doses'})),
+  ...SCENARIOS_PHARMA.map(s => ({...s, categorie: 'Pharmacologie'})),
+    'Nutrition entérale': SCENARIOS_NUTRITION,
+  'Gériatrie': SCENARIOS_GERIATRIE,
+  'Oncologie': SCENARIOS_ONCOLOGIE,
+    ...SCENARIOS_NUTRITION.map(s => ({ ...s, categorie: 'Nutrition entérale' })),
+  ...SCENARIOS_GERIATRIE.map(s => ({ ...s, categorie: 'Gériatrie' })),
+  ...SCENARIOS_ONCOLOGIE.map(s => ({ ...s, categorie: 'Oncologie' })),
+    'Nutrition entérale': SCENARIOS_NUTRITION,
+  'Gériatrie': SCENARIOS_GERIATRIE,
+  'Oncologie': SCENARIOS_ONCOLOGIE,
     ...SCENARIOS_NUTRITION.map(s => ({ ...s, categorie: 'Nutrition entérale' })),
   ...SCENARIOS_GERIATRIE.map(s => ({ ...s, categorie: 'Gériatrie' })),
   ...SCENARIOS_ONCOLOGIE.map(s => ({ ...s, categorie: 'Oncologie' })),
