@@ -314,10 +314,6 @@ const QCM = {
     { ue:'UE 4.4', chap:'Perfusions', q:'Pendant l\'administration d\'un médicament IV périphérique, une douleur et un gonflement apparaissent autour du cathéter. Quelle est la première action ?', opts:['Retirer immédiatement le cathéter sans évaluation','Accélérer la perfusion pour terminer','Arrêter immédiatement l\'administration','Masser vigoureusement la zone'], rep:2, expl:'Douleur et gonflement évoquent une extravasation. Il faut **arrêter immédiatement l\'administration** avant toute autre action.' },
     { ue:'UE 2.11', chap:'Pharmacologie', q:'Quel signe doit faire rechercher un saignement chez un patient traité par anticoagulant ?', opts:['Une rhinorrhée claire','Une douleur mécanique du genou','Une soif isolée','Des selles noires goudronneuses'], rep:3, expl:'Des **selles noires goudronneuses (méléna)** évoquent un saignement digestif haut, à rechercher systématiquement sous anticoagulant.' },
     { ue:'UE 4.5', chap:'Transfusion', q:'Dix minutes après le début d\'une transfusion de CGR, le patient présente des frissons et un malaise. Quelle conduite est prioritaire ?', opts:['Attendre une deuxième mesure de température','Réduire légèrement le débit','Arrêter la transfusion et évaluer le patient','Administrer un antipyrétique puis poursuivre'], rep:2, expl:'Frissons et malaise en cours de transfusion imposent d\'**arrêter la transfusion et d\'évaluer le patient** sans délai, avant d\'envisager toute autre mesure.' },
-// ===== NOUVEAUX CHAPITRES ANNÉE 2 — Gériatrie, Nutrition, Diabète, Oncologie (32 QCM) =====
-    // À insérer dans praxis-qcm-data.js, à l'intérieur du tableau "2: [ // 2ème année",
-    // juste AVANT la ligne " ],affichée avant "3: [ // 3ème année"
-
     { ue:'UE 2.7', chap:'Gériatrie', q:'Chez la personne de 75 ans et plus, quelle part des accidents domestiques représentent les chutes ?', opts:['Environ 25%','Environ 50%','Environ 90%','100%'], rep:2, expl:'La chute représente environ **90%** des accidents survenant au domicile chez la personne âgée de 75 ans et plus.' },
     { ue:'UE 2.7', chap:'Gériatrie', q:'Selon la méthode CAM (Confusion Assessment Method), quels critères doivent impérativement être présents pour poser le diagnostic de confusion aiguë ?', opts:['Le critère 1 (début rapide et fluctuation) et le critère 2 (inattention), associés au critère 3 ou 4','Les 4 critères simultanément','Le critère 3 uniquement','Le critère 4 uniquement'], rep:0, expl:'Les critères **1 (début rapide/fluctuation) et 2 (inattention)** doivent toujours être présents, associés au critère 3 (désorganisation de la pensée) ou au critère 4 (trouble de la vigilance).' },
     { ue:'UE 2.7', chap:'Gériatrie', q:'Quel élément clinique est la clé du diagnostic de syndrome confusionnel aigu ?', opts:['Une désorientation permanente et stable','La fluctuation des symptômes au cours de la journée (nycthémère)','Une perte de mémoire ancienne isolée','Une agitation exclusivement nocturne'], rep:1, expl:'La **fluctuation des symptômes au cours du nycthémère** est l\'élément clé du diagnostic, à distinguer d\'un trouble cognitif stable comme la démence.' },
@@ -326,7 +322,6 @@ const QCM = {
     { ue:'UE 2.7', chap:'Gériatrie', q:'Quels signes évoquent un syndrome de glissement débutant ?', opts:['Refus de s\'alimenter, clinophilie, repli sur soi','Hyperactivité et euphorie','Amélioration de l\'appétit','Recherche de contacts sociaux accrue'], rep:0, expl:'Le tableau associe typiquement **refus alimentaire, clinophilie (reste au lit), repli sur soi et désintérêt** pour les activités habituelles.' },
     { ue:'UE 2.7', chap:'Gériatrie', q:'Concernant la contention chez la personne âgée à risque de chute, il faut :', opts:['La systématiser dès le moindre risque','Mettre en balance son intérêt et son effet négatif sur l\'autonomie','L\'utiliser uniquement la nuit sans réévaluation','Ne jamais l\'envisager même en dernier recours'], rep:1, expl:'La HAS recommande de **mettre en balance l\'intérêt de la contention et son effet négatif sur l\'autonomie**, plutôt que de la systématiser.' },
     { ue:'UE 2.7', chap:'Gériatrie', q:'Le syndrome post-chute se caractérise notamment par :', opts:['Une amélioration immédiate de la confiance en soi','Une peur de tomber entraînant une réduction de l\'activité et de la mobilité','Une absence totale de conséquence psychologique','Une augmentation systématique du périmètre de marche'], rep:1, expl:'La **peur de tomber** peut entraîner une réduction de l\'activité et de la mobilité, elle-même génératrice d\'un risque accru de chute — un cercle vicieux souvent sous-estimé.' },
-
     { ue:'UE 4.4', chap:'Nutrition entérale et parentérale', q:'Lors du contrôle du pH du liquide gastrique aspiré par une sonde nasogastrique, quelle valeur oriente vers un bon positionnement gastrique ?', opts:['pH < 5,5','pH entre 7 et 8','pH > 9','Le pH n\'a aucune valeur informative'], rep:0, expl:'Un **pH inférieur à 5,5** est compatible avec un contenu gastrique et oriente vers un bon positionnement de la sonde.' },
     { ue:'UE 4.4', chap:'Nutrition entérale et parentérale', q:'Quelle position privilégier pendant une alimentation entérale pour limiter le risque de broncho-inhalation ?', opts:['Décubitus dorsal strict à plat','Position demi-assise à 30-45°','Décubitus ventral','Position déclive (Trendelenburg)'], rep:1, expl:'La position **demi-assise à 30-45°** réduit le risque de reflux et de broncho-inhalation pendant et après l\'alimentation.' },
     { ue:'UE 4.4', chap:'Nutrition entérale et parentérale', q:'Pourquoi rincer la sonde nasogastrique après chaque alimentation ou administration de médicament ?', opts:['Pour prévenir l\'obstruction par accumulation de résidus','Pour changer le groupe sanguin du patient','Pour remplacer le contrôle de position','Cela n\'apporte aucun bénéfice'], rep:0, expl:'Le rinçage prévient l\'**obstruction** de la sonde par accumulation de résidus alimentaires ou médicamenteux.' },
@@ -335,7 +330,6 @@ const QCM = {
     { ue:'UE 4.4', chap:'Nutrition entérale et parentérale', q:'Quelle anomalie biologique est le signe majeur du syndrome de renutrition inappropriée ?', opts:['Hyperkaliémie','Hypophosphorémie','Hypercalcémie','Hyperalbuminémie'], rep:1, expl:'L\'**hypophosphorémie** est le signe biologique majeur, pouvant entraîner des troubles neurologiques, cardiaques et neuromusculaires graves.' },
     { ue:'UE 4.4', chap:'Nutrition entérale et parentérale', q:'Avant de débuter une renutrition chez un patient dénutri à risque, quelle surveillance biologique est recommandée ?', opts:['Aucune, la renutrition ne présente aucun risque','Un bilan phosphore, potassium, magnésium avant renutrition puis surveillance rapprochée','Uniquement la glycémie capillaire','Un dosage de la vitamine C'], rep:1, expl:'Un bilan **phosphore, potassium et magnésium** est recommandé avant renutrition, puis répété (par exemple toutes les 48h) pendant les premiers jours.' },
     { ue:'UE 4.4', chap:'Nutrition entérale et parentérale', q:'Pourquoi une nutrition parentérale fortement hyperosmolaire nécessite-t-elle une voie veineuse centrale ?', opts:['Pour éviter la lésion des veines périphériques par une osmolarité trop élevée','Parce que la voie orale est toujours possible en parallèle','Pour accélérer artificiellement le débit','Parce qu\'une voie périphérique est toujours suffisante'], rep:0, expl:'Une osmolarité élevée est **délétère pour les veines périphériques** (risque de phlébite) ; la dilution dans le flux sanguin central est nécessaire.' },
-
     { ue:'UE 2.7', chap:'Diabète (complications chroniques)', q:'Le pied diabétique résulte typiquement de l\'association de :', opts:['Neuropathie, artériopathie et infection','Seulement une carence en vitamine D','Une allergie cutanée isolée','Une hyperthyroïdie'], rep:0, expl:'Le pied diabétique résulte d\'un triple processus associant **neuropathie, artériopathie et infection**.' },
     { ue:'UE 2.7', chap:'Diabète (complications chroniques)', q:'Selon la gradation HAS du risque podologique chez le patient diabétique, le grade 3 correspond à :', opts:['Absence de neuropathie sensitive','Antécédent d\'ulcération du pied évoluant depuis plus de 4 semaines et/ou d\'amputation','Neuropathie sensitive isolée sans autre facteur','Un simple hallux valgus sans neuropathie'], rep:1, expl:'Le grade 3 correspond à un **antécédent d\'ulcération de plus de 4 semaines et/ou d\'amputation**, nécessitant une surveillance par un centre spécialisé.' },
     { ue:'UE 2.7', chap:'Diabète (complications chroniques)', q:'Le test au monofilament utilisé pour dépister la neuropathie diabétique évalue :', opts:['La sensibilité à la pression au niveau du pied','La force musculaire du mollet','La température cutanée','La coloration des orteils'], rep:0, expl:'Le monofilament évalue la **sensibilité à la pression** ; le patient est à risque s\'il ne la perçoit pas à deux reprises sur les points testés.' },
@@ -344,7 +338,6 @@ const QCM = {
     { ue:'UE 2.7', chap:'Diabète (complications chroniques)', q:'Le schéma basal-bolus en insulinothérapie associe :', opts:['Une insuline lente pour les besoins de base et une insuline rapide aux repas','Deux insulines lentes à heures différentes','Une insuline rapide unique le matin','Un antidiabétique oral seul'], rep:0, expl:'Ce schéma associe une **insuline basale (lente)** couvrant les besoins de fond et une **insuline rapide** aux repas, pour mimer la sécrétion physiologique.' },
     { ue:'UE 2.7', chap:'Diabète (complications chroniques)', q:'Dès le grade 2 de risque podologique diabétique, quelle mesure spécifique est recommandée en plus de l\'éducation ?', opts:['Des soins de pédicurie réguliers et la correction des anomalies biomécaniques','L\'arrêt de toute activité physique','La suppression du suivi médical','Le port de chaussures ouvertes systématique'], rep:0, expl:'Le grade 2 justifie des **soins de pédicurie réguliers** et la correction des anomalies biomécaniques, en plus des mesures du grade 1.' },
     { ue:'UE 2.7', chap:'Diabète (complications chroniques)', q:'Le pied de Charcot chez le patient diabétique correspond à :', opts:['Une complication ostéo-articulaire liée à la neuropathie','Une allergie cutanée au pansement','Un simple cor plantaire','Une mycose superficielle'], rep:0, expl:'Le pied de Charcot est une **complication ostéo-articulaire grave** liée à la neuropathie diabétique, pouvant déformer durablement le pied.' },
-
     { ue:'UE 2.9', chap:'Oncologie et chimiothérapie', q:'Une neutropénie sévère post-chimiothérapie est généralement définie par un taux de polynucléaires neutrophiles :', opts:['< 500/mm³','< 4 000/mm³','< 10 000/mm³','> 500/mm³'], rep:0, expl:'Un taux de neutrophiles **inférieur à 500/mm³** correspond à une toxicité de grade 4 (agranulocytose).' },
     { ue:'UE 2.9', chap:'Oncologie et chimiothérapie', q:'Chez un patient neutropénique, quel seuil de température définit classiquement la fièvre devant faire évoquer une neutropénie fébrile ?', opts:['37,5°C ponctuel','38,3°C en une seule mesure (ou 38°C prolongé au moins 1h)','40°C uniquement','La fièvre n\'est jamais un critère'], rep:1, expl:'Le seuil classique est **38,3°C en une seule mesure**, ou 38°C maintenu pendant au moins une heure.' },
     { ue:'UE 2.9', chap:'Oncologie et chimiothérapie', q:'L\'aplasie post-chimiothérapie survient typiquement :', opts:['Immédiatement après la perfusion','Dans les 4 à 10 jours suivant le traitement','Après plusieurs mois','Uniquement après la dernière cure'], rep:1, expl:'L\'agranulocytose et l\'aplasie post-chimiothérapie surviennent généralement **4 à 10 jours** après le début du traitement.' },
@@ -413,7 +406,6 @@ const QCM = {
     { ue:'UE 4.6', chap:'Qualité des soins', q:'Pourquoi déclarer un presque-accident ?', opts:['Il révèle une vulnérabilité avant qu\'un dommage ne survienne','Il n\'a aucune valeur','Pour remplacer le dossier patient','Uniquement pour punir'], rep:0, expl:'Un presque-accident fournit une occasion d\'apprendre et de **corriger une faiblesse du système** avant un événement dommageable.' },
     { ue:'UE 4.6', chap:'Qualité des soins', q:'Quel indicateur mesure un résultat directement lié à la prise en charge ?', opts:['Taux de chutes avec dommage','Nombre de salles de réunion','Couleur des uniformes','Ancienneté du bâtiment'], rep:0, expl:'Le **taux de chutes avec dommage** est un indicateur de résultat clinique pouvant guider une démarche d\'amélioration.' },
     { ue:'UE 5.5', chap:'Encadrement', q:'Lorsqu\'un étudiant réalise un soin nouveau, quelle démarche du tuteur est la plus sûre ?', opts:['Le laisser seul sans évaluation','Évaluer ses acquis, expliquer, superviser puis débriefer','Réaliser toujours le soin à sa place','Se limiter à une note finale'], rep:1, expl:'La supervision est adaptée au niveau de l\'étudiant et associe **préparation, observation, sécurité et retour constructif**.' },
-    // Nouveau chapitre — Transfusion sanguine et immunohématologie (100 QCM)
     { ue:'UE 4.5', chap:'Transfusion sanguine et immunohématologie', q:'Que signifie l\'abréviation PSL ?', opts:['Produit sanguin labile','Prélèvement sanguin limité','Plasma sécurisé lyophilisé','Protocole de surveillance leucocytaire'], rep:0, expl:'Un **produit sanguin labile** est issu du sang humain et destiné à la transfusion, notamment le CGR, le concentré plaquettaire ou le plasma thérapeutique.' },
     { ue:'UE 4.5', chap:'Transfusion sanguine et immunohématologie', q:'Quel PSL est principalement destiné à corriger une anémie mal tolérée ?', opts:['Concentré de globules rouges','Concentré plaquettaire','Plasma thérapeutique','Albumine'], rep:0, expl:'Le **CGR** apporte des hématies fonctionnelles afin d\'améliorer le transport de l\'oxygène.' },
     { ue:'UE 4.5', chap:'Transfusion sanguine et immunohématologie', q:'Quel PSL est utilisé pour prévenir ou traiter certaines hémorragies liées à une thrombopénie ?', opts:['CGR','Concentré plaquettaire','Plasma uniquement','Immunoglobulines'], rep:1, expl:'Le **concentré plaquettaire** apporte des plaquettes lorsque leur nombre ou leur fonction expose au saignement.' },
@@ -514,7 +506,6 @@ const QCM = {
     { ue:'UE 4.5', chap:'Transfusion sanguine et immunohématologie', q:'Pourquoi certains patients reçoivent-ils des CGR phénotypés compatibles au-delà d\'ABO-RhD ?', opts:['Pour prévenir ou respecter des allo-immunisations','Pour augmenter leur glycémie','Pour réduire le volume de la poche','Pour remplacer le contrôle ultime'], rep:0, expl:'La compatibilité étendue sur certains antigènes réduit le risque d\'**allo-immunisation** ou évite la réaction avec un anticorps connu.' },
     { ue:'UE 4.5', chap:'Transfusion sanguine et immunohématologie', q:'Quel intérêt présente un PSL irradié ?', opts:['Prévenir la réaction du greffon contre l\'hôte transfusionnelle chez certains patients','Détruire tous les antigènes ABO','Augmenter l\'hémoglobine du produit','Supprimer le besoin de compatibilité'], rep:0, expl:'L\'irradiation inactive la capacité de prolifération des lymphocytes et prévient une complication rare : la **GVH transfusionnelle**.' },
     { ue:'UE 4.5', chap:'Transfusion sanguine et immunohématologie', q:'Quel intérêt présente un CGR lavé dans certaines indications ?', opts:['Réduire fortement les protéines plasmatiques résiduelles','Ajouter des plaquettes','Augmenter les leucocytes','Changer le groupe ABO'], rep:0, expl:'Le lavage élimine une grande partie du plasma résiduel, utile notamment dans certaines **réactions allergiques sévères récidivantes**.' },
-    // Nouveau chapitre — Injections et accès veineux centraux (100 QCM)
     { ue:'UE B.3', chap:'Injections et accès veineux centraux', q:'Quelle vérification précède toute injection médicamenteuse ?', opts:['Identité, prescription, médicament, dose, voie et moment','Couleur du conditionnement seulement','Avis de la famille','Numéro de chambre uniquement'], rep:0, expl:'La sécurisation confronte **patient, prescription et produit**, notamment identité, médicament, dose, voie et horaire.' },
     { ue:'UE B.3', chap:'Injections et accès veineux centraux', q:'Que faire devant une prescription injectable ambiguë ?', opts:['Choisir la dose habituelle','Clarifier avant de préparer','Injecter la moitié','Demander au patient de décider'], rep:1, expl:'Une ambiguïté doit être **levée auprès du prescripteur** avant toute préparation ou administration.' },
     { ue:'UE B.3', chap:'Injections et accès veineux centraux', q:'Pourquoi vérifier les allergies avant une injection ?', opts:['Pour prévenir une réaction potentiellement grave','Pour déterminer la voie veineuse','Pour calculer le poids','Pour choisir le pansement'], rep:0, expl:'L\'allergie connue peut contre-indiquer le médicament ou imposer une **évaluation préalable**.' },
@@ -617,7 +608,6 @@ const QCM = {
     { ue:'UE B.3', chap:'Injections et accès veineux centraux', q:'Pourquoi étiqueter une ligne de perfusion ?', opts:['Pour identifier le produit, la voie et les informations utiles','Pour remplacer le dossier','Pour décorer le dispositif','Pour éviter le contrôle au patient'], rep:0, expl:'L\'étiquette facilite la lecture du circuit et prévient les **erreurs de connexion ou de médicament**.' },
     { ue:'UE 2.11', chap:'Médicaments à risque', q:'Un patient insuffisant rénal présente une kaliémie à 6,3 mmol/L. Une perfusion contenant du potassium est programmée. Quelle décision infirmière est la plus sûre ?', opts:['Administrer la perfusion plus lentement','Diluer davantage le potassium','Attendre le prochain bilan biologique','Suspendre l\'administration et alerter immédiatement'], rep:3, expl:'Une kaliémie à 6,3 mmol/L est une **hyperkaliémie sévère** (seuil > 5,5). Ajouter du potassium serait dangereux : il faut **suspendre et alerter immédiatement**.' },
     { ue:'UE B.3', chap:'Injections et accès veineux centraux', q:'Avant une injection sur chambre implantable, l\'IDE ne retrouve aucun reflux sanguin et rencontre une résistance au rinçage. Le patient signale ensuite une douleur locale. Quelle conduite est appropriée ?', opts:['Arrêter toute utilisation et faire évaluer le dispositif','Rincer sous une pression plus importante','Injecter lentement en surveillant la douleur','Mobiliser fortement l\'aiguille dans la chambre'], rep:0, expl:'Absence de reflux, résistance et douleur associée évoquent un mauvais positionnement ou une complication : il faut **arrêter toute utilisation et faire évaluer le dispositif**, jamais forcer.' },
-const CAS_CLINIQUES_TRANSVERSAUX = [
     { ue:'UE 3.1', chap:'Cas cliniques transversaux (type MSP)', q:'M. D., 72 ans, BPCO connu sous O2 à 2L/min (cible SpO2 88-92%), a lui-même augmenté son débit à 6L/min car il se sentait essoufflé. Vous le trouvez somnolent, difficile à réveiller, FR à 10/min. Quelle est votre priorité immédiate ?', opts:['Continuer à 6L/min car il reste hypoxémique','Réduire le débit d\'O2 vers la cible prescrite et réévaluer en urgence l\'état de conscience et la ventilation','Attendre la prochaine gazométrie avant toute action','Administrer un stimulant respiratoire sans avis médical'], rep:1, expl:'Chez le BPCO, un excès d\'oxygène peut supprimer la commande ventilatoire hypoxique et provoquer une narcose au CO2, se traduisant par somnolence et bradypnée. Il faut ramener le débit vers la **cible prescrite (88-92%)** et alerter en urgence.' },
     { ue:'UE 3.1', chap:'Cas cliniques transversaux (type MSP)', q:'Un patient témoin de Jéhovah refuse une transfusion malgré une anémie symptomatique. Sa famille demande à l\'équipe de transfuser sans l\'en informer. Quelle attitude est conforme au droit du patient et à l\'éthique infirmière ?', opts:['Transfuser discrètement pour le protéger, avec l\'accord de la famille','Respecter le refus du patient capable après l\'avoir informé, tracer sa décision et explorer les alternatives avec l\'équipe médicale','Attendre que le patient perde connaissance pour transfuser','Refuser tout soin au patient en réaction à son refus'], rep:1, expl:'Le refus d\'un patient majeur et capable, après information loyale, doit être **respecté et tracé**, hors cadre légal particulier. Le soignant explore les alternatives avec l\'équipe médicale, sans céder à la pression de l\'entourage ni abandonner le patient.' },
     { ue:'UE 3.1', chap:'Cas cliniques transversaux (type MSP)', q:'Un patient en phase palliative d\'un cancer métastatique présente une douleur mal contrôlée malgré une titration morphinique récente. Sa famille demande d\'augmenter fortement les doses pour « abréger ses souffrances ». Quelle démarche est appropriée ?', opts:['Augmenter fortement la dose pour répondre à la demande familiale','Réévaluer précisément la douleur, adapter le traitement selon la prescription et le protocole, et distinguer soulagement de la douleur et volonté d\'abréger la vie','Refuser toute adaptation du traitement','Laisser la famille décider seule de la posologie'], rep:1, expl:'La prise en charge de la douleur en soins palliatifs vise le **soulagement**, avec réévaluation et ajustement selon prescription — à distinguer clairement d\'une volonté d\'abréger la vie, qui relève d\'un cadre légal et éthique différent.' },
@@ -626,8 +616,6 @@ const CAS_CLINIQUES_TRANSVERSAUX = [
     { ue:'UE 3.1', chap:'Cas cliniques transversaux (type MSP)', q:'Un patient hospitalisé pour dépression vous confie des idées suicidaires avec un plan précis, en vous demandant de ne rien dire à l\'équipe. Quelle conduite est appropriée ?', opts:['Respecter sa demande de confidentialité absolue','Évaluer le risque, informer l\'équipe soignante dans le cadre du secret partagé, et organiser la sécurité du patient','Le laisser seul pour respecter sa vie privée','Promettre de garder le secret pour maintenir la confiance'], rep:1, expl:'Face à un risque suicidaire identifié, le secret professionnel s\'exerce dans le cadre du **secret partagé** au sein de l\'équipe soignante, indispensable pour organiser la protection du patient — la confidentialité ne peut primer sur la sécurité vitale.' },
     { ue:'UE 3.1', chap:'Cas cliniques transversaux (type MSP)', q:'Un patient hémiplégique suite à un AVC est alimenté par sonde nasogastrique en décubitus dorsal strict sur prescription d\'un examen à venir. Vous constatez une toux et des sécrétions mousseuses pendant l\'alimentation. Quelle est votre action prioritaire ?', opts:['Poursuivre l\'alimentation en accélérant le débit pour terminer plus vite','Arrêter l\'alimentation, évaluer les voies aériennes et alerter, la position à plat majorant le risque de broncho-inhalation','Continuer sans rien changer car la prescription impose le décubitus dorsal','Donner de l\'eau pour faire passer la toux'], rep:1, expl:'Toux et sécrétions pendant une alimentation entérale évoquent une **broncho-inhalation**, favorisée par le décubitus dorsal. Il faut arrêter, évaluer et alerter — la contrainte d\'examen ne prime pas sur la sécurité respiratoire immédiate.' },
     { ue:'UE 3.1', chap:'Cas cliniques transversaux (type MSP)', q:'Lors de la préparation d\'une chimiothérapie, vous remarquez que la dose calculée par un collègue est le double de la dose habituelle pour ce protocole et ce poids. Le collègue insiste car « le prescripteur a signé ». Quelle attitude est appropriée ?', opts:['Administrer car la prescription est signée','Suspendre l\'administration, vérifier le calcul et clarifier avec le prescripteur avant toute administration','Diviser la dose par deux de sa propre initiative sans vérification','Laisser le collègue décider seul car il a préparé la dose'], rep:1, expl:'Une dose qui paraît disproportionnée doit être **vérifiée et clarifiée auprès du prescripteur**, même signée — la signature ne dispense jamais du contrôle de plausibilité, en particulier pour un cytotoxique.' },
-];
-console.log('Nombre de questions:', CAS_CLINIQUES_TRANSVERSAUX.length);
   ],
 };
 
@@ -1014,235 +1002,7 @@ const SCENARIOS_PHARMA = [
     debrief:['Pourquoi un contrôle réalisé après l\'administration n\'a-t-il aucune valeur de sécurité ?', 'Comment un service peut-il s\'organiser pour que ce contrôle reste réalisable même sous tension ?']
   },
 ];
-const SCENARIOS_NUTRITION = [
-  {
-    id:'NUT-01', titre:'Résidu gastrique important en alimentation continue', niveau:'Débutant', duree:15,
-    objectifs:['Repérer un résidu gastrique anormal', 'Adapter la conduite selon le protocole'],
-    situation:'Un patient sous nutrition entérale continue par sonde nasogastrique présente, lors du contrôle habituel, un résidu gastrique nettement plus important que d\'habitude.',
-    declencheurs:['Si l\'étudiant poursuit l\'alimentation sans réévaluation, le patient présente ensuite des nausées et un inconfort abdominal.'],
-    attendus:['Réévaluer la tolérance digestive', 'Ne pas poursuivre l\'alimentation sans réflexion', 'Adapter ou suspendre selon le protocole du service', 'Transmettre l\'observation'],
-    erreurs_critiques:['Poursuivre l\'alimentation au même débit sans réévaluation', 'Ignorer le résidu car \'ça arrive souvent\''],
-    debrief:['Pourquoi un résidu gastrique élevé n\'est-il pas à ignorer ?', 'Quels signes associés rechercher avant de décider ?']
-  },
-  {
-    id:'NUT-02', titre:'Toux pendant l\'alimentation entérale', niveau:'Débutant', duree:15,
-    objectifs:['Reconnaître un signe évocateur de broncho-inhalation', 'Réagir sans délai'],
-    situation:'Un patient alimenté par sonde nasogastrique, installé à plat sur prescription d\'un examen à venir, se met à tousser pendant le passage de l\'alimentation.',
-    declencheurs:['Si l\'alimentation continue, le patient présente ensuite une désaturation.'],
-    attendus:['Arrêter immédiatement l\'alimentation', 'Évaluer la respiration et la saturation', 'Repositionner si possible en position demi-assise', 'Alerter'],
-    erreurs_critiques:['Continuer l\'alimentation car \'c\'est juste une toux\'', 'Attendre la fin de la prescription d\'examen avant de réagir'],
-    debrief:['Pourquoi la position à plat majore-t-elle le risque de broncho-inhalation ?', 'Comment concilier une contrainte d\'examen et la sécurité respiratoire ?']
-  },
-  {
-    id:'NUT-03', titre:'Repère externe déplacé', niveau:'Intermédiaire', duree:15,
-    objectifs:['Ne jamais repousser une sonde partiellement sortie', 'Réagir de façon sécurisée'],
-    situation:'En vérifiant le repère externe d\'une sonde nasogastrique avant l\'alimentation, vous constatez qu\'il ne correspond plus à la longueur documentée — la sonde semble avoir légèrement reculé.',
-    declencheurs:['Un collègue propose de \'la repousser un peu pour remettre le repère en place\'.'],
-    attendus:['Ne jamais repousser la sonde soi-même', 'Vérifier la position avant toute utilisation (pH et/ou avis médical)', 'Documenter l\'écart constaté', 'Alerter si la position ne peut pas être confirmée'],
-    erreurs_critiques:['Repousser la sonde pour \'corriger\' le repère', 'Utiliser la sonde sans revérifier sa position'],
-    debrief:['Pourquoi ne faut-il jamais repousser une sonde déplacée ?', 'Quelles vérifications avant de reprendre l\'utilisation ?']
-  },
-  {
-    id:'NUT-04', titre:'pH douteux à la lecture', niveau:'Intermédiaire', duree:15,
-    objectifs:['Ne pas interpréter un résultat ambigu comme favorable', 'Décider dans le doute'],
-    situation:'Avant une administration de médicament par sonde nasogastrique, la bandelette de pH donne une coloration difficile à interpréter, entre deux teintes de référence.',
-    declencheurs:['Le service est chargé, un collègue propose de \'considérer que c\'est bon, ça a l\'air correct\'.'],
-    attendus:['Ne pas conclure à une position correcte en cas de doute', 'Recommencer le test ou demander un second avis', 'Envisager une radiographie si le doute persiste', 'Ne pas administrer tant que la position n\'est pas confirmée'],
-    erreurs_critiques:['Administrer malgré un résultat ambigu', 'Se fier à l\'impression générale plutôt qu\'à un résultat clair'],
-    debrief:['Pourquoi un résultat ambigu ne doit-il jamais être interprété favorablement ?', 'Quelles options existent en cas de doute persistant ?']
-  },
-  {
-    id:'NUT-05', titre:'Refus de la position demi-assise', niveau:'Débutant', duree:15,
-    objectifs:['Expliquer un soin sans imposer', 'Rechercher la coopération du patient'],
-    situation:'Un patient sous nutrition entérale souhaite rester complètement allongé pendant l\'alimentation, une position plus confortable pour lui, malgré les explications initiales.',
-    declencheurs:['Le patient insiste : \'juste cette fois, je suis fatigué\'.'],
-    attendus:['Expliquer clairement le risque de broncho-inhalation lié au décubitus dorsal', 'Proposer un compromis (position la plus relevée possible tolérée)', 'Ne pas démarrer l\'alimentation en position à risque sans discussion', 'Tracer l\'échange si le refus persiste'],
-    erreurs_critiques:['Démarrer l\'alimentation à plat sans discussion ni explication', 'Céder sans reformuler le risque'],
-    debrief:['Comment concilier confort du patient et sécurité du soin ?', 'Que faire si le patient refuse malgré l\'explication ?']
-  },
-  {
-    id:'NUT-06', titre:'Renutrition rapide chez un patient dénutri', niveau:'Avancé', duree:20,
-    objectifs:['Reconnaître un risque de syndrome de renutrition inappropriée', 'Anticiper la surveillance nécessaire'],
-    situation:'Un patient très dénutri, à jeun depuis plusieurs jours, débute une nutrition entérale à débit d\'emblée élevé sur prescription initiale.',
-    declencheurs:['Deux jours plus tard, le patient présente des œdèmes et une fatigue musculaire inhabituelle.'],
-    attendus:['Identifier le contexte à risque (dénutrition sévère, jeûne prolongé)', 'Vérifier qu\'un bilan phosphore/potassium/magnésium a été réalisé avant renutrition', 'Signaler les signes cliniques apparus (œdèmes, fatigue musculaire)', 'Ne pas augmenter le débit sans réévaluation médicale'],
-    erreurs_critiques:['Ignorer les signes cliniques apparus car \'c\'est juste la fatigue de la maladie\'', 'Augmenter le débit d\'alimentation sans vérification biologique'],
-    debrief:['Pourquoi la renutrition rapide est-elle risquée chez un patient sévèrement dénutri ?', 'Quels signes biologiques et cliniques doivent alerter ?']
-  },
-  {
-    id:'NUT-07', titre:'Solution hyperosmolaire sur voie périphérique', niveau:'Intermédiaire', duree:15,
-    objectifs:['Repérer une incohérence entre le produit et la voie prescrite', 'Alerter avant d\'administrer'],
-    situation:'Une prescription de nutrition parentérale fortement concentrée est associée à une simple voie veineuse périphérique posée la veille.',
-    declencheurs:['Le collègue qui a préparé la poche n\'a rien remarqué de particulier.'],
-    attendus:['Repérer que la voie périphérique n\'est pas adaptée à une solution très hyperosmolaire', 'Vérifier la prescription et alerter le prescripteur avant d\'administrer', 'Ne pas administrer en attendant la clarification', 'Documenter l\'échange'],
-    erreurs_critiques:['Administrer la solution sur la voie périphérique sans vérification', 'Supposer que le prescripteur a nécessairement anticipé ce point'],
-    debrief:['Pourquoi une solution très hyperosmolaire nécessite-t-elle une voie centrale ?', 'Quel réflexe adopter face à une prescription qui semble incohérente ?']
-  },
-  {
-    id:'NUT-08', titre:'Reprise après une interruption prolongée', niveau:'Intermédiaire', duree:15,
-    objectifs:['Ne jamais reprendre une alimentation sans revérifier la situation', 'Adopter une vigilance après une interruption'],
-    situation:'L\'alimentation entérale d\'un patient a été interrompue plusieurs heures pour un examen. À votre prise de poste, vous devez la reprendre.',
-    declencheurs:['Rien ne signale de changement au dossier depuis l\'interruption.'],
-    attendus:['Revérifier le repère externe de la sonde et sa position avant de reprendre', 'Vérifier qu\'aucun événement n\'est survenu pendant l\'interruption (mobilisation, examen)', 'Reprendre au débit prescrit, pas nécessairement au débit d\'avant interruption sans vérification', 'Tracer la reprise'],
-    erreurs_critiques:['Reprendre l\'alimentation sans revérifier ni le repère ni la position', 'Augmenter le débit pour \'rattraper\' le temps perdu sans prescription'],
-    debrief:['Pourquoi une interruption prolongée justifie-t-elle une nouvelle vérification ?', 'Quels événements pendant l\'interruption pourraient avoir déplacé la sonde ?']
-  },
-];
 
-const SCENARIOS_GERIATRIE = [
-  {
-    id:'GER-01', titre:'Confusion apparue brutalement', niveau:'Débutant', duree:15,
-    objectifs:['Repérer les critères d\'un syndrome confusionnel aigu', 'Ne pas confondre avec une démence installée'],
-    situation:'Mme B., 82 ans, habituellement bien orientée, est retrouvée ce matin désorientée, avec un discours incohérent qui fluctue au cours de la matinée.',
-    declencheurs:['La famille affirme qu\'elle \'a toujours été un peu confuse\', ce qui n\'est pas corroboré par le dossier.'],
-    attendus:['Reconnaître le caractère aigu et fluctuant, évocateur d\'une confusion aiguë plutôt que d\'une démence', 'Rechercher une cause (infection, médicament, rétention...)', 'Alerter sans délai, la confusion aiguë étant une urgence médicale', 'Ne pas se fier uniquement au discours de la famille sans vérifier le dossier'],
-    erreurs_critiques:['Attribuer les symptômes à une démence supposée sans vérification', 'Ne pas alerter en pensant que \'ça va passer\''],
-    debrief:['Quels éléments distinguent confusion aiguë et démence installée ?', 'Pourquoi la fluctuation est-elle une clé du diagnostic ?']
-  },
-  {
-    id:'GER-02', titre:'Chute retrouvée au sol', niveau:'Débutant', duree:15,
-    objectifs:['Prioriser l\'évaluation après une chute', 'Ne pas relever sans évaluation'],
-    situation:'Vous retrouvez M. T., 79 ans, au sol dans sa chambre. Il est conscient et dit avoir glissé en se levant.',
-    declencheurs:['Le patient veut se relever immédiatement seul, avant toute évaluation.'],
-    attendus:['Évaluer avant tout relevage (douleur, mobilité, signes de traumatisme, constantes)', 'Ne pas laisser le patient se relever seul sans évaluation', 'Rechercher une cause à la chute (hypotension, hypoglycémie, trouble de la marche)', 'Tracer précisément les circonstances'],
-    erreurs_critiques:['Relever le patient immédiatement sans évaluation préalable', 'Ne pas rechercher de cause à la chute'],
-    debrief:['Pourquoi ne pas relever un patient chuté sans évaluation ?', 'Quelles causes de chute rechercher systématiquement ?']
-  },
-  {
-    id:'GER-03', titre:'Refus de s\'alimenter et de se lever', niveau:'Intermédiaire', duree:20,
-    objectifs:['Repérer les signes précoces d\'un syndrome de glissement', 'Réagir avant l\'aggravation'],
-    situation:'Depuis sa chute la semaine dernière, Mme L., 88 ans, refuse progressivement de s\'alimenter, reste au lit et ne communique presque plus avec l\'équipe.',
-    declencheurs:['Un collègue considère que c\'est \'juste de la déprime passagère après la chute\'.'],
-    attendus:['Reconnaître les signes évocateurs d\'un syndrome de glissement débutant (refus alimentaire, clinophilie, repli sur soi)', 'Alerter sans attendre une aggravation supplémentaire', 'Rechercher l\'événement déclenchant (ici la chute récente)', 'Ne pas banaliser ces signes chez la personne âgée'],
-    erreurs_critiques:['Attendre \'que ça passe\' sans alerter', 'Réduire les signes à une simple tristesse passagère sans évaluation'],
-    debrief:['Pourquoi le syndrome de glissement nécessite-t-il une réaction rapide ?', 'Quel évènement déclenchant identifier dans cette situation ?']
-  },
-  {
-    id:'GER-04', titre:'Contention réclamée par la famille', niveau:'Intermédiaire', duree:20,
-    objectifs:['Peser bénéfice et risque de la contention', 'Argumenter une position professionnelle'],
-    situation:'La famille de M. R., 85 ans, à risque de chute, demande à l\'équipe de le contentionner systématiquement au fauteuil \'pour sa sécurité\'.',
-    declencheurs:['La famille insiste, évoquant une chute passée qui les a beaucoup inquiétés.'],
-    attendus:['Écouter l\'inquiétude de la famille sans la rejeter', 'Expliquer que la contention n\'est pas automatique et doit mettre en balance son intérêt et son effet négatif sur l\'autonomie', 'Proposer des mesures alternatives de prévention des chutes', 'Impliquer l\'équipe médicale dans la décision plutôt que de décider seul'],
-    erreurs_critiques:['Contentionner systématiquement pour répondre à la demande familiale sans évaluation', 'Refuser tout échange avec la famille sur le sujet'],
-    debrief:['Pourquoi la contention n\'est-elle pas une réponse automatique au risque de chute ?', 'Comment accueillir l\'inquiétude d\'une famille sans céder à une demande inadaptée ?']
-  },
-  {
-    id:'GER-05', titre:'Confusion liée à un nouveau traitement', niveau:'Avancé', duree:20,
-    objectifs:['Envisager une cause iatrogène à une confusion', 'Réexaminer l\'ordonnance'],
-    situation:'Depuis l\'introduction d\'un nouveau traitement contre la douleur il y a deux jours, M. G., 81 ans, présente une confusion progressive.',
-    declencheurs:['L\'équipe cherche d\'abord une cause infectieuse sans envisager le traitement récent.'],
-    attendus:['Réexaminer systématiquement l\'ordonnance devant une confusion, les médicaments étant une cause fréquente', 'Faire le lien temporel avec l\'introduction récente du traitement', 'Transmettre cette hypothèse au médecin sans l\'écarter au profit d\'une seule piste', 'Poursuivre néanmoins la recherche d\'autres causes en parallèle'],
-    erreurs_critiques:['Écarter d\'emblée l\'hypothèse médicamenteuse sans vérification', 'Multiplier les examens complémentaires sans avoir réexaminé l\'ordonnance'],
-    debrief:['Pourquoi la réévaluation de l\'ordonnance est-elle un réflexe systématique devant une confusion ?', 'Comment articuler plusieurs hypothèses sans en négliger aucune ?']
-  },
-  {
-    id:'GER-06', titre:'Peur de tomber après une chute récente', niveau:'Intermédiaire', duree:15,
-    objectifs:['Reconnaître un syndrome post-chute', 'Ne pas réduire la prise en charge au seul aspect physique'],
-    situation:'Depuis sa chute il y a dix jours, sans blessure grave, Mme F., 84 ans, refuse de se lever seule et réduit fortement ses déplacements, alors qu\'elle marchait sans aide auparavant.',
-    declencheurs:['L\'équipe conclut à une simple prudence excessive sans y prêter attention particulière.'],
-    attendus:['Reconnaître le syndrome post-chute : peur de tomber entraînant une réduction de la mobilité', 'Ne pas banaliser cette peur comme une simple prudence', 'Proposer un accompagnement progressif à la remobilisation', 'Prévenir le cercle vicieux (moins de mobilité → plus de risque de chute)'],
-    erreurs_critiques:['Forcer brutalement la remobilisation sans tenir compte de la peur exprimée', 'Ignorer complètement la réduction de mobilité en la jugeant anodine'],
-    debrief:['Qu\'est-ce que le syndrome post-chute et pourquoi est-il sous-estimé ?', 'Comment accompagner une remobilisation progressive ?']
-  },
-  {
-    id:'GER-07', titre:'Hypoglycémie confondue avec confusion', niveau:'Débutant', duree:15,
-    objectifs:['Éliminer une cause métabolique devant une confusion', 'Prioriser un geste simple et rapide'],
-    situation:'Mme K., 86 ans, diabétique traitée, est retrouvée confuse par l\'équipe qui s\'apprête à alerter pour une confusion d\'origine neurologique.',
-    declencheurs:['Personne n\'a encore vérifié la glycémie capillaire.'],
-    attendus:['Vérifier systématiquement la glycémie capillaire devant une confusion chez un patient diabétique', 'Corriger une hypoglycémie identifiée avant d\'engager d\'autres investigations', 'Réévaluer l\'état de conscience après correction', 'Documenter la valeur retrouvée et la correction effectuée'],
-    erreurs_critiques:['Engager des investigations neurologiques sans avoir vérifié la glycémie', 'Retarder la correction d\'une hypoglycémie identifiée'],
-    debrief:['Pourquoi la glycémie capillaire est-elle un réflexe devant toute confusion chez un patient diabétique ?', 'Quel est le risque à retarder la correction d\'une hypoglycémie ?']
-  },
-  {
-    id:'GER-08', titre:'Douleur non exprimée chez un patient dément', niveau:'Avancé', duree:20,
-    objectifs:['Repérer une douleur chez un patient non communicant', 'Utiliser une hétéroévaluation adaptée'],
-    situation:'M. D., 90 ans, atteint de troubles cognitifs sévères, est agité depuis ce matin sans plainte verbale compréhensible.',
-    declencheurs:['L\'équipe attribue l\'agitation aux troubles cognitifs habituels du patient.'],
-    attendus:['Ne pas attribuer systématiquement l\'agitation aux seuls troubles cognitifs', 'Envisager la douleur comme cause possible malgré l\'absence de plainte verbale', 'Utiliser une échelle d\'hétéroévaluation adaptée (comportementale)', 'Réévaluer après une éventuelle prise en charge antalgique'],
-    erreurs_critiques:['Administrer un sédatif sans avoir recherché une douleur sous-jacente', 'Considérer l\'absence de plainte verbale comme une absence de douleur'],
-    debrief:['Pourquoi l\'absence de plainte verbale ne signifie-t-elle pas absence de douleur ?', 'Quels outils permettent d\'évaluer la douleur chez un patient non communicant ?']
-  },
-];
-
-const SCENARIOS_ONCOLOGIE = [
-  {
-    id:'ONCO-01', titre:'Douleur au point de perfusion pendant une chimiothérapie', niveau:'Débutant', duree:15,
-    objectifs:['Reconnaître les signes évocateurs d\'une extravasation', 'Réagir immédiatement'],
-    situation:'Pendant l\'administration d\'une chimiothérapie IV, le patient signale une sensation de brûlure au point de perfusion. Vous observez un léger gonflement.',
-    declencheurs:['Si la perfusion continue, le gonflement augmente et la douleur s\'intensifie.'],
-    attendus:['Arrêter immédiatement l\'administration', 'Évaluer le site (douleur, œdème, retour veineux)', 'Traiter comme une extravasation avérée en cas de doute', 'Alerter et appliquer la conduite spécifique au produit'],
-    erreurs_critiques:['Continuer la perfusion en attendant confirmation', 'Réduire seulement le débit sans arrêter'],
-    debrief:['Pourquoi traite-t-on comme avérée une extravasation simplement suspectée ?', 'Qu\'est-ce qui différencie un agent vésicant d\'un agent irritant ?']
-  },
-  {
-    id:'ONCO-02', titre:'Fièvre après une chimiothérapie récente', niveau:'Débutant', duree:15,
-    objectifs:['Reconnaître l\'urgence d\'une fièvre en contexte de neutropénie possible', 'Réagir sans délai'],
-    situation:'Un patient ayant reçu une chimiothérapie il y a six jours présente une température à 38,4°C, sans autre symptôme marqué.',
-    declencheurs:['Un collègue propose d\'attendre une deuxième mesure avant de prévenir qui que ce soit.'],
-    attendus:['Reconnaître le délai (4 à 10 jours post-chimiothérapie) comme une période à risque de neutropénie', 'Ne pas attendre une deuxième mesure pour alerter', 'Faire réaliser les prélèvements prescrits (dont NFS, hémocultures)', 'Considérer la neutropénie fébrile comme une urgence thérapeutique jusqu\'à preuve du contraire'],
-    erreurs_critiques:['Attendre une deuxième mesure de température avant d\'agir', 'Banaliser la fièvre car le patient \'a l\'air bien\''],
-    debrief:['Pourquoi le délai post-chimiothérapie est-il une donnée clé ?', 'Quels examens sont généralement prescrits en urgence dans ce contexte ?']
-  },
-  {
-    id:'ONCO-03', titre:'Visiteur symptomatique chez un patient neutropénique', niveau:'Intermédiaire', duree:15,
-    objectifs:['Protéger un patient immunodéprimé', 'Concilier prévention et lien social'],
-    situation:'Le conjoint d\'un patient en aplasie post-chimiothérapie se présente avec une toux et un rhume évidents pour la visite habituelle.',
-    declencheurs:['Le conjoint insiste, expliquant qu\'il vient tous les jours et que \'ce n\'est qu\'un petit rhume\'.'],
-    attendus:['Expliquer avec tact le risque infectieux pour un patient neutropénique', 'Proposer des alternatives (appel vidéo, visite différée, mesures de protection)', 'Ne pas laisser entrer un visiteur symptomatique sans précaution', 'Impliquer l\'équipe si la situation reste tendue'],
-    erreurs_critiques:['Laisser entrer le visiteur sans aucune précaution', 'Refuser sèchement sans proposer d\'alternative'],
-    debrief:['Pourquoi un patient en aplasie est-il particulièrement vulnérable aux infections banales ?', 'Comment concilier prévention et maintien du lien avec les proches ?']
-  },
-  {
-    id:'ONCO-04', titre:'Produit extravasé non identifié avec certitude', niveau:'Avancé', duree:20,
-    objectifs:['Comprendre pourquoi l\'identification du produit conditionne la prise en charge', 'Agir méthodiquement dans l\'incertitude'],
-    situation:'Une extravasation est constatée pendant une chimiothérapie combinant plusieurs produits en séquence. Il n\'est pas immédiatement certain lequel des produits était en cours au moment de l\'incident.',
-    declencheurs:['L\'équipe hésite sur l\'antidote à utiliser faute de certitude sur le produit en cause.'],
-    attendus:['Arrêter immédiatement l\'administration en cours', 'Reconstituer précisément la chronologie (quel produit, à quel moment) à partir de la prescription et de la traçabilité', 'Ne pas administrer un antidote au hasard sans certitude sur le produit', 'Solliciter un avis spécialisé pour la conduite à tenir'],
-    erreurs_critiques:['Administrer un antidote sans certitude sur le produit en cause', 'Négliger la traçabilité qui aurait permis de lever le doute'],
-    debrief:['Pourquoi la traçabilité précise de l\'administration est-elle cruciale en cas d\'incident ?', 'Que faire quand l\'incertitude sur le produit persiste malgré les vérifications ?']
-  },
-  {
-    id:'ONCO-05', titre:'Dose de chimiothérapie deux fois supérieure à l\'habituelle', niveau:'Avancé', duree:20,
-    objectifs:['Maintenir le contrôle indépendant même sous pression', 'Ne jamais administrer sur la seule confiance en un collègue'],
-    situation:'En vérifiant une préparation de chimiothérapie déjà réalisée par un collègue, vous constatez que la dose calculée est le double de la dose habituelle pour ce protocole et ce poids.',
-    declencheurs:['Le collègue insiste : \'le prescripteur a signé, ça doit être bon\'.'],
-    attendus:['Ne jamais administrer sur la seule base d\'une signature sans vérification du calcul', 'Refaire le calcul de façon indépendante', 'Clarifier avec le prescripteur avant toute administration', 'Documenter la vérification et son résultat'],
-    erreurs_critiques:['Administrer car \'le prescripteur a signé\'', 'Diviser soi-même la dose par deux sans clarification'],
-    debrief:['Pourquoi une signature ne dispense-t-elle jamais du contrôle de plausibilité ?', 'Quelle est la particularité des erreurs de dose en oncologie ?']
-  },
-  {
-    id:'ONCO-06', titre:'Alarme de pompe pendant une chimiothérapie', niveau:'Intermédiaire', duree:15,
-    objectifs:['Ne jamais neutraliser une alarme sans en comprendre la cause', 'Explorer méthodiquement avant de reprendre'],
-    situation:'La pompe administrant une chimiothérapie déclenche une alarme de pression élevée. Le service est chargé.',
-    declencheurs:['Un collègue propose de réarmer directement l\'alarme sans chercher plus loin.'],
-    attendus:['Ne jamais réarmer sans investigation', 'Vérifier toute la ligne (clamp, coude, site de perfusion)', 'Évaluer le patient et le point de ponction', 'Ne reprendre qu\'après avoir identifié et corrigé la cause'],
-    erreurs_critiques:['Réarmer répétitivement sans chercher la cause', 'Augmenter la pression autorisée pour faire cesser l\'alarme'],
-    debrief:['Pourquoi une alarme de pompe ne doit-elle jamais être neutralisée sans investigation, particulièrement avec un cytotoxique ?', 'Quelles causes fréquentes rechercher en priorité ?']
-  },
-  {
-    id:'ONCO-07', titre:'Patient neutropénique qui minimise ses symptômes', niveau:'Intermédiaire', duree:15,
-    objectifs:['Ne pas se fier uniquement au ressenti du patient', 'Maintenir la vigilance malgré une présentation rassurante'],
-    situation:'Un patient en période à risque de neutropénie après chimiothérapie dit se sentir \'très bien\' malgré une température mesurée à 38,3°C.',
-    declencheurs:['Le patient insiste pour ne pas déranger l\'équipe et propose d\'attendre le lendemain.'],
-    attendus:['Ne pas se fier au seul ressenti subjectif du patient dans ce contexte à risque', 'Expliquer pourquoi cette fièvre doit être prise au sérieux malgré l\'absence de signes inquiétants ressentis', 'Alerter et faire réaliser les examens prescrits sans délai', 'Rassurer le patient tout en maintenant la conduite nécessaire'],
-    erreurs_critiques:['Attendre le lendemain à la demande du patient', 'Se fier uniquement à l\'absence de plainte pour ne pas alerter'],
-    debrief:['Pourquoi la présentation clinique peut-elle être trompeuse chez un patient neutropénique ?', 'Comment expliquer une conduite qui peut sembler disproportionnée au patient ?']
-  },
-  {
-    id:'ONCO-08', titre:'Gêne légère au site de perfusion, patient veut continuer', niveau:'Débutant', duree:15,
-    objectifs:['Ne pas céder à la pression du patient sur un signe d\'alerte', 'Appliquer le principe de précaution face à un doute'],
-    situation:'Vers la fin d\'une chimiothérapie vésicante, le patient signale une gêne légère au point de perfusion mais souhaite terminer la poche rapidement plutôt que d\'interrompre le soin.',
-    declencheurs:['Le patient insiste : \'ce n\'est presque rien, autant finir\'.'],
-    attendus:['Évaluer le site malgré le souhait du patient de continuer', 'Traiter comme une extravasation possible en cas de doute, même léger', 'Expliquer au patient pourquoi l\'arrêt est nécessaire par précaution', 'Ne jamais poursuivre uniquement pour \'terminer plus vite\''],
-    erreurs_critiques:['Poursuivre l\'administration à la demande du patient', 'Attendre la fin de la poche pour évaluer le site'],
-    debrief:['Pourquoi une gêne même légère justifie-t-elle une évaluation immédiate avec un produit vésicant ?', 'Comment expliquer une interruption au patient sans le braquer ?']
-  },
-];
-
-console.log('Nutrition:', SCENARIOS_NUTRITION.length);
-console.log('Gériatrie:', SCENARIOS_GERIATRIE.length);
-console.log('Oncologie:', SCENARIOS_ONCOLOGIE.length);
-console.log('Total nouveaux scénarios:', SCENARIOS_NUTRITION.length + SCENARIOS_GERIATRIE.length + SCENARIOS_ONCOLOGIE.length);
 // Nouveau chapitre — Prescription et calculs de doses (100 QCM)
 const PRESCRIPTION_CALCULS_DOSES = [
   // 1. Lecture et sécurisation de la prescription
