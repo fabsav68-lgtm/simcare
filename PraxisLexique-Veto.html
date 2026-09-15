@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisLexique · SimCare</title>
+<style>
+:root{
+  --bg:#080c14; --bg2:#0d1525; --card:rgba(255,255,255,.03); --bdr:rgba(255,255,255,.08);
+  --txt:#e8edf5; --txt2:#5a6478; --em:#60a8f8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 55%,var(--bg) 100%);color:var(--txt);min-height:100vh;padding-bottom:40px}
+.wrap{max-width:600px;margin:0 auto;padding:0 20px}
+header{padding:24px 0 16px;text-align:center}
+.badge{display:inline-block;background:rgba(255,255,255,.06);border:1px solid var(--bdr);color:var(--em);padding:4px 14px;border-radius:20px;font-size:11px;letter-spacing:2px;font-family:monospace;margin-bottom:12px}
+h1{font-family:Georgia,serif;font-size:26px;font-weight:300}
+h1 em{font-style:italic;color:var(--em)}
+.sub{color:var(--txt2);font-size:12.5px;margin-top:6px}
+
+.search-box{position:sticky;top:0;background:var(--bg);padding:12px 0;z-index:10}
+.search-input{width:100%;padding:12px 16px;border-radius:14px;border:1px solid var(--bdr);background:var(--card);color:var(--txt);font-size:14px}
+.search-input::placeholder{color:var(--txt2)}
+.search-input:focus{outline:none;border-color:var(--em)}
+
+.count{font-size:12px;color:var(--txt2);margin:10px 0}
+
+.terme-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:10px}
+.terme-nom{font-size:15px;font-weight:700;color:var(--em);margin-bottom:6px}
+.terme-def{font-size:13.5px;line-height:1.6;color:var(--txt)}
+
+.no-result{text-align:center;color:var(--txt2);padding:40px 20px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">GLOSSAIRE</div>
+    <h1>Praxis<em>Lexique</em></h1>
+    <p class="sub">Vocabulaire infirmier — 30 termes essentiels</p>
+  </header>
+
+  <div class="search-box">
+    <input type="text" class="search-input" id="search" placeholder="Rechercher un terme..." oninput="filtrer()">
+  </div>
+  <div class="count" id="count"></div>
+  <div id="liste"></div>
+</div>
+
+<script>
+const TERMES = [{"terme": "ABCDE (approche)", "def": "Méthode d'évaluation systématique d'un patient en urgence : Airway (voies aériennes), Breathing (respiration), Circulation, Disability (neurologique), Exposure."}, {"terme": "ACR (Arrêt cardio-respiratoire)", "def": "Cessation brutale de l'activité cardiaque et respiratoire efficace, nécessitant une réanimation immédiate."}, {"terme": "Allo-immunisation", "def": "Réponse immunitaire du receveur contre un antigène étranger, notamment après une transfusion ou une grossesse."}, {"terme": "Anasarque", "def": "Œdème généralisé et sévère touchant l'ensemble du corps, y compris les séreuses (plèvre, péritoine)."}, {"terme": "Antidote", "def": "Substance capable de neutraliser ou de contrer les effets toxiques d'un médicament ou d'un produit."}, {"terme": "Aplasie", "def": "Diminution ou arrêt de la production des cellules sanguines par la moelle osseuse, souvent observée après une chimiothérapie."}, {"terme": "Broncho-inhalation", "def": "Passage accidentel de liquide, d'aliments ou de sécrétions dans les voies respiratoires, avec risque de pneumopathie."}, {"terme": "Chambre implantable (PAC)", "def": "Dispositif sous-cutané relié à un cathéter veineux central, permettant un accès veineux répété sans nouvelle ponction."}, {"terme": "Consentement éclairé", "def": "Accord donné par un patient après une information claire, loyale et appropriée sur un soin ou un traitement."}, {"terme": "Cyanose", "def": "Coloration bleutée de la peau et des muqueuses, traduisant un manque d'oxygénation du sang."}, {"terme": "DAE (Défibrillateur automatisé externe)", "def": "Appareil qui analyse le rythme cardiaque et délivre un choc électrique si nécessaire, lors d'un arrêt cardiaque."}, {"terme": "Dénutrition", "def": "Déficit d'apports ou d'assimilation des nutriments par rapport aux besoins de l'organisme."}, {"terme": "Directives anticipées", "def": "Expression écrite, par une personne majeure, de ses volontés relatives à sa fin de vie, pour le cas où elle ne pourrait plus s'exprimer."}, {"terme": "Dyspnée", "def": "Sensation de gêne ou de difficulté respiratoire."}, {"terme": "Extravasation", "def": "Diffusion accidentelle d'un produit perfusé hors de la veine, dans les tissus environnants."}, {"terme": "Hémolyse", "def": "Destruction des globules rouges, pouvant être aiguë (incompatibilité transfusionnelle) ou retardée."}, {"terme": "Hémovigilance", "def": "Système de surveillance organisé autour de la chaîne transfusionnelle, du donneur au receveur."}, {"terme": "Iatrogène", "def": "Se dit d'un trouble ou d'une complication provoqués par un acte médical ou un traitement, y compris involontairement."}, {"terme": "Ictère", "def": "Coloration jaunâtre de la peau et des muqueuses, due à une accumulation de bilirubine."}, {"terme": "Leucopénie", "def": "Diminution du nombre de globules blancs (leucocytes) en dessous des valeurs normales."}, {"terme": "Neutropénie fébrile", "def": "Association d'une fièvre et d'un taux très bas de polynucléaires neutrophiles, constituant une urgence infectieuse, notamment après une chimiothérapie."}, {"terme": "Personne de confiance", "def": "Personne désignée par le patient pour l'accompagner dans ses démarches de santé et témoigner de sa volonté s'il ne peut plus s'exprimer."}, {"terme": "PICC (Peripherally Inserted Central Catheter)", "def": "Cathéter veineux central inséré par une veine périphérique du bras, dont l'extrémité se situe dans une grosse veine centrale."}, {"terme": "Prurit", "def": "Sensation de démangeaison pouvant être un signe d'allergie ou d'irritation cutanée."}, {"terme": "RAI (Recherche d'Agglutinines Irrégulières)", "def": "Examen biologique recherchant des anticorps anti-érythrocytaires pouvant compromettre la compatibilité transfusionnelle."}, {"terme": "Résidu gastrique", "def": "Volume de liquide présent dans l'estomac, mesuré pour évaluer la tolérance d'une nutrition entérale."}, {"terme": "Secret professionnel", "def": "Obligation légale de ne pas divulguer les informations concernant un patient, sauf dérogations prévues par la loi."}, {"terme": "Syncope", "def": "Perte de connaissance brève et brutale, due à une diminution transitoire du débit sanguin cérébral."}, {"terme": "Syndrome de glissement", "def": "Décompensation physique et psychologique rapide de la personne âgée, faisant suite à un événement déclenchant."}, {"terme": "Thrombopénie", "def": "Diminution du nombre de plaquettes sanguines en dessous des valeurs normales, augmentant le risque hémorragique."}];
+
+function filtrer(){
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const filtres = q ? TERMES.filter(t => t.terme.toLowerCase().includes(q) || t.def.toLowerCase().includes(q)) : TERMES;
+  afficher(filtres);
+}
+
+function afficher(liste){
+  document.getElementById('count').textContent = liste.length + ' terme' + (liste.length > 1 ? 's' : '');
+  if(liste.length === 0){
+    document.getElementById('liste').innerHTML = '<div class="no-result">Aucun terme trouvé</div>';
+    return;
+  }
+  document.getElementById('liste').innerHTML = liste.map(t => `
+    <div class="terme-card">
+      <div class="terme-nom">${t.terme}</div>
+      <div class="terme-def">${t.def}</div>
+    </div>
+  `).join('');
+}
+
+afficher(TERMES);
+</script>
+</body>
+</html>
