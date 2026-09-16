@@ -152,6 +152,17 @@ function appliquerRestrictions(){
 
 window.addEventListener('load', appliquerRestrictions);
 </script>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#38bdf8">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('Service worker enregistré — mode hors-ligne actif'))
+      .catch((err) => console.error('Échec service worker :', err));
+  });
+}
+</script>
 </head>
 <body>
 
