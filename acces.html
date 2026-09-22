@@ -51,6 +51,8 @@ footer{margin-top:30px;font-size:10px;letter-spacing:1px;color:var(--txt2)}
   <div class="logo">Praxis<b>Care</b></div>
   <div class="sub">Suite pédagogique IFSI · Accès sécurisé</div>
 
+  <div id="msg-paiement" style="display:none;background:rgba(63,185,80,.1);border:1.5px solid #3fb950;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;line-height:1.6;text-align:center"></div>
+
   <div class="card">
     <h2>🔒 Code d'accès</h2>
     <p>Saisissez le code fourni par votre formateur pour accéder aux modules pédagogiques.</p>
@@ -176,6 +178,33 @@ async function tenterAcces(){
 document.getElementById('code-input').addEventListener('keydown', function(e){
   if(e.key === 'Enter') tenterAcces();
 });
+
+// ═══════════════════════════════════════════════════════════
+//  Message de confirmation après retour de paiement Stripe
+//  (creer-paiement.ts redirige vers acces.html?paiement=succes ou annule)
+// ═══════════════════════════════════════════════════════════
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const statut = params.get('paiement');
+  const zone = document.getElementById('msg-paiement');
+  if(!zone) return;
+
+  if(statut === 'succes'){
+    zone.style.display = 'block';
+    zone.innerHTML = '✅ <strong>Paiement réussi !</strong><br>Votre code d\'accès arrive par email dans quelques instants — pensez à vérifier vos spams si vous ne le voyez pas.';
+  } else if(statut === 'annule'){
+    zone.style.display = 'block';
+    zone.style.background = 'rgba(255,176,32,.1)';
+    zone.style.borderColor = '#ffb020';
+    zone.innerHTML = 'Paiement annulé — vous pouvez réessayer quand vous le souhaitez.';
+  }
+
+  // Nettoie l'URL pour que le message ne réapparaisse pas à un rechargement de page
+  if(statut){
+    const urlPropre = window.location.pathname;
+    window.history.replaceState({}, document.title, urlPropre);
+  }
+})();
 </script>
 </body>
 </html>
